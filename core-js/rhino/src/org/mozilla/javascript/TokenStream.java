@@ -876,12 +876,19 @@ class TokenStream
         }
 
         int c;
-        while ((c = getChar()) != '/') {
+        boolean unescapedSlashAccepted = false;
+        while ((c = getChar()) != '/' || unescapedSlashAccepted) {
             if (c == '\n' || c == EOF_CHAR) {
                 ungetChar(c);
                 throw parser.reportError("msg.unterminated.re.lit");
             }
-            if (c == '\\') {
+        	if (c == '[') {
+        		unescapedSlashAccepted = true;
+        	}
+        	else if (c == ']') {
+        		unescapedSlashAccepted = false;
+        	}
+        	else if (c == '\\') {
                 addToString(c);
                 c = getChar();
             }
