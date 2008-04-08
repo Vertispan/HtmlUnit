@@ -138,6 +138,10 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
     // it indicates sealed object where ~count gives number of keys
     private int count;
 
+    // gateways into the definition-order linked list of slots
+    private transient Slot firstAdded;
+    private transient Slot lastAdded;
+    
     // cache; may be removed for smaller memory footprint
     private transient Slot lastAccess = REMOVED;
 
@@ -160,6 +164,8 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         transient volatile byte wasDeleted;
         volatile Object value;
         transient volatile Slot next;
+        transient volatile Slot orderedNext; // next in linked list
+        transient volatile Slot orderedPrev; // prev in linked list
 
         Slot(String name, int indexOrHash, int attributes)
         {
@@ -2239,6 +2245,16 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                                     slot.getAttributes());
                             newSlot.value = slot.value;
                             newSlot.next = slot.next;
+                            // add new slot to linked list
+                            if(firstAdded == slot)
+                                firstAdded = newSlot;
+                            if(lastAdded == slot)
+                                lastAdded = newSlot;
+                            if(slot.orderedPrev != null)
+                                slot.orderedPrev.orderedNext = newSlot;
+                            if(slot.orderedNext != null)
+                                slot.orderedNext.orderedPrev = newSlot;
+                            // add new slot to hash table
                             if (prev == slot) {
                                 slotsLocalRef[insertPos] = newSlot;
                             } else {
@@ -2271,6 +2287,13 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                 if (accessType == SLOT_MODIFY_CONST)
                     newSlot.setAttributes(CONST);
                 ++count;
+                // add new slot to linked list
+                newSlot.orderedPrev = lastAdded;
+                if(lastAdded != null)
+                    lastAdded.orderedNext = newSlot;
+                if(firstAdded == null)
+                    firstAdded = newSlot;
+                lastAdded = newSlot;
                 addKnownAbsentSlot(slotsLocalRef, newSlot, insertPos);
                 return newSlot;
             }
@@ -2300,7 +2323,15 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                         } else {
                             prev.next = slot.next;
                         }
-                        // Mark the slot as removed to handle a case when
+                        // remove slot from linked list
+                        if(firstAdded == slot)
+                            firstAdded = slot.orderedNext;
+                        if(lastAdded == slot)
+                            lastAdded = slot.orderedPrev;
+                        if(slot.orderedPrev != null)
+                            slot.orderedPrev.orderedNext = slot.orderedNext;
+                        if(slot.orderedNext != null)
+                            slot.orderedNext.orderedPrev = slot.orderedPrev;                        // Mark the slot as removed to handle a case when
                         // another thread manages to put just removed slot
                         // into lastAccess cache.
                         slot.wasDeleted = (byte)1;
@@ -2368,16 +2399,12 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         if (s == null)
             return a;
         int c = 0;
-        for (int i=0; i < s.length; i++) {
-            Slot slot = s[i];
-            while (slot != null) {
-                if (getAll || (slot.getAttributes() & DONTENUM) == 0) {
-                    if (c == 0)
-                        a = new Object[s.length];
-                    a[c++] = (slot.name != null ? (Object) slot.name
-                              : new Integer(slot.indexOrHash));
-                }
-                slot = slot.next;
+        for(Slot slot = firstAdded; slot != null; slot = slot.orderedNext) {
+            if (getAll || (slot.getAttributes() & DONTENUM) == 0) {
+                if (c == 0)
+                    a = new Object[s.length];
+                a[c++] = (slot.name != null ? (Object) slot.name
+                          : new Integer(slot.indexOrHash));
             }
         }
         if (c == a.length)
