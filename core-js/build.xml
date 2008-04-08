@@ -84,6 +84,11 @@ Marc Guillemot
 		<cvs cvsRoot=":pserver:anonymous:anonymous@cvs-mirror.mozilla.org:/cvsroot" package="mozilla/js/rhino" dest="rhino_original" failonerror="true" />
 	</target>
 
+	<target name="generateRhinoDiff">
+		<echo message="Generating diff to rhinoDiff.txt"/>
+		<cvs command="diff -u -N" output="rhinoDiff.txt" dest="rhino/src" failonerror="false" />
+	</target>
+
 	<target name="deploy-snapshot" depends="compile" description="Deploys a snapshot to HTMLUnit snapshot repository">
 		<mkdir dir="${build.dir}/dist"/>
 	 	<jar destfile="${jar.sources}">

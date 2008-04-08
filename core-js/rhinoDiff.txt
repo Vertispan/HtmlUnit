@@ -1,0 +1,112 @@
+? .svn
+? org/.svn
+? org/mozilla/.svn
+? org/mozilla/classfile/.svn
+? org/mozilla/javascript/.svn
+? org/mozilla/javascript/continuations/.svn
+? org/mozilla/javascript/debug/.svn
+? org/mozilla/javascript/jdk13/.svn
+? org/mozilla/javascript/jdk15/.svn
+? org/mozilla/javascript/optimizer/.svn
+? org/mozilla/javascript/regexp/.svn
+? org/mozilla/javascript/resources/.svn
+? org/mozilla/javascript/serialize/.svn
+? org/mozilla/javascript/xml/.svn
+Index: org/mozilla/javascript/ScriptableObject.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ScriptableObject.java,v
+retrieving revision 1.130
+diff -u -r1.130 ScriptableObject.java
+--- org/mozilla/javascript/ScriptableObject.java	18 Mar 2008 15:10:18 -0000	1.130
++++ org/mozilla/javascript/ScriptableObject.java	8 Apr 2008 11:28:09 -0000
+@@ -138,6 +138,10 @@
+     // it indicates sealed object where ~count gives number of keys
+     private int count;
+ 
++    // gateways into the definition-order linked list of slots
++    private transient Slot firstAdded;
++    private transient Slot lastAdded;
++    
+     // cache; may be removed for smaller memory footprint
+     private transient Slot lastAccess = REMOVED;
+ 
+@@ -160,6 +164,8 @@
+         transient volatile byte wasDeleted;
+         volatile Object value;
+         transient volatile Slot next;
++        transient volatile Slot orderedNext; // next in linked list
++        transient volatile Slot orderedPrev; // prev in linked list
+ 
+         Slot(String name, int indexOrHash, int attributes)
+         {
+@@ -2239,6 +2245,16 @@
+                                     slot.getAttributes());
+                             newSlot.value = slot.value;
+                             newSlot.next = slot.next;
++                            // add new slot to linked list
++                            if(firstAdded == slot)
++                                firstAdded = newSlot;
++                            if(lastAdded == slot)
++                                lastAdded = newSlot;
++                            if(slot.orderedPrev != null)
++                                slot.orderedPrev.orderedNext = newSlot;
++                            if(slot.orderedNext != null)
++                                slot.orderedNext.orderedPrev = newSlot;
++                            // add new slot to hash table
+                             if (prev == slot) {
+                                 slotsLocalRef[insertPos] = newSlot;
+                             } else {
+@@ -2271,6 +2287,13 @@
+                 if (accessType == SLOT_MODIFY_CONST)
+                     newSlot.setAttributes(CONST);
+                 ++count;
++                // add new slot to linked list
++                newSlot.orderedPrev = lastAdded;
++                if(lastAdded != null)
++                    lastAdded.orderedNext = newSlot;
++                if(firstAdded == null)
++                    firstAdded = newSlot;
++                lastAdded = newSlot;
+                 addKnownAbsentSlot(slotsLocalRef, newSlot, insertPos);
+                 return newSlot;
+             }
+@@ -2300,7 +2323,15 @@
+                         } else {
+                             prev.next = slot.next;
+                         }
+-                        // Mark the slot as removed to handle a case when
++                        // remove slot from linked list
++                        if(firstAdded == slot)
++                            firstAdded = slot.orderedNext;
++                        if(lastAdded == slot)
++                            lastAdded = slot.orderedPrev;
++                        if(slot.orderedPrev != null)
++                            slot.orderedPrev.orderedNext = slot.orderedNext;
++                        if(slot.orderedNext != null)
++                            slot.orderedNext.orderedPrev = slot.orderedPrev;                        // Mark the slot as removed to handle a case when
+                         // another thread manages to put just removed slot
+                         // into lastAccess cache.
+                         slot.wasDeleted = (byte)1;
+@@ -2368,16 +2399,12 @@
+         if (s == null)
+             return a;
+         int c = 0;
+-        for (int i=0; i < s.length; i++) {
+-            Slot slot = s[i];
+-            while (slot != null) {
+-                if (getAll || (slot.getAttributes() & DONTENUM) == 0) {
+-                    if (c == 0)
+-                        a = new Object[s.length];
+-                    a[c++] = (slot.name != null ? (Object) slot.name
+-                              : new Integer(slot.indexOrHash));
+-                }
+-                slot = slot.next;
++        for(Slot slot = firstAdded; slot != null; slot = slot.orderedNext) {
++            if (getAll || (slot.getAttributes() & DONTENUM) == 0) {
++                if (c == 0)
++                    a = new Object[s.length];
++                a[c++] = (slot.name != null ? (Object) slot.name
++                          : new Integer(slot.indexOrHash));
+             }
+         }
+         if (c == a.length)
