@@ -2,10 +2,6 @@ package net.sourceforge.htmlunit;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextAction;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Scriptable;
 
 /**
  * Test that Object properties are returned in the creation order.
@@ -29,17 +25,6 @@ public class PropertiesOrderTest {
 			+ "if (str != 'a b c d ')\n"
 			+ "  throw 'Got: ' + str";
 		
-		executeScript(script);
-	}
-
-	private void executeScript(final String script) {
-		final ContextAction action = new ContextAction()
-		{
-			public Object run(Context cx) {
-				final Scriptable scope = cx.initStandardObjects();
-				return cx.evaluateString(scope, script, "test", 0, null);
-			}
-		};
-		ContextFactory.getGlobal().call(action);
+		Utilities.executeScript(script);
 	}
 }
