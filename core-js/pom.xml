@@ -11,7 +11,7 @@
 	<name>HtmlUnit Core JS</name>
 	<url>http://htmlunit.sourceforge.net</url>
 	<description>
-		HtmlUnit adaptation of Moziall Rhino Javascript engine for Java
+		HtmlUnit adaptation of Mozilla Rhino Javascript engine for Java
 	</description>
 	<licenses>
 		<license>
