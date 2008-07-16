@@ -6,7 +6,8 @@ This extension adds JavaScript execution tracing capabilities to Firefox, the pu
 Firefox and HtmlUnit traces, in order to easily determine if and when the traces diverge, making it easier
 to find (and fix) bugs in HtmlUnit.
 
-After installing this extension (see below), you will have three new buttons available to add to your toolbar:
+After installing this extension (see below), you will have three new buttons available to add to your toolbar
+(View -> Toolbars -> Customize) to drag and drop:
   1. Enable/Disable Tracing
   2. Save Trace Log to File
   3. Clear Trace Log
@@ -20,7 +21,7 @@ Most of the files in this package are based on the 'helloworld' extension from t
 You can build an XPI for installation by running the build.sh script located in this folder.
 
 Development installation instructions:
-  1. Put the full path to this folder (e.g. c:\dev\firetrace on Windows, /home/user/dev/firetrace on Linux) in
+  1. Put the full path to this folder (e.g. c:\dev\firetrace on Windows, /home/user/dev/firetrace on Unix) in
      a file named firetrace@daniel.gredler and copy that file to [your Firefox profile folder]\extensions\
   2. Restart Firefox.
 
