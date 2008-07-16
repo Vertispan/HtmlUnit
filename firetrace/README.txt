@@ -21,7 +21,7 @@ Most of the files in this package are based on the 'helloworld' extension from t
 You can build an XPI for installation by running the build.sh script located in this folder.
 
 Development installation instructions:
-  1. Put the full path to this folder (e.g. c:\dev\firetrace on Windows, /home/user/dev/firetrace on Unix) in
+  1. Put the full path to this folder (e.g. c:\dev\firetrace on Windows, /home/user/dev/firetrace on Unix-like) in
      a file named firetrace@daniel.gredler and copy that file to [your Firefox profile folder]\extensions\
   2. Restart Firefox.
 
