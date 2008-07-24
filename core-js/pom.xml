@@ -6,12 +6,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sourceforge.htmlunit</groupId>
 	<artifactId>htmlunit-core-js</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>2.2</version>
 	<packaging>jar</packaging>
 	<name>HtmlUnit Core JS</name>
 	<url>http://htmlunit.sourceforge.net</url>
 	<description>
-		HtmlUnit adaptation of Mozilla Rhino Javascript engine for Java
+		HtmlUnit adaptation of Mozilla Rhino Javascript engine for Java. 
+		Changes are documented by a diff (rhinoDiff.txt) contained in the generated jar files.
 	</description>
 	<licenses>
 		<license>
