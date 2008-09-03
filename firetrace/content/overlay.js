@@ -22,7 +22,25 @@ const jsdICallHook = Components.interfaces.jsdICallHook;
 const jsdIProperty = Components.interfaces.jsdIProperty;
 const jsdIValue = Components.interfaces.jsdIValue;
 
-var ftLog = new Array();
+var ftLog = {
+	_tab: new Array(),
+	push: function(s)
+	{
+		this.length++;
+		this._tab.push(s);
+	},
+	getLine: function(i)
+	{
+		return this._tab[i];
+	},
+	length: 0,
+	clear: function()
+	{
+		this._tab = new Array();
+		this.length = 0;
+	}
+};
+
 var ftEnabled = false;
 var ftLogNextInterruptAsFunctionCall = false; // Need to log function calls in the next interrupt, because the function hook doesn't provide enough info.
 var ftSkipNextInterrupt = false; // Need to skip interrupts after functions return, because it's on the line which called the function, which we've already logged.
@@ -72,7 +90,7 @@ var firetrace = {
 
 		if(!ftEnabled) {
 			if(triggerButton) triggerButton.style.listStyleImage = "url('chrome://firetrace/skin/trigger-button-start.png')";
-			msg("Disabled tracing.");
+			msg("Disabled tracing. " + ftLog.length + " calls traced");
 			debuggerService.off();
 			debuggerService.throwHook = null;
 			debuggerService.functionHook = null;
@@ -153,9 +171,14 @@ var firetrace = {
 					args = args.substring(0, args.length - 2);
 				}
 				// Continue with other information.
-				var file = frame.callingFrame.script.fileName;
-				var line = frame.callingFrame.line;
-				var funcName = frame.functionName;
+				var file = "unknown", line = "unknown";
+				if (frame.callingFrame != null)
+				{
+					file = frame.callingFrame.script.fileName;
+					line = frame.callingFrame.line;
+				}
+				var funcName = getFunctionName(frame);
+
 				// Log the gathered information.
 				var s = indent + funcName + "(" + args + ") @ line " + line + " of " + file;
 				ftLog.push(s);
@@ -207,7 +230,7 @@ var firetrace = {
 			var cos = ConverterOutputStream.createInstance(nsIConverterOutputStream);
 			cos.init(fos, "UTF-8", 4096, 0x0000);
 			for(var i = 0; i < ftLog.length; i++) {
-				cos.writeString(ftLog[i] + "\r\n");
+				cos.writeString(ftLog.getLine(i) + "\r\n");
 			}
 			cos.close();
 		}
@@ -216,7 +239,7 @@ var firetrace = {
 	// Clears the javascript trace log.
 	clearLog: function() {
 		msg("Cleared " + ftLog.length + " log entries.");
-		ftLog = new Array();
+		ftLog.clear();
 	}
 
 };
@@ -268,6 +291,26 @@ function formatValue(value) {
 			// For now, we just normalize the whitespace so that the function doesn't span multiple lines and kill our formatting.
 			return normalizeWhitespace(value.stringValue);
 	}
+}
+
+function getFunctionName(frame)
+{
+	var name = frame.functionName
+	if ("anonymous" == name)
+	{
+        // An anonymous function -- try to figure out how it was referenced.
+        // For example, someone may have set foo.prototype.bar = function() { ... };
+        // And then called fooInstance.bar() -- in which case it's "named" bar.
+		var currentFunction = frame.script.functionObject.getWrappedValue();
+		var currentThis = frame.thisValue.getWrappedValue()
+
+		for (var i in currentThis)
+		{
+			if ((typeof i == "string") && currentThis[i] === currentFunction)
+				return i;
+		}
+	}
+	return name;
 }
 
 function hookDomCalls(o) {
