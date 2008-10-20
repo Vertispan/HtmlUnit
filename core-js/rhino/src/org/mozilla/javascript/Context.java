@@ -330,7 +330,7 @@ public class Context
         this(ContextFactory.getGlobal());
     }
     
-    Context(ContextFactory factory)
+    protected Context(ContextFactory factory)
     {
         assert factory != null;
         this.factory = factory;
