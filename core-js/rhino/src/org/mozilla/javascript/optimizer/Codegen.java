@@ -1927,7 +1927,12 @@ class BodyCodegen
               case Token.SCRIPT:
               case Token.BLOCK:
               case Token.EMPTY:
-                // no-ops.
+                // no-ops. 
+                if (compilerEnv.isGenerateObserverCount()) {
+                    // Need to add instruction count even for no-ops to catch
+                    // cases like while (1) {}
+                    addInstructionCount(1);
+                }
                 while (child != null) {
                     generateStatement(child);
                     child = child.getNext();
@@ -3597,11 +3602,13 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
                 String property = id.getString();
                 cfw.addPush(property);
                 cfw.addALoad(contextLocal);
+                cfw.addALoad(thisObjLocal);
                 addScriptRuntimeInvoke(
                     "getPropFunctionAndThis",
                     "(Ljava/lang/Object;"
                     +"Ljava/lang/String;"
                     +"Lorg/mozilla/javascript/Context;"
+                    +"Lorg/mozilla/javascript/Scriptable;"
                     +")Lorg/mozilla/javascript/Callable;");
             } else {
                 // Optimizer do not optimize this case for now
@@ -3929,7 +3936,7 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
     /**
      * Save the current code offset. This saved code offset is used to
      * compute instruction counts in subsequent calls to
-     * {@link #addInstructionCount}.
+     * {@link #addInstructionCount()}.
      */
     private void saveCurrentCodeOffset() {
         savedCodeOffset = cfw.getCurrentCodeOffset();
@@ -3938,12 +3945,25 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
     /**
      * Generate calls to ScriptRuntime.addInstructionCount to keep track of
      * executed instructions and call <code>observeInstructionCount()</code>
-     * if a threshold is exceeded.
+     * if a threshold is exceeded.<br>
+     * Calculates the count from getCurrentCodeOffset - savedCodeOffset
      */
     private void addInstructionCount() {
         int count = cfw.getCurrentCodeOffset() - savedCodeOffset;
         if (count == 0)
             return;
+        addInstructionCount(count);
+    }
+
+    /**
+     * Generate calls to ScriptRuntime.addInstructionCount to keep track of
+     * executed instructions and call <code>observeInstructionCount()</code>
+     * if a threshold is exceeded.<br>
+     * Takes the count as a parameter - used to add monitoring to loops and 
+     * other blocks that don't have any ops - this allows
+     * for monitoring/killing of while(true) loops and such.
+     */
+    private void addInstructionCount(int count) {
         cfw.addALoad(contextLocal);
         cfw.addPush(count);
         addScriptRuntimeInvoke("addInstructionCount",
@@ -4601,11 +4621,13 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
                 +")Ljava/lang/Object;");
         } else {
             cfw.addALoad(contextLocal);
+            cfw.addALoad(thisObjLocal);
             addScriptRuntimeInvoke(
                 "getObjectProp",
                 "(Ljava/lang/Object;"
                 +"Ljava/lang/String;"
                 +"Lorg/mozilla/javascript/Context;"
+                +"Lorg/mozilla/javascript/Scriptable;"
                 +")Ljava/lang/Object;");
         }
     }

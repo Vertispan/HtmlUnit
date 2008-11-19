@@ -370,7 +370,7 @@ WrapFactory#wrap(Context, Scriptable, Object, Class)}
 
         case JSTYPE_OBJECT:
             // Other objects takes #1-#3 spots
-            if (to == fromObj.getClass()) {
+            if (to.isInstance(fromObj)) {
                 // No conversion required
                 return 1;
             }
@@ -972,7 +972,7 @@ WrapFactory#wrap(Context, Scriptable, Object, Class)}
     private transient Map<String,FieldAndMethods> fieldAndMethods;
     private transient boolean isAdapter;
 
-    private static final Object COERCED_INTERFACE_KEY = new Object();
+    private static final Object COERCED_INTERFACE_KEY = "Coerced Interface";
     private static Method adapter_writeAdapterObject;
     private static Method adapter_readAdapterObject;
 

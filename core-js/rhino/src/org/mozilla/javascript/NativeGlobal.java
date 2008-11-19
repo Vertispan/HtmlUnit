@@ -126,17 +126,17 @@ public class NativeGlobal implements Serializable, IdFunctionCall
             scope, "undefined", Undefined.instance,
             ScriptableObject.DONTENUM);
 
-        String[] errorMethods = Kit.semicolonSplit(""
-                                    +"ConversionError;"
-                                    +"EvalError;"
-                                    +"RangeError;"
-                                    +"ReferenceError;"
-                                    +"SyntaxError;"
-                                    +"TypeError;"
-                                    +"URIError;"
-                                    +"InternalError;"
-                                    +"JavaException;"
-                                    );
+        String[] errorMethods = {
+                "ConversionError",
+                "EvalError",
+                "RangeError",
+                "ReferenceError",
+                "SyntaxError",
+                "TypeError",
+                "URIError",
+                "InternalError",
+                "JavaException"
+        };
 
         /*
             Each error constructor gets its own Error object as a prototype,
@@ -507,7 +507,7 @@ public class NativeGlobal implements Serializable, IdFunctionCall
     private Object js_eval(Context cx, Scriptable scope, Scriptable thisObj, Object[] args)
     {
         if (thisObj.getParentScope() == null) {
-            // We allow indirect calls to eval as long as the script will execute in
+            // We allow indirect calls to eval as long as the script will execute in 
             // the global scope.
             return ScriptRuntime.evalSpecial(cx, scope, thisObj, args, "eval code", 1);
         }
@@ -772,7 +772,7 @@ public class NativeGlobal implements Serializable, IdFunctionCall
         return utf8Length;
     }
 
-    private static final Object FTAG = new Object();
+    private static final Object FTAG = "Global";
 
     private static final int
         Id_decodeURI           =  1,

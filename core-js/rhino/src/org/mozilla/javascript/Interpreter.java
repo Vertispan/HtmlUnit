@@ -51,7 +51,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.mozilla.javascript.continuations.Continuation;
+import org.mozilla.javascript.ScriptRuntime.NoSuchMethodShim;
 import org.mozilla.javascript.debug.DebugFrame;
 
 public class Interpreter implements Evaluator
@@ -253,6 +253,7 @@ public class Interpreter implements Evaluator
 
         DebugFrame debuggerFrame;
         boolean useActivation;
+        boolean isContinuationsTopFrame;
 
         Scriptable thisObj;
         Scriptable[] scriptRegExps;
@@ -302,7 +303,7 @@ public class Interpreter implements Evaluator
         Object result;
         double resultDbl;
 
-        ContinuationJump(Continuation c, CallFrame current)
+        ContinuationJump(NativeContinuation c, CallFrame current)
         {
             this.capturedFrame = (CallFrame)c.getImplementation();
             if (this.capturedFrame == null || current == null) {
@@ -2480,6 +2481,8 @@ public class Interpreter implements Evaluator
         CallFrame frame = new CallFrame();
         initFrame(cx, scope, thisObj, args, null, 0, args.length,
                   ifun, null, frame);
+        frame.isContinuationsTopFrame = cx.isContinuationsTopCall;
+        cx.isContinuationsTopCall = false;
 
         return interpretLoop(cx, frame, null);
     }
@@ -2518,7 +2521,7 @@ public class Interpreter implements Evaluator
       return result;
     }
 
-    public static Object restartContinuation(Continuation c, Context cx,
+    public static Object restartContinuation(NativeContinuation c, Context cx,
                                              Scriptable scope, Object[] args)
     {
         if (!ScriptRuntime.hasTopCall(cx)) {
@@ -2576,8 +2579,8 @@ public class Interpreter implements Evaluator
         // When restarting continuation throwable is not null and to jump
         // to the code that rewind continuation state indexReg should be set
         // to -1.
-        // With the normal call throable == null and indexReg == -1 allows to
-        // catch bugs with using indeReg to access array eleemnts before
+        // With the normal call throwable == null and indexReg == -1 allows to
+        // catch bugs with using indeReg to access array elements before
         // initializing indexReg.
 
         GeneratorState generatorState = null;
@@ -2795,37 +2798,7 @@ switch (op) {
     case Token.SHEQ :
     case Token.SHNE : {
         --stackTop;
-        Object rhs = stack[stackTop + 1];
-        Object lhs = stack[stackTop];
-        boolean valBln;
-      shallow_compare: {
-            double rdbl, ldbl;
-            if (rhs == DBL_MRK) {
-                rdbl = sDbl[stackTop + 1];
-                if (lhs == DBL_MRK) {
-                    ldbl = sDbl[stackTop];
-                } else if (lhs instanceof Number) {
-                    ldbl = ((Number)lhs).doubleValue();
-                } else {
-                    valBln = false;
-                    break shallow_compare;
-                }
-            } else if (lhs == DBL_MRK) {
-                ldbl = sDbl[stackTop];
-                if (rhs == DBL_MRK) {
-                    rdbl = sDbl[stackTop + 1];
-                } else if (rhs instanceof Number) {
-                    rdbl = ((Number)rhs).doubleValue();
-                } else {
-                    valBln = false;
-                    break shallow_compare;
-                }
-            } else {
-                valBln = ScriptRuntime.shallowEq(lhs, rhs);
-                break shallow_compare;
-            }
-            valBln = (ldbl == rdbl);
-        }
+        boolean valBln = shallowEquals(stack, sDbl, stackTop);
         valBln ^= (op == Token.SHNE);
         stack[stackTop] = ScriptRuntime.wrapBoolean(valBln);
         continue Loop;
@@ -3051,7 +3024,7 @@ switch (op) {
     case Token.GETPROP : {
         Object lhs = stack[stackTop];
         if (lhs == DBL_MRK) lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
-        stack[stackTop] = ScriptRuntime.getObjectProp(lhs, stringReg, cx);
+        stack[stackTop] = ScriptRuntime.getObjectProp(lhs, stringReg, cx, frame.scope);
         continue Loop;
     }
     case Token.SETPROP : {
@@ -3168,7 +3141,7 @@ switch (op) {
         if (obj == DBL_MRK) obj = ScriptRuntime.wrapNumber(sDbl[stackTop]);
         // stringReg: property
         stack[stackTop] = ScriptRuntime.getPropFunctionAndThis(obj, stringReg,
-                                                               cx);
+                                                               cx, frame.scope);
         ++stackTop;
         stack[stackTop] = ScriptRuntime.lastStoredScriptable(cx);
         continue Loop;
@@ -3291,13 +3264,13 @@ switch (op) {
             }
         }
 
-        if (fun instanceof Continuation) {
+        if (fun instanceof NativeContinuation) {
             // Jump to the captured continuation
             ContinuationJump cjump;
-            cjump = new ContinuationJump((Continuation)fun, frame);
+            cjump = new ContinuationJump((NativeContinuation)fun, frame);
 
             // continuation result is the first argument if any
-            // of contination call
+            // of continuation call
             if (indexReg == 0) {
                 cjump.result = undefined;
             } else {
@@ -3312,17 +3285,18 @@ switch (op) {
 
         if (fun instanceof IdFunctionObject) {
             IdFunctionObject ifun = (IdFunctionObject)fun;
-            if (Continuation.isContinuationConstructor(ifun)) {
-                captureContinuation(cx, frame, stackTop);
+            if (NativeContinuation.isContinuationConstructor(ifun)) {
+                frame.stack[stackTop] = captureContinuation(cx,
+                        frame.parentFrame, false);
                 continue Loop;
             }
             // Bug 405654 -- make best effort to keep Function.apply and 
             // Function.call within this interpreter loop invocation
-            if(BaseFunction.isApplyOrCall(ifun)) {
+            if (BaseFunction.isApplyOrCall(ifun)) {
                 Callable applyCallable = ScriptRuntime.getCallable(funThisObj);
-                if(applyCallable instanceof InterpretedFunction) {
+                if (applyCallable instanceof InterpretedFunction) {
                     InterpretedFunction iApplyCallable = (InterpretedFunction)applyCallable;
-                    if(frame.fnOrScript.securityDomain == iApplyCallable.securityDomain) {
+                    if (frame.fnOrScript.securityDomain == iApplyCallable.securityDomain) {
                         frame = initFrameForApplyOrCall(cx, frame, indexReg,
                                 stack, sDbl, stackTop, op, calleeScope, ifun,
                                 iApplyCallable);
@@ -3332,8 +3306,30 @@ switch (op) {
             }
         }
 
+        // Bug 447697 -- make best effort to keep __noSuchMethod__ within this  
+        // interpreter loop invocation
+        if (fun instanceof NoSuchMethodShim) {
+            // get the shim and the actual method
+            NoSuchMethodShim noSuchMethodShim = (NoSuchMethodShim) fun;
+            Callable noSuchMethodMethod = noSuchMethodShim.noSuchMethodMethod;
+            // if the method is in fact an InterpretedFunction
+            if (noSuchMethodMethod instanceof InterpretedFunction) {
+                InterpretedFunction ifun = (InterpretedFunction) noSuchMethodMethod;
+                if (frame.fnOrScript.securityDomain == ifun.securityDomain) {
+                    frame = initFrameForNoSuchMethod(cx, frame, indexReg, stack, sDbl,
+                                             stackTop, op, funThisObj, calleeScope,
+                                             noSuchMethodShim, ifun);
+                    continue StateLoop;
+                }
+            }
+        }
+
+        cx.lastInterpreterFrame = frame;
+        frame.savedCallOp = op;
+        frame.savedStackTop = stackTop;
         stack[stackTop] = fun.call(cx, calleeScope, funThisObj, 
                 getArgsArray(stack, sDbl, stackTop + 2, indexReg));
+        cx.lastInterpreterFrame = null;
 
         continue Loop;
     }
@@ -3370,8 +3366,9 @@ switch (op) {
 
         if (fun instanceof IdFunctionObject) {
             IdFunctionObject ifun = (IdFunctionObject)fun;
-            if (Continuation.isContinuationConstructor(ifun)) {
-                captureContinuation(cx, frame, stackTop);
+            if (NativeContinuation.isContinuationConstructor(ifun)) {
+                frame.stack[stackTop] =
+                    captureContinuation(cx, frame.parentFrame, false);
                 continue Loop;
             }
         }
@@ -3752,7 +3749,7 @@ switch (op) {
         if (frame.debuggerFrame != null) {
             frame.debuggerFrame.onDebuggerStatement(cx);
         }
-        break Loop;
+        continue Loop;
     case Icode_LINE :
         frame.pcSourceLineStart = frame.pc;
         if (frame.debuggerFrame != null) {
@@ -4013,6 +4010,80 @@ switch (op) {
         return (interpreterResult != DBL_MRK)
                ? interpreterResult
                : ScriptRuntime.wrapNumber(interpreterResultDbl);
+    }
+
+    /**
+     * Call __noSuchMethod__.
+     */
+    private static CallFrame initFrameForNoSuchMethod(Context cx,
+            CallFrame frame, int indexReg, Object[] stack, double[] sDbl,
+            int stackTop, int op, Scriptable funThisObj, Scriptable calleeScope,
+            NoSuchMethodShim noSuchMethodShim, InterpretedFunction ifun)
+    {
+        // create an args array from the stack
+        Object[] argsArray = null;
+        // exactly like getArgsArray except that the first argument
+        // is the method name from the shim
+        int shift = stackTop + 2;
+        Object[] elements = new Object[indexReg];
+        for (int i=0; i < indexReg; ++i, ++shift) {
+            Object val = stack[shift];
+            if (val == UniqueTag.DOUBLE_MARK) {
+                val = ScriptRuntime.wrapNumber(sDbl[shift]);
+            }
+            elements[i] = val;
+        }
+        argsArray = new Object[2];
+        argsArray[0] = noSuchMethodShim.methodName;
+        argsArray[1] = cx.newArray(calleeScope, elements);
+        
+        // exactly the same as if it's a regular InterpretedFunction
+        CallFrame callParentFrame = frame;
+        CallFrame calleeFrame = new CallFrame();
+        if (op == Icode_TAIL_CALL) {
+            callParentFrame = frame.parentFrame;
+            exitFrame(cx, frame, null);
+        }
+        // init the frame with the underlying method with the 
+        // adjusted args array and shim's function
+        initFrame(cx, calleeScope, funThisObj, argsArray, null,
+          0, 2, ifun, callParentFrame, calleeFrame);
+        if (op != Icode_TAIL_CALL) {
+            frame.savedStackTop = stackTop;
+            frame.savedCallOp = op;
+        }
+        return calleeFrame;
+    }
+    
+    private static boolean shallowEquals(Object[] stack, double[] sDbl,
+            int stackTop)
+    {
+        Object rhs = stack[stackTop + 1];
+        Object lhs = stack[stackTop];
+        final Object DBL_MRK = UniqueTag.DOUBLE_MARK;
+        double rdbl, ldbl;
+        if (rhs == DBL_MRK) {
+            rdbl = sDbl[stackTop + 1];
+            if (lhs == DBL_MRK) {
+                ldbl = sDbl[stackTop];
+            } else if (lhs instanceof Number) {
+                ldbl = ((Number)lhs).doubleValue();
+            } else {
+                return false;
+            }
+        } else if (lhs == DBL_MRK) {
+            ldbl = sDbl[stackTop];
+            if (rhs == DBL_MRK) {
+                rdbl = sDbl[stackTop + 1];
+            } else if (rhs instanceof Number) {
+                rdbl = ((Number)rhs).doubleValue();
+            } else {
+                return false;
+            }
+        } else {
+            return ScriptRuntime.shallowEq(lhs, rhs);
+        }
+        return (ldbl == rdbl);
     }
 
     private static CallFrame processThrowable(Context cx, Object throwable,
@@ -4469,16 +4540,26 @@ switch (op) {
         }
         frame.savedCallOp = 0;
     }
+    
+    public static NativeContinuation captureContinuation(Context cx) {
+        if (cx.lastInterpreterFrame == null ||
+            !(cx.lastInterpreterFrame instanceof CallFrame))
+        {
+            throw new IllegalStateException("Interpreter frames not found");
+        }
+        return captureContinuation(cx, (CallFrame)cx.lastInterpreterFrame, true);
+    }
 
-    private static void captureContinuation(Context cx, CallFrame frame,
-                                            int stackTop)
+    private static NativeContinuation captureContinuation(Context cx, CallFrame frame,
+        boolean requireContinuationsTopFrame)
     {
-        Continuation c = new Continuation();
+        NativeContinuation c = new NativeContinuation();
         ScriptRuntime.setObjectProtoAndParent(
             c, ScriptRuntime.getTopCallScope(cx));
 
-        // Make sure that all frames upstack frames are frozen
-        CallFrame x = frame.parentFrame;
+        // Make sure that all frames are frozen
+        CallFrame x = frame;
+        CallFrame outermost = frame;
         while (x != null && !x.frozen) {
             x.frozen = true;
             // Allow to GC unused stack space
@@ -4496,11 +4577,23 @@ switch (op) {
                 // object so it shall not be cleared: see comments in
                 // setCallResult
             }
+            outermost = x;
             x = x.parentFrame;
         }
+        
+        while (outermost.parentFrame != null)
+            outermost = outermost.parentFrame;
 
-        c.initImplementation(frame.parentFrame);
-        frame.stack[stackTop] = c;
+        if (requireContinuationsTopFrame && !outermost.isContinuationsTopFrame)
+        {
+            throw new IllegalStateException("Cannot capture continuation " +
+                    "from JavaScript code not called directly by " +
+                    "executeScriptWithContinuations or " +
+                    "callFunctionWithContinuations");
+        }
+        
+        c.initImplementation(frame);
+        return c;
     }
 
     private static int stack_int32(CallFrame frame, int i)

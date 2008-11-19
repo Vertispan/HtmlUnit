@@ -81,7 +81,7 @@ public class JsDriver {
             else
               list.add(tests[i]);
           }
-          return (String[])list.toArray(new String[0]);
+          return list.toArray(new String[0]);
         }
         
         private void addTestsFromFile(String filename, ArrayList<String> list) {
@@ -151,7 +151,7 @@ public class JsDriver {
         Script[] getFiles() {
             ArrayList<Script> rv = new ArrayList<Script>();
             addFiles(rv, "", testDirectory);
-            return (Script[])rv.toArray(new Script[0]);
+            return rv.toArray(new Script[0]);
         }
     }
 
@@ -168,6 +168,7 @@ public class JsDriver {
             this.trace = trace;
         }
 
+        @Override
         void running(File jsFile) {
             try {
                 console.println("Running: " + jsFile.getCanonicalPath());
@@ -177,22 +178,26 @@ public class JsDriver {
             }
         }
 
+        @Override
         void failed(String s) {
             console.println("Failed: " + jsFile + ": " + s);
             failed = true;
         }
 
+        @Override
         void threw(Throwable t) {
             console.println("Failed: " + jsFile + " with exception.");
             console.println(ShellTest.getStackTrace(t));
             failed = true;
         }
 
+        @Override
         void timedOut() {
             console.println("Failed: " + jsFile + ": timed out.");
             failed = true;
         }
 
+        @Override
         void exitCodesWere(int expected, int actual) {
             if (expected != actual) {
                 console.println("Failed: " + jsFile + " expected " + expected + " actual " + actual);
@@ -200,6 +205,7 @@ public class JsDriver {
             }
         }
 
+        @Override
         void outputWas(String s) {
             if (!failed) {
                 console.println("Passed: " + jsFile);
@@ -282,14 +288,17 @@ public class JsDriver {
             this.failureHtml = failureHtml;
         }
 
+        @Override
         void running(File file) {
         }
 
+        @Override
         void failed(String s) {
             failed = true;
             setContent(failureHtml, "failureDetails.reason", "Failure reason: \n" + s);
         }
 
+        @Override
         void exitCodesWere(int expected, int actual) {
             if (expected != actual) {
                 failed = true;
@@ -297,16 +306,19 @@ public class JsDriver {
             }
         }
 
+        @Override
         void threw(Throwable e) {
             failed = true;
             setContent(failureHtml, "failureDetails.reason", "Threw Java exception:\n" + newlineLineEndings(ShellTest.getStackTrace(e)));
         }
 
+        @Override
         void timedOut() {
             failed = true;
             setContent(failureHtml, "failureDetails.reason", "Timed out.");
         }
 
+        @Override
         void outputWas(String s) {
             this.output = s;
         }
@@ -376,6 +388,7 @@ public class JsDriver {
 			root.appendChild(target);
 		}
 		
+		@Override
 		void running(File file) {
 			this.start = new Date();
 		}
@@ -396,6 +409,7 @@ public class JsDriver {
 			e.setTextContent( newlineLineEndings(content) );
 		}
 		
+        @Override
 		void exitCodesWere(int expected, int actual) {
 			finish();
 			Element exit = createElement(target, "exit");
@@ -403,23 +417,27 @@ public class JsDriver {
 			exit.setAttribute("actual", String.valueOf(actual));
 		}
 		
+        @Override
 		void timedOut() {
 			finish();
 			createElement(target, "timedOut");
 		}
 		
+        @Override
 		void failed(String s) {
 			finish();
 			Element failed = createElement(target, "failed");
 			setTextContent(failed, s);
 		}
 		
+        @Override
 		void outputWas(String message) {
 			finish();
 			Element output = createElement(target, "output");
 			setTextContent(output, message);
 		}
 		
+        @Override
 		void threw(Throwable t) {
 			finish();
 			Element threw = createElement(target, "threw");
@@ -578,6 +596,7 @@ public class JsDriver {
             this.timeout = timeout;
         }
 
+        @Override
         int getTimeoutMilliseconds() {
             return timeout;
         }
@@ -679,7 +698,7 @@ public class JsDriver {
             }
 
             String getValue() {
-                return (String)values.get(0);
+                return values.get(0);
             }
 
             boolean getSwitch() {
@@ -692,18 +711,20 @@ public class JsDriver {
             }
 
             String[] getValues() {
-                return (String[])values.toArray(new String[0]);
+                return values.toArray(new String[0]);
             }
 
             void process(List<String> arguments) {
-                String option = (String)arguments.get(0);
+                String option = arguments.get(0);
                 String dashLetter = (letterOption == null) ? (String)null : "-" + letterOption;
                 if (option.equals(dashLetter) || option.equals("--" + wordOption)) {
                     arguments.remove(0);
                     if (flag) {
                         values.add(0, (String)null );
                     } else if (array) {
-                        while( arguments.size() > 0 && !( (String)arguments.get(0) ).startsWith("-") ) {
+                        while (arguments.size() > 0 &&
+                               !arguments.get(0).startsWith("-"))
+                        {
                             values.add(arguments.remove(0));
                         }
                     } else {
@@ -801,7 +822,7 @@ public class JsDriver {
         
         void process(List<String> arguments) {
             while(arguments.size() > 0) {
-                String option = (String)arguments.get(0);
+                String option = arguments.get(0);
                 if (option.startsWith("--")) {
                     //    preprocess --name=value options into --name value
                     if (option.indexOf("=") != -1) {
@@ -820,7 +841,7 @@ public class JsDriver {
                 int lengthBefore = arguments.size();
                 for (int i=0; i<options.size(); i++) {
                     if (arguments.size() > 0) {
-                        ((Option)options.get(i)).process(arguments);
+                        options.get(i).process(arguments);
                     }
                 }
                 

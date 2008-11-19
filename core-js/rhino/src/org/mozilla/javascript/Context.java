@@ -242,7 +242,7 @@ public class Context
      * Control if strict variable mode is enabled.
      * When the feature is on Rhino reports runtime errors if assignment
      * to a global variable that does not exist is executed. When the feature
-     * is off such assignments creates new variable in the global scope  as
+     * is off such assignments create a new variable in the global scope as
      * required by ECMA 262.
      * <p>
      * By default {@link #hasFeature(int)} returns false.
@@ -266,7 +266,7 @@ public class Context
      * When the feature is on Rhino will add a "fileName" and "lineNumber"
      * properties to Error objects automatically. When the feature is off, you
      * have to explicitly pass them as the second and third argument to the
-     * Error constructor. Note that neither behaviour is fully ECMA 262 
+     * Error constructor. Note that neither behavior is fully ECMA 262 
      * compliant (as 262 doesn't specify a three-arg constructor), but keeping 
      * the feature off results in Error objects that don't have
      * additional non-ECMA properties when constructed using the ECMA-defined
@@ -318,21 +318,37 @@ public class Context
     public static final Object[] emptyArgs = ScriptRuntime.emptyArgs;
 
     /**
-     * Create a new Context.
+     * Creates a new Context. The context will be associated with the {@link 
+     * ContextFactory#getGlobal() global context factory}.
      *
      * Note that the Context must be associated with a thread before
      * it can be used to execute a script.
-     * @deprecated use {@link ContextFactory#enter()} or 
-     * {@link ContextFactory#call(ContextAction)} instead.
+     * @deprecated this constructor is deprecated because it creates a 
+     * dependency on a static singleton context factory. Use 
+     * {@link ContextFactory#enter()} or 
+     * {@link ContextFactory#call(ContextAction)} instead. If you subclass
+     * this class, consider using {@link #Context(ContextFactory)} constructor
+     * instead in the subclasses' constructors.
      */
     public Context()
     {
         this(ContextFactory.getGlobal());
     }
     
+    /**
+     * Creates a new context. Provided as a preferred super constructor for
+     * subclasses in place of the deprecated default public constructor.
+     * @param factory the context factory associated with this context (most
+     * likely, the one that created the context). Can not be null. The context
+     * features are inherited from the factory, and the context will also 
+     * otherwise use its factory's services.
+     * @throws IllegalArgumentException if factory parameter is null.
+     */
     protected Context(ContextFactory factory)
     {
-        assert factory != null;
+        if(factory == null) {
+            throw new IllegalArgumentException("factory == null");
+        }
         this.factory = factory;
         setLanguageVersion(VERSION_DEFAULT);
         optimizationLevel = codegenClass != null ? 0 : -1;
@@ -360,9 +376,6 @@ public class Context
     /**
      * Same as calling {@link ContextFactory#enterContext()} on the global
      * ContextFactory instance.
-     * @deprecated use {@link ContextFactory#enter()} or 
-     * {@link ContextFactory#call(ContextAction)} instead as this method relies
-     * on usage of a static singleton "global" ContextFactory.
      * @return a Context associated with the current thread
      * @see #getCurrentContext()
      * @see #exit()
@@ -1124,12 +1137,115 @@ public class Context
             return null;
         }
     }
+    
+    /**
+     * Execute script that may pause execution by capturing a continuation.
+     * Caller must be prepared to catch a ContinuationPending exception
+     * and resume execution by calling 
+     * {@link #resumeContinuation(Object, Scriptable, Object)}.
+     * @param script The script to execute. Script must have been compiled
+     *      with interpreted mode (optimization level -1)
+     * @param scope The scope to execute the script against
+     * @throws ContinuationPending if the script calls a function that results
+     *      in a call to {@link #captureContinuation()}
+     * @since 1.7 Release 2
+     */
+    public Object executeScriptWithContinuations(Script script,
+            Scriptable scope)
+        throws ContinuationPending
+    {
+        if (!(script instanceof InterpretedFunction) ||
+            !((InterpretedFunction)script).isScript())
+        {
+            // Can only be applied to scripts
+            throw new IllegalArgumentException("Script argument was not" +
+                    " a script or was not created by interpreted mode ");
+        }
+        return callFunctionWithContinuations((InterpretedFunction) script,
+                scope, ScriptRuntime.emptyArgs);
+    }
+    
+    /**
+     * Call function that may pause execution by capturing a continuation.
+     * Caller must be prepared to catch a ContinuationPending exception
+     * and resume execution by calling 
+     * {@link #resumeContinuation(Object, Scriptable, Object)}.
+     * @param function The function to call. The function must have been
+     *      compiled with interpreted mode (optimization level -1)
+     * @param scope The scope to execute the script against
+     * @param args The arguments for the function
+     * @throws ContinuationPending if the script calls a function that results
+     *      in a call to {@link #captureContinuation()}
+     * @since 1.7 Release 2
+     */
+    public Object callFunctionWithContinuations(Callable function,
+            Scriptable scope, Object[] args)
+        throws ContinuationPending
+    {
+        if (!(function instanceof InterpretedFunction)) {
+            // Can only be applied to scripts
+            throw new IllegalArgumentException("Function argument was not" +
+                    " created by interpreted mode ");
+        }
+        if (ScriptRuntime.hasTopCall(this)) {
+            throw new IllegalStateException("Cannot have any pending top " +
+                    "calls when executing a script with continuations");
+        }
+        // Annotate so we can check later to ensure no java code in
+        // intervening frames
+        isContinuationsTopCall = true;
+        return ScriptRuntime.doTopCall(function, this, scope, scope, args);
+    }
+    
+    /**
+     * Capture a continuation from the current execution. The execution must
+     * have been started via a call to 
+     * {@link #executeScriptWithContinuations(Script, Scriptable)} or
+     * {@link #callFunctionWithContinuations(Callable, Scriptable, Object[])}.
+     * This implies that the code calling
+     * this method must have been called as a function from the
+     * JavaScript script. Also, there cannot be any non-JavaScript code
+     * between the JavaScript frames (e.g., a call to eval()). The
+     * ContinuationPending exception returned must be thrown.
+     * @return A ContinuationPending exception that must be thrown
+     * @since 1.7 Release 2
+     */
+    public ContinuationPending captureContinuation() {
+        return new ContinuationPending(
+                Interpreter.captureContinuation(this));
+    }
+    
+    /**
+     * Restarts execution of the JavaScript suspended at the call
+     * to {@link #captureContinuation()}. Execution of the code will resume
+     * with the functionResult as the result of the call that captured the
+     * continuation.
+     * Execution of the script will either conclude normally and the
+     * result returned, another continuation will be captured and
+     * thrown, or the script will terminate abnormally and throw an exception.
+     * @param continuation The value returned by 
+     * {@link ContinuationPending#getContinuation()}
+     * @param functionResult This value will appear to the code being resumed
+     *      as the result of the function that captured the continuation
+     * @throws ContinuationPending if another continuation is captured before
+     *      the code terminates
+     * @since 1.7 Release 2
+     */
+    public Object resumeContinuation(Object continuation,
+            Scriptable scope, Object functionResult)
+            throws ContinuationPending
+    {
+        Object[] args = { functionResult };
+        return Interpreter.restartContinuation(
+                (org.mozilla.javascript.NativeContinuation) continuation,
+                this, scope, args);
+    }
 
     /**
      * Check whether a string is ready to be compiled.
      * <p>
      * stringIsCompilableUnit is intended to support interactive compilation of
-     * javascript.  If compiling the string would result in an error
+     * JavaScript.  If compiling the string would result in an error
      * that might be fixed by appending more source, this method
      * returns false.  In every other case, it returns true.
      * <p>
@@ -2118,9 +2234,6 @@ public class Context
      * The method is useful to observe long running scripts and if necessary
      * to terminate them.
      * <p>
-     * The instruction counting support is available only for interpreted
-     * scripts generated when the optimization level is set to -1.
-     * <p>
      * The default implementation calls
      * {@link ContextFactory#observeInstructionCount(Context cx,
      *                                               int instructionCount)}
@@ -2462,6 +2575,7 @@ public class Context
     private Object sealKey;
 
     Scriptable topCallScope;
+    boolean isContinuationsTopCall;
     NativeCall currentActivationCall;
     XMLLib cachedXMLLib;
 

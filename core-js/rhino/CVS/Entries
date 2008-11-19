@@ -1,16 +1,13 @@
-D/build////
 D/deprecatedsrc////
-D/docs////
 D/examples////
-D/macbuild////
-D/org////
 D/src////
 D/testsrc////
 D/toolsrc////
 D/xmlimplsrc////
-/.cvsignore/1.2/Mon Apr  7 18:32:57 2008//
-/README.html/1.6/Mon Apr  7 18:30:08 2008//
-/apiClasses.properties/1.27/Mon Apr  7 18:30:01 2008//
-/build-date/1.1/Mon Apr  7 18:30:07 2008//
-/build.properties/1.24/Mon Apr  7 18:30:07 2008//
-/build.xml/1.51/Mon Apr  7 18:30:07 2008//
+/.cvsignore/1.2/Wed Nov 19 13:26:29 2008//TRhino1_7R2_BRANCH
+/LICENSE.txt/1.4/Mon Apr 14 15:21:30 2008//TRhino1_7R2_BRANCH
+/README.html/1.6/Wed Nov 19 13:26:29 2008//TRhino1_7R2_BRANCH
+/apiClasses.properties/1.28/Wed Nov 19 13:42:55 2008//TRhino1_7R2_BRANCH
+/build-date/1.1/Wed Nov 19 13:26:29 2008//TRhino1_7R2_BRANCH
+/build.properties/1.24.2.1/Wed Nov 19 13:42:55 2008//TRhino1_7R2_BRANCH
+/build.xml/1.52/Wed Nov 19 13:42:55 2008//TRhino1_7R2_BRANCH

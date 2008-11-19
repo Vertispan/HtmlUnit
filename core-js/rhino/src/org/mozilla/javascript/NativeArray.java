@@ -63,7 +63,7 @@ public class NativeArray extends IdScriptableObject
      * always gets at least an object back, even when Array == null.
      */
 
-    private static final Object ARRAY_TAG = new Object();
+    private static final Object ARRAY_TAG = "Array";
     private static final Integer NEGATIVE_ONE = new Integer(-1);
 
     static void init(Scriptable scope, boolean sealed)
@@ -650,12 +650,12 @@ public class NativeArray extends IdScriptableObject
                                          boolean toSource, boolean toLocale)
     {
         /* It's probably redundant to handle long lengths in this
-         * function; StringBuffers are limited to 2^31 in java.
+         * function; StringBuilders are limited to 2^31 in java.
          */
 
         long length = getLengthProperty(cx, thisObj);
 
-        StringBuffer result = new StringBuffer(256);
+        StringBuilder result = new StringBuilder(256);
 
         // whether to return '4,unquoted,5' or '[4, "quoted", 5]'
         String separator;
@@ -757,7 +757,7 @@ public class NativeArray extends IdScriptableObject
         if (thisObj instanceof NativeArray) {
             NativeArray na = (NativeArray) thisObj;
             if (na.denseOnly) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < length; i++) {
                     if (i != 0) {
                         sb.append(separator);
@@ -788,7 +788,7 @@ public class NativeArray extends IdScriptableObject
             }
         }
         total_size += (length - 1) * separator.length();
-        StringBuffer sb = new StringBuffer(total_size);
+        StringBuilder sb = new StringBuilder(total_size);
         for (int i = 0; i != length; i++) {
             if (i != 0) {
                 sb.append(separator);

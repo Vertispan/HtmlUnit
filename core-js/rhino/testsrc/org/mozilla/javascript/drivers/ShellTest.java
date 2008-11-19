@@ -36,11 +36,23 @@
 
 package org.mozilla.javascript.drivers;
 
-import org.mozilla.javascript.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
 
-import org.mozilla.javascript.tools.shell.*;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextAction;
+import org.mozilla.javascript.ErrorReporter;
+import org.mozilla.javascript.EvaluatorException;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.tools.shell.Global;
+import org.mozilla.javascript.tools.shell.Main;
+import org.mozilla.javascript.tools.shell.ShellContextFactory;
 
 /**
  * @version $Id$
@@ -110,31 +122,37 @@ class ShellTest {
 
         static Status compose(final Status[] array) {
             return new Status() {
+                @Override
                 void running(File file) {
 					for (int i=0; i<array.length; i++) {
 						array[i].running(file);
 					}
                 }
+                @Override
                 void threw(Throwable t) {
 					for (int i=0; i<array.length; i++) {
 						array[i].threw(t);
 					}
 				}
+                @Override
                 void failed(String s) {
 					for (int i=0; i<array.length; i++) {
 						array[i].failed(s);
 					}
                 }
+                @Override
                 void exitCodesWere(int expected, int actual) {
 					for (int i=0; i<array.length; i++) {
 						array[i].exitCodesWere(expected, actual);
 					}
                 }
+                @Override
                 void outputWas(String s) {
 					for (int i=0; i<array.length; i++) {
 						array[i].outputWas(s);
 					}
                 }
+                @Override
                 void timedOut() {
 					for (int i=0; i<array.length; i++) {
 						array[i].timedOut();
@@ -169,8 +187,14 @@ class ShellTest {
                 this.lineOffset = lineOffset;
             }
 
+            @Override
             public String toString() {
-                String locationLine = sourceName + ":" + line + ": " + message;
+                String locationLine = "";
+                if (sourceName != null)
+                    locationLine += sourceName + ":";
+                if (line != 0)
+                    locationLine += line + ": ";
+                locationLine += message;
                 String sourceLine = this.lineSource;
                 String errCaret = null;
                 if (lineSource != null) {
@@ -259,6 +283,8 @@ class ShellTest {
         if (jsFile.getName().endsWith("-n.js")) {
             status.setNegative();
         }
+        final Throwable thrown[] = {null};
+        
         Thread t = new Thread(new Runnable()
         {
             public void run()
@@ -281,13 +307,13 @@ class ShellTest {
                                 runFileIfExists(cx, global, jsFile);
                                 //    Emulate SpiderMonkey enum value from mozilla/js/src/js.c
                                 for (int i=0; i<testState.errors.errors.size(); i++) {
-                                    Status.JsError thisOne = (Status.JsError)testState.errors.errors.get(i);
+                                    Status.JsError thisOne = testState.errors.errors.get(i);
                                     if (thisOne.getMessage().indexOf("java.lang.OutOfMemoryError") != -1) {
                                         testState.exitCode = 5;
                                         testState.errors.errors.remove(thisOne);
                                     }
                                 }
-                                status.hadErrors( (Status.JsError[])testState.errors.errors.toArray(new Status.JsError[0]) );
+                                status.hadErrors(testState.errors.errors.toArray(new Status.JsError[0]));
                             } catch (ThreadDeath e) {
                             } catch (Throwable t) {
                                 status.threw(t);
@@ -295,7 +321,16 @@ class ShellTest {
                             return null;
                         }
                     });
-                } finally {
+                }
+                catch (Error t)
+                {
+                    thrown[0] = t;
+                }
+                catch (RuntimeException t)
+                {
+                    thrown[0] = t;
+                }
+                finally {
                     synchronized(testState)
                     {
                         testState.finished = true;
@@ -336,6 +371,10 @@ class ShellTest {
             {
                 expectedExitCode = s.charAt(expex + "EXPECT EXIT CODE ".length()) - '0';
             }
+        }
+        if (thrown[0] != null)
+        {
+        	status.threw(thrown[0]);
         }
         status.exitCodesWere(expectedExitCode, testState.exitCode);
         if(failures != "")
