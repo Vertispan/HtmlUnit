@@ -58,7 +58,7 @@ import org.mozilla.javascript.tools.shell.ShellContextFactory;
  */
 public class StandardTests extends TestSuite
 {
-    public static TestSuite suite() throws Exception
+	public static TestSuite suite() throws Exception
     {
         TestSuite suite = new TestSuite("Standard JavaScript tests");
 
@@ -151,26 +151,33 @@ public class StandardTests extends TestSuite
     }
 
     private static class JunitStatus extends ShellTest.Status {
+        @Override
         final void running(File jsFile) {
             //    do nothing
         }
 
+        @Override
         final void failed(String s) {
             Assert.fail(s);
         }
 
+        @Override
         final void exitCodesWere(int expected, int actual) {
             Assert.assertEquals("Unexpected exit code", expected, actual);
         }
 
+        @Override
         final void outputWas(String s) {
-            System.out.print(s);
+            // Do nothing; we don't want to see the output when running JUnit 
+            // tests.
         }
 
+        @Override
         final void threw(Throwable t) {
             Assert.fail(ShellTest.getStackTrace(t));
         }
 
+        @Override
         final void timedOut() {
             failed("Timed out.");
         }
@@ -188,12 +195,14 @@ public class StandardTests extends TestSuite
             this.optimizationLevel = optimizationLevel;
         }
 
+        @Override
         public int countTestCases()
         {
             return 1;
         }
 
         private static class ShellTestParameters extends ShellTest.Parameters {
+            @Override
             int getTimeoutMilliseconds() {
                 if (System.getProperty("mozilla.js.tests.timeout") != null) {
                     return Integer.parseInt(System.getProperty("mozilla.js.tests.timeout"));
@@ -202,11 +211,13 @@ public class StandardTests extends TestSuite
             }
         }
 
+        @Override
         public void runBare() throws Exception
         {
             final ShellContextFactory shellContextFactory = new ShellContextFactory();
             shellContextFactory.setOptimizationLevel(optimizationLevel);
-            ShellTest.run(shellContextFactory, jsFile, new ShellTestParameters(), new JunitStatus());
+            ShellTestParameters params = new ShellTestParameters();
+            ShellTest.run(shellContextFactory, jsFile, params, new JunitStatus());
         }
     }
 }
