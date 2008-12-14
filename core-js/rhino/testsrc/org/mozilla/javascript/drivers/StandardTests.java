@@ -43,6 +43,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -80,11 +82,8 @@ public class StandardTests extends TestSuite
         {
             throw new FileNotFoundException(testDir + " is not a directory");
         }
-        Properties excludes = new Properties();
-        loadExcludes(excludes, "/base.skip");
-        Properties opt1Excludes = new Properties();
-        loadExcludes(opt1Excludes, "/opt1.skip");
-        opt1Excludes.putAll(excludes);
+        String[] excludes = TestUtils.loadTestsFromResource("/base.skip", null);
+        String[] opt1Excludes = TestUtils.loadTestsFromResource("/opt1.skip", excludes);
         for(int i = -1; i < 2; ++i)
         {
             TestSuite optimizationLevelSuite = new TestSuite("Optimization level " + i);
@@ -94,20 +93,7 @@ public class StandardTests extends TestSuite
         return suite;
     }
 
-    private static void loadExcludes(Properties excludes, String excludeFileName) throws IOException
-    {
-        InputStream in = StandardTests.class.getResourceAsStream(excludeFileName);
-        try
-        {
-            excludes.load(in);
-        }
-        finally
-        {
-            in.close();
-        }
-    }
-
-    private static void addSuites(TestSuite topLevel, File testDir, Properties excludes, int optimizationLevel)
+    private static void addSuites(TestSuite topLevel, File testDir, String[] excludes, int optimizationLevel)
     {
         File[] subdirs = testDir.listFiles(ShellTest.DIRECTORY_FILTER);
         Arrays.sort(subdirs);
@@ -115,13 +101,16 @@ public class StandardTests extends TestSuite
         {
             File subdir = subdirs[i];
             String name = subdir.getName();
+            if (TestUtils.matches(excludes, name)) {
+                continue;
+            }
             TestSuite testSuite = new TestSuite(name);
             addCategories(testSuite, subdir, name + "/", excludes, optimizationLevel);
             topLevel.addTest(testSuite);
         }
     }
 
-    private static void addCategories(TestSuite suite, File suiteDir, String prefix, Properties excludes, int optimizationLevel)
+    private static void addCategories(TestSuite suite, File suiteDir, String prefix, String[] excludes, int optimizationLevel)
     {
         File[] subdirs = suiteDir.listFiles(ShellTest.DIRECTORY_FILTER);
         Arrays.sort(subdirs);
@@ -135,7 +124,7 @@ public class StandardTests extends TestSuite
         }
     }
 
-    private static void addTests(TestSuite suite, File suiteDir, String prefix, Properties excludes, int optimizationLevel)
+    private static void addTests(TestSuite suite, File suiteDir, String prefix, String[] excludes, int optimizationLevel)
     {
         File[] jsFiles = suiteDir.listFiles(ShellTest.TEST_FILTER);
         Arrays.sort(jsFiles);
@@ -143,8 +132,7 @@ public class StandardTests extends TestSuite
         {
             File jsFile = jsFiles[i];
             String name = jsFile.getName();
-            if(!excludes.containsKey(prefix + name))
-            {
+            if (!TestUtils.matches(excludes, prefix + name)) {
                 suite.addTest(new JsTestCase(jsFile, optimizationLevel));
             }
         }
