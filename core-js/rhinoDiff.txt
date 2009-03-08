@@ -1,0 +1,39 @@
+Index: src/org/mozilla/javascript/Context.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Context.java,v
+retrieving revision 1.275.2.2
+diff -u -r1.275.2.2 Context.java
+--- src/org/mozilla/javascript/Context.java	5 Nov 2008 21:22:50 -0000	1.275.2.2
++++ src/org/mozilla/javascript/Context.java	6 Mar 2009 20:34:50 -0000
+@@ -1349,7 +1349,7 @@
+                              securityDomain);
+     }
+ 
+-    final Script compileString(String source,
++    protected Script compileString(String source,
+                                Evaluator compiler,
+                                ErrorReporter compilationErrorReporter,
+                                String sourceName, int lineno,
+Index: src/org/mozilla/javascript/NativeArray.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/NativeArray.java,v
+retrieving revision 1.93
+diff -u -r1.93 NativeArray.java
+--- src/org/mozilla/javascript/NativeArray.java	8 Aug 2008 19:45:36 -0000	1.93
++++ src/org/mozilla/javascript/NativeArray.java	6 Mar 2009 20:34:59 -0000
+@@ -1333,11 +1333,12 @@
+                 boolean canUseDense = true;
+                 int length = (int) denseThis.length;
+                 for (int i = 0; i < args.length && canUseDense; i++) {
+-                    if (ScriptRuntime.instanceOf(args[i], ctor, cx)) {
++                    if (args[i] instanceof NativeArray) {
+                         // only try to use dense approach for Array-like
+                         // objects that are actually NativeArrays
+-                        canUseDense = args[i] instanceof NativeArray;
+-                        length += ((NativeArray) args[i]).length;
++                    	 final NativeArray arg = (NativeArray) args[i];
++                    	 canUseDense = arg.denseOnly;
++                    	 length += arg.length;
+                     } else {
+                         length++;
+                     }
