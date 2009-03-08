@@ -3,17 +3,13 @@ package net.sourceforge.htmlunit;
 import org.junit.Test;
 
 /**
- * Unit tests for <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=374918">Bug 374918 - 
- * String primitive prototype wrongly resolved when used with many top scopes</a>  
+ * Unit tests for <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=477604">Bug 477604 - 
+ * Array.concat causes ArrayIndexOutOfBoundException with non dense array</a>  
  * @author Marc Guillemot
  */
 public class ArrayConcatTest
 {
 	/**
-	 * Test for properties order as exposed in issues
-	 * https://bugzilla.mozilla.org/show_bug.cgi?id=419090
-	 * and
-	 * https://bugzilla.mozilla.org/show_bug.cgi?id=383592
 	 * @throws Exception if the test fails
 	 */
 	@Test
