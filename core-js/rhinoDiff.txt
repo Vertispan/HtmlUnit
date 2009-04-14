@@ -1,3 +1,6 @@
+HtmlUnit's core js is mainly a repakaging of Rhino classes from org.mozilla to net.sourceforge.htmlunit.corejs.
+The diff below contains the other changes made to the original Rhino version.
+
 Index: src/org/mozilla/javascript/Context.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Context.java,v
