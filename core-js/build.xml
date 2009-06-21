@@ -108,6 +108,7 @@ Marc Guillemot
 		</copy>
 
 		<replace dir="${corejs.dir}" token="org.mozilla" value="net.sourceforge.htmlunit.corejs"/>
+		<replace dir="${corejs.dir}" token="org/mozilla" value="net/sourceforge/htmlunit/corejs"/>
 
 		<mkdir dir='${repackaged-rhino.dir}/classes'/>
 		<javac destdir='${repackaged-rhino.dir}/classes' debug='true' encoding="ISO-8859-1" source='1.5' target='1.5' includeAntRuntime='false'>
