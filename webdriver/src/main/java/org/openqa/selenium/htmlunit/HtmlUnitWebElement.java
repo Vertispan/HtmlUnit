@@ -56,7 +56,6 @@ import org.w3c.dom.NamedNodeMap;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.SgmlPage;
-import com.gargoylesoftware.htmlunit.html.ClickableElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
@@ -93,16 +92,12 @@ public class HtmlUnitWebElement implements WebElement, FindsById,
     public void click() {
         assertElementNotStale();
 
-        if (!(element instanceof ClickableElement))
-            return;
-
-        ClickableElement clickableElement = ((ClickableElement) element);
         try {
             if (parent.isJavascriptEnabled() && !(element instanceof HtmlInput)) {
                 element.focus();
             }
 
-            clickableElement.click();
+            element.click();
         } catch (IOException e) {
             throw new WebDriverException(e);
         } catch (ScriptException e) {
@@ -161,7 +156,7 @@ public class HtmlUnitWebElement implements WebElement, FindsById,
             throw new WebDriverException(
                     "Cannot locate element used to submit form");
         try {
-            ((ClickableElement) submit).click();
+            submit.click();
         } catch (IOException e) {
             throw new WebDriverException(e);
         }

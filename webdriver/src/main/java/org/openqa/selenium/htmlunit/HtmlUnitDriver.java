@@ -35,46 +35,7 @@ limitations under the License.
 
 package org.openqa.selenium.htmlunit;
 
-import com.gargoylesoftware.htmlunit.CookieManager;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
-import com.gargoylesoftware.htmlunit.ScriptResult;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.WebWindow;
-import com.gargoylesoftware.htmlunit.WebWindowEvent;
-import com.gargoylesoftware.htmlunit.WebWindowListener;
-import com.gargoylesoftware.htmlunit.WebWindowNotFoundException;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.html.FrameWindow;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlInlineFrame;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
-
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.Speed;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.internal.FindsById;
-import org.openqa.selenium.internal.FindsByLinkText;
-import org.openqa.selenium.internal.FindsByName;
-import org.openqa.selenium.internal.FindsByTagName;
-import org.openqa.selenium.internal.FindsByXPath;
-import org.openqa.selenium.internal.ReturnedCookie;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -87,10 +48,48 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.io.IOException;
 
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.Speed;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.FindsById;
+import org.openqa.selenium.internal.FindsByLinkText;
+import org.openqa.selenium.internal.FindsByName;
+import org.openqa.selenium.internal.FindsByTagName;
+import org.openqa.selenium.internal.FindsByXPath;
+import org.openqa.selenium.internal.ReturnedCookie;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.CookieManager;
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.ProxyConfig;
+import com.gargoylesoftware.htmlunit.ScriptResult;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.WebWindowEvent;
+import com.gargoylesoftware.htmlunit.WebWindowListener;
+import com.gargoylesoftware.htmlunit.WebWindowNotFoundException;
+import com.gargoylesoftware.htmlunit.html.FrameWindow;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlInlineFrame;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
 public class HtmlUnitDriver implements WebDriver, SearchContext,
         JavascriptExecutor, FindsById, FindsByLinkText, FindsByXPath,
@@ -253,7 +252,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext,
     }
 
     public String getCurrentUrl() {
-        return lastPage().getWebResponse().getRequestUrl().toString();
+        return lastPage().getWebResponse().getRequestSettings().getUrl().toString();
     }
 
     public String getTitle() {
@@ -635,10 +634,6 @@ public class HtmlUnitDriver implements WebDriver, SearchContext,
             throw new NoSuchElementException(
                     "Unable to locate element with focus or body tag");
         }
-
-        public Alert alert() {
-            return null;
-        }
     }
 
     protected WebDriver findActiveWindow() {
@@ -808,12 +803,11 @@ public class HtmlUnitDriver implements WebDriver, SearchContext,
         }
 
         private String getHostName() {
-            return lastPage().getWebResponse().getRequestUrl().getHost()
-                    .toLowerCase();
+            return lastPage().getWebResponse().getRequestSettings().getUrl().getHost().toLowerCase();
         }
 
         private String getPath() {
-            return lastPage().getWebResponse().getRequestUrl().getPath();
+            return lastPage().getWebResponse().getRequestSettings().getUrl().getPath();
         }
 
         public Speed getSpeed() {
@@ -825,40 +819,12 @@ public class HtmlUnitDriver implements WebDriver, SearchContext,
         }
 
         private String getDomainForCookie(Cookie cookie) {
-            URL current = lastPage().getWebResponse().getRequestUrl();
+            URL current = lastPage().getWebResponse().getRequestSettings().getUrl();
             if (current.getPort() == 80) {
                 return current.getHost();
             }
 
             return String.format("%s:%s", current.getHost(), current.getPort());
-        }
-    }
-
-    private class HtmlUnitDriverIterator implements Iterator<WebDriver> {
-        private Iterator<WebWindow> underlyingIterator;
-
-        public HtmlUnitDriverIterator() {
-            List<WebWindow> allWindows = new ArrayList<WebWindow>();
-            for (WebWindow window : webClient.getWebWindows()) {
-                WebWindow top = window.getTopWindow();
-                if (!allWindows.contains(top))
-                    allWindows.add(top);
-            }
-
-            underlyingIterator = allWindows.iterator();
-        }
-
-        public boolean hasNext() {
-            return underlyingIterator.hasNext();
-        }
-
-        public WebDriver next() {
-            WebWindow window = underlyingIterator.next();
-            return new HtmlUnitDriver(isJavascriptEnabled(), window);
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException("remove");
         }
     }
 
