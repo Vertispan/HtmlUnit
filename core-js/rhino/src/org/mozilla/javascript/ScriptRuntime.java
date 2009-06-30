@@ -55,6 +55,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.mozilla.javascript.ast.FunctionNode;
 import org.mozilla.javascript.xml.XMLObject;
 import org.mozilla.javascript.xml.XMLLib;
 
@@ -231,7 +232,7 @@ public class ScriptRuntime {
 				className = cx.getE4xImplementationFactory().
                                getImplementationClassName();
 			}
-            new LazilyLoadedCtor(scope, topProperty, className, sealed);
+            new LazilyLoadedCtor(scope, topProperty, className, sealed, true);
         }
 
         return scope;
@@ -263,7 +264,7 @@ public class ScriptRuntime {
 
     public static Integer wrapInt(int i)
     {
-        return new Integer(i);
+        return Integer.valueOf(i);
     }
 
     public static Number wrapNumber(double x)
@@ -1303,7 +1304,7 @@ public class ScriptRuntime {
     {
         long indexTest = indexFromString(s);
         if (indexTest >= 0) {
-            return new Integer((int)indexTest);
+            return Integer.valueOf((int)indexTest);
         }
         return s;
     }
@@ -1316,7 +1317,7 @@ public class ScriptRuntime {
     {
         int i = (int)d;
         if (i == d) {
-            return new Integer(i);
+            return Integer.valueOf(i);
         }
         return toString(d);
     }
@@ -1490,7 +1491,7 @@ public class ScriptRuntime {
     {
         if (obj instanceof XMLObject) {
             XMLObject xmlObject = (XMLObject)obj;
-            return xmlObject.ecmaGet(cx, new Integer(index));
+            return xmlObject.ecmaGet(cx, Integer.valueOf(index));
         }
 
         Object result = ScriptableObject.getProperty(obj, index);
@@ -1585,7 +1586,7 @@ public class ScriptRuntime {
     {
         if (obj instanceof XMLObject) {
             XMLObject xmlObject = (XMLObject)obj;
-            xmlObject.ecmaPut(cx, new Integer(index), value);
+            xmlObject.ecmaPut(cx, Integer.valueOf(index), value);
         } else {
             ScriptableObject.putProperty(obj, index, value);
         }
@@ -1978,7 +1979,8 @@ public class ScriptRuntime {
             enumType != ENUMERATE_VALUES_NO_ITERATOR &&
             enumType != ENUMERATE_ARRAY_NO_ITERATOR)
         {
-            x.iterator = toIterator(cx, x.obj.getParentScope(), x.obj, true);
+            x.iterator = toIterator(cx, x.obj.getParentScope(), x.obj,
+                                    enumType == ScriptRuntime.ENUMERATE_KEYS);
         }
         if (x.iterator == null) {
             // enumInit should read all initial ids before returning
@@ -2035,7 +2037,7 @@ public class ScriptRuntime {
                 int intId = ((Number)id).intValue();
                 if (!x.obj.has(intId, x.obj))
                     continue;   // must have been deleted
-                x.currentId = x.enumNumbers ? (Object) (new Integer(intId))
+                x.currentId = x.enumNumbers ? (Object) (Integer.valueOf(intId))
                                             : String.valueOf(intId);
             }
             return Boolean.TRUE;
@@ -2058,7 +2060,7 @@ public class ScriptRuntime {
           case ENUMERATE_ARRAY:
           case ENUMERATE_ARRAY_NO_ITERATOR:
             Object[] elements = { x.currentId, enumValue(enumObj, cx) };
-            return cx.newArray(x.obj, elements);
+            return cx.newArray(ScriptableObject.getTopLevelScope(x.obj), elements);
           default:
             throw Kit.codeBug();
         }
@@ -2495,17 +2497,10 @@ public class ScriptRuntime {
             return "object";
         if (value == Undefined.instance)
             return "undefined";
+        if (value instanceof ScriptableObject)
+        	return ((ScriptableObject) value).getTypeOf();
         if (value instanceof Scriptable)
-        {
-            if (value instanceof ScriptableObject &&
-                ((ScriptableObject)value).avoidObjectDetection())
-            {
-                return "undefined";
-            }
-            if (value instanceof XMLObject)
-                return "xml";
             return (value instanceof Callable) ? "function" : "object";
-        }
         if (value instanceof String)
             return "string";
         if (value instanceof Number)
@@ -2928,8 +2923,6 @@ public class ScriptRuntime {
         }
 
         // for primitive values on LHS, return false
-        // XXX we may want to change this so that
-        // 5 instanceof Number == true
         if (! (a instanceof Scriptable))
             return false;
 
@@ -3256,7 +3249,7 @@ public class ScriptRuntime {
             int line = re.lineNumber();
             Object args[];
             if (line > 0) {
-                args = new Object[] { errorMsg, sourceUri, new Integer(line) };
+                args = new Object[] { errorMsg, sourceUri, Integer.valueOf(line) };
             } else {
                 args = new Object[] { errorMsg, sourceUri };
             }
@@ -3472,9 +3465,13 @@ public class ScriptRuntime {
             int getterSetter = getterSetters[i];
             Object value = propertyValues[i];
             if (id instanceof String) {
-                if (getterSetter == 0)
-                    ScriptableObject.putProperty(object, (String)id, value);
-                else {
+                if (getterSetter == 0) {
+                    if (isSpecialProperty((String)id)) {
+                        specialRef(object, (String)id, cx).set(cx, value);
+                    } else {
+                        ScriptableObject.putProperty(object, (String)id, value);
+                    }
+                } else {
                     Callable fun;
                     String definer;
                     if (getterSetter < 0)   // < 0 means get foo() ...

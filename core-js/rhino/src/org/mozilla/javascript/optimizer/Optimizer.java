@@ -40,6 +40,7 @@
 package org.mozilla.javascript.optimizer;
 
 import org.mozilla.javascript.*;
+import org.mozilla.javascript.ast.ScriptNode;
 
 class Optimizer
 {
@@ -50,7 +51,7 @@ class Optimizer
 
     // It is assumed that (NumberType | AnyType) == AnyType
 
-    void optimize(ScriptOrFnNode scriptOrFn)
+    void optimize(ScriptNode scriptOrFn)
     {
         //  run on one function at a time for now
         int functionCount = scriptOrFn.getFunctionCount();
@@ -181,7 +182,10 @@ class Optimizer
                     Node child = n.getFirstChild();
                     // "child" will be GETVAR or GETPROP or GETELEM
                     if (child.getType() == Token.GETVAR) {
-                        if (rewriteForNumberVariables(child, NumberType) == NumberType) {
+                        ;
+                        if (rewriteForNumberVariables(child, NumberType) == NumberType &&
+                            !convertParameter(child))
+                        {
                             n.putIntProp(Node.ISNUMBER_PROP, Node.BOTH);
                             markDCPNumberContext(child);
                             return NumberType;
@@ -390,11 +394,12 @@ class Optimizer
                     }
                     int indexType = rewriteForNumberVariables(arrayIndex, NumberType);
                     if (indexType == NumberType) {
-                        // setting the ISNUMBER_PROP signals the codegen
-                        // to use the OptRuntime.setObjectIndex that takes
-                        // a double index
-                        n.putIntProp(Node.ISNUMBER_PROP, Node.LEFT);
-                        markDCPNumberContext(arrayIndex);
+                        if (!convertParameter(arrayIndex)) {
+                            // setting the ISNUMBER_PROP signals the codegen
+                            // to use the OptRuntime.setObjectIndex that takes
+                            // a double index
+                            n.putIntProp(Node.ISNUMBER_PROP, Node.LEFT);
+                        }
                     }
                     int rValueType = rewriteForNumberVariables(rValue, NumberType);
                     if (rValueType == NumberType) {
