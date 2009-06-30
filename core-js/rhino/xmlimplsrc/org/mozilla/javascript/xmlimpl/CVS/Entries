@@ -1,12 +1,12 @@
-/XMLCtor.java/1.13/Wed Nov 19 13:43:01 2008//TRhino1_7R2_BRANCH
-/XMLLibImpl.java/1.26/Wed Nov 19 13:43:01 2008//TRhino1_7R2_BRANCH
-/XMLName.java/1.14/Wed Nov 19 13:43:01 2008//TRhino1_7R2_BRANCH
-/XMLWithScope.java/1.6/Wed Nov 19 13:43:01 2008//TRhino1_7R2_BRANCH
-/XmlProcessor.java/1.14/Wed Nov 19 13:43:01 2008//TRhino1_7R2_BRANCH
-/Namespace.java/1.16/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
-/QName.java/1.16/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
-/XML.java/1.27.2.1/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
-/XMLList.java/1.27.2.1/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
-/XMLObjectImpl.java/1.23.2.1/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
-/XmlNode.java/1.11/Sun Dec 14 13:58:38 2008//TRhino1_7R2_BRANCH
+/Namespace.java/1.17/Tue Jun 30 11:55:07 2009//
+/QName.java/1.17/Tue Jun 30 11:55:08 2009//
+/XML.java/1.29/Tue Jun 30 11:55:08 2009//
+/XMLCtor.java/1.13/Tue Jun 30 11:55:08 2009//
+/XMLLibImpl.java/1.27/Tue Jun 30 11:55:08 2009//
+/XMLList.java/1.30/Tue Jun 30 11:55:08 2009//
+/XMLName.java/1.14/Tue Jun 30 11:55:08 2009//
+/XMLObjectImpl.java/1.24/Tue Jun 30 11:55:08 2009//
+/XMLWithScope.java/1.6/Tue Jun 30 11:55:08 2009//
+/XmlNode.java/1.12/Tue Jun 30 11:55:08 2009//
+/XmlProcessor.java/1.14/Tue Jun 30 11:55:09 2009//
 D
