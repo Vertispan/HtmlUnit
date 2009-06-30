@@ -310,6 +310,7 @@ public class ContextFactory
             return false;
 
           case Context.FEATURE_ENHANCED_JAVA_ACCESS:
+          case Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES:
             return false;
         }
         // It is a bug to call the method with unknown featureIndex

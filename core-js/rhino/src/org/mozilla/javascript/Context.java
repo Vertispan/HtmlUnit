@@ -315,6 +315,13 @@ public class Context
      */
     public static final int FEATURE_ENHANCED_JAVA_ACCESS = 13;
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     * Enable assignment to properties with only a getter defined.
+     * This was Rhino's standard behaviour until 1.7R2.
+     * By default {@link #hasFeature(int)} returns false.
+     */
+    public static final int FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES = 14;
 
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";
@@ -1358,7 +1365,7 @@ public class Context
                              securityDomain);
     }
 
-    final Script compileString(String source,
+    protected Script compileString(String source,
                                Evaluator compiler,
                                ErrorReporter compilationErrorReporter,
                                String sourceName, int lineno,
