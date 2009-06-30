@@ -38,7 +38,7 @@ public class StrictModeApiTest extends TestCase {
     try {
         global = cx.initStandardObjects();
         try {
-            runScript("({}.nonexistent)");
+            runScript("({}.nonexistent);");
             fail();
         } catch (EvaluatorException e) {
             assertTrue(e.getMessage().startsWith("Reference to undefined property"));

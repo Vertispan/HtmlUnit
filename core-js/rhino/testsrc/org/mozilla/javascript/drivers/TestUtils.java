@@ -6,7 +6,21 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Arrays;
 
+import org.mozilla.javascript.ContextFactory;
+
 public class TestUtils {
+    private static ContextFactory.GlobalSetter globalSetter;
+
+    public static void GrabContextFactoryGlobalSetter() {
+        if (globalSetter == null) {
+            globalSetter = ContextFactory.getGlobalSetter();
+        }
+    }
+
+    public static void setGlobalContextFactory(ContextFactory factory) {
+        GrabContextFactoryGlobalSetter();
+        globalSetter.setContextFactoryGlobal(factory);
+    }
 
     public static File[] recursiveListFiles(File dir, FileFilter filter) {
         if (!dir.isDirectory())
@@ -49,7 +63,8 @@ public class TestUtils {
                 new ArrayList<String>() :
                 new ArrayList<String>(Arrays.asList(inherited));
         InputStream in = StandardTests.class.getResourceAsStream(resource);
-        addTestsFromStream(in, list);
+        if (in != null)
+            addTestsFromStream(in, list);
         return list.toArray(new String[0]);
     }
 
@@ -61,5 +76,4 @@ public class TestUtils {
         }
         return false;
     }
-
 }

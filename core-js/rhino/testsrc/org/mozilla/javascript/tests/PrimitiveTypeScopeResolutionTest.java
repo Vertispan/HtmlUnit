@@ -84,7 +84,8 @@ public class PrimitiveTypeScopeResolutionTest
 	 */
 	static class MySimpleScriptableObject extends ScriptableObject
 	{
-		private String label_;
+        private static final long serialVersionUID = 1L;
+        private String label_;
 		MySimpleScriptableObject(String label)
 		{
 			label_ = label;
@@ -103,7 +104,9 @@ public class PrimitiveTypeScopeResolutionTest
 	}
 	
     public static class MyObject extends ScriptableObject {
-      @Override
+        private static final long serialVersionUID = 1L;
+
+    @Override
       public String getClassName()
       {
           return "MyObject";

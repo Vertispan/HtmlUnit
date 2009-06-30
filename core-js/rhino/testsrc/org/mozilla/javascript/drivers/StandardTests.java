@@ -38,13 +38,8 @@ package org.mozilla.javascript.drivers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -76,6 +71,7 @@ public class StandardTests extends TestSuite
                 throw new IllegalStateException("You aren't running the tests from within the standard mozilla/js directory structure");
             }
             path = path.substring(0, jsIndex + 3).replace('/', File.separatorChar);
+            path = path.replace("%20", " ");
             testDir = new File(path, "tests");
         }
         if(!testDir.isDirectory())
@@ -138,40 +134,40 @@ public class StandardTests extends TestSuite
         }
     }
 
-    private static class JunitStatus extends ShellTest.Status {
+    public static class JunitStatus extends ShellTest.Status {
         @Override
-        final void running(File jsFile) {
+        public final void running(File jsFile) {
             //    do nothing
         }
 
         @Override
-        final void failed(String s) {
+        public final void failed(String s) {
             Assert.fail(s);
         }
 
         @Override
-        final void exitCodesWere(int expected, int actual) {
+        public final void exitCodesWere(int expected, int actual) {
             Assert.assertEquals("Unexpected exit code", expected, actual);
         }
 
         @Override
-        final void outputWas(String s) {
+        public final void outputWas(String s) {
             // Do nothing; we don't want to see the output when running JUnit 
             // tests.
         }
 
         @Override
-        final void threw(Throwable t) {
+        public final void threw(Throwable t) {
             Assert.fail(ShellTest.getStackTrace(t));
         }
 
         @Override
-        final void timedOut() {
+        public final void timedOut() {
             failed("Timed out.");
         }
     }
 
-    private static final class JsTestCase extends TestCase
+    public static final class JsTestCase extends TestCase
     {
         private final File jsFile;
         private final int optimizationLevel;
@@ -189,9 +185,9 @@ public class StandardTests extends TestSuite
             return 1;
         }
 
-        private static class ShellTestParameters extends ShellTest.Parameters {
+        public static class ShellTestParameters extends ShellTest.Parameters {
             @Override
-            int getTimeoutMilliseconds() {
+            public int getTimeoutMilliseconds() {
                 if (System.getProperty("mozilla.js.tests.timeout") != null) {
                     return Integer.parseInt(System.getProperty("mozilla.js.tests.timeout"));
                 }

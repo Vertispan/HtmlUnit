@@ -10,6 +10,7 @@ import org.mozilla.javascript.ContextAction;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Script;
+import org.mozilla.javascript.drivers.TestUtils;
 import org.mozilla.javascript.tools.shell.Global;
 import org.mozilla.javascript.tools.shell.ShellContextFactory;
 
@@ -20,11 +21,21 @@ public class JavaAcessibilityTest extends TestCase {
 
   protected final Global global = new Global();
   String importClass = "importClass(Packages.org.mozilla.javascript.tests.PrivateAccessClass)\n";
-  
+	
   public JavaAcessibilityTest() {
     global.init(contextFactory);
   }
   
+  @Override
+  protected void setUp() {
+    TestUtils.setGlobalContextFactory(contextFactory);
+  }
+   
+  @Override
+  protected void tearDown() {
+    TestUtils.setGlobalContextFactory(null);
+  }
+
   private ContextFactory contextFactory = new ShellContextFactory() {
     @Override
     protected boolean hasFeature(Context cx, int featureIndex) {
@@ -99,8 +110,15 @@ public class JavaAcessibilityTest extends TestCase {
       assertEquals("4 true", result);
   }
 
+  public void testOverloadFunctionRegression() {
+      Object result = runScript(
+        "(new java.util.GregorianCalendar()).set(3,4);'success';");
+      assertEquals("success", result);
+  }
+
+  
   private Object runScript(final String scriptSourceText) {
-    return this.contextFactory.call(new ContextAction() {
+    return contextFactory.call(new ContextAction() {
       public Object run(Context context) {
         Script script = context.compileString(scriptSourceText, "", 1, null);
         return script.exec(context, global);
