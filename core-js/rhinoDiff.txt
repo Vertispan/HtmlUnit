@@ -1,14 +1,28 @@
 HtmlUnit's core js is mainly a repakaging of Rhino classes from org.mozilla to net.sourceforge.htmlunit.corejs.
 The diff below contains the other changes made to the original Rhino version.
 
-Index: src/org/mozilla/javascript/Context.java
+Index: org/mozilla/javascript/Context.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Context.java,v
-retrieving revision 1.275.2.2
-diff -u -r1.275.2.2 Context.java
---- src/org/mozilla/javascript/Context.java	5 Nov 2008 21:22:50 -0000	1.275.2.2
-+++ src/org/mozilla/javascript/Context.java	6 Mar 2009 20:34:50 -0000
-@@ -1349,7 +1349,7 @@
+retrieving revision 1.279
+diff -u -r1.279 Context.java
+--- org/mozilla/javascript/Context.java	15 May 2009 12:09:51 -0000	1.279
++++ org/mozilla/javascript/Context.java	2 Jul 2009 11:43:34 -0000
+@@ -315,6 +315,13 @@
+      */
+     public static final int FEATURE_ENHANCED_JAVA_ACCESS = 13;
+ 
++    /**
++     * Special to HtmlUnit's Rhino fork.
++     * Enable assignment to properties with only a getter defined.
++     * This was Rhino's standard behaviour until 1.7R2.
++     * By default {@link #hasFeature(int)} returns false.
++     */
++    public static final int FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES = 14;
+ 
+     public static final String languageVersionProperty = "language version";
+     public static final String errorReporterProperty   = "error reporter";
+@@ -1358,7 +1365,7 @@
                               securityDomain);
      }
  
@@ -17,26 +31,57 @@ diff -u -r1.275.2.2 Context.java
                                 Evaluator compiler,
                                 ErrorReporter compilationErrorReporter,
                                 String sourceName, int lineno,
-Index: src/org/mozilla/javascript/NativeArray.java
+Index: org/mozilla/javascript/ContextFactory.java
 ===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/NativeArray.java,v
-retrieving revision 1.93
-diff -u -r1.93 NativeArray.java
---- src/org/mozilla/javascript/NativeArray.java	8 Aug 2008 19:45:36 -0000	1.93
-+++ src/org/mozilla/javascript/NativeArray.java	6 Mar 2009 20:34:59 -0000
-@@ -1333,11 +1333,12 @@
-                 boolean canUseDense = true;
-                 int length = (int) denseThis.length;
-                 for (int i = 0; i < args.length && canUseDense; i++) {
--                    if (ScriptRuntime.instanceOf(args[i], ctor, cx)) {
-+                    if (args[i] instanceof NativeArray) {
-                         // only try to use dense approach for Array-like
-                         // objects that are actually NativeArrays
--                        canUseDense = args[i] instanceof NativeArray;
--                        length += ((NativeArray) args[i]).length;
-+                    	 final NativeArray arg = (NativeArray) args[i];
-+                    	 canUseDense = arg.denseOnly;
-+                    	 length += arg.length;
-                     } else {
-                         length++;
-                     }
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ContextFactory.java,v
+retrieving revision 1.34
+diff -u -r1.34 ContextFactory.java
+--- org/mozilla/javascript/ContextFactory.java	15 May 2009 12:09:55 -0000	1.34
++++ org/mozilla/javascript/ContextFactory.java	2 Jul 2009 11:43:34 -0000
+@@ -310,6 +310,7 @@
+             return false;
+ 
+           case Context.FEATURE_ENHANCED_JAVA_ACCESS:
++          case Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES:
+             return false;
+         }
+         // It is a bug to call the method with unknown featureIndex
+Index: org/mozilla/javascript/Interpreter.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Interpreter.java,v
+retrieving revision 1.355
+diff -u -r1.355 Interpreter.java
+--- org/mozilla/javascript/Interpreter.java	16 Mar 2009 22:58:37 -0000	1.355
++++ org/mozilla/javascript/Interpreter.java	2 Jul 2009 11:43:35 -0000
+@@ -1687,7 +1687,6 @@
+         frame.savedStackTop = stackTop;
+         stack[stackTop] = fun.call(cx, calleeScope, funThisObj, 
+                 getArgsArray(stack, sDbl, stackTop + 2, indexReg));
+-        cx.lastInterpreterFrame = null;
+ 
+         continue Loop;
+     }
+Index: org/mozilla/javascript/ScriptableObject.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ScriptableObject.java,v
+retrieving revision 1.151
+diff -u -r1.151 ScriptableObject.java
+--- org/mozilla/javascript/ScriptableObject.java	22 Jun 2009 01:08:20 -0000	1.151
++++ org/mozilla/javascript/ScriptableObject.java	2 Jul 2009 11:43:37 -0000
+@@ -2320,9 +2320,16 @@
+             Object setterObj = ((GetterSlot)slot).setter;
+             if (setterObj == null) {
+                 if (((GetterSlot)slot).getter != null) {
++                	if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES)) {
++                        // Odd case: Assignment to a property with only a getter 
++                        // defined. The assignment cancels out the getter.
++                        ((GetterSlot)slot).getter = null;
++                	}
++                	else {
+                   // Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
+                   // we should throw a TypeError in this case.
+                   throw ScriptRuntime.typeError1("msg.set.prop.no.setter", name);
++                	}
+                 }
+             } else {
+                 Context cx = Context.getContext();

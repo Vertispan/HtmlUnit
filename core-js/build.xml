@@ -25,8 +25,7 @@ Marc Guillemot
 	<property name="jar" location="target/htmlunit-core-js-${version}.jar" />
 	<property name="jar.sources" location="target/htmlunit-core-js-${version}-sources.jar" />
 	
-	<property name="rhino.base.date" value="20081214" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
-	<property name="rhino.base.branch" value="Rhino1_7R2_BRANCH" description="the branch of the Rhino version we take as basis. Used to generate the diff"/>
+	<property name="rhino.base.date" value="20090701" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
 	
 	<target name="default" depends="test, checkPatchNeeded">
 
@@ -92,7 +91,7 @@ Marc Guillemot
 
 	<target name="generateRhinoDiff">
 		<echo message="Generating diff to rhinoDiff.txt"/>
-		<cvs command="diff -u -N -D ${rhino.base.date}" output="rhinoDiff.txt" dest="rhino/src" failonerror="false" />
+		<cvs command="diff -u -N" output="rhinoDiff.txt" dest="rhino/src" failonerror="false" />
 		<echo message="Don't forget to clean the generated diff (for instance removing all lines with .svn)"/>
 	</target>
 
