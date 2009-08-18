@@ -92,8 +92,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
 public class HtmlUnitDriver implements WebDriver, SearchContext,
-        JavascriptExecutor, FindsById, FindsByLinkText, FindsByXPath,
-        FindsByName, FindsByTagName {
+        JavascriptExecutor, FindsById, FindsByLinkText, FindsByXPath, FindsByName, FindsByTagName {
+
     private WebClient webClient;
     private WebWindow currentWindow;
     /** window name => history. */

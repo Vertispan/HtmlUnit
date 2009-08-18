@@ -75,6 +75,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 public class HtmlUnitWebElement implements WebElement, FindsById,
         FindsByLinkText, FindsByXPath, FindsByTagName, SearchContext {
+
     protected final HtmlUnitDriver parent;
     protected final HtmlElement element;
     private final static char nbspChar = (char) 160;
@@ -245,6 +246,7 @@ public class HtmlUnitWebElement implements WebElement, FindsById,
      * @deprecated Use {@link #getTagName()} instead, this method will be
      *             removed in the near future.
      */
+    @Deprecated
     public String getElementName() {
         return getTagName();
     }
@@ -536,8 +538,7 @@ public class HtmlUnitWebElement implements WebElement, FindsById,
     public List<WebElement> findElementsByLinkText(String linkText) {
         assertElementNotStale();
 
-        List<? extends HtmlElement> htmlElements = (List<? extends HtmlElement>) element
-                .getHtmlElementsByTagName("a");
+        List<? extends HtmlElement> htmlElements = element.getHtmlElementsByTagName("a");
         List<WebElement> webElements = new ArrayList<WebElement>();
         for (HtmlElement e : htmlElements) {
             if (e.getTextContent().equals(linkText)
@@ -562,8 +563,7 @@ public class HtmlUnitWebElement implements WebElement, FindsById,
     public List<WebElement> findElementsByPartialLinkText(String linkText) {
         assertElementNotStale();
 
-        List<? extends HtmlElement> htmlElements = (List<? extends HtmlElement>) element
-                .getHtmlElementsByTagName("a");
+        List<? extends HtmlElement> htmlElements = element.getHtmlElementsByTagName("a");
         List<WebElement> webElements = new ArrayList<WebElement>();
         for (HtmlElement e : htmlElements) {
             if (e.getTextContent().contains(linkText)

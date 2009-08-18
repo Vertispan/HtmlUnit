@@ -111,8 +111,7 @@ public class RenderedHtmlUnitDriverWebElement extends HtmlUnitWebElement impleme
         return getEffectiveStyle(element, propertyName);
     }
 
-    private String getEffectiveStyle(HtmlElement htmlElement,
-            String propertyName) {
+    private String getEffectiveStyle(HtmlElement htmlElement, String propertyName) {
         HtmlElement current = htmlElement;
         String value = "inherit";
         while ("inherit".equals(value)) {
