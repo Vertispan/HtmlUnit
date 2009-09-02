@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sourceforge.htmlunit</groupId>
 	<artifactId>webdriver</artifactId>
-	<version>2.6-SNAPSHOT</version>
+	<version>2.6</version>
 	<packaging>jar</packaging>
 	<name>HtmlUnitDriver</name>
 	<url>http://htmlunit.sourceforge.net</url>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.6-SNAPSHOT</version>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -82,19 +82,4 @@
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <id>htmlUnitSnapshots</id>
-            <name>HtmlUnit Snapshots</name>
-            <url>http://htmlunit.sourceforge.net/m2-repo-snapshots</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
 </project>
