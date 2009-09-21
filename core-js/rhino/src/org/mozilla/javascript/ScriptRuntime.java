@@ -73,6 +73,30 @@ public class ScriptRuntime {
     protected ScriptRuntime() {
     }
 
+
+    /**
+     * Returns representation of the [[ThrowTypeError]] object.
+     * See ECMA 5 spec, 13.2.3
+     */
+    public static BaseFunction typeErrorThrower() {
+      if (THROW_TYPE_ERROR == null) {
+        BaseFunction thrower = new BaseFunction() {
+          @Override
+          public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
+            throw typeError0("msg.op.not.allowed");
+          }
+          @Override
+          public int getLength() {
+            return 0;
+          }
+        };
+        thrower.preventExtensions();
+        THROW_TYPE_ERROR = thrower;
+      }
+      return THROW_TYPE_ERROR;
+    }
+    private static BaseFunction THROW_TYPE_ERROR = null;
+
     static class NoSuchMethodShim implements Callable {
         String methodName;
         Callable noSuchMethodMethod;
@@ -139,7 +163,6 @@ public class ScriptRuntime {
     public static final Class<Scriptable> ScriptableClass =
         Scriptable.class;
 
-
     private static final String[] lazilyNames = {
         "RegExp",        "org.mozilla.javascript.regexp.NativeRegExp",
         "Packages",      "org.mozilla.javascript.NativeJavaTopPackage",
@@ -161,6 +184,9 @@ public class ScriptRuntime {
         "QName",         "(xml)",
     };
 
+    // Locale object used to request locale-neutral operations.
+    public static Locale ROOT_LOCALE = new Locale("");
+ 
     private static final Object LIBRARY_SCOPE_KEY = "LIBRARY_SCOPE";
 
     public static boolean isRhinoRuntimeType(Class<?> cl)
@@ -213,6 +239,7 @@ public class ScriptRuntime {
         NativeNumber.init(scope, sealed);
         NativeDate.init(scope, sealed);
         NativeMath.init(scope, sealed);
+        NativeJSON.init(scope, sealed);
 
         NativeWith.init(scope, sealed);
         NativeCall.init(scope, sealed);
@@ -255,6 +282,44 @@ public class ScriptRuntime {
             return false;
         }
         return c == '\n' || c == '\r' || c == 0x2028 || c == 0x2029;
+    }
+
+    public static boolean isJSWhitespaceOrLineTerminator(int c) {
+      return (isStrWhiteSpaceChar(c) || isJSLineTerminator(c));
+    }
+
+    /**
+     * Indicates if the character is a Str whitespace char according to ECMA spec:
+     * StrWhiteSpaceChar :::
+      <TAB>
+      <SP>
+      <NBSP>
+      <FF>
+      <VT>
+      <CR>
+      <LF>
+      <LS>
+      <PS>
+      <USP>
+      <BOM>
+     */
+    static boolean isStrWhiteSpaceChar(int c)
+    {
+    	switch (c) {
+    		case ' ': // <SP>
+    		case '\n': // <LF>
+    		case '\r': // <CR>
+    		case '\t': // <TAB>
+    		case '\u00A0': // <NBSP>
+    		case '\u000C': // <FF>
+    		case '\u000B': // <VT>
+    		case '\u2028': // <LS>
+    		case '\u2029': // <PS>
+        case '\uFEFF': // <BOM>
+    			return true;
+    		default:
+    			return Character.getType(c) == Character.SPACE_SEPARATOR;
+    	}
     }
 
     public static Boolean wrapBoolean(boolean b)
@@ -528,7 +593,7 @@ public class ScriptRuntime {
                 return +0.0;
             }
             startChar = s.charAt(start);
-            if (!Character.isWhitespace(startChar))
+            if (!ScriptRuntime.isStrWhiteSpaceChar(startChar))
                 break;
             start++;
         }
@@ -554,7 +619,7 @@ public class ScriptRuntime {
 
         int end = len - 1;
         char endChar;
-        while (Character.isWhitespace(endChar = s.charAt(end)))
+        while (ScriptRuntime.isStrWhiteSpaceChar(endChar = s.charAt(end)))
             end--;
         if (endChar == 'y') {
             // check for "Infinity"
@@ -1604,9 +1669,11 @@ public class ScriptRuntime {
             String s = toStringIdOrIndex(cx, elem);
             if (s == null) {
                 int index = lastIndexResult(cx);
-                result = ScriptableObject.deleteProperty(target, index);
+            	target.delete(index);
+                return !target.has(index, target);
             } else {
-                result = ScriptableObject.deleteProperty(target, s);
+            	target.delete(s);
+                return !target.has(s, target);
             }
         }
         return result;
@@ -2336,7 +2403,7 @@ public class ScriptRuntime {
                                      String filename, int lineNumber)
     {
         if (callType == Node.SPECIALCALL_EVAL) {
-            if (NativeGlobal.isEvalFunction(fun)) {
+            if (thisObj.getParentScope() == null && NativeGlobal.isEvalFunction(fun)) {
                 return evalSpecial(cx, scope, callerThis, args,
                                    filename, lineNumber);
             }
@@ -2721,13 +2788,17 @@ public class ScriptRuntime {
         }
     }
 
-    private static Object toPrimitive(Object val)
+    public static Object toPrimitive(Object val) {
+        return toPrimitive(val, null);
+    }
+    
+    public static Object toPrimitive(Object val, Class<?> typeHint)
     {
         if (!(val instanceof Scriptable)) {
             return val;
         }
         Scriptable s = (Scriptable)val;
-        Object result = s.getDefaultValue(null);
+        Object result = s.getDefaultValue(typeHint);
         if (result instanceof Scriptable)
             throw typeError0("msg.bad.default.value");
         return result;
@@ -2817,9 +2888,10 @@ public class ScriptRuntime {
         }
     }
     
-    private static boolean isPrimitive(Object obj) {
-        return (obj instanceof Number) || (obj instanceof String) ||
-               (obj instanceof Boolean);
+    public static boolean isPrimitive(Object obj) {
+        return obj == null || obj == Undefined.instance || 
+                (obj instanceof Number) || (obj instanceof String) ||
+                (obj instanceof Boolean);
     }
 
     static boolean eqNumber(double x, Object y)
@@ -3420,21 +3492,24 @@ public class ScriptRuntime {
                     ++j;
                 }
             }
-            return cx.newObject(scope, "Array", sparse);
+            NativeArray array = new NativeArray(sparse);
+            setObjectProtoAndParent(array, scope);
+            return array;
         }
         
-        Scriptable arrayObj = cx.newObject(scope, "Array",
-                                           ScriptRuntime.emptyArgs);
+        NativeArray array = new NativeArray(length);
+        setObjectProtoAndParent(array, scope);
+
         int skip = 0;
         for (int i = 0, j = 0; i != length; ++i) {
             if (skip != skipCount && skipIndices[skip] == i) {
                 ++skip;
                 continue;
             }
-            ScriptableObject.putProperty(arrayObj, i, objects[j]);
+            ScriptableObject.putProperty(array, i, objects[j]);
             ++j;
         }
-        return arrayObj;
+        return array;
     }
 
   /**

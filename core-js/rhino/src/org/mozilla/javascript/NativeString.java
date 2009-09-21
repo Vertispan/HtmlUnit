@@ -25,6 +25,7 @@
  *   Tom Beauvais
  *   Norris Boyd
  *   Mike McCabe
+ *   Cameron McCormack
  *
  * Alternatively, the contents of this file may be used under the terms of
  * the GNU General Public License Version 2 or later (the "GPL"), in which
@@ -149,8 +150,6 @@ final class NativeString extends IdScriptableObject
                 ConstructorId_localeCompare, "localeCompare", 2);
         addIdFunctionProperty(ctor, STRING_TAG,
                 ConstructorId_toLocaleLowerCase, "toLocaleLowerCase", 1);
-        addIdFunctionProperty(ctor, STRING_TAG,
-                ConstructorId_fromCharCode, "fromCharCode", 1);
         super.fillConstructorProperties(ctor);
     }
 
@@ -196,6 +195,7 @@ final class NativeString extends IdScriptableObject
           case Id_localeCompare:     arity=1; s="localeCompare";     break;
           case Id_toLocaleLowerCase: arity=0; s="toLocaleLowerCase"; break;
           case Id_toLocaleUpperCase: arity=0; s="toLocaleUpperCase"; break;
+          case Id_trim:              arity=0; s="trim";              break;
           default: throw new IllegalArgumentException(String.valueOf(id));
         }
         initPrototypeMethod(STRING_TAG, id, s, arity);
@@ -308,11 +308,13 @@ final class NativeString extends IdScriptableObject
     
               case Id_toLowerCase:
                 // See ECMA 15.5.4.11
-                return ScriptRuntime.toString(thisObj).toLowerCase();
+                return ScriptRuntime.toString(thisObj).toLowerCase(
+                         ScriptRuntime.ROOT_LOCALE);
     
               case Id_toUpperCase:
                 // See ECMA 15.5.4.12
-                return ScriptRuntime.toString(thisObj).toUpperCase();
+                return ScriptRuntime.toString(thisObj).toUpperCase(
+                         ScriptRuntime.ROOT_LOCALE);
     
               case Id_substr:
                 return js_substr(ScriptRuntime.toString(thisObj), args);
@@ -409,6 +411,22 @@ final class NativeString extends IdScriptableObject
                 {
                     return ScriptRuntime.toString(thisObj)
                             .toUpperCase(cx.getLocale());
+                }
+              case Id_trim:
+                {
+                    String str = ScriptRuntime.toString(thisObj);
+                    char[] chars = str.toCharArray();
+
+                    int start = 0;
+                    while (start < chars.length && ScriptRuntime.isJSWhitespaceOrLineTerminator(chars[start])) {
+                      start++;
+                    }
+                    int end = chars.length;
+                    while (end > start && ScriptRuntime.isJSWhitespaceOrLineTerminator(chars[end-1])) {
+                      end--;
+                    }
+
+                    return str.substring(start, end);
                 }
             }
             throw new IllegalArgumentException(String.valueOf(id));
@@ -650,7 +668,7 @@ final class NativeString extends IdScriptableObject
     protected int findPrototypeId(String s)
     {
         int id;
-// #generated# Last update: 2007-05-01 22:11:49 EDT
+// #generated# Last update: 2009-07-23 07:32:39 EST
         L0: { id = 0; String X = null; int c;
             L: switch (s.length()) {
             case 3: c=s.charAt(2);
@@ -661,6 +679,7 @@ final class NativeString extends IdScriptableObject
             case 4: c=s.charAt(0);
                 if (c=='b') { X="bold";id=Id_bold; }
                 else if (c=='l') { X="link";id=Id_link; }
+                else if (c=='t') { X="trim";id=Id_trim; }
                 break L;
             case 5: switch (s.charAt(4)) {
                 case 'd': X="fixed";id=Id_fixed; break L;
@@ -754,7 +773,8 @@ final class NativeString extends IdScriptableObject
         Id_localeCompare             = 34,
         Id_toLocaleLowerCase         = 35,
         Id_toLocaleUpperCase         = 36,
-        MAX_PROTOTYPE_ID             = 36;
+        Id_trim                      = 37,
+        MAX_PROTOTYPE_ID             = Id_trim;
 
 // #/string_id_map#
 

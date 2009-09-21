@@ -69,6 +69,8 @@ class TokenStream
     private final static int
         EOF_CHAR = -1;
 
+    private final static char BYTE_ORDER_MARK = '\uFEFF';
+
     TokenStream(Parser parser, Reader sourceReader, String sourceString,
                 int lineno)
     {
@@ -303,6 +305,7 @@ class TokenStream
     }
 
     final double getNumber() { return number; }
+    final boolean isNumberOctal() { return isOctal; }
 
     final boolean eof() { return hitEOF; }
 
@@ -396,7 +399,7 @@ class TokenStream
                                 return Token.ERROR;
                             }
                         } else {
-                            if (c == EOF_CHAR
+                            if (c == EOF_CHAR || c == BYTE_ORDER_MARK
                                 || !Character.isJavaIdentifierPart((char)c))
                             {
                                 break;
@@ -438,7 +441,7 @@ class TokenStream
 
             // is it a number?
             if (isDigit(c) || (c == '.' && isDigit(peekChar()))) {
-
+                isOctal = false;
                 stringBufferTop = 0;
                 int base = 10;
 
@@ -449,6 +452,7 @@ class TokenStream
                         c = getChar();
                     } else if (isDigit(c)) {
                         base = 8;
+                        isOctal = true;
                     } else {
                         addToString('0');
                     }
@@ -882,7 +886,7 @@ class TokenStream
         if (c <= 127) {
             return c == 0x20 || c == 0x9 || c == 0xC || c == 0xB;
         } else {
-            return c == 0xA0
+            return c == 0xA0 || c == BYTE_ORDER_MARK
                 || Character.getType((char)c) == Character.SPACE_SEPARATOR;
         }
     }
@@ -1334,6 +1338,7 @@ class TokenStream
                     c = '\n';
                 }
             } else {
+                if (c == BYTE_ORDER_MARK) return c; // BOM is considered whitespace
                 if (isJSFormatChar(c)) {
                     continue;
                 }
@@ -1379,6 +1384,7 @@ class TokenStream
                     c = '\n';
                 }
             } else {
+                if (c == BYTE_ORDER_MARK) return c; // BOM is considered whitespace
                 if (isJSFormatChar(c)) {
                     continue;
                 }
@@ -1563,6 +1569,7 @@ class TokenStream
     // code.
     private String string = "";
     private double number;
+    private boolean isOctal;
 
     // delimiter for last string literal scanned
     private int quoteChar;

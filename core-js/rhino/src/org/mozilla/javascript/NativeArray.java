@@ -157,23 +157,23 @@ public class NativeArray extends IdScriptableObject
     protected void fillConstructorProperties(IdFunctionObject ctor)
     {
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_join,
-                "join", 2);
+                "join", 1);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_reverse,
-                "reverse", 1);
+                "reverse", 0);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_sort,
-                "sort", 2);
+                "sort", 1);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_push,
-                "push", 2);
+                "push", 1);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_pop,
-                "pop", 2);
+                "pop", 0);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_shift,
-                "shift", 2);
+                "shift", 0);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_unshift,
-                "unshift", 2);
+                "unshift", 1);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_splice,
                 "splice", 2);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_concat,
-                "concat", 2);
+                "concat", 1);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_slice,
                 "slice", 2);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_indexOf,
@@ -194,6 +194,8 @@ public class NativeArray extends IdScriptableObject
                 "reduce", 2);
         addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_reduceRight,
                 "reduceRight", 2);
+        addIdFunctionProperty(ctor, ARRAY_TAG, ConstructorId_isArray,
+                "isArray", 1);
         super.fillConstructorProperties(ctor);
     }
 
@@ -205,27 +207,27 @@ public class NativeArray extends IdScriptableObject
         switch (id) {
           case Id_constructor:    arity=1; s="constructor";    break;
           case Id_toString:       arity=0; s="toString";       break;
-          case Id_toLocaleString: arity=1; s="toLocaleString"; break;
+          case Id_toLocaleString: arity=0; s="toLocaleString"; break;
           case Id_toSource:       arity=0; s="toSource";       break;
           case Id_join:           arity=1; s="join";           break;
           case Id_reverse:        arity=0; s="reverse";        break;
           case Id_sort:           arity=1; s="sort";           break;
           case Id_push:           arity=1; s="push";           break;
-          case Id_pop:            arity=1; s="pop";            break;
-          case Id_shift:          arity=1; s="shift";          break;
+          case Id_pop:            arity=0; s="pop";            break;
+          case Id_shift:          arity=0; s="shift";          break;
           case Id_unshift:        arity=1; s="unshift";        break;
-          case Id_splice:         arity=1; s="splice";         break;
+          case Id_splice:         arity=2; s="splice";         break;
           case Id_concat:         arity=1; s="concat";         break;
-          case Id_slice:          arity=1; s="slice";          break;
-          case Id_indexOf:        arity=1; s="indexOf";        break;
-          case Id_lastIndexOf:    arity=1; s="lastIndexOf";    break;
-          case Id_every:          arity=1; s="every";          break;
-          case Id_filter:         arity=1; s="filter";         break;
-          case Id_forEach:        arity=1; s="forEach";        break;
-          case Id_map:            arity=1; s="map";            break;
-          case Id_some:           arity=1; s="some";           break;
-          case Id_reduce:         arity=1; s="reduce";         break;
-          case Id_reduceRight:    arity=1; s="reduceRight";    break;
+          case Id_slice:          arity=2; s="slice";          break;
+          case Id_indexOf:        arity=2; s="indexOf";        break;
+          case Id_lastIndexOf:    arity=2; s="lastIndexOf";    break;
+          case Id_every:          arity=2; s="every";          break;
+          case Id_filter:         arity=2; s="filter";         break;
+          case Id_forEach:        arity=2; s="forEach";        break;
+          case Id_map:            arity=2; s="map";            break;
+          case Id_some:           arity=2; s="some";           break;
+          case Id_reduce:         arity=2; s="reduce";         break;
+          case Id_reduceRight:    arity=2; s="reduceRight";    break;
           default: throw new IllegalArgumentException(String.valueOf(id));
         }
         initPrototypeMethod(ARRAY_TAG, id, s, arity);
@@ -271,6 +273,9 @@ public class NativeArray extends IdScriptableObject
                 id = -id;
                 continue again;
               }
+
+              case ConstructorId_isArray:
+                return args.length > 0 && (args[0] instanceof NativeArray);
     
               case Id_constructor: {
                 boolean inNewExpr = (thisObj == null);
@@ -494,6 +499,18 @@ public class NativeArray extends IdScriptableObject
       return allIds.toArray();
     }
 
+    public Integer[] getIndexIds() {
+      Object[] ids = getIds();
+      java.util.List<Integer> indices = new java.util.ArrayList<Integer>(ids.length);
+      for (Object id : ids) {
+        int int32Id = ScriptRuntime.toInt32(id);
+        if (int32Id >= 0 && ScriptRuntime.toString(int32Id).equals(ScriptRuntime.toString(id))) {
+          indices.add(int32Id);
+        }
+      }
+      return indices.toArray(new Integer[indices.size()]);
+    }
+
     @Override
     public Object getDefaultValue(Class<?> hint)
     {
@@ -503,6 +520,59 @@ public class NativeArray extends IdScriptableObject
                 return Long.valueOf(length);
         }
         return super.getDefaultValue(hint);
+    }
+
+    private ScriptableObject defaultIndexPropertyDescriptor(Object value) {
+      Scriptable scope = getParentScope();
+      if (scope == null) scope = this;
+      ScriptableObject desc = new NativeObject();
+      ScriptRuntime.setObjectProtoAndParent(desc, scope);
+      desc.defineProperty("value", value, EMPTY);
+      desc.defineProperty("writable", true, EMPTY);
+      desc.defineProperty("enumerable", true, EMPTY);
+      desc.defineProperty("configurable", true, EMPTY);
+      return desc;
+    }
+
+    @Override
+    protected ScriptableObject getOwnPropertyDescriptor(Context cx, Object id) {
+      if (dense != null) {
+        int index = toIndex(id);
+        if (0 <= index && index < length) {
+          Object value = dense[index];
+          return defaultIndexPropertyDescriptor(value);
+        }
+      }
+      return super.getOwnPropertyDescriptor(cx, id);
+    }
+
+    @Override
+    public void defineOwnProperty(Context cx, Object id, ScriptableObject desc) {
+      if (dense != null) {
+        Object[] values = dense;
+        dense = null;
+        denseOnly = false;
+        for (int i = 0; i < values.length; i++) {
+          if (values[i] != NOT_FOUND) {
+            put(i, this, values[i]);
+          }
+        }
+      }
+      int index = toIndex(id);
+      if (index >= length) {
+        length = index + 1;
+      }
+      super.defineOwnProperty(cx, id, desc);
+    }
+
+    private int toIndex(Object id) {
+      if (id instanceof String) {
+        return (int) toArrayIndex((String) id);
+      } else if (id instanceof Number) {
+        return ((Number) id).intValue();
+      } else {
+        return -1;
+      }
     }
 
     /**
@@ -1551,7 +1621,7 @@ public class NativeArray extends IdScriptableObject
         }
         if (value == Scriptable.NOT_FOUND) {
             // reproduce spidermonkey error message
-            throw Context.reportRuntimeError0("msg.empty.array.reduce");
+            throw ScriptRuntime.typeError0("msg.empty.array.reduce");
         }
         return value;
     }
@@ -1657,7 +1727,8 @@ public class NativeArray extends IdScriptableObject
         ConstructorId_map                  = -Id_map,
         ConstructorId_some                 = -Id_some,
         ConstructorId_reduce               = -Id_reduce,
-        ConstructorId_reduceRight          = -Id_reduceRight;
+        ConstructorId_reduceRight          = -Id_reduceRight,
+        ConstructorId_isArray              = -24;
 
     /**
      * Internal representation of the JavaScript array's length property.

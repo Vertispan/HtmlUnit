@@ -43,6 +43,9 @@ package org.mozilla.javascript;
 import java.io.Serializable;
 
 import org.mozilla.javascript.xml.XMLLib;
+import static org.mozilla.javascript.ScriptableObject.DONTENUM;
+import static org.mozilla.javascript.ScriptableObject.READONLY;
+import static org.mozilla.javascript.ScriptableObject.PERMANENT;
 
 /**
  * This class implements the global native object (function and value
@@ -117,14 +120,14 @@ public class NativeGlobal implements Serializable, IdFunctionCall
 
         ScriptableObject.defineProperty(
             scope, "NaN", ScriptRuntime.NaNobj,
-            ScriptableObject.DONTENUM);
+            READONLY|DONTENUM|PERMANENT);
         ScriptableObject.defineProperty(
             scope, "Infinity",
             ScriptRuntime.wrapNumber(Double.POSITIVE_INFINITY),
-            ScriptableObject.DONTENUM);
+            READONLY|DONTENUM|PERMANENT);
         ScriptableObject.defineProperty(
             scope, "undefined", Undefined.instance,
-            ScriptableObject.DONTENUM);
+            READONLY|DONTENUM|PERMANENT);
 
         String[] errorMethods = {
                 "ConversionError",
@@ -144,20 +147,19 @@ public class NativeGlobal implements Serializable, IdFunctionCall
         */
         for (int i = 0; i < errorMethods.length; i++) {
             String name = errorMethods[i];
-            Scriptable errorProto = ScriptRuntime.
-                                        newObject(cx, scope, "Error",
+            ScriptableObject errorProto = 
+              (ScriptableObject) ScriptRuntime.newObject(cx, scope, "Error",
                                                   ScriptRuntime.emptyArgs);
             errorProto.put("name", errorProto, name);
-            if (sealed) {
-                if (errorProto instanceof ScriptableObject) {
-                    ((ScriptableObject)errorProto).sealObject();
-                }
-            }
+            errorProto.put("message", errorProto, "");
             IdFunctionObject ctor = new IdFunctionObject(obj, FTAG,
                                                          Id_new_CommonError,
                                                          name, 1, scope);
             ctor.markAsConstructor(errorProto);
+            errorProto.put("constructor", errorProto, ctor);
+            errorProto.setAttributes("constructor", ScriptableObject.DONTENUM);
             if (sealed) {
+                errorProto.sealObject();
                 ctor.sealObject();
             }
             ctor.exportAsScopeProperty();
@@ -186,7 +188,7 @@ public class NativeGlobal implements Serializable, IdFunctionCall
                     return js_escape(args);
 
                 case Id_eval:
-                    return js_eval(cx, scope, thisObj, args);
+                    return js_eval(cx, scope, args);
 
                 case Id_isFinite: {
                     boolean result;
@@ -261,7 +263,7 @@ public class NativeGlobal implements Serializable, IdFunctionCall
         char c;
         do {
             c = s.charAt(start);
-            if (!isStrWhiteSpaceChar(c))
+            if (!ScriptRuntime.isStrWhiteSpaceChar(c))
                 break;
             start++;
         } while (start < len);
@@ -299,38 +301,6 @@ public class NativeGlobal implements Serializable, IdFunctionCall
     }
 
     /**
-     * Indicates if the character is a Str whitespace char according to ECMA spec:
-     * StrWhiteSpaceChar :::
-      <TAB>
-      <SP>
-      <NBSP>
-      <FF>
-      <VT>
-      <CR>
-      <LF>
-      <LS>
-      <PS>
-      <USP>
-     */
-    static boolean isStrWhiteSpaceChar(char c)
-    {
-    	switch (c) {
-    		case '\t': // <TAB>
-    		case ' ': // <SP>
-    		case '\u00A0': // <NBSP>
-    		case '\u000C': // <FF>
-    		case '\u000B': // <VT>
-    		case '\r': // <CR>
-    		case '\n': // <LF>
-    		case '\u2028': // <LS>
-    		case '\u2029': // <PS>
-    			return true;
-    		default:
-    			return Character.getType(c) == Character.SPACE_SEPARATOR;
-    	}
-    }
-
-    /**
      * The global method parseFloat, as per ECMA-262 15.1.2.3.
      *
      * @param args the arguments to parseFloat, ignoring args[>=1]
@@ -350,7 +320,7 @@ public class NativeGlobal implements Serializable, IdFunctionCall
                 return ScriptRuntime.NaNobj;
             }
             c = s.charAt(start);
-            if (!isStrWhiteSpaceChar(c)) {
+            if (!ScriptRuntime.isStrWhiteSpaceChar(c)) {
                 break;
             }
             ++start;
@@ -536,15 +506,14 @@ public class NativeGlobal implements Serializable, IdFunctionCall
         return s;
     }
 
-    private Object js_eval(Context cx, Scriptable scope, Scriptable thisObj, Object[] args)
+    /**
+     * This is an indirect call to eval, and thus uses the global environment.
+     * Direct calls are executed via ScriptRuntime.callSpecial().
+     */
+    private Object js_eval(Context cx, Scriptable scope, Object[] args)
     {
-        if (thisObj.getParentScope() == null) {
-            // We allow indirect calls to eval as long as the script will execute in 
-            // the global scope.
-            return ScriptRuntime.evalSpecial(cx, scope, thisObj, args, "eval code", 1);
-        }
-        String m = ScriptRuntime.getMessage1("msg.cant.call.indirect", "eval");
-        throw NativeGlobal.constructError(cx, "EvalError", m, scope);
+        Scriptable global = ScriptableObject.getTopLevelScope(scope);
+        return ScriptRuntime.evalSpecial(cx, global, global, args, "eval code", 1);
     }
 
     static boolean isEvalFunction(Object functionObj)

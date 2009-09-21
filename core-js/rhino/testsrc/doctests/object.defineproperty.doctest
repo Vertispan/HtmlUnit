@@ -32,7 +32,7 @@ js> var describe = Object.getOwnPropertyDescriptor;
 js> // when define new property with empty descriptor then default values are used for the descriptor
 js> var obj = define({}, 'a', {});
 js> describe(obj, 'a').toSource()
-({writable:false, enumerable:false, configurable:false})
+({value:undefined, writable:false, enumerable:false, configurable:false})
 
 js> // when define new property with data descriptor then those values are used for the descriptor
 js> var obj = define({}, 'a', { value: 2, writable: true });
@@ -114,7 +114,7 @@ js> // can change writable from true to false when configurable is false
 js> var obj = define({},  'a', {writable:true, configurable:false});
 js> var obj = define(obj, 'a', {writable:false});
 
-js> // can set enumerable to the same value when configuable is false
+js> // can set enumerable to the same value when configurable is false
 js> var obj = define({},  'a', {enumerable:true, configurable:false});
 js> var obj = define(obj, 'a', {enumerable:true});
 
@@ -170,4 +170,34 @@ js> expectTypeError(function() { define({}, 'a', {set:1}); })
 js> // make sure defineProperty works properly with numbers as ids
 js> Object.defineProperty({}, 0, {value:1, enumerable:true})['0']
 1
+
+js> // make sure defineProperty works properly with arrays
+js> Object.defineProperty([], 0, {value:1, enumerable:true})[0]
+1
+
+js> // make sure defineProperty works properly with arrays
+js> Object.defineProperty([], 'a', {value:1, enumerable:true})['a']
+1
+
+js> // make sure defineProperty updates length properly for arrays
+js> Object.defineProperty([], 0, {value:1}).length
+1
+
+js> // make sure that getters and setters are actually used to get and set property
+js> Object.defineProperty({}, 'a', {get:function() { return "get called"; }}).a
+get called
+js> Object.defineProperty({}, 'a', {set:function(val) { print("set called with "+val); }}).a = 1; undefined;
+set called with 1
+
+js> // make sure defineProperty works for builtin properties
+js> Object.defineProperty(JSON, 'stringify', {value:1}).stringify
+1
+js> Object.defineProperty(JSON, 'parse', {get:function() {print('do get'); return undefined}}).parse
+do get
+
+js> // an accessor property without a setter behaves as if the setter were undefined
+js> // and thus the setter can be set to undefined even when configurable is false
+js> var obj = Object.defineProperty({}, 'a', {get:function(){return 1}})
+js> var _ = Object.defineProperty(obj, 'a', {set:undefined})
+js>
 

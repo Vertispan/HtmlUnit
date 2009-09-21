@@ -155,7 +155,7 @@ public class NativeRegExp extends IdScriptableObject implements Function
         NativeRegExpCtor ctor = new NativeRegExpCtor();
         // Bug #324006: ECMA-262 15.10.6.1 says "The initial value of
         // RegExp.prototype.constructor is the builtin RegExp constructor." 
-        proto.put("constructor", proto, ctor);
+        proto.defineProperty("constructor", ctor, ScriptableObject.DONTENUM);
 
         ScriptRuntime.setFunctionProtoAndParent(ctor, scope);
 
@@ -382,12 +382,7 @@ if (regexp.anchorCh >= 0) {
 
     private static boolean isREWhiteSpace(int c)
     {
-        return (c == '\u0020' || c == '\u0009'
-                || c == '\n' || c == '\r'
-                || c == 0x2028 || c == 0x2029
-                || c == '\u000C' || c == '\u000B'
-                || c == '\u00A0'
-                || Character.getType((char)c) == Character.SPACE_SEPARATOR);
+        return ScriptRuntime.isJSWhitespaceOrLineTerminator(c);
     }
 
     /*

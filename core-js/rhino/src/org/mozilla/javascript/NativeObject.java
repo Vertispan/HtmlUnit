@@ -40,8 +40,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 package org.mozilla.javascript;
-import java.util.Map;
-import java.util.LinkedHashMap;
 
 /**
  * This class implements the Object native object.
@@ -363,7 +361,7 @@ public class NativeObject extends IdScriptableObject
           case ConstructorId_create:
               {
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
-                Scriptable obj = ensureScriptable(arg);
+                Scriptable obj = (arg == null) ? null : ensureScriptable(arg);
 
                 ScriptableObject newObject = new NativeObject();
                 newObject.setParentScope(this.getParentScope());
@@ -382,18 +380,22 @@ public class NativeObject extends IdScriptableObject
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 ScriptableObject obj = ensureScriptableObject(arg);
 
+                if (obj.isExtensible()) return false;
+
                 for (Object name: obj.getAllIds()) {
                   Object configurable = obj.getOwnPropertyDescriptor(cx, name).get("configurable");
                   if (Boolean.TRUE.equals(configurable)) 
                     return false;
                 }
 
-                return !obj.isExtensible();
+                return true;
               }
           case ConstructorId_isFrozen:
               {
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 ScriptableObject obj = ensureScriptableObject(arg);
+
+                if (obj.isExtensible()) return false;
 
                 for (Object name: obj.getAllIds()) {
                   ScriptableObject desc = obj.getOwnPropertyDescriptor(cx, name);
@@ -403,7 +405,7 @@ public class NativeObject extends IdScriptableObject
                     return false;
                 }
 
-                return !obj.isExtensible();
+                return true;
               }
           case ConstructorId_seal:
               {
