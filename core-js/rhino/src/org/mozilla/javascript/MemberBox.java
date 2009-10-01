@@ -180,7 +180,11 @@ final class MemberBox implements Serializable
             } while ((e instanceof InvocationTargetException));
             if (e instanceof ContinuationPending) 
                 throw (ContinuationPending) e;
-            throw Context.throwAsScriptRuntimeEx(e);            
+            
+            if (e instanceof RhinoException || Context.getCurrentContext().hasFeature(Context.FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION))
+                throw Context.throwAsScriptRuntimeEx(e);            
+            else
+            	throw new RuntimeException("Exception invoking " + method.getName(), e);
         } catch (Exception ex) {
             throw Context.throwAsScriptRuntimeEx(ex);
         }

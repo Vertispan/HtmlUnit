@@ -323,6 +323,14 @@ public class Context
      */
     public static final int FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES = 14;
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     * Indicates if a JavaScript catch statement can catch Java exceptions
+     * (exceptions occurring in host objects).
+     * By default {@link #hasFeature(int)} returns true.
+     */
+    public static final int FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION = 15;
+
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";
 

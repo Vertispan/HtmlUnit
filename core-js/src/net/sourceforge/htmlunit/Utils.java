@@ -21,11 +21,29 @@ public class Utils
 	}
 
 	/**
+	 * Runs the action successively with all available optimization levels
+	 */
+	public static void runWithAllOptimizationLevels(final ContextFactory contextFactory, final ContextAction action)
+	{
+		runWithOptimizationLevel(contextFactory, action, -1);
+		runWithOptimizationLevel(contextFactory, action, 0);
+		runWithOptimizationLevel(contextFactory, action, 1);
+	}
+
+	/**
 	 * Runs the provided action at the given optimization level
 	 */
 	public static void runWithOptimizationLevel(final ContextAction action, final int optimizationLevel)
 	{
-    	final Context cx = new ContextFactory().enterContext();
+		runWithOptimizationLevel(new ContextFactory(), action, optimizationLevel);
+	}
+
+	/**
+	 * Runs the provided action at the given optimization level
+	 */
+	public static void runWithOptimizationLevel(final ContextFactory contextFactory, final ContextAction action, final int optimizationLevel)
+	{
+    	final Context cx = contextFactory.enterContext();
     	try
     	{
     		cx.setOptimizationLevel(optimizationLevel);
