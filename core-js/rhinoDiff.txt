@@ -1,14 +1,14 @@
 HtmlUnit's core js is mainly a repakaging of Rhino classes from org.mozilla to net.sourceforge.htmlunit.corejs.
 The diff below contains the other changes made to the original Rhino version.
 
-Index: org/mozilla/javascript/Context.java
+Index: src/org/mozilla/javascript/Context.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Context.java,v
 retrieving revision 1.279
 diff -u -r1.279 Context.java
---- org/mozilla/javascript/Context.java	15 May 2009 12:09:51 -0000	1.279
-+++ org/mozilla/javascript/Context.java	21 Sep 2009 12:51:53 -0000
-@@ -315,6 +315,13 @@
+--- src/org/mozilla/javascript/Context.java	15 May 2009 12:09:51 -0000	1.279
++++ src/org/mozilla/javascript/Context.java	1 Oct 2009 10:12:48 -0000
+@@ -315,6 +315,21 @@
       */
      public static final int FEATURE_ENHANCED_JAVA_ACCESS = 13;
  
@@ -19,10 +19,18 @@ diff -u -r1.279 Context.java
 +     * By default {@link #hasFeature(int)} returns false.
 +     */
 +    public static final int FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES = 14;
++
++    /**
++     * Special to HtmlUnit's Rhino fork.
++     * Indicates if a JavaScript catch statement can catch Java exceptions
++     * (exceptions occurring in host objects).
++     * By default {@link #hasFeature(int)} returns true.
++     */
++    public static final int FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION = 15;
  
      public static final String languageVersionProperty = "language version";
      public static final String errorReporterProperty   = "error reporter";
-@@ -1358,7 +1365,7 @@
+@@ -1358,7 +1373,7 @@
                               securityDomain);
      }
  
@@ -31,28 +39,78 @@ diff -u -r1.279 Context.java
                                 Evaluator compiler,
                                 ErrorReporter compilationErrorReporter,
                                 String sourceName, int lineno,
-Index: org/mozilla/javascript/ContextFactory.java
+Index: src/org/mozilla/javascript/ContextFactory.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ContextFactory.java,v
 retrieving revision 1.34
 diff -u -r1.34 ContextFactory.java
---- org/mozilla/javascript/ContextFactory.java	15 May 2009 12:09:55 -0000	1.34
-+++ org/mozilla/javascript/ContextFactory.java	21 Sep 2009 12:51:53 -0000
-@@ -310,6 +310,7 @@
+--- src/org/mozilla/javascript/ContextFactory.java	15 May 2009 12:09:55 -0000	1.34
++++ src/org/mozilla/javascript/ContextFactory.java	1 Oct 2009 10:12:48 -0000
+@@ -310,7 +310,10 @@
              return false;
  
            case Context.FEATURE_ENHANCED_JAVA_ACCESS:
 +          case Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES:
              return false;
++          case Context.FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION:
++              return true;
          }
          // It is a bug to call the method with unknown featureIndex
-Index: org/mozilla/javascript/ScriptableObject.java
+         throw new IllegalArgumentException(String.valueOf(featureIndex));
+Index: src/org/mozilla/javascript/IRFactory.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/IRFactory.java,v
+retrieving revision 1.126
+diff -u -r1.126 IRFactory.java
+--- src/org/mozilla/javascript/IRFactory.java	9 Aug 2009 13:52:48 -0000	1.126
++++ src/org/mozilla/javascript/IRFactory.java	1 Oct 2009 10:12:49 -0000
+@@ -691,8 +691,7 @@
+         Node nx = createCallOrNew(Token.NEW, transform(node.getTarget()));
+         nx.setLineno(node.getLineno());
+         List<AstNode> args = node.getArguments();
+-        if (!args.isEmpty())
+-            decompiler.addToken(Token.LP);
++        decompiler.addToken(Token.LP);
+         for (int i = 0; i < args.size(); i++) {
+             AstNode arg = args.get(i);
+             nx.addChildToBack(transform(arg));
+@@ -700,8 +699,7 @@
+                 decompiler.addToken(Token.COMMA);
+             }
+         }
+-        if (!args.isEmpty())
+-            decompiler.addToken(Token.RP);
++        decompiler.addToken(Token.RP);
+         if (node.getInitializer() != null) {
+             nx.addChildToBack(transformObjectLiteral(node.getInitializer()));
+         }
+Index: src/org/mozilla/javascript/MemberBox.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/MemberBox.java,v
+retrieving revision 1.19
+diff -u -r1.19 MemberBox.java
+--- src/org/mozilla/javascript/MemberBox.java	26 Jun 2008 13:57:11 -0000	1.19
++++ src/org/mozilla/javascript/MemberBox.java	1 Oct 2009 10:12:49 -0000
+@@ -180,7 +180,11 @@
+             } while ((e instanceof InvocationTargetException));
+             if (e instanceof ContinuationPending) 
+                 throw (ContinuationPending) e;
+-            throw Context.throwAsScriptRuntimeEx(e);            
++            
++            if (e instanceof RhinoException || Context.getCurrentContext().hasFeature(Context.FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION))
++                throw Context.throwAsScriptRuntimeEx(e);            
++            else
++            	throw new RuntimeException("Exception invoking " + method.getName(), e);
+         } catch (Exception ex) {
+             throw Context.throwAsScriptRuntimeEx(ex);
+         }
+Index: src/org/mozilla/javascript/ScriptableObject.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ScriptableObject.java,v
 retrieving revision 1.157
 diff -u -r1.157 ScriptableObject.java
---- org/mozilla/javascript/ScriptableObject.java	9 Aug 2009 02:57:39 -0000	1.157
-+++ org/mozilla/javascript/ScriptableObject.java	21 Sep 2009 12:51:55 -0000
+--- src/org/mozilla/javascript/ScriptableObject.java	9 Aug 2009 02:57:39 -0000	1.157
++++ src/org/mozilla/javascript/ScriptableObject.java	1 Oct 2009 10:12:50 -0000
 @@ -2331,13 +2331,22 @@
              }
              slot = getSlot(name, index, SLOT_MODIFY);
@@ -85,3 +143,123 @@ diff -u -r1.157 ScriptableObject.java
          }
          if (this == start) {
              slot.value = value;
+Index: toolsrc/org/mozilla/javascript/tools/debugger/Dim.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/toolsrc/org/mozilla/javascript/tools/debugger/Dim.java,v
+retrieving revision 1.15
+diff -u -r1.15 Dim.java
+--- toolsrc/org/mozilla/javascript/tools/debugger/Dim.java	21 Apr 2008 19:54:02 -0000	1.15
++++ toolsrc/org/mozilla/javascript/tools/debugger/Dim.java	1 Oct 2009 10:12:51 -0000
+@@ -87,6 +87,11 @@
+     private ScopeProvider scopeProvider;
+ 
+     /**
++     * The SourceProvider object that provides the source of evaluated scripts.
++     */
++    private SourceProvider sourceProvider;
++
++    /**
+      * The index of the current stack frame.
+      */
+     private int frameIndex = -1;
+@@ -200,6 +205,13 @@
+     }
+ 
+     /**
++     * Sets the ScopeProvider to be used.
++     */
++    public void setSourceProvider(final SourceProvider sourceProvider) {
++        this.sourceProvider = sourceProvider;
++    }
++
++    /**
+      * Switches context to the stack frame with the given index.
+      */
+     public void contextSwitch(int frameIndex) {
+@@ -352,6 +364,9 @@
+         }
+         String url = getNormalizedUrl(topScript);
+         DebuggableScript[] functions = getAllFunctions(topScript);
++        if (sourceProvider != null)
++        	source = sourceProvider.getSource(topScript, source);
++
+         final SourceInfo sourceInfo = new SourceInfo(source, functions, url);
+ 
+         synchronized (urlToSourceInfo) {
+Index: toolsrc/org/mozilla/javascript/tools/debugger/Main.java
+===================================================================
+RCS file: /cvsroot/mozilla/js/rhino/toolsrc/org/mozilla/javascript/tools/debugger/Main.java,v
+retrieving revision 1.76
+diff -u -r1.76 Main.java
+--- toolsrc/org/mozilla/javascript/tools/debugger/Main.java	11 Sep 2007 12:31:33 -0000	1.76
++++ toolsrc/org/mozilla/javascript/tools/debugger/Main.java	1 Oct 2009 10:12:51 -0000
+@@ -141,6 +141,14 @@
+     }
+ 
+     /**
++     * Sets the {@link SourceProvider} that provides the source to be displayed
++     * for script evaluation.
++     */
++    public void setSourceProvider(final SourceProvider sourceProvider) {
++        dim.setSourceProvider(sourceProvider);
++    }
++
++    /**
+      * Assign a Runnable object that will be invoked when the user
+      * selects "Exit..." or closes the Debugger main window.
+      */
+@@ -260,11 +268,11 @@
+      * created {@link Global} object.  No I/O redirection is performed
+      * as with {@link #main(String[])}.
+      */
+-    public static void mainEmbedded(String title) {
++    public static Main mainEmbedded(String title) {
+         ContextFactory factory = ContextFactory.getGlobal();
+         Global global = new Global();
+         global.init(factory);
+-        mainEmbedded(factory, global, title);
++        return mainEmbedded(factory, global, title);
+     }
+ 
+     /**
+@@ -272,10 +280,10 @@
+      * to the given {@link ContextFactory} with the given scope.  No
+      * I/O redirection is performed as with {@link #main(String[])}.
+      */
+-    public static void mainEmbedded(ContextFactory factory,
++    public static Main mainEmbedded(ContextFactory factory,
+                                     Scriptable scope,
+                                     String title) {
+-        mainEmbeddedImpl(factory, scope, title);
++        return mainEmbeddedImpl(factory, scope, title);
+     }
+ 
+     /**
+@@ -283,16 +291,16 @@
+      * to the given {@link ContextFactory} with the given scope.  No
+      * I/O redirection is performed as with {@link #main(String[])}.
+      */
+-    public static void mainEmbedded(ContextFactory factory,
++    public static Main mainEmbedded(ContextFactory factory,
+                                     ScopeProvider scopeProvider,
+                                     String title) {
+-        mainEmbeddedImpl(factory, scopeProvider, title);
++        return mainEmbeddedImpl(factory, scopeProvider, title);
+     }
+ 
+     /**
+      * Helper method for {@link #mainEmbedded(String)}, etc.
+      */
+-    private static void mainEmbeddedImpl(ContextFactory factory,
++    private static Main mainEmbeddedImpl(ContextFactory factory,
+                                          Object scopeProvider,
+                                          String title) {
+         if (title == null) {
+@@ -319,6 +327,7 @@
+         main.pack();
+         main.setSize(600, 460);
+         main.setVisible(true);
++        return main;
+     }
+ 
+     // Deprecated methods

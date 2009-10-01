@@ -95,8 +95,8 @@ Marc Guillemot
 	</target>
 
 	<target name="generateRhinoDiff">
-		<echo message="Generating diff to rhinoDiff.txt"/>
-		<cvs command="diff -u -N" output="rhinoDiff.txt" dest="rhino/src" failonerror="false" />
+		<echo message="Generating diff to rhinoDiff.txt against head from trunk on ${rhino.base.date}"/>
+		<cvs command="diff -D ${rhino.base.date} -u -N" output="rhinoDiff.txt" dest="rhino" failonerror="false" />
 		<echo message="Don't forget to clean the generated diff (for instance removing all lines with .svn)"/>
 	</target>
 
