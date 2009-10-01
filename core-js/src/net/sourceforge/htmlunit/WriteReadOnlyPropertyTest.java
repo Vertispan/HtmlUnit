@@ -14,6 +14,7 @@ import org.mozilla.javascript.ScriptableObject;
  * Test that read-only properties can be... set when needed.
  * This was the standard behavior in Rhino until 1.7R2 but has changed then.
  * It is needed to simulate IE as well as FF2 (but not FF3).
+ * @see <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=519933">Rhino bug 519933</a>
  * @author Marc Guillemot
  */
 public class WriteReadOnlyPropertyTest {
