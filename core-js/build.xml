@@ -17,6 +17,7 @@ Marc Guillemot
 	<property name="test.src" location="src" />
 	<property name="patchedRhino.classes" location="target/rhino-patched-classes" />
 	<property name="patchedRhino.src" location="rhino/src" />
+	<property name="patchedRhino.tools.src" location="rhino/toolsrc" />
 	<property name="originalRhino.classes" location="target/rhino-original-classes" />
 	<property name="src.test.dir" location="src" />
 	<property name="junit.jar" location="lib/junit-4.4.jar" />
@@ -107,6 +108,11 @@ Marc Guillemot
 		<copy toDir="${corejs.dir}">
 		    <fileset dir='${patchedRhino.src}/org/mozilla'>
 				<include name="**/*"/>
+		    </fileset>
+		    <fileset dir='${patchedRhino.tools.src}/org/mozilla'>
+				<include name="javascript/tools/debugger/**/*.java"/>
+				<include name="javascript/tools/shell/**/*.java"/>
+				<include name="javascript/tools/*.java"/>
 		    </fileset>
 		</copy>
 
