@@ -48,9 +48,11 @@
 package org.mozilla.javascript;
 
 import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.io.*;
 import org.mozilla.javascript.debug.DebuggableObject;
+import org.mozilla.javascript.annotations.*;
 
 /**
  * This is the default implementation of the Scriptable interface. This
@@ -1147,8 +1149,13 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         final String setterPrefix = "jsSet_";
         final String ctorName = "jsConstructor";
 
-        Member ctorMember = FunctionObject.findSingleMethod(methods, ctorName);
-
+        Member ctorMember = findAnnotatedMember(methods, JSConstructor.class);
+        if (ctorMember == null) {
+            ctorMember = findAnnotatedMember(ctors, JSConstructor.class);
+        }
+        if (ctorMember == null) {
+            ctorMember = FunctionObject.findSingleMethod(methods, ctorName);
+        }        
         if (ctorMember == null) {
             if (ctors.length == 1) {
                 ctorMember = ctors[0];
@@ -1173,20 +1180,20 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
 
         Method finishInit = null;
         HashSet<String> names = new HashSet<String>(methods.length);
-        for (int i=0; i < methods.length; i++) {
-            if (methods[i] == ctorMember) {
+        for (Method method : methods) {
+            if (method == ctorMember) {
                 continue;
             }
-            String name = methods[i].getName();
+            String name = method.getName();
             if (name.equals("finishInit")) {
-                Class<?>[] parmTypes = methods[i].getParameterTypes();
+                Class<?>[] parmTypes = method.getParameterTypes();
                 if (parmTypes.length == 3 &&
                     parmTypes[0] == ScriptRuntime.ScriptableClass &&
                     parmTypes[1] == FunctionObject.class &&
                     parmTypes[2] == ScriptRuntime.ScriptableClass &&
-                    Modifier.isStatic(methods[i].getModifiers()))
+                    Modifier.isStatic(method.getModifiers()))
                 {
-                    finishInit = methods[i];
+                    finishInit = method;
                     continue;
                 }
             }
@@ -1196,57 +1203,68 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
             if (name.equals(ctorName))
                 continue;
 
+            Annotation annotation = null;
             String prefix = null;
-            if (name.startsWith(functionPrefix)) {
-                prefix = functionPrefix;
-            } else if (name.startsWith(staticFunctionPrefix)) {
-                prefix = staticFunctionPrefix;
-                if (!Modifier.isStatic(methods[i].getModifiers())) {
-                    throw Context.reportRuntimeError(
-                        "jsStaticFunction must be used with static method.");
-                }
-            } else if (name.startsWith(getterPrefix)) {
-                prefix = getterPrefix;
-            } else {
-                // note that setterPrefix is among the unhandled names here -
-                // we deal with that when we see the getter
+            if (method.isAnnotationPresent(JSFunction.class)) {
+                annotation = method.getAnnotation(JSFunction.class);
+            } else if (method.isAnnotationPresent(JSStaticFunction.class)) {
+                annotation = method.getAnnotation(JSStaticFunction.class);
+            } else if (method.isAnnotationPresent(JSGetter.class)) {
+                annotation = method.getAnnotation(JSGetter.class);
+            } else if (method.isAnnotationPresent(JSSetter.class)) {
                 continue;
             }
-            String propName = name.substring(prefix.length());
+
+            if (annotation == null) {
+                if (name.startsWith(functionPrefix)) {
+                    prefix = functionPrefix;
+                } else if (name.startsWith(staticFunctionPrefix)) {
+                    prefix = staticFunctionPrefix;
+                } else if (name.startsWith(getterPrefix)) {
+                    prefix = getterPrefix;
+                } else if (annotation == null) {
+                    // note that setterPrefix is among the unhandled names here -
+                    // we deal with that when we see the getter
+                    continue;
+                }
+            }
+            String propName = getPropertyName(name, prefix, annotation);
             if (names.contains(propName)) {
                 throw Context.reportRuntimeError2("duplicate.defineClass.name",
                         name, propName);
             }
             names.add(propName);
-            name = name.substring(prefix.length());
-            if (prefix == getterPrefix) {
+            name = propName;
+            if (annotation instanceof JSGetter || prefix == getterPrefix) {
                 if (!(proto instanceof ScriptableObject)) {
                     throw Context.reportRuntimeError2(
                         "msg.extend.scriptable",
                         proto.getClass().toString(), name);
                 }
-                Method setter = FunctionObject.findSingleMethod(
-                                    methods,
-                                    setterPrefix + name);
+                Method setter = findSetterMethod(methods, name, setterPrefix);
                 int attr = ScriptableObject.PERMANENT |
                            ScriptableObject.DONTENUM  |
                            (setter != null ? 0
                                            : ScriptableObject.READONLY);
                 ((ScriptableObject) proto).defineProperty(name, null,
-                                                          methods[i], setter,
+                                                          method, setter,
                                                           attr);
                 continue;
             }
 
-            FunctionObject f = new FunctionObject(name, methods[i], proto);
+            boolean isStatic = annotation instanceof JSStaticFunction
+                    || prefix == staticFunctionPrefix;
+            if (isStatic && !Modifier.isStatic(method.getModifiers())) {
+                throw Context.reportRuntimeError(
+                        "jsStaticFunction must be used with static method.");
+            }
+
+            FunctionObject f = new FunctionObject(name, method, proto);
             if (f.isVarArgsConstructor()) {
                 throw Context.reportRuntimeError1
                     ("msg.varargs.fun", ctorMember.getName());
             }
-            Scriptable dest = prefix == staticFunctionPrefix
-                              ? ctor
-                              : proto;
-            defineProperty(dest, name, f, DONTENUM);
+            defineProperty(isStatic ? ctor : proto, name, f, DONTENUM);
             if (sealed) {
                 f.sealObject();
             }
@@ -1267,6 +1285,73 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         }
 
         return ctor;
+    }
+
+    private static Member findAnnotatedMember(AccessibleObject[] members,
+                                              Class<? extends Annotation> annotation) {
+        for (AccessibleObject member : members) {
+            if (member.isAnnotationPresent(annotation)) {
+                return (Member) member;
+            }
+        }
+        return null;
+    }
+
+    private static Method findSetterMethod(Method[] methods,
+                                           String name,
+                                           String prefix) {
+        String newStyleName = "set"
+                + Character.toUpperCase(name.charAt(0))
+                + name.substring(1);
+        for (Method method : methods) {
+            JSSetter annotation = method.getAnnotation(JSSetter.class);
+            if (annotation != null) {
+                if (name.equals(annotation.value()) ||
+                        ("".equals(annotation.value()) && newStyleName.equals(method.getName()))) {
+                    return method;
+                }
+            }
+        }
+        String oldStyleName = prefix + name;
+        for (Method method : methods) {
+            if (oldStyleName.equals(method.getName())) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static String getPropertyName(String methodName,
+                                          String prefix,
+                                          Annotation annotation) {
+        if (prefix != null) {
+            return methodName.substring(prefix.length());
+        }
+        String propName = null;
+        if (annotation instanceof JSGetter) {
+            propName = ((JSGetter) annotation).value();
+            if (propName == null || propName.length() == 0) {
+                if (methodName.length() > 3 && methodName.startsWith("get")) {
+                    propName = methodName.substring(3);
+                    if (Character.isUpperCase(propName.charAt(0))) {
+                        if (propName.length() == 1) {
+                            propName = propName.toLowerCase();
+                        } else if (!Character.isUpperCase(propName.charAt(1))){
+                            propName = Character.toLowerCase(propName.charAt(0))
+                                    + propName.substring(1);
+                        }
+                    }
+                }
+            }
+        } else if (annotation instanceof JSFunction) {
+            propName = ((JSFunction) annotation).value();
+        } else if (annotation instanceof JSStaticFunction) {
+            propName = ((JSStaticFunction) annotation).value();
+        }
+        if (propName == null || propName.length() == 0) {
+            propName = methodName;
+        }
+        return propName;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -1550,9 +1635,13 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
     }
 
     private void defineOwnProperty(Context cx, Slot slot, ScriptableObject desc, int attributes) {
+      String name = slot.name;
+      int index = slot.indexOrHash;
+
       if (isAccessorDescriptor(desc)) {
-        if ( !(slot instanceof GetterSlot) ) 
-          slot = getSlot(cx, slot.name, SLOT_MODIFY_GETTER_SETTER);
+        if ( !(slot instanceof GetterSlot) ) {
+          slot = getSlot(cx, (name != null ? name : index), SLOT_MODIFY_GETTER_SETTER);
+        }
 
         GetterSlot gslot = (GetterSlot) slot;
 
@@ -1569,7 +1658,7 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         gslot.setAttributes(attributes);
       } else {
         if (slot instanceof GetterSlot && isDataDescriptor(desc)) {
-            slot = getSlot(cx, slot.name, SLOT_CONVERT_ACCESSOR_TO_DATA);
+            slot = getSlot(cx, (name != null ? name : index), SLOT_CONVERT_ACCESSOR_TO_DATA);
         }
 
         Object value = getProperty(desc, "value");
@@ -1630,11 +1719,11 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
       }
     }
 
-    private static boolean isTrue(Object value) {
+    protected static boolean isTrue(Object value) {
       return (value == NOT_FOUND) ? false : ScriptRuntime.toBoolean(value);
     }
 
-    private static boolean isFalse(Object value) {
+    protected static boolean isFalse(Object value) {
       return !isTrue(value);
     }
 
@@ -1737,6 +1826,10 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
      */
     public static Scriptable getFunctionPrototype(Scriptable scope) {
         return getClassPrototype(scope, "Function");
+    }
+
+    public static Scriptable getArrayPrototype(Scriptable scope) {
+        return getClassPrototype(scope, "Array");
     }
 
     /**
@@ -2334,9 +2427,15 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         if ((slot.getAttributes() & READONLY) != 0)
             return true;
         if (slot instanceof GetterSlot) {
-            Object setterObj = ((GetterSlot)slot).setter;
+            final GetterSlot getterSlot = (GetterSlot)slot;
+            final Object setterObj = getterSlot.setter;
             if (setterObj == null) {
-                if (((GetterSlot)slot).getter != null) {
+                if (getterSlot.getter != null) {
+                  if (Context.getContext().hasFeature(Context.FEATURE_STRICT_MODE)) {
+                      // Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
+                      // we should throw a TypeError in this case.
+                      throw ScriptRuntime.typeError1("msg.set.prop.no.setter", name);
+                  }
                 	if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES)) {
                         // Odd case: Assignment to a property with only a getter 
                         // defined. The assignment cancels out the getter.
@@ -2376,6 +2475,8 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                 }
                 return true;
             }
+        } else if ((slot.getAttributes() & READONLY) != 0) {
+            return true;
         }
         if (this == start) {
             slot.value = value;

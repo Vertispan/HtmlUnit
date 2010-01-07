@@ -364,8 +364,12 @@ public class Dim {
         }
         String url = getNormalizedUrl(topScript);
         DebuggableScript[] functions = getAllFunctions(topScript);
-        if (sourceProvider != null)
-        	source = sourceProvider.getSource(topScript, source);
+        if (sourceProvider != null) {
+            final String providedSource = sourceProvider.getSource(topScript); 
+            if(providedSource != null) {
+                source = providedSource; 
+            }
+        }
 
         final SourceInfo sourceInfo = new SourceInfo(source, functions, url);
 

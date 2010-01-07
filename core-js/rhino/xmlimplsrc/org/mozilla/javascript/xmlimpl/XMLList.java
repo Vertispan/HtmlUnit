@@ -169,7 +169,8 @@ class XMLList extends XMLObjectImpl implements Function {
             // Secret sauce for super-expandos.
             // We set an element here, and then add ourselves to our target.
             if (targetObject != null && targetProperty != null &&
-                targetProperty.getLocalName() != null)
+                targetProperty.getLocalName() != null &&
+                targetProperty.getLocalName().length() > 0)
             {
                 // Add an empty element with our targetProperty name and 
                 // then set it.
@@ -249,6 +250,9 @@ class XMLList extends XMLObjectImpl implements Function {
                 //    There may well be a better way to do this
                 //    TODO    Find a way to refactor this whole method and simplify it
                 xmlValue = item(index);
+                if (xmlValue == null) {
+                    xmlValue = item(0).copy();
+                }
                 ((XML)xmlValue).setChildren(value);
             }
         }

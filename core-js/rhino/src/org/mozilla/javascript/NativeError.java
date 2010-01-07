@@ -107,7 +107,9 @@ final class NativeError extends IdScriptableObject
     @Override
     public String toString()
     {
-        return js_toString(this);
+        // According to spec, Error.prototype.toString() may return undefined. 
+        Object toString =  js_toString(this);
+        return toString instanceof String ? (String) toString : super.toString();
     }
 
     @Override
@@ -145,9 +147,21 @@ final class NativeError extends IdScriptableObject
         throw new IllegalArgumentException(String.valueOf(id));
     }
 
-    private static String js_toString(Scriptable thisObj)
-    {
-        return getString(thisObj, "name")+": "+getString(thisObj, "message");
+    private static Object js_toString(Scriptable thisObj) {
+        Object name = ScriptableObject.getProperty(thisObj, "name");
+        if (name == NOT_FOUND || name == Undefined.instance) {
+            name = "Error";
+        } else {
+            name = ScriptRuntime.toString(name);
+        }
+        Object msg = ScriptableObject.getProperty(thisObj, "message");
+        final Object result;
+        if (msg == NOT_FOUND || msg == Undefined.instance) {
+            result = Undefined.instance;
+        } else {
+            result = ((String) name) + ": " + ScriptRuntime.toString(msg);
+        }
+        return result;
     }
 
     private static String js_toSource(Context cx, Scriptable scope,

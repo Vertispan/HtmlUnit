@@ -22,8 +22,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Christopher Oliver
- *   Cameron McCormack
+ *   Marc Guillemot
+ *   Attila Szegedi
  *
  * Alternatively, the contents of this file may be used under the terms of
  * the GNU General Public License Version 2 or later (the "GPL"), in which
@@ -43,13 +43,16 @@ import org.mozilla.javascript.debug.DebuggableScript;
 
 /**
  * Interface to provide a source of scripts to the debugger.
+ * @version $Id$
  */
 public interface SourceProvider {
 
     /**
      * Returns the source of the script.
      * @param script the script object
-     * @param knownSource the source as known by the compiler
+     * @return the source code of the script, or null if it can not be provided
+     * (the provider is not expected to decompile the script, so if it doesn't
+     * have a readily available source text, it is free to return null).
      */
-    String getSource(DebuggableScript script, final String knownSource);
+    String getSource(DebuggableScript script);
 }

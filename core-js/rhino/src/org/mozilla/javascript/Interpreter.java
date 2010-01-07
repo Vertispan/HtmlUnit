@@ -1039,6 +1039,20 @@ switch (op) {
           frame.idata.itsSourceFile, sourceLine);
       break Loop;
     }
+    case Token.STRICT_SETNAME: {
+        Object rhs = stack[stackTop];
+        if (rhs == DBL_MRK) rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
+        --stackTop;
+        Scriptable lhs = (Scriptable)stack[stackTop];
+        if (lhs != null) {
+            stack[stackTop] = ScriptRuntime.setName(lhs, rhs, cx,
+                                                    frame.scope, stringReg);
+            continue Loop;
+        }
+        stack[stackTop] = cx.newObject(frame.scope, "ReferenceError",
+                                       new Object[] { stringReg });
+    }
+    /* fall through */
     case Token.THROW: {
         Object value = stack[stackTop];
         if (value == DBL_MRK) value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
@@ -2801,7 +2815,7 @@ switch (op) {
     	if (frame.parentFrame != null && !frame.parentFrame.fnOrScript.isScript())
     		frame.fnOrScript.defaultPut("caller", frame.parentFrame.fnOrScript);
 
-    	boolean usesActivation = frame.idata.itsNeedsActivation;
+        boolean usesActivation = frame.idata.itsNeedsActivation;
         boolean isDebugged = frame.debuggerFrame != null;
         if(usesActivation || isDebugged) {
             Scriptable scope = frame.scope;
@@ -2851,7 +2865,7 @@ switch (op) {
     {
 		frame.fnOrScript.delete("caller");
 
-		if (frame.idata.itsNeedsActivation) {
+        if (frame.idata.itsNeedsActivation) {
             ScriptRuntime.exitActivationFunction(cx);
         }
 

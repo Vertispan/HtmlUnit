@@ -114,7 +114,7 @@ public class Parser
     protected int nestingOfFunction;
     private LabeledStatement currentLabel;
     private boolean inDestructuringAssignment;
-    private boolean inUseStrictDirective;
+    protected boolean inUseStrictDirective;
 
     // The following are per function variables and should be saved/restored
     // during function parsing.  See PerFunctionVariables class below.
@@ -240,16 +240,27 @@ public class Parser
             ? ScriptRuntime.getMessage0(messageId)
             : ScriptRuntime.getMessage1(messageId, messageArg);
     }
-
+    
     void reportError(String messageId) {
+        reportError(messageId, null);
+    }
+
+    void reportError(String messageId, String messageArg) {
         if (ts == null) {  // happens in some regression tests
-            reportError(messageId, 1, 1);
+            reportError(messageId, messageArg, 1, 1);
         } else {
-            reportError(messageId, ts.tokenBeg, ts.tokenEnd - ts.tokenBeg);
+            reportError(messageId, messageArg, ts.tokenBeg,
+                        ts.tokenEnd - ts.tokenBeg);
         }
     }
 
     void reportError(String messageId, int position, int length)
+    {
+        reportError(messageId, null, position, length);
+    }
+
+    void reportError(String messageId, String messageArg, int position,
+                     int length)
     {
         addError(messageId, position, length);
 
@@ -708,6 +719,11 @@ public class Parser
                     String paramName = ts.getString();
                     defineSymbol(Token.LP, paramName);
                     if (this.inUseStrictDirective) {
+                        if ("eval".equals(paramName) ||
+                            "arguments".equals(paramName))
+                        {
+                            reportError("msg.bad.id.strict", paramName);
+                        }
                         if (paramNames.contains(paramName))
                             addError("msg.dup.param.strict", paramName);
                         paramNames.add(paramName);
@@ -762,6 +778,12 @@ public class Parser
 
         if (matchToken(Token.NAME)) {
             name = createNameNode(true, Token.NAME);
+            if (inUseStrictDirective) {
+                String id = name.getIdentifier();
+                if ("eval".equals(id)|| "arguments".equals(id)) {
+                    reportError("msg.bad.id.strict", id);                
+                }
+            }
             if (!matchToken(Token.LP)) {
                 if (compilerEnv.isAllowMemberExprAsFunctionName()) {
                     AstNode memberExprHead = name;
@@ -1408,6 +1430,14 @@ public class Parser
 
                 mustMatchToken(Token.NAME, "msg.bad.catchcond");
                 Name varName = createNameNode();
+                String varNameString = varName.getIdentifier();
+                if (inUseStrictDirective) {
+                    if ("eval".equals(varNameString) ||
+                        "arguments".equals(varNameString))
+                    {
+                        reportError("msg.bad.id.strict", varNameString);
+                    }
+                }
 
                 AstNode catchCond = null;
                 if (matchToken(Token.IF)) {
@@ -1603,6 +1633,7 @@ public class Parser
         }
 
         WithStatement pn = new WithStatement(pos, getNodeEnd(body) - pos);
+        pn.setJsDoc(getAndResetJsDoc());
         pn.setExpression(obj);
         pn.setStatement(body);
         pn.setParens(lp, rp);
@@ -1869,6 +1900,13 @@ public class Parser
                 mustMatchToken(Token.NAME, "msg.bad.var");
                 name = createNameNode();
                 name.setLineno(ts.getLineno());
+                if (inUseStrictDirective) {
+                    String id = ts.getString();
+                    if ("eval".equals(id) || "arguments".equals(ts.getString()))
+                    {
+                        reportError("msg.bad.id.strict", id);                    
+                    }
+                }
                 defineSymbol(declType, ts.getString(), inForInit);
             }
 
@@ -1882,7 +1920,7 @@ public class Parser
                 end = getNodeEnd(init);
             }
 
-            VariableInitializer vi = new VariableInitializer(kidPos, end);
+            VariableInitializer vi = new VariableInitializer(kidPos, end - kidPos);
             if (destructuring != null) {
                 if (init == null && !inForInit) {
                     reportError("msg.destruct.assign.no.init");
@@ -3050,6 +3088,7 @@ public class Parser
         for (;;) {
             String propertyName = null;
             int tt = peekToken();
+            String jsdoc = getAndResetJsDoc();
             switch(tt) {
               case Token.NAME:
               case Token.STRING:
@@ -3070,12 +3109,14 @@ public class Parser
                   {
                       consumeToken();
                       name = createNameNode();
+                      name.setJsDoc(jsdoc);
                       ObjectProperty objectProp = getterSetterProperty(ppos, name,
                                                      "get".equals(propertyName));
                       elems.add(objectProp);
                       propertyName = objectProp.getLeft().getString();
                   } else {
                       AstNode pname = stringProp != null ? stringProp : name;
+                      pname.setJsDoc(jsdoc);
                       elems.add(plainProperty(pname, tt));
                   }
                   break;
@@ -3086,6 +3127,7 @@ public class Parser
                   AstNode nl = new NumberLiteral(ts.tokenBeg,
                                                  ts.getString(),
                                                  ts.getNumber());
+                  nl.setJsDoc(jsdoc);
                   propertyName = ts.getString();
                   elems.add(plainProperty(nl, tt));
                   break;
@@ -3108,6 +3150,10 @@ public class Parser
                 propertyNames.add(propertyName);
             }
 
+            // Eat any dangling jsdoc in the property.
+            getAndResetJsDoc();
+            jsdoc = null;
+            
             if (matchToken(Token.COMMA)) {
                 afterComma = ts.tokenEnd;
             } else {
@@ -3631,6 +3677,12 @@ public class Parser
         int nodeType = left.getType();
         switch (nodeType) {
           case Token.NAME:
+              if (inUseStrictDirective &&
+                  "eval".equals(((Name) left).getIdentifier()))
+              {
+                  reportError("msg.bad.id.strict",
+                              ((Name) left).getIdentifier());
+              }
               left.setType(Token.BINDNAME);
               return new Node(Token.SETNAME, left, right);
 

@@ -873,8 +873,6 @@ ecma_3/Exceptions/15.11.7.6-001.js
 ecma_3/Exceptions/15.11.7.6-002.js
 ecma_3/Exceptions/15.11.7.6-003.js
 ecma_3/Exceptions/binding-001.js
-ecma_3/Exceptions/regress-181654.js
-ecma_3/Exceptions/regress-181914.js
 ecma_3/Exceptions/regress-95101.js
 ecma_3/ExecutionContexts/10.1.3-1.js
 ecma_3/ExecutionContexts/10.1.3-2.js
@@ -894,7 +892,6 @@ ecma_3/FunExpr/fe-001.js
 ecma_3/FunExpr/fe-002.js
 ecma_3/Function/15.3.4.3-1.js
 ecma_3/Function/15.3.4.4-1.js
-ecma_3/Function/arguments-001.js
 ecma_3/Function/arguments-002.js
 ecma_3/Function/call-001.js
 ecma_3/Function/regress-131964.js
@@ -1283,8 +1280,6 @@ js1_5/Regress/regress-328012.js
 js1_5/Regress/regress-328897.js
 js1_5/Regress/regress-329383.js
 js1_5/Regress/regress-330951.js
-js1_5/Regress/regress-334807-01.js
-js1_5/Regress/regress-334807-03.js
 js1_5/Regress/regress-334807-05.js
 js1_5/Regress/regress-334807-06.js
 js1_5/Regress/regress-338307.js
@@ -1353,10 +1348,8 @@ js1_5/decompilation/regress-349663.js
 js1_5/decompilation/regress-350670.js
 js1_5/decompilation/regress-351625.js
 js1_5/decompilation/regress-351626.js
-js1_5/decompilation/regress-351705.js
 js1_5/decompilation/regress-352022.js
 js1_5/decompilation/regress-352073.js
-js1_5/decompilation/regress-352312.js
 js1_5/decompilation/regress-352360.js
 js1_5/decompilation/regress-352873-01.js
 js1_5/decompilation/regress-352873-02.js
@@ -1366,7 +1359,6 @@ js1_5/decompilation/regress-354910.js
 js1_5/decompilation/regress-371692.js
 js1_5/decompilation/regress-373678.js
 js1_5/decompilation/regress-375639.js
-js1_5/decompilation/regress-376564.js
 js1_5/decompilation/regress-383721.js
 js1_5/decompilation/regress-406555.js
 js1_5/extensions/catchguard-001.js
