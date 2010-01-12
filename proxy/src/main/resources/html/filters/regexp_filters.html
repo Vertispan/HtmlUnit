@@ -1,0 +1,479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>RegExp Filters</title>
+
+</head>
+<body bgcolor="white">
+<table width="640" border="0">
+  <tbody>
+    <tr>
+              <td align="center">
+
+      <h1>RegExp Filters</h1>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+<!-- Content starts here -->
+<table cellpadding="2" cellspacing="2" border="0" width="640">
+    <tbody>
+      <tr>
+        <td valign="top" align="left" width="600">PAW support two kind of
+Regular expression filters, <i><b>Replace-</b></i> and       <i><b>Size-Filters</b></i>.<br>
+Replace-Filters inspect the HTML page returned from the web server and do
+substitutions according to the rules of the active Replace-Filters.<br>
+Size-Filters in addition can include height and width definitions which are
+read from a specified file to filter for examples images.<br>
+      <br>
+      <br>
+
+      <div align="center"><b>Information for developers</b><br>
+
+      <hr width="100%" size="2"></div>
+Special instructions known by Replace- and Size-Filters are:<br>
+      <br>
+
+      <blockquote>
+        <table cellpadding="2" cellspacing="2">
+          <tbody>
+            <tr>
+              <td valign="top">@START<br>
+              </td>
+              <td valign="top">Inset &nbsp;at start of HTML file.<br>
+              </td>
+            </tr>
+            <tr>
+              <td valign="top">@END<br>
+              </td>
+              <td valign="top">Append to end of HTML file.<br>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        <br>
+      </blockquote>
+In addition Size-Filters can include the following instructions:<br>
+      <br>
+
+      <blockquote>
+        <table cellpadding="2" cellspacing="2">
+    <tbody>
+      <tr>
+        <td valign="top">@HEIGHT<br>
+        </td>
+        <td valign="top">Width read from file.<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">@WIDTH<br>
+        </td>
+        <td valign="top">Height read from file.<br>
+        </td>
+      </tr>
+
+          </tbody>
+        </table>
+      </blockquote>
+The width and height used in Size-Filters read from a file which has the
+form.<br>
+Each line contains one width and height definition:<br>
+      <br>
+      <code>WIDTHxHEIGHT</code><br>
+      <br>
+
+      <h3>Perl 5 Regular Expressions</h3>
+PAW Regualar Expression Filters support basic Perl 5 Regular Expressions
+(including back references).<br>
+      <br>
+      <b>Regular Expression Syntax</b><br>
+
+      <table class="informaltable" border="1" cellpadding="3">
+        <thead class="thead"><tr class="row" valign="top">
+          <th class="entry" align="left" rowspan="1" colspan="1">Metacharacter</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Meaning</th>
+        </tr>
+        </thead><tbody class="tbody">
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Escapes the character(s) immediately following
+it</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">.</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches any single character except a newline
+(unless <code class="literal">/s</code> is used)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">^</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the beginning of the string (or line,
+if <code class="literal">/m</code> used)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">$</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the end of the string (or line, if
+            <code class="literal">/m</code> used)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">*</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches the preceding element 0 or more times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">+</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches the preceding element 1 or more times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches the preceding element 0 or 1 times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{...}</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Specifies a range of occurrences for the element
+preceding it</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">[...]</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches any one of the class of characters contained
+within the brackets</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">(...)</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Groups regular expressions</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">|</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches either the expression preceding or following
+it</p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <br>
+      <b>Escaped Sequence<br>
+      </b>
+      <table class="informaltable" border="1" cellpadding="3">
+        <thead class="thead"><tr class="row" valign="top">
+          <th class="entry" align="left" rowspan="1" colspan="1">Code</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Matches</th>
+        </tr>
+        </thead><tbody class="tbody">
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\a</code></td>
+            <td class="entry" rowspan="1" colspan="1">Alarm (beep)</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\n</code></td>
+            <td class="entry" rowspan="1" colspan="1">Newline</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\r</code></td>
+            <td class="entry" rowspan="1" colspan="1">Carriage return</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\t</code></td>
+            <td class="entry" rowspan="1" colspan="1">Tab</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\f</code></td>
+            <td class="entry" rowspan="1" colspan="1">Formfeed</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\e</code></td>
+            <td class="entry" rowspan="1" colspan="1">Escape</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\007</code></td>
+            <td class="entry" rowspan="1" colspan="1">Any octal ASCII value</td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\x7f</code></td>
+            <td class="entry" rowspan="1" colspan="1">Any hexadecimal ASCII
+value </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\c</code><code class="replaceable"><i>x</i></code></td>
+            <td class="entry" rowspan="1" colspan="1">Control-<code
+ class="replaceable"><i>x</i></code></td>
+          </tr>
+
+        </tbody>
+      </table>
+      <b><br>
+Character Classes</b><br>
+
+      <table class="informaltable" border="1" cellpadding="3">
+        <thead class="thead"><tr class="row" valign="top">
+          <th class="entry" align="left" rowspan="1" colspan="1">Code</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Matches</th>
+        </tr>
+        </thead><tbody class="tbody">
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\d</code></td>
+            <td class="entry" rowspan="1" colspan="1">A digit, same as <code
+ class="literal">[0-9]</code></td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\D</code></td>
+            <td class="entry" rowspan="1" colspan="1">A nondigit, same as
+            <code class="literal">[^0-9]</code></td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\w</code></td>
+            <td class="entry" rowspan="1" colspan="1">A word character (alphanumeric),
+same as <code class="literal">[a-zA-Z_0-9]</code></td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\W</code></td>
+            <td class="entry" rowspan="1" colspan="1">A nonword character,
+            <code class="literal">[^a-zA-Z_0-9]</code></td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\s</code></td>
+            <td class="entry" rowspan="1" colspan="1">A whitespace character,
+same as <code class="literal">[\t\n\r\f]</code></td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\S</code></td>
+            <td class="entry" rowspan="1" colspan="1">A non-whitespace character,
+            <code class="literal">[^\t\n\r\f]</code></td>
+          </tr>
+
+        </tbody>
+      </table>
+      <br>
+      <b>Anchors</b><br>
+
+      <table class="informaltable" border="1" cellpadding="3">
+        <thead class="thead"><tr class="row" valign="top">
+          <th class="entry" align="left" rowspan="1" colspan="1">Assertion</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Meaning</th>
+        </tr>
+        </thead><tbody class="tbody">
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">^</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the beginning of the string (or line,
+if <code class="literal">/m</code> used)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">$</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the end of the string (or line, if
+            <code class="literal">/m</code> used)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\b</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at word boundary (between <code
+ class="literal">\w</code> and <code class="literal">\W</code>)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\B</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches except at word boundary</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\A</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the beginning of the string</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\Z</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches at the end of the string or before a newline</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\z</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches only at the end of the string</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">\G</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Matches where previous <code class="literal">m//g</code>
+left off</p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <br>
+      <b>Quantifiers</b><br>
+
+      <table class="informaltable" border="1" cellpadding="3">
+        <thead class="thead"><tr class="row" valign="top">
+          <th class="entry" align="left" rowspan="1" colspan="1">Maximal</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Minimal</th>
+          <th class="entry" align="left" rowspan="1" colspan="1">Allowed Range</th>
+        </tr>
+        </thead><tbody class="tbody">
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code>,<code
+ class="literal">m</code><code class="literal">}</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code>,<code
+ class="literal">m</code><code class="literal">}?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Must occur at least <code class="literal">n</code>
+times but no more than <code class="literal">m</code> times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code><code
+ class="literal">,}</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code><code
+ class="literal">,}?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Must occur at least <code class="literal">n</code>
+times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code><code
+ class="literal">}</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">{</code><code class="literal">n</code><code
+ class="literal">}?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">Must match exactly <code class="literal">n</code>
+times</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">*</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">*?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">0 or more times (same as <code
+ class="literal">{0,}</code>)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">+</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">+?</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">1 or more times (same as <code
+ class="literal">{1,}</code>)</p>
+            </td>
+          </tr>
+          <tr class="row" valign="top">
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">?</code></td>
+            <td class="entry" rowspan="1" colspan="1"><code
+ class="literal">??</code></td>
+            <td class="entry" rowspan="1" colspan="1">
+
+            <p class="para">0 or 1 time (same as <code class="literal">{0,1}</code>)</p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <br>
+      </td>
+      </tr>
+
+  </tbody>
+</table>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

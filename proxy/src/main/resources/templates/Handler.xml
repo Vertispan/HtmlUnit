@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<handlers>
+  <handler status="inactive">
+    <name>New Handler</name>
+    <description>
+<!-- Description -->
+    </description>
+    <removable>true</removable>
+    <id><!-- Param id --></id>
+    <files>
+      <!-- File entries (one or multiple) -->
+      <file><!-- Filename --></file>
+    </files>
+    <params>
+      <!-- Parameter entries (one or multiple) -->
+      <param name="" value="" />
+    </params>
+  </handler>
+</handlers>
+
+

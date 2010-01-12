@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<reg-filters>
+   <reg-filter type="size" status="active">
+    <name>New Size Filter</name>
+    <description>
+
+    </description>
+    <file></file>
+    <regexp>
+      <match><![CDATA[<!-- Insert Regular Expression -->]]></match>
+      <subst><![CDATA[<!-- Insert Regular Expression -->]]></subst>
+    </regexp>
+  </reg-filter>
+</reg-filters>
+
+

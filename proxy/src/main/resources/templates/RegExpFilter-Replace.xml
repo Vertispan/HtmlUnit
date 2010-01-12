@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<reg-filters>
+  <reg-filter type="replace" status="inactive">
+    <name>New Replace Filter</name>
+    <description>
+<!-- Insert description -->
+    </description>
+    <!-- One or more <regexp>...</regexp> sections -->
+    <regexp>
+      <match><![CDATA[<!-- Insert Regular Expression -->]]></match>
+      <subst><![CDATA[<!-- Insert Regular Expression -->]]></subst>
+    </regexp>
+  </reg-filter>
+</reg-filters>
+
+

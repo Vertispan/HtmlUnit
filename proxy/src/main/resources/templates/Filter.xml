@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<filters>
+  <filter status="inactive" type="httpProxy">
+    <name>New Filter</name>
+    <description>
+<!-- Description -->
+    </description>
+    <removable>true</removable>
+    <id><!-- Param id --></id>
+    <files>
+      <!-- File entries (one or multiple) -->
+      <file><!-- Filename --></file>
+    </files>
+    <params>
+      <!-- Parameter entries (one or multiple) -->
+      <param name="" value="" />
+    </params>
+  </filter>
+</filters>
+
+

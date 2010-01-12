@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>Visualization Filter</title>
+
+</head>
+<body bgcolor="white">
+<table width="640" border="0">
+  <tbody>
+    <tr>
+              <td align="center">
+
+
+      <h1>Visualization Filter</h1>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+<!-- Content starts here -->
+<table cellpadding="2" cellspacing="2" border="0" width="640">
+    <tbody>
+      <tr>
+        <td valign="top" align="left" width="600">Logs HTTP Protocol conversation
+between Client and Server.<br>
+      <br>
+The output is written to the <i><b>logfile</b></i>.<br>
+      <br>
+
+      <blockquote><img src="images/attention.png" alt="" align="middle"> &nbsp; &nbsp; Should only be used for debugging,
+because logfile can get very large.<br>
+      </blockquote>
+      <br>
+Sample output:<br>
+      <br>
+      <blockquote><code>===========================================</code><br>
+        <code>CLIENT --&gt; SERVER</code><br>
+        <code>GET http://www.google.de/ HTTP/1.1</code><br>
+        <code>Host: www.google.de</code><br>
+        <code>User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.1)
+Gecko/20020913 Debian/1.1-1</code><br>
+        <code>Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,<br>
+image/png,image/jpeg,image/gif;q=0.2,text/css,*/*;q=0.1</code><br>
+        <code>Accept-Encoding: gzip, deflate, compress;q=0.9</code><br>
+        <code>Accept-Charset: ISO-8859-1, utf-8;q=0.66, *;q=0.66</code><br>
+        <code>Cookie: PREF=ID=1ac847e83fc07786:LD=de:TM=1030169582:LM=1033066029:S=49YXCcZc_PFmo2Yx</code><br>
+        <code>Cache-Control: max-age=0</code><br>
+        <code>-------------------------------------------</code><br>
+        <code>SERVER --&gt; CLIENT</code><br>
+        <code>HTTP/1.1 200 OK</code><br>
+        <code>Content-Length: 1272</code><br>
+        <code>Server: GWS/2.0</code><br>
+        <code>Date: Sat, 28 Dec 2002 12:19:42 GMT</code><br>
+        <code>Content-Encoding: gzip</code><br>
+        <code>Content-Type: text/html</code><br>
+        <code>Cache-control: private</code><br>
+        <code>Via: HTTP/1.1 127.0.0.1:8080 (Brazil/2.0)</code><br>
+        <code>Proxy-Connection: close</code><br>
+        <code>X-PAW-DECOMPRESSED: true</code><br>
+        <code>===========================================</code><br>
+      </blockquote>
+      </td>
+      </tr>
+
+  </tbody>
+</table>
+</body>
+</html>
