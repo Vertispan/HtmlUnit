@@ -89,4 +89,12 @@
             </batchtest>
         </junit>
     </target>
+
+	<target name="run-server" depends="compile" description="Runs the server">
+        <java classname="org.paw.server.PawMain" classpathref="build.classpath" fork="true" dir="${build.dir}"/>
+	</target>
+
+	<target name="run-gui" depends="compile" description="Runs the GUI">
+        <java classname="org.paw.gui.PawGui" classpathref="build.classpath" fork="true" dir="${build.dir}"/>
+	</target>
 </project>
