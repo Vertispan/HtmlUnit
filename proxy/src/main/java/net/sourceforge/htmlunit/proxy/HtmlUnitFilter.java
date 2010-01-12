@@ -17,7 +17,6 @@ public class HtmlUnitFilter implements Filter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public byte[] filter(Request arg0, MimeHeaders arg1, byte[] arg2) {
         return null;
     }
@@ -25,7 +24,6 @@ public class HtmlUnitFilter implements Filter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean shouldFilter(Request arg0, MimeHeaders arg1) {
         return false;
     }
@@ -33,7 +31,6 @@ public class HtmlUnitFilter implements Filter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean init(Server arg0, String arg1) {
         return false;
     }
@@ -41,7 +38,6 @@ public class HtmlUnitFilter implements Filter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean respond(Request arg0) throws IOException {
         return false;
     }
