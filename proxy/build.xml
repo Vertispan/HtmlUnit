@@ -4,7 +4,8 @@
     <property name="build.dir" value="bin"/>
     <property name="build.srcDir" value="src/main/java"/>
     <property name="build.resourceDir" value="src/main/resources"/>
-    <property name="build.testDir" value="src/test"/>
+    <property name="build.testDir" value="src/test/java"/>
+	<property name="build.testResourceDir" value="src/test/resources"/>
 
     <path id="build.classpath">
         <pathelement location="${basedir}/lib/paw-gui-0.30.jar"/>
@@ -60,6 +61,9 @@
 	        <path refid="build.classpath"/>
 	      </classpath>
 	    </javac>
+	    <copy todir="${build.dir}">
+	      <fileset dir="${build.testResourceDir}"/>
+	    </copy>
 	  </target>
 
 	<target name="test-junit-present">
