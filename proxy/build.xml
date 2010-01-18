@@ -15,6 +15,7 @@
         <pathelement location="${basedir}/lib/gnu-regexp-1.1.4.jar"/>
         <pathelement location="${basedir}/lib/jdom-1.1.jar"/>
         <pathelement location="${basedir}/lib/xerces-2.9.1.jar"/>
+        <pathelement location="${basedir}/lib/htmlunit-core-js-2.7-SNAPSHOT-07-01-2010.jar"/>
     </path>
 
 	<target name="clean" description="Clean the output directory">
