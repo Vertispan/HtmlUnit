@@ -25,12 +25,17 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.AstNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.AstRoot;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Block;
 import net.sourceforge.htmlunit.corejs.javascript.ast.CatchClause;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ConditionalExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ExpressionStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionCall;
 import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
+import net.sourceforge.htmlunit.corejs.javascript.ast.InfixExpression;
+import net.sourceforge.htmlunit.corejs.javascript.ast.KeywordLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Name;
 import net.sourceforge.htmlunit.corejs.javascript.ast.NumberLiteral;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectLiteral;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectProperty;
 import net.sourceforge.htmlunit.corejs.javascript.ast.PropertyGet;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ReturnStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Scope;
@@ -50,22 +55,30 @@ import sunlabs.brazil.util.http.MimeHeaders;
  */
 public class BeautifierFilter implements Filter {
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public byte[] filter(final Request arg0, final MimeHeaders arg1, final byte[] arg2) {
         return null;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean shouldFilter(final Request arg0, final MimeHeaders arg1) {
         return false;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean init(final Server arg0, final String arg1) {
         return false;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean respond(final Request arg0) throws IOException {
         return false;
     }
@@ -129,6 +142,21 @@ public class BeautifierFilter implements Filter {
         }
         else if (node instanceof NumberLiteral) {
             print((NumberLiteral) node, sb, depth);
+        }
+        else if (node instanceof ConditionalExpression) {
+            print((ConditionalExpression) node, sb, depth);
+        }
+        else if (node instanceof ObjectLiteral) {
+            print((ObjectLiteral) node, sb, depth);
+        }
+        else if (node instanceof ObjectProperty) {
+            print((ObjectProperty) node, sb, depth);
+        }
+        else if (node instanceof KeywordLiteral) {
+            print((KeywordLiteral) node, sb, depth);
+        }
+        else if (node instanceof InfixExpression) {
+            print((InfixExpression) node, sb, depth);
         }
         else {
             throw new RuntimeException("Unknown " + node.getClass().getName());
@@ -420,6 +448,101 @@ public class BeautifierFilter implements Filter {
     protected void print(final NumberLiteral node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append(node.getValue() == null ? "<null>" : node.getValue());
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ConditionalExpression node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        print(node.getTestExpression(), sb, depth);
+        sb.append(" ? ");
+        print(node.getTrueExpression(), sb, 0);
+        sb.append(" : ");
+        print(node.getFalseExpression(), sb, 0);
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ObjectLiteral node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("{");
+        if (!node.getElements().isEmpty()) {
+            printList(node.getElements(), sb);
+        }
+        sb.append("}");
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ObjectProperty node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        if (node.isGetter()) {
+            sb.append("get ");
+        }
+        else if (node.isSetter()) {
+            sb.append("set ");
+        }
+        print(node.getLeft(), sb, 0);
+        if (node.getType() == Token.COLON) {
+            sb.append(": ");
+        }
+        print(node.getRight(), sb, 0);
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final KeywordLiteral node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        switch (node.getType()) {
+            case Token.THIS:
+                sb.append("this");
+                break;
+            case Token.NULL:
+                sb.append("null");
+                break;
+            case Token.TRUE:
+                sb.append("true");
+                break;
+            case Token.FALSE:
+                sb.append("false");
+                break;
+            case Token.DEBUGGER:
+                sb.append("debugger");
+                break;
+            default:
+                throw new IllegalStateException("Invalid keyword literal type: " + node.getType());
+        }
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final InfixExpression node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        print(node.getLeft(), sb, 0);
+        sb.append(" ");
+        sb.append(AstNode.operatorToString(node.getType()));
+        sb.append(" ");
+        print(node.getRight(), sb, 0);
     }
 
 }

@@ -33,7 +33,9 @@ public class BeautifierFilterTest {
     @Test
     public void test() {
         final String source = "function oa(){if(!c.isReady){try{s.documentElement.doScroll(\"left\");}catch(a){"
-            + "setTimeout(oa,1);return;}c.ready();}}";
+            + "setTimeout(oa,1);return;}c.ready();}}"
+            + "function La(a,b){b.src?c.ajax({url:b.src,async:false,dataType:\"script\"}):"
+            + "c.globalEval(b.text||b.textContent||b.innerHTML||\"\");b.parentNode&&b.parentNode.removeChild(b);}";
 
         final String beautified = new BeautifierFilter().beautify(source);
         final AstRoot root = new Parser().parse(source, "<cmd>", 0);
