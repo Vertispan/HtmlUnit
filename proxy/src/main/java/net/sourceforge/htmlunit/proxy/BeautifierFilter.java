@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2010 HtmlUnit team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.sourceforge.htmlunit.proxy;
 
 import java.io.IOException;
@@ -32,38 +46,45 @@ import sunlabs.brazil.util.http.MimeHeaders;
  * Beautifier filter.
  *
  * @author Ahmed Ashour
+ * @version $Revision$
  */
 public class BeautifierFilter implements Filter {
 
     @Override
-    public byte[] filter(Request arg0, MimeHeaders arg1, byte[] arg2) {
+    public byte[] filter(final Request arg0, final MimeHeaders arg1, final byte[] arg2) {
         return null;
     }
 
     @Override
-    public boolean shouldFilter(Request arg0, MimeHeaders arg1) {
+    public boolean shouldFilter(final Request arg0, final MimeHeaders arg1) {
         return false;
     }
 
     @Override
-    public boolean init(Server arg0, String arg1) {
+    public boolean init(final Server arg0, final String arg1) {
         return false;
     }
 
     @Override
-    public boolean respond(Request arg0) throws IOException {
+    public boolean respond(final Request arg0) throws IOException {
         return false;
     }
 
     String beautify(final String source) {
-        Parser parser = new Parser(); 
-        AstRoot root = parser.parse(source, "<cmd>", 0);
-        StringBuilder builder = new StringBuilder();
+        final Parser parser = new Parser();
+        final AstRoot root = parser.parse(source, "<cmd>", 0);
+        final StringBuilder builder = new StringBuilder();
         print(root, builder, 0);
         return builder.toString();
     }
 
-    private void print(final Node node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    private void print(final Node node, final StringBuilder sb, final int depth) {
         if (node instanceof AstRoot) {
             print((AstRoot) node, sb, depth);
         }
@@ -85,7 +106,7 @@ public class BeautifierFilter implements Filter {
         else if (node instanceof Scope) {
             print((Scope) node, sb, depth);
         }
-        else if(node instanceof PropertyGet) {
+        else if (node instanceof PropertyGet) {
             print((PropertyGet) node, sb, depth);
         }
         else if (node instanceof TryStatement) {
@@ -114,7 +135,7 @@ public class BeautifierFilter implements Filter {
         }
     }
 
-    private static void makeIndent(int indent, StringBuilder builder) {
+    private static void makeIndent(final int indent, final StringBuilder builder) {
         for (int i = 0; i < indent; i++) {
             builder.append("  ");
         }
@@ -124,25 +145,38 @@ public class BeautifierFilter implements Filter {
      * Prints a comma-separated item list into a {@link StringBuilder}.
      * @param items a list to print
      * @param sb a {@link StringBuilder} into which to print
+     * @param <T> the type of node
      */
-    protected <T extends AstNode> void printList(List<T> items, StringBuilder sb) {
-        int max = items.size();
+    protected <T extends AstNode> void printList(final List<T> items, final StringBuilder sb) {
+        final int max = items.size();
         int count = 0;
-        for (AstNode item : items) {
+        for (final AstNode item : items) {
             print(item, sb, 0);
-            if (count++ < max-1) {
+            if (count++ < max - 1) {
                 sb.append(", ");
             }
         }
     }
 
-    protected void print(final AstRoot node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final AstRoot node, final StringBuilder sb, final int depth) {
         for (final Node child : node) {
             print(child, sb, depth);
         }
     }
 
-    protected void print(final FunctionNode node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final FunctionNode node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("function");
         if (node.getFunctionName() != null) {
@@ -151,7 +185,8 @@ public class BeautifierFilter implements Filter {
         }
         if (node.getParams().isEmpty()) {
             sb.append("() ");
-        } else {
+        }
+        else {
             sb.append("(");
             printList(node.getParams(), sb);
             sb.append(") ");
@@ -159,8 +194,9 @@ public class BeautifierFilter implements Filter {
         if (node.isExpressionClosure()) {
             sb.append(" ");
             print(node.getBody(), sb, 0);
-        } else {
-            int previousLength = sb.length();
+        }
+        else {
+            final int previousLength = sb.length();
             print(node.getBody(), sb, 0);
             sb.replace(previousLength, sb.length(), sb.substring(previousLength, sb.length()).trim());
         }
@@ -169,12 +205,24 @@ public class BeautifierFilter implements Filter {
         }
     }
 
-    protected void print(final Name node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final Name node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append(node.getIdentifier() == null ? "<null>" : node.getIdentifier());
     }
 
-    protected void print(final Block node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final Block node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("{\n");
         for (final Node kid : node) {
@@ -184,7 +232,13 @@ public class BeautifierFilter implements Filter {
         sb.append("}\n");
     }
 
-    protected void print(final IfStatement node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final IfStatement node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("if (");
         print(node.getCondition(), sb, 0);
@@ -202,7 +256,8 @@ public class BeautifierFilter implements Filter {
             previousLength = sb.length();
             print(node.getElsePart(), sb, depth);
             sb.replace(previousLength, sb.length(), sb.substring(previousLength, sb.length()).trim());
-        } else if (node.getElsePart() != null) {
+        }
+        else if (node.getElsePart() != null) {
             sb.append(" else ");
             previousLength = sb.length();
             print(node.getElsePart(), sb, depth);
@@ -211,7 +266,13 @@ public class BeautifierFilter implements Filter {
         sb.append("\n");
     }
 
-    protected void print(final UnaryExpression node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final UnaryExpression node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         if (!node.isPostfix()) {
             sb.append(AstNode.operatorToString(node.getType()));
@@ -225,7 +286,13 @@ public class BeautifierFilter implements Filter {
         }
     }
 
-    protected void print(final Scope node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final Scope node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("{\n");
         for (Node kid : node) {
@@ -235,17 +302,29 @@ public class BeautifierFilter implements Filter {
         sb.append("}\n");
     }
 
-    protected void print(final PropertyGet node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final PropertyGet node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         print(node.getLeft(), sb, 0);
         sb.append(".");
         print(node.getRight(), sb, 0);
     }
 
-    protected void print(final TryStatement node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final TryStatement node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("try ");
-        int previousLength = sb.length();
+        final int previousLength = sb.length();
         print(node.getTryBlock(), sb, depth);
         sb.replace(previousLength, sb.length(), sb.substring(previousLength, sb.length()).trim());
 
@@ -258,12 +337,24 @@ public class BeautifierFilter implements Filter {
         }
     }
 
-    protected void print(final ExpressionStatement node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ExpressionStatement node, final StringBuilder sb, final int depth) {
         print(node.getExpression(), sb, depth);
         sb.append(";\n");
     }
 
-    protected void print(final FunctionCall node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final FunctionCall node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         print(node.getTarget(), sb, 0);
         sb.append("(");
@@ -273,7 +364,13 @@ public class BeautifierFilter implements Filter {
         sb.append(")");
     }
 
-    protected void print(final CatchClause node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final CatchClause node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("catch (");
         print(node.getVarName(), sb, 0);
@@ -285,24 +382,42 @@ public class BeautifierFilter implements Filter {
         print(node.getBody(), sb, 0);
     }
 
-    protected void print(final ReturnStatement node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ReturnStatement node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append("return");
         if (node.getReturnValue() != null) {
             sb.append(" ");
-            print(node.getReturnValue(), sb, 0); 
+            print(node.getReturnValue(), sb, 0);
         }
         sb.append(";\n");
     }
 
-    protected void print(final StringLiteral node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final StringLiteral node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append(node.getQuoteCharacter())
-        .append(ScriptRuntime.escapeString(node.getValue(), node.getQuoteCharacter()))
-        .append(node.getQuoteCharacter());
+            .append(ScriptRuntime.escapeString(node.getValue(), node.getQuoteCharacter()))
+            .append(node.getQuoteCharacter());
     }
 
-    protected void print(final NumberLiteral node, final StringBuilder sb, int depth) {
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final NumberLiteral node, final StringBuilder sb, final int depth) {
         makeIndent(depth, sb);
         sb.append(node.getValue() == null ? "<null>" : node.getValue());
     }
