@@ -26,7 +26,10 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.AstRoot;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Block;
 import net.sourceforge.htmlunit.corejs.javascript.ast.CatchClause;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ConditionalExpression;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ElementGet;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ExpressionStatement;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ForInLoop;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ForLoop;
 import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionCall;
 import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
@@ -42,6 +45,8 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.Scope;
 import net.sourceforge.htmlunit.corejs.javascript.ast.StringLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.TryStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.UnaryExpression;
+import net.sourceforge.htmlunit.corejs.javascript.ast.VariableDeclaration;
+import net.sourceforge.htmlunit.corejs.javascript.ast.VariableInitializer;
 import sunlabs.brazil.filter.Filter;
 import sunlabs.brazil.server.Request;
 import sunlabs.brazil.server.Server;
@@ -116,9 +121,6 @@ public class BeautifierFilter implements Filter {
         else if (node instanceof UnaryExpression) {
             print((UnaryExpression) node, sb, depth);
         }
-        else if (node instanceof Scope) {
-            print((Scope) node, sb, depth);
-        }
         else if (node instanceof PropertyGet) {
             print((PropertyGet) node, sb, depth);
         }
@@ -157,6 +159,24 @@ public class BeautifierFilter implements Filter {
         }
         else if (node instanceof InfixExpression) {
             print((InfixExpression) node, sb, depth);
+        }
+        else if (node instanceof VariableDeclaration) {
+            print((VariableDeclaration) node, sb, depth);
+        }
+        else if (node instanceof VariableInitializer) {
+            print((VariableInitializer) node, sb, depth);
+        }
+        else if (node instanceof ElementGet) {
+            print((ElementGet) node, sb, depth);
+        }
+        else if (node instanceof ForLoop) {
+            print((ForLoop) node, sb, depth);
+        }
+        else if (node instanceof ForInLoop) {
+            print((ForInLoop) node, sb, depth);
+        }
+        else if (node instanceof Scope) {
+            print((Scope) node, sb, depth);
         }
         else {
             throw new RuntimeException("Unknown " + node.getClass().getName());
@@ -321,6 +341,9 @@ public class BeautifierFilter implements Filter {
      * @param depth the current recursion depth
      */
     protected void print(final Scope node, final StringBuilder sb, final int depth) {
+        if (!node.getClass().getName().endsWith("Scope")) {
+            throw new RuntimeException("Printing Scope called with " + node.getClass().getName());
+        }
         makeIndent(depth, sb);
         sb.append("{\n");
         for (Node kid : node) {
@@ -545,4 +568,104 @@ public class BeautifierFilter implements Filter {
         print(node.getRight(), sb, 0);
     }
 
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final VariableDeclaration node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append(Token.typeToName(node.getType()).toLowerCase());
+        sb.append(" ");
+        printList(node.getVariables(), sb);
+        if (!(node.getParent() instanceof ForInLoop)) {
+            sb.append(";\n");
+        }
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final VariableInitializer node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        print(node.getTarget(), sb, 0);
+        if (node.getInitializer() != null) {
+            sb.append(" = ");
+            print(node.getInitializer(), sb, 0);
+        }
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ElementGet node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        print(node.getTarget(), sb, 0);
+        sb.append("[");
+        print(node.getElement(), sb, 0);
+        sb.append("]");
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ForInLoop node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("for ");
+        if (node.isForEach()) {
+            sb.append("each ");
+        }
+        sb.append("(");
+        print(node.getIterator(), sb, 0);
+        sb.append(" in ");
+        print(node.getIteratedObject(), sb, 0);
+        sb.append(") ");
+        if (node.getBody() instanceof Block) {
+            final int previousLength = sb.length();
+            print(node.getBody(), sb, depth);
+            sb.replace(previousLength, sb.length(), sb.substring(previousLength, sb.length()).trim());
+            sb.append("\n");
+        }
+        else {
+            sb.append("\n");
+            print(node.getBody(), sb, depth + 1);
+        }
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ForLoop node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("for (");
+        print(node.getInitializer(), sb, 0);
+        sb.append("; ");
+        print(node.getCondition(), sb, 0);
+        sb.append("; ");
+        print(node.getIncrement(), sb, 0);
+        sb.append(") ");
+        if (node.getBody() instanceof Block) {
+            final int previousLength = sb.length();
+            print(node.getBody(), sb, depth);
+            sb.replace(previousLength, sb.length(), sb.substring(previousLength, sb.length()).trim());
+            sb.append("\n");
+        }
+        else {
+            sb.append("\n");
+            print(node.getBody(), sb, depth + 1);
+        }
+    }
 }

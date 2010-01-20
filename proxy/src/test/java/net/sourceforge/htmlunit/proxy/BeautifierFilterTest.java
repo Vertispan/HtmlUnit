@@ -16,9 +16,6 @@ package net.sourceforge.htmlunit.proxy;
 
 import static org.junit.Assert.assertEquals;
 
-import net.sourceforge.htmlunit.corejs.javascript.Parser;
-import net.sourceforge.htmlunit.corejs.javascript.ast.AstRoot;
-
 import org.junit.Test;
 /**
  * Test for {@link BeautifierFilter}.
@@ -35,13 +32,12 @@ public class BeautifierFilterTest {
         final String source = "function oa(){if(!c.isReady){try{s.documentElement.doScroll(\"left\");}catch(a){"
             + "setTimeout(oa,1);return;}c.ready();}}"
             + "function La(a,b){b.src?c.ajax({url:b.src,async:false,dataType:\"script\"}):"
-            + "c.globalEval(b.text||b.textContent||b.innerHTML||\"\");b.parentNode&&b.parentNode.removeChild(b);}";
+            + "c.globalEval(b.text||b.textContent||b.innerHTML||\"\");b.parentNode&&b.parentNode.removeChild(b);}"
+            + "function $(a,b,d,f,e,i){var j=a.length;if(typeof b===\"object\"){for(var o in b)$(a,o,b[o],f,e,d);"
+            + "return a;}if(d!==w){f=!i&&f&&c.isFunction(d);for(o=0;o<j;o++)e(a[o],b,f?d.call(a[o],o,e(a[o],b)):d,i);"
+            + "return a;}return j?e(a[0],b):null;}";
 
         final String beautified = new BeautifierFilter().beautify(source);
-        final AstRoot root = new Parser().parse(source, "<cmd>", 0);
-
-        //This is for now, to be removed once we are sure the filter prints everything
-        assertEquals(root.toSource(), beautified);
 
         assertEquals(source.replaceAll("\\s", ""), beautified.replaceAll("\\s", ""));
     }
