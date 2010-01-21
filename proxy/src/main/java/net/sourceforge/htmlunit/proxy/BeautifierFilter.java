@@ -21,9 +21,11 @@ import net.sourceforge.htmlunit.corejs.javascript.Node;
 import net.sourceforge.htmlunit.corejs.javascript.Parser;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptRuntime;
 import net.sourceforge.htmlunit.corejs.javascript.Token;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ArrayLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.AstNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.AstRoot;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Block;
+import net.sourceforge.htmlunit.corejs.javascript.ast.BreakStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.CatchClause;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ConditionalExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ElementGet;
@@ -36,9 +38,11 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.InfixExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.KeywordLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Name;
+import net.sourceforge.htmlunit.corejs.javascript.ast.NewExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.NumberLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectProperty;
+import net.sourceforge.htmlunit.corejs.javascript.ast.ParenthesizedExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.PropertyGet;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ReturnStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Scope;
@@ -130,6 +134,9 @@ public class BeautifierFilter implements Filter {
         else if (node instanceof ExpressionStatement) {
             print((ExpressionStatement) node, sb, depth);
         }
+        else if (node instanceof NewExpression) {
+            print((NewExpression) node, sb, depth);
+        }
         else if (node instanceof FunctionCall) {
             print((FunctionCall) node, sb, depth);
         }
@@ -177,6 +184,15 @@ public class BeautifierFilter implements Filter {
         }
         else if (node instanceof Scope) {
             print((Scope) node, sb, depth);
+        }
+        else if (node instanceof ParenthesizedExpression) {
+            print((ParenthesizedExpression) node, sb, depth);
+        }
+        else if (node instanceof ArrayLiteral) {
+            print((ArrayLiteral) node, sb, depth);
+        }
+        else if (node instanceof BreakStatement) {
+            print((BreakStatement) node, sb, depth);
         }
         else {
             throw new RuntimeException("Unknown " + node.getClass().getName());
@@ -341,7 +357,7 @@ public class BeautifierFilter implements Filter {
      * @param depth the current recursion depth
      */
     protected void print(final Scope node, final StringBuilder sb, final int depth) {
-        if (!node.getClass().getName().endsWith("Scope")) {
+        if (node.getClass() != Scope.class) {
             throw new RuntimeException("Printing Scope called with " + node.getClass().getName());
         }
         makeIndent(depth, sb);
@@ -406,6 +422,9 @@ public class BeautifierFilter implements Filter {
      * @param depth the current recursion depth
      */
     protected void print(final FunctionCall node, final StringBuilder sb, final int depth) {
+        if (node.getClass() != FunctionCall.class) {
+            throw new RuntimeException("Printing FunctionCall called with " + node.getClass().getName());
+        }
         makeIndent(depth, sb);
         print(node.getTarget(), sb, 0);
         sb.append("(");
@@ -668,4 +687,70 @@ public class BeautifierFilter implements Filter {
             print(node.getBody(), sb, depth + 1);
         }
     }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ParenthesizedExpression node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append('(');
+        print(node.getExpression(), sb, 0);
+        sb.append(')');
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final NewExpression node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("new ");
+        print(node.getTarget(), sb, 0);
+        sb.append("(");
+        if (!node.getArguments().isEmpty()) {
+            printList(node.getArguments(), sb);
+        }
+        sb.append(")");
+        if (node.getInitializer() != null) {
+            sb.append(" ");
+            print(node.getInitializer(), sb, 0);
+        }
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final ArrayLiteral node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("[");
+        if (!node.getElements().isEmpty()) {
+            printList(node.getElements(), sb);
+        }
+        sb.append("]");
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final BreakStatement node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append("break");
+        if (node.getBreakLabel() != null) {
+            sb.append(" ");
+            print(node.getBreakLabel(), sb, 0);
+        }
+        sb.append(";\n");
+    }
+
 }
