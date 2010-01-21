@@ -80,6 +80,16 @@ public class BeautifierTest {
         new Beautifier().beautify(source);
     }
 
+    /**
+     * Tests loading minimized sample of GWT.
+     * @throws IOException if an error occurs
+     */
+    @Test
+    public void gwt() throws IOException {
+        final String source = load("src/test/resources/minimized/GWT-sample-min.js");
+        new Beautifier().beautify(source);
+    }
+
     private String load(final String file) throws IOException {
         final StringBuilder sb = new StringBuilder();
         final BufferedReader reader = new BufferedReader(new FileReader(file));

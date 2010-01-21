@@ -57,6 +57,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.TryStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.UnaryExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.VariableDeclaration;
 import net.sourceforge.htmlunit.corejs.javascript.ast.VariableInitializer;
+import net.sourceforge.htmlunit.corejs.javascript.ast.WhileLoop;
 
 /**
  * Beautifier.
@@ -161,6 +162,9 @@ public class Beautifier {
         }
         else if (node instanceof ForInLoop) {
             print((ForInLoop) node, depth);
+        }
+        else if (node instanceof WhileLoop) {
+            print((WhileLoop) node, depth);
         }
         else if (node instanceof Scope) {
             print((Scope) node, depth);
@@ -805,4 +809,26 @@ public class Beautifier {
             }
         }
     }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param depth the current recursion depth
+     */
+    protected void print(final WhileLoop node, final int depth) {
+        makeIndent(depth);
+        buffer_.append("while (");
+        print(node.getCondition(), 0);
+        buffer_.append(") ");
+        if (node.getBody() instanceof Block) {
+            final int initLength = buffer_.length();
+            print(node.getBody(), depth);
+            buffer_.replace(initLength, buffer_.length(), buffer_.substring(initLength, buffer_.length()).trim());
+            buffer_.append("\n");
+        } else {
+            buffer_.append("\n");
+            print(node.getBody(), depth + 1);
+        }
+    }
+
 }
