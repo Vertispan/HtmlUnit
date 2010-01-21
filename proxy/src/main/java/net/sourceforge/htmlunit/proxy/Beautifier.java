@@ -825,7 +825,8 @@ public class Beautifier {
             print(node.getBody(), depth);
             buffer_.replace(initLength, buffer_.length(), buffer_.substring(initLength, buffer_.length()).trim());
             buffer_.append("\n");
-        } else {
+        }
+        else {
             buffer_.append("\n");
             print(node.getBody(), depth + 1);
         }
