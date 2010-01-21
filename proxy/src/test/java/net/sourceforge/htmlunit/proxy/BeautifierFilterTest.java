@@ -50,7 +50,7 @@ public class BeautifierFilterTest {
             + "function sa(a){return!a||!a.parentNode||a.parentNode.nodeType===11;}"
             + "function ta(a,b){var d=0;b.each(function(){if(this.nodeName===(a[d]&&a[d].nodeName)){"
             + "var f=c.data(a[d++]),e=c.data(this,f);if(f=f&&f.events){delete e.handle;e.events={};for(var i in f)"
-            + "for(var j in f[i])c.event.add(this,i,f[i][j],f[i][j].data);}}});}";
+            + "for(var j in f[i])c.event.add(this,i,f[i][j],f[i][j].data);}}});}" + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 
         final String beautified = new BeautifierFilter().beautify(source);
 
