@@ -45,7 +45,12 @@ public class BeautifierFilterTest {
             + "j=t[p];o=i[n].elem;f=null;if(i[n].selector===j.selector){"
             + "if(j.live===\"mouseenter\"||j.live===\"mouseleave\")f=c(a.relatedTarget).closest(j.selector)[0];"
             + "if(!f||f!==o)d.push({elem:o,fn:j});}}n=0;for(l=d.length;n<l;n++){i=d[n];a.currentTarget=i.elem;"
-            + "a.data=i.fn.data;if(i.fn.apply(i.elem,e)===false){b=false;break;}}return b;}";
+            + "a.data=i.fn.data;if(i.fn.apply(i.elem,e)===false){b=false;break;}}return b;}"
+            + "function ra(a,b){return[\"live\",a,b.replace(/\\./g,\"`\").replace(/ /g,\"&\")].join(\".\");}"
+            + "function sa(a){return!a||!a.parentNode||a.parentNode.nodeType===11;}"
+            + "function ta(a,b){var d=0;b.each(function(){if(this.nodeName===(a[d]&&a[d].nodeName)){"
+            + "var f=c.data(a[d++]),e=c.data(this,f);if(f=f&&f.events){delete e.handle;e.events={};for(var i in f)"
+            + "for(var j in f[i])c.event.add(this,i,f[i][j],f[i][j].data);}}});}";
 
         final String beautified = new BeautifierFilter().beautify(source);
 

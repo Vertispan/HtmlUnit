@@ -44,6 +44,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ObjectProperty;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ParenthesizedExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.PropertyGet;
+import net.sourceforge.htmlunit.corejs.javascript.ast.RegExpLiteral;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ReturnStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Scope;
 import net.sourceforge.htmlunit.corejs.javascript.ast.StringLiteral;
@@ -193,6 +194,9 @@ public class BeautifierFilter implements Filter {
         }
         else if (node instanceof BreakStatement) {
             print((BreakStatement) node, sb, depth);
+        }
+        else if (node instanceof RegExpLiteral) {
+            print((RegExpLiteral) node, sb, depth);
         }
         else {
             throw new RuntimeException("Unknown " + node.getClass().getName());
@@ -751,6 +755,20 @@ public class BeautifierFilter implements Filter {
             print(node.getBreakLabel(), sb, 0);
         }
         sb.append(";\n");
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param sb the buffer
+     * @param depth the current recursion depth
+     */
+    protected void print(final RegExpLiteral node, final StringBuilder sb, final int depth) {
+        makeIndent(depth, sb);
+        sb.append('/').append(node.getValue()).append('/');
+        if (node.getFlags() != null) {
+            sb.append(node.getFlags());
+        }
     }
 
 }
