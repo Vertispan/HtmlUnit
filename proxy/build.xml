@@ -9,6 +9,7 @@
 
     <path id="build.classpath">
         <pathelement location="${basedir}/lib/paw-gui-0.30.jar"/>
+        <pathelement location="${basedir}/lib/paw-gui-0.30.jar"/>
         <pathelement location="${basedir}/lib/paw-server-0.30.jar"/>
         <pathelement location="${basedir}/lib/brazil-2.3-patched.jar"/>
         <pathelement location="${basedir}/lib/commons-codec-1.3.jar"/>
@@ -111,7 +112,8 @@
     </target>
 
 	<target name="run-server" depends="compile" description="Runs the server">
-        <java classname="org.paw.server.PawMain" classpathref="build.classpath" fork="true" dir="${build.dir}"/>
+        <java classname="org.paw.server.PawMain" classpathref="build.classpath"
+            dir="${build.dir}" classpath="${build.dir}" fork="true"/>
 	</target>
 
 	<target name="run-gui" depends="compile" description="Runs the GUI">

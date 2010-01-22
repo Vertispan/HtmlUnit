@@ -22,12 +22,12 @@ import java.io.IOException;
 
 import org.junit.Test;
 /**
- * Test for {@link Beautifier}.
+ * Test for {@link JavaScriptBeautifier}.
  *
  * @author Ahmed Ashour
  * @version $Revision$
  */
-public class BeautifierTest {
+public class JavaScriptBeautifierTest {
 
     /**
      */
@@ -65,7 +65,7 @@ public class BeautifierTest {
             + "function wa(a){return\"scrollTo\"in a&&a.document?a:a.nodeType===9?a.defaultView||a.parentWindow:"
             + "false;}";
 
-        final String beautified = new Beautifier().beautify(source);
+        final String beautified = new JavaScriptBeautifier().beautify(source);
 
         assertEquals(source.replaceAll("\\s", ""), beautified.replaceAll("\\s", ""));
     }
@@ -77,7 +77,7 @@ public class BeautifierTest {
     @Test
     public void jquery() throws IOException {
         final String source = load("src/test/resources/minimized/jquery-1.4.min.js");
-        new Beautifier().beautify(source);
+        new JavaScriptBeautifier().beautify(source);
     }
 
     /**
@@ -87,7 +87,7 @@ public class BeautifierTest {
     @Test
     public void gwt() throws IOException {
         final String source = load("src/test/resources/minimized/GWT-sample-min.js");
-        new Beautifier().beautify(source);
+        new JavaScriptBeautifier().beautify(source);
     }
 
     private String load(final String file) throws IOException {

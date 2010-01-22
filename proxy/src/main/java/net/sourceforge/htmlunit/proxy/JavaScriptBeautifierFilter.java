@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.proxy;
+package  net.sourceforge.htmlunit.proxy;
 
 import java.io.IOException;
 
@@ -27,33 +27,38 @@ import sunlabs.brazil.util.http.MimeHeaders;
  * @author Ahmed Ashour
  * @version $Revision$
  */
-public class BeautifierFilter implements Filter {
+public class JavaScriptBeautifierFilter implements Filter {
 
     /**
      * {@inheritDoc}
      */
-    public byte[] filter(final Request arg0, final MimeHeaders arg1, final byte[] arg2) {
-        return null;
+    public boolean init(final Server server, final String prefix) {
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean shouldFilter(final Request arg0, final MimeHeaders arg1) {
+    public boolean respond(final Request request) throws IOException {
         return false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean init(final Server arg0, final String arg1) {
-        return false;
+    public boolean shouldFilter(final Request request, final MimeHeaders headers) {
+        final String type = headers.get("Content-Type");
+        return type != null
+            && (type.equals("text/javascript") || type.equals("application/x-javascript"));
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean respond(final Request arg0) throws IOException {
-        return false;
+    public byte[] filter(final Request request, final MimeHeaders headers, final byte[] content) {
+        final JavaScriptBeautifier beautifier = new JavaScriptBeautifier();
+        final String beauty = beautifier.beautify(new String(content));
+        return beauty.getBytes();
     }
+
 }

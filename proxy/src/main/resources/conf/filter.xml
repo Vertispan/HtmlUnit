@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <filters>
-  <filter status="active" type="httpProxy">
+  <filter status="inactive" type="httpProxy">
     <name>RegExp Filters</name>
     <description>This filter is used to filter HTTP responses with
 regular expression.
@@ -74,17 +74,15 @@ For more details on the configuration see the file virus.conf
       <param name="responseheaders.headers" value="conf/headers-response" />
     </params>
   </filter>
-  <filter status="inactive" type="httpProxy">
-    <name>Visualization Filter</name>
-    <description>Logs HTTP Protocol conversation between Client and Server.
-Output is written to logfile.
-Should only be used for debugging, because logfile can get very large.
-@URL "html/filters/visualization_filter.html"</description>
+  <filter status="active" type="httpProxy">
+    <name>JavaScript Beautifier Filter</name>
+    <description>Beautifies JavaScript files</description>
     <removable>true</removable>
-    <id>VisualizeFilter</id>
+    <id>JavaScriptBeautifierFilter</id>
     <files />
     <params>
-      <param name="VisualizeFilter.class" value="org.paw.filter.VisualizeFilter" />
+      <param name="JavaScriptBeautifierFilter.class"
+          value="net.sourceforge.htmlunit.proxy.JavaScriptBeautifierFilter" />
     </params>
   </filter>
 </filters>

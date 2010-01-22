@@ -65,7 +65,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.WhileLoop;
  * @author Ahmed Ashour
  * @version $Revision$
  */
-public class Beautifier {
+public class JavaScriptBeautifier {
 
     private StringBuilder buffer_ = new StringBuilder();
 
