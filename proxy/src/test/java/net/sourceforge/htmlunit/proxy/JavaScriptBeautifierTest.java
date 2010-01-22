@@ -63,7 +63,7 @@ public class JavaScriptBeautifierTest {
             + "delete c.cache[f];}"
             + "function L(a,b){var d={};c.each(va.concat.apply([],va.slice(0,b)),function(){d[this]=a;});return d;}"
             + "function wa(a){return\"scrollTo\"in a&&a.document?a:a.nodeType===9?a.defaultView||a.parentWindow:"
-            + "false;} something: while(x=y){}";
+            + "false;} something: while(x=y){} do {} while(x==y);";
 
         final String beautified = new JavaScriptBeautifier().beautify(source);
 

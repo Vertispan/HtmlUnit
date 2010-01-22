@@ -28,6 +28,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.BreakStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.CatchClause;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ConditionalExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ContinueStatement;
+import net.sourceforge.htmlunit.corejs.javascript.ast.DoLoop;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ElementGet;
 import net.sourceforge.htmlunit.corejs.javascript.ast.EmptyExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.ExpressionStatement;
@@ -167,6 +168,9 @@ public class JavaScriptBeautifier {
         }
         else if (node instanceof WhileLoop) {
             print((WhileLoop) node, depth);
+        }
+        else if (node instanceof DoLoop) {
+            print((DoLoop) node, depth);
         }
         else if (node instanceof Scope) {
             print((Scope) node, depth);
@@ -860,5 +864,20 @@ public class JavaScriptBeautifier {
     protected void print(final Label node, final int depth) {
         makeIndent(depth);
         buffer_.append(node.getName()).append(":\n");
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param depth the current recursion depth
+     */
+    protected void print(final DoLoop node, final int depth) {
+        buffer_.append("do ");
+        final int initLength = buffer_.length();
+        print(node.getBody(), depth);
+        buffer_.replace(initLength, buffer_.length(), buffer_.substring(initLength, buffer_.length()).trim());
+        buffer_.append(" while (");
+        print(node.getCondition(), 0);
+        buffer_.append(");\n");
     }
 }
