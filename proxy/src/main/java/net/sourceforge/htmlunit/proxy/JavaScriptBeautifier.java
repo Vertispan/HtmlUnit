@@ -38,6 +38,8 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.InfixExpression;
 import net.sourceforge.htmlunit.corejs.javascript.ast.KeywordLiteral;
+import net.sourceforge.htmlunit.corejs.javascript.ast.Label;
+import net.sourceforge.htmlunit.corejs.javascript.ast.LabeledStatement;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Loop;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Name;
 import net.sourceforge.htmlunit.corejs.javascript.ast.NewExpression;
@@ -195,6 +197,12 @@ public class JavaScriptBeautifier {
         }
         else if (node instanceof SwitchCase) {
             print((SwitchCase) node, depth);
+        }
+        else if (node instanceof LabeledStatement) {
+            print((LabeledStatement) node, depth);
+        }
+        else if (node instanceof Label) {
+            print((Label) node, depth);
         }
         else {
             throw new RuntimeException("Unknown " + node.getClass().getName());
@@ -832,4 +840,25 @@ public class JavaScriptBeautifier {
         }
     }
 
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param depth the current recursion depth
+     */
+    protected void print(final LabeledStatement node, final int depth) {
+        for (final Label label : node.getLabels()) {
+            print(label, depth);
+        }
+        print(node.getStatement(), depth + 1);
+    }
+
+    /**
+     * Prints the specified node.
+     * @param node the node
+     * @param depth the current recursion depth
+     */
+    protected void print(final Label node, final int depth) {
+        makeIndent(depth);
+        buffer_.append(node.getName()).append(":\n");
+    }
 }
