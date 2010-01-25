@@ -156,6 +156,9 @@ final class MemberBox implements Serializable
     Object invoke(Object target, Object[] args)
     {
         Method method = method();
+        if (target instanceof Delegator) {
+        	target = ((Delegator) target).getDelegee();
+        }
         try {
             try {
                 return method.invoke(target, args);
