@@ -19,5 +19,6 @@ public class NumberTest
 			+ "if (s != '2.274341322658976e-309') throw 'got ' + s";
 		
 		Utilities.executeScript(script);
+		Utilities.executeScript("'' + 1");
 	}
 }
