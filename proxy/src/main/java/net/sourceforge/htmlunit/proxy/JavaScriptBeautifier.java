@@ -86,11 +86,19 @@ public class JavaScriptBeautifier {
     }
 
     /**
+     * Returns the current buffer
+     * @return the current buffer
+     */
+    protected StringBuilder getBuffer() {
+        return buffer_;
+    }
+
+    /**
      * Prints the specified node.
      * @param node the node
      * @param depth the current recursion depth
      */
-    private void print(final Node node, final int depth) {
+    protected void print(final Node node, final int depth) {
         if (node instanceof AstRoot) {
             print((AstRoot) node, depth);
         }

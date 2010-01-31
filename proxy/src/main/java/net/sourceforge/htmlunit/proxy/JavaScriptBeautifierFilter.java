@@ -29,11 +29,21 @@ import sunlabs.brazil.util.http.MimeHeaders;
  */
 public class JavaScriptBeautifierFilter implements Filter {
 
+    private JavaScriptBeautifier beautifier_;
+
     /**
      * {@inheritDoc}
      */
     public boolean init(final Server server, final String prefix) {
-        return true;
+        final String className = server.props.getProperty(prefix + "beautifier");
+        try {
+            beautifier_ = (JavaScriptBeautifier) Class.forName(className).newInstance();
+            return true;
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -56,8 +66,7 @@ public class JavaScriptBeautifierFilter implements Filter {
      * {@inheritDoc}
      */
     public byte[] filter(final Request request, final MimeHeaders headers, final byte[] content) {
-        final JavaScriptBeautifier beautifier = new JavaScriptBeautifier();
-        final String beauty = beautifier.beautify(new String(content));
+        final String beauty = beautifier_.beautify(new String(content));
         return beauty.getBytes();
     }
 

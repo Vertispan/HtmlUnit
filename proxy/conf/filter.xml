@@ -8,8 +8,9 @@
     <params>
       <param name="JavaScriptBeautifierFilter.class"
           value="net.sourceforge.htmlunit.proxy.JavaScriptBeautifierFilter" />
+      <param name="JavaScriptBeautifierFilter.beautifier"
+          value="net.sourceforge.htmlunit.proxy.JavaScriptDetailedLogger" />
     </params>
   </filter>
 </filters>
-
 
