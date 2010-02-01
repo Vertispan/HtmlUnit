@@ -2,7 +2,13 @@
 <filters>
   <filter status="active" type="httpProxy">
     <name>JavaScript Beautifier Filter</name>
-    <description>Beautifies JavaScript files</description>
+    <description>Beautifies JavaScript files, it can allow instrumenting JavaScript.
+The following configuration parameters are used:
+
+[beautifier]
+The fully qualified class name of JavaScriptBeautifier, or a subclass.
+
+    </description>
     <removable>true</removable>
     <id>JavaScriptBeautifierFilter</id>
     <params>
