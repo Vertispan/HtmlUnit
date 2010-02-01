@@ -86,7 +86,7 @@ public class JavaScriptBeautifier {
     }
 
     /**
-     * Returns the current buffer
+     * Returns the current buffer.
      * @return the current buffer
      */
     protected StringBuilder getBuffer() {

@@ -20,7 +20,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionNode;
 
 /**
  * Logs function entry.
- * 
+ *
  * @author Ahmed Ashour
  * @version $Revision$
  */
@@ -48,6 +48,4 @@ public class JavaScriptFunctionLogger extends JavaScriptBeautifier {
         }
         super.print(node, depth);
     }
-
-    
 }
