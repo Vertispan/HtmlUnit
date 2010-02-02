@@ -5,9 +5,9 @@
 htmlunit-core-js is a Rhino fork containing patches that haven't yet been
 applied in Rhino but that are needed for HtmlUnit.
 
-The build file ensures that no patch is kept when it is not needed anymore.
+The build file tries to ensure that no patch is kept when it is not needed anymore.
 
-CAUTION: before to release, the rhinoDiff.txt need to be generated to respect 
+CAUTION: before to release, the rhinoDiff.txt needs to be generated to respect 
 the terms of the MPL.
 
 Marc Guillemot                                                                
@@ -22,7 +22,7 @@ Marc Guillemot
 	<property name="src.test.dir" location="src" />
 	<property name="junit.jar" location="lib/junit-4.4.jar" />
 	
-	<property name="version" value="2.7-SNAPSHOT"/>
+	<property name="version" value="2.7"/>
 	<property name="jar" location="target/htmlunit-core-js-${version}.jar" />
 	<property name="jar.sources" location="target/htmlunit-core-js-${version}-sources.jar" />
 	
