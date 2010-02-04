@@ -30,6 +30,10 @@ public class DelegatorAndHostObjectTest {
 			return new Delegator(this);
 		}
 
+		public int jsFunction_methodWithParam(final MyHostObject param) {
+			return 123;
+		}
+
 		public int jsFunction_foo() {
 			return 42;
 		}
@@ -53,6 +57,21 @@ public class DelegatorAndHostObjectTest {
 		testIt("var t = new MyHostObject().createDelegator(); t.x = 12; t.x;",
 				12);
 	}
+
+	@Test
+	public void delegatorAsParameter() {
+		testIt("var t = new MyHostObject().createDelegator(); t.methodWithParam(t);",
+				123);
+	}
+
+	@Test
+	public void delegatorAnd__defineGetter__() {
+		final String script = "var t = new MyHostObject().createDelegator();\n"
+			+ "t.__defineGetter__('foo', function(a) { return 'hello' });\n"
+		    + "t.foo;";
+		testIt(script, "hello");
+	}
+
 
 	private void testIt(final String script, final Object expected) {
 		final ContextAction action = new ContextAction() {

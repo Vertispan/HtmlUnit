@@ -978,7 +978,10 @@ public class ScriptRuntime {
     public static Scriptable toObjectOrNull(Context cx, Object obj,
                                             final Scriptable scope)
     {
-        if (obj instanceof Scriptable) {
+    	if (obj instanceof Delegator) {
+    		return ((Delegator) obj).getDelegee();
+    	}
+    	else if (obj instanceof Scriptable) {
             return (Scriptable)obj;
         } else if (obj != null && obj != Undefined.instance) {
             return toObject(cx, scope, obj);
