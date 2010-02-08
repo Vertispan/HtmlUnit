@@ -35,9 +35,9 @@ public class JavaScriptFunctionLogger extends JavaScriptBeautifier {
                 makeIndent(depth);
                 sb.append("{\n");
                 makeIndent(depth + 1);
-                sb.append("// entering function [");
+                sb.append(getLogginMethodName()).append("('Entering Method: ");
                 print(parent.getFunctionName(), 0);
-                sb.append("]\n");
+                sb.append("()');\n");
                 for (final Node kid : node) {
                     print(kid, depth + 1);
                 }

@@ -37,7 +37,9 @@ public class JavaScriptFunctionLoggerTest {
             + "}";
 
         final JavaScriptBeautifier beautifier = new JavaScriptFunctionLogger();
+        beautifier.setLoggingMethodName("window.top.__HtmlUnitLog");
         final String beautified = beautifier.beautify(source);
-        assertTrue(beautified.replaceAll("\\s", "").contains("functiontest(){//enteringfunction[test]test2();}"));
+        assertTrue(beautified.replaceAll("\\s", "").contains(
+            "functiontest(){window.top.__HtmlUnitLog('EnteringMethod:test()');test2();}"));
     }
 }

@@ -71,6 +71,7 @@ import net.sourceforge.htmlunit.corejs.javascript.ast.WhileLoop;
 public class JavaScriptBeautifier {
 
     private StringBuilder buffer_ = new StringBuilder();
+    private String methodName_;
 
     /**
      * Beautifies the given JavaScript source.
@@ -83,6 +84,22 @@ public class JavaScriptBeautifier {
         final AstRoot root = parser.parse(source, "<cmd>", 0);
         print(root, 0);
         return buffer_.toString();
+    }
+
+    /**
+     * Sets the JavaScript method name that is called for logging events.
+     * @param methoName the method name
+     */
+    public void setLoggingMethodName(final String methoName) {
+        methodName_ = methoName;
+    }
+
+    /**
+     * Gets the JavaScript method name that is called for logging events.
+     * @return the method name
+     */
+    public String getLogginMethodName() {
+        return methodName_;
     }
 
     /**
