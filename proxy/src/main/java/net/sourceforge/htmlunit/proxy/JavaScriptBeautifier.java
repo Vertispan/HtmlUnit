@@ -98,7 +98,7 @@ public class JavaScriptBeautifier {
      * Gets the JavaScript method name that is called for logging events.
      * @return the method name
      */
-    public String getLogginMethodName() {
+    public String getLogginFunctionName() {
         return methodName_;
     }
 

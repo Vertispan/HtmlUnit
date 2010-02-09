@@ -30,9 +30,9 @@ public class JavaScriptFunctionLoggerTest {
     @Test
     public void test() {
         final String source = "function test() {"
-            + "  test2();"
+            + "  test2('hello', 'there');"
             + "}"
-            + "function test2() {"
+            + "function test2(a, b) {"
             + "  alert(window.location.href)"
             + "}";
 
@@ -40,6 +40,8 @@ public class JavaScriptFunctionLoggerTest {
         beautifier.setLoggingMethodName("window.top.__HtmlUnitLog");
         final String beautified = beautifier.beautify(source);
         assertTrue(beautified.replaceAll("\\s", "").contains(
-            "functiontest(){window.top.__HtmlUnitLog('EnteringMethod:test()');test2();}"));
+            "functiontest(){window.top.__HtmlUnitLog('EnteringFunction:test()');test2('hello','there');}"));
+        assertTrue(beautified.replaceAll("\\s", "").contains(
+            "functiontest2(a,b){window.top.__HtmlUnitLog('EnteringFunction:test2('+'a:'+a+','+'b:'+b+')');"));
     }
 }

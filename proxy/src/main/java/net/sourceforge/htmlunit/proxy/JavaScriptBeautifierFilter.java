@@ -72,16 +72,10 @@ public class JavaScriptBeautifierFilter implements Filter {
     public byte[] filter(final Request request, final MimeHeaders headers, final byte[] content) {
         String beauty = beautifier_.beautify(new String(content));
         beauty = "if (!window.top.__HtmlUnitLog) {\n"
-            + "  window.top.__HtmlUnitLog_getXMLHttpRequest = function() {\n"
-            + "    if (window.XMLHttpRequest)\n"
-            + "      return new XMLHttpRequest();\n"
-            + "    else if (window.ActiveXObject)\n"
-            + "      return new ActiveXObject('Microsoft.XMLHTTP');\n"
-            + "  }\n"
+            + "  window.top.__HtmlUnitLogger = window.XMLHttpRequest "
+            + "? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');\n"
             + "  window.top.__HtmlUnitLog = function(data) {\n"
             + "    var req = window.top.__HtmlUnitLogger;\n"
-            + "    if (!req)\n"
-            + "      window.top.__HtmlUnitLogger = req = __HtmlUnitLog_getXMLHttpRequest();\n"
             + "    req.open('POST', '/__HtmlUnitLogger', false);\n"
             + "    req.send(data);\n"
             + "  }\n"

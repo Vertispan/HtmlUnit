@@ -15,6 +15,7 @@
 package net.sourceforge.htmlunit.proxy;
 
 import net.sourceforge.htmlunit.corejs.javascript.Node;
+import net.sourceforge.htmlunit.corejs.javascript.ast.AstNode;
 import net.sourceforge.htmlunit.corejs.javascript.ast.Block;
 import net.sourceforge.htmlunit.corejs.javascript.ast.FunctionNode;
 
@@ -35,9 +36,25 @@ public class JavaScriptFunctionLogger extends JavaScriptBeautifier {
                 makeIndent(depth);
                 sb.append("{\n");
                 makeIndent(depth + 1);
-                sb.append(getLogginMethodName()).append("('Entering Method: ");
+                sb.append(getLogginFunctionName()).append("('Entering Function: ");
                 print(parent.getFunctionName(), 0);
-                sb.append("()');\n");
+                sb.append("(");
+                if (!parent.getParams().isEmpty()) {
+                    sb.append("' + ");
+                    final int max = parent.getParams().size();
+                    int count = 0;
+                    for (final AstNode item : parent.getParams()) {
+                        sb.append("'");
+                        print(item, 0);
+                        sb.append(":' + ");
+                        print(item, 0);
+                        if (count++ < max - 1) {
+                            sb.append(" + ',' + ");
+                        }
+                    }
+                    sb.append(" + '");
+                }
+                sb.append(")');\n");
                 for (final Node kid : node) {
                     print(kid, depth + 1);
                 }
