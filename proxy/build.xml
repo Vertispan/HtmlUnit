@@ -23,17 +23,24 @@
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="compile" description="Compile the code">
+    <target name="check-java-version">
+	    <condition property="version-check">
+	        <matches pattern="1.6" string="${java.specification.version}"/>
+	    </condition>
+        <fail message="You must use Java 6" unless="version-check"/>
+    </target>
+
+	<target name="compile" description="Compile the code" depends="check-java-version">
         <mkdir dir="${build.dir}"/>
 	    <javac destdir="${build.dir}"
 	           nowarn="false" 
 	           debug="true" 
 	           optimize="false" 
 	           deprecation="true" 
-	           target="1.5" 
+	           target="1.6" 
 	           verbose="false" 
 	           fork="false" 
-	           source="1.5">
+	           source="1.6">
 	      <src>
 	        <pathelement location="${build.srcDir}"/>
 	      </src>
@@ -42,26 +49,26 @@
 	    <copy todir="${build.dir}">
 	      <fileset dir="${build.resourceDir}"/>
 	    </copy>
-	  </target>
+	</target>
 
-	  <target name="compile-tests" 
-	          depends="junit-missing, compile" 
-	          description="Compile the test code">
-	    <javac destdir="${build.dir}" 
-	           nowarn="false" 
-	           debug="true" 
-	           optimize="false" 
-	           deprecation="true" 
-	           target="1.5" 
-	           verbose="false" 
-	           fork="false" 
-	           source="1.5">
-	      <src>
-	        <pathelement location="${build.testDir}"/>
-	      </src>
-	      <classpath>
-	        <path refid="build.classpath"/>
-	      </classpath>
+    <target name="compile-tests" 
+            depends="junit-missing, compile" 
+            description="Compile the test code">
+        <javac destdir="${build.dir}" 
+            nowarn="false" 
+            debug="true" 
+            optimize="false" 
+            deprecation="true" 
+            target="1.6" 
+            verbose="false" 
+            fork="false" 
+            source="1.6">
+            <src>
+                <pathelement location="${build.testDir}"/>
+            </src>
+            <classpath>
+                <path refid="build.classpath"/>
+            </classpath>
 	    </javac>
 	    <copy todir="${build.dir}">
 	      <fileset dir="${build.testResourceDir}"/>
