@@ -2,7 +2,7 @@ Built over paw-project.sourceforge.net, this sub-project is focusing on having a
 to see how real browsers and htmlUnit process various web applications.
 
 Requirements:
-    - Java 6
+    - Java 5
     - Apache ant
     - JUnit 4 in $ANT_HOME/lib 
 
@@ -11,7 +11,7 @@ To run the server, type:
 
 Which will start a local proxy listening at port 8080 (check conf/server.xml)
 
-To shutdown the server, click the icon in the system tray.
+To shutdown the server, click the icon in the system tray (if runtime is Java 6), or close from the GUI.
 
 To run the admin GUI, type:
     ant run-gui
