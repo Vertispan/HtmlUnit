@@ -26,6 +26,7 @@ import org.junit.Test;
 public class JavaScriptFunctionLoggerTest {
 
     /**
+     * Basic test.
      */
     @Test
     public void test() {

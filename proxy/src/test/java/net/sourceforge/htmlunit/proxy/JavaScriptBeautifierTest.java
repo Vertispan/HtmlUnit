@@ -30,6 +30,7 @@ import org.junit.Test;
 public class JavaScriptBeautifierTest {
 
     /**
+     * Basic test.
      */
     @Test
     public void test() {
