@@ -5,20 +5,18 @@
 
 <web-app>
   
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>net.sourceforge.htmlunit.proxy.webapp.server.GreetingServiceImpl</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>logServlet</servlet-name>
+        <servlet-class>net.sourceforge.htmlunit.proxy.webapp.server.LogServiceImpl</servlet-class>
+    </servlet>
   
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/proxywebapp/greet</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>logServlet</servlet-name>
+        <url-pattern>/proxywebapp/log</url-pattern>
+    </servlet-mapping>
   
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>ProxyWebApp.html</welcome-file>
-  </welcome-file-list>
+    <welcome-file-list>
+        <welcome-file>ProxyWebApp.html</welcome-file>
+    </welcome-file-list>
 
 </web-app>
