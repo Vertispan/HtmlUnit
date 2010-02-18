@@ -101,7 +101,7 @@
         </junit>
     </target>
 
-    <target name="checkstyle" description="Checks the constistency of htmlunit source code">
+    <target name="checkstyle" description="Checks the constistency of the source code">
         <taskdef resource="checkstyletask.properties" classpath="${basedir}/lib/checkstyle-all-5.0.jar"/>
         <checkstyle config="checkstyle.xml" maxWarnings="0">
             <property key="checkstyle.suppressions.file" file="${basedir}/checkstyle_suppressions.xml"/>
