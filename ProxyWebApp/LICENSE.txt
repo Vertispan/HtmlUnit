@@ -12,30 +12,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.proxy.webapp.client;
-
-import com.google.gwt.junit.client.GWTTestCase;
-
-/**
- * GWT JUnit tests.
- *
- * @author Ahmed Ashour
- * @version $Revision$
- */
-public class ProxyWebAppTest extends GWTTestCase {
-
-    /**
-     * Must refer to a valid module that sources this class.
-     * @return the module name
-     */
-    @Override
-    public String getModuleName() {
-        return "net.sourceforge.htmlunit.proxy.webapp.ProxyWebAppJUnit";
-    }
-
-    /**
-     * Tests the FieldVerifier.
-     */
-    public void testFieldVerifier() {
-    }
-}
