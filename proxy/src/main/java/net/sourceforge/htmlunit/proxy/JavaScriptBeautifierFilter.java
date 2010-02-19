@@ -66,6 +66,12 @@ public class JavaScriptBeautifierFilter implements Filter {
      * {@inheritDoc}
      */
     public boolean respond(final Request request) throws IOException {
+        if (request.url.endsWith("/__HtmlUnitLogger") && request.postData != null) {
+            final String log = new String(request.postData);
+            WebApplUtils.addLog(log);
+            request.sendResponse("");
+            return true;
+        }
         String urlString = request.url;
         if (urlString.startsWith("/")) {
             urlString = "http://localhost:" + SERVER_PORT_ + urlString;
@@ -89,9 +95,6 @@ public class JavaScriptBeautifierFilter implements Filter {
      * {@inheritDoc}
      */
     public boolean shouldFilter(final Request request, final MimeHeaders headers) {
-        if (request.url.endsWith("/__HtmlUnitLogger") && request.postData != null) {
-            System.out.println("Logging: " + new String(request.postData));
-        }
         final String type = headers.get("Content-Type");
         return type != null
             && (type.equals("text/javascript") || type.equals("application/x-javascript"));

@@ -76,23 +76,44 @@ final class WebApplUtils {
         String content = null;
         if (request.postData != null) {
             content = new String(request.postData);
-            req.setHeader("Content-Length", String.valueOf(content.length()));
             final String contentType = request.getRequestHeader("Content-Type");
             if (contentType != null) {
                 req.setHeader("Content-Type", contentType);
             }
-            res.setContent(content);
+            req.setContent(content);
         }
 
         connector_.reopen();
-        String generated = req.generate();
-        if (request.method.equals("POST")) {
-            generated += content;
-        }
 
+        final String generated = req.generate();
         final String response = connector_.getResponses(generated);
         res.parse(response);
         request.sendResponse(res.getContent(), res.getContentType(), res.getStatus());
     }
 
+    /**
+     * Sends a log request to the locally deployed WebApp
+     * @param log the log entry
+     * @throws Exception if an error occurs
+     */
+    static synchronized void addLog(final String log) {
+        try {
+            final HttpTester req = new HttpTester();
+            req.setMethod("POST");
+            req.setVersion("HTTP/1.1");
+            req.addHeader("Host", "localhost");
+            req.setURI("/proxywebapp/addLog");
+
+            req.setHeader("Content-Length", String.valueOf(log.length()));
+            req.setContent(log);
+
+            connector_.reopen();
+
+            final String generated = req.generate();
+            connector_.getResponses(generated);
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
