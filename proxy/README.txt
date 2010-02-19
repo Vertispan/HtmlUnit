@@ -9,9 +9,11 @@ Requirements:
 To run the server, type:
     ant run-server
 
-Which will start a local proxy listening at port 8080 (check conf/server.xml)
+    Which will start a local proxy listening at port 8080 (check conf/server.xml)
 
-To shutdown the server, click the icon in the system tray (if runtime is Java 6), or close from the GUI.
+To shutdown the server, click the icon in the system tray (with Java 6), or close from the admin GUI.
+
+To see the logs, make the web browser opens the application at the proxy hostname and port, e.g. http://localhost:8080
 
 To run the admin GUI, type:
     ant run-gui
@@ -22,9 +24,7 @@ from the server side.
 By default, JavaScriptFunctionLogger is used to beautify and logs entry of all functions
 
 Roadmap:
-    - Under the same proxy port, we can have a web application (GWT?) by which the user controls the instrumentation,
-      sees the logs, compares real browsers and HtmlUnit behavior. Hint: static web application is currently
-      implemented by sunlabs.brazil.server.FileHandler
+    - Enhance the WebApp to control the instrumentation, compare real browsers and HtmlUnit behavior.
 
     - More instrumentation mechanisms, e.g.:
         - Log all function invocations with their parameter values e.g. [method(var1, var2)], and log all 
