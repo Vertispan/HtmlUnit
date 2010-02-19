@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +36,7 @@ public class AddLogServlet extends HttpServlet {
      * {@inheritDoc}
      */
     @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         final Reader reader = req.getReader();
         final StringBuilder sb = new StringBuilder();
         int ch;
