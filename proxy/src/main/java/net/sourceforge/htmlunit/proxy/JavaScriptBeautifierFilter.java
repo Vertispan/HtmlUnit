@@ -15,6 +15,10 @@
 package  net.sourceforge.htmlunit.proxy;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
+
+import org.paw.server.PawMain;
 
 import sunlabs.brazil.filter.Filter;
 import sunlabs.brazil.server.Request;
@@ -29,7 +33,18 @@ import sunlabs.brazil.util.http.MimeHeaders;
  */
 public class JavaScriptBeautifierFilter implements Filter {
 
+    private static String LOCALHOST_ADDRESS_;
+    private static final int SERVER_PORT_ = PawMain.getServer().getPort();
     private JavaScriptBeautifier beautifier_;
+
+    static {
+        try {
+            LOCALHOST_ADDRESS_ = InetAddress.getLocalHost().getHostAddress();
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -51,6 +66,22 @@ public class JavaScriptBeautifierFilter implements Filter {
      * {@inheritDoc}
      */
     public boolean respond(final Request request) throws IOException {
+        String urlString = request.url;
+        if (urlString.startsWith("/")) {
+            urlString = "http://localhost:" + SERVER_PORT_ + urlString;
+        }
+        final URL url = new URL(urlString);
+        if (url.getPort() == SERVER_PORT_
+                && (url.getHost().equals("localhost")
+                || InetAddress.getByName(url.getHost()).getHostAddress().equals(LOCALHOST_ADDRESS_))) {
+            try {
+                WebApplUtils.respond(request);
+                return true;
+            }
+            catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
         return false;
     }
 

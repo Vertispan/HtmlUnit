@@ -8,8 +8,12 @@
     <property name="build.testResourceDir" value="src/test/resources"/>
 
     <path id="build.classpath">
-        <pathelement location="${basedir}/lib/paw-gui-12Feb2010.jar"/>
-        <pathelement location="${basedir}/lib/paw-server-12Feb2010.jar"/>
+        <pathelement location="${basedir}/lib/paw-gui-18Feb2010.jar"/>
+        <pathelement location="${basedir}/lib/paw-server-18Feb2010.jar"/>
+        <pathelement location="${basedir}/lib/jetty-6.1.22.jar"/>
+        <pathelement location="${basedir}/lib/jetty-servlet-tester-6.1.22.jar"/>
+        <pathelement location="${basedir}/lib/jetty-util-6.1.22.jar"/>
+        <pathelement location="${basedir}/lib/servlet-api-2.5-20081211.jar"/>
         <pathelement location="${basedir}/lib/brazil-2.3-patched.jar"/>
         <pathelement location="${basedir}/lib/commons-codec-1.3.jar"/>
         <pathelement location="${basedir}/lib/gnu-regexp-1.1.4.jar"/>
