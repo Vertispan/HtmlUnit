@@ -32,6 +32,7 @@ public class ProxyWebApp implements EntryPoint {
     private final LogServiceAsync logService_ = GWT.create(LogService.class);
 
     private int counter_;
+    private boolean isError_;
 
     /**
      * This is the entry point method.
@@ -43,24 +44,26 @@ public class ProxyWebApp implements EntryPoint {
 
             @Override
             public void run() {
-                logService_.getLog(counter_, new AsyncCallback<String[]>() {
+                if (!isError_) {
+                    logService_.getLog(counter_, new AsyncCallback<String[]>() {
 
-                    @Override
-                    public void onSuccess(final String[] logs) {
-                        for (int i = 0; i < logs.length; i++) {
-                            main.logTextArea_.setText(main.logTextArea_.getText() + logs[i] + '\n');
+                        public void onSuccess(final String[] logs) {
+                            for (int i = 0; i < logs.length; i++) {
+                                main.logTextArea_.setText(main.logTextArea_.getText() + logs[i] + '\n');
+                            }
+                            counter_ += logs.length;
+                            main.logTextArea_.setCursorPos(main.logTextArea_.getText().length());
                         }
-                        counter_ += logs.length;
-                        main.logTextArea_.setCursorPos(main.logTextArea_.getText().length());
-                    }
 
-                    @Override
-                    public void onFailure(final Throwable caught) {
-                        Window.alert("Failure connecting to server " + caught);
-                    }
-                });
+                        public void onFailure(final Throwable caught) {
+                            isError_ = true;
+                            Window.alert("Failure connecting to server " + caught);
+                            isError_ = false;
+                        }
+                    });
+                }
             }
         };
-        timer.scheduleRepeating(2000);
+        timer.scheduleRepeating(1000);
     }
 }

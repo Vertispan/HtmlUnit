@@ -6,13 +6,23 @@
 <web-app>
   
     <servlet>
-        <servlet-name>logServlet</servlet-name>
+        <servlet-name>getLogServlet</servlet-name>
         <servlet-class>net.sourceforge.htmlunit.proxy.webapp.server.LogServiceImpl</servlet-class>
     </servlet>
   
     <servlet-mapping>
-        <servlet-name>logServlet</servlet-name>
-        <url-pattern>/proxywebapp/log</url-pattern>
+        <servlet-name>getLogServlet</servlet-name>
+        <url-pattern>/proxywebapp/getLog</url-pattern>
+    </servlet-mapping>
+  
+    <servlet>
+        <servlet-name>addLogServlet</servlet-name>
+        <servlet-class>net.sourceforge.htmlunit.proxy.webapp.server.AddLogServlet</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>addLogServlet</servlet-name>
+        <url-pattern>/proxywebapp/addLog</url-pattern>
     </servlet-mapping>
   
     <welcome-file-list>

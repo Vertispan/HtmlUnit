@@ -45,7 +45,6 @@ public class MainPanel extends Composite {
         initWidget(binder_.createAndBindUi(this));
         clearButton_.addClickHandler(new ClickHandler() {
 
-            @Override
             public void onClick(final ClickEvent event) {
                 logTextArea_.setText("");
             }

@@ -15,9 +15,8 @@
 package net.sourceforge.htmlunit.proxy.webapp.server;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import net.sourceforge.htmlunit.proxy.webapp.client.LogService;
 
@@ -35,39 +34,29 @@ public class LogServiceImpl extends RemoteServiceServlet implements LogService {
 
     private static final List<String> logs_ = new ArrayList<String>();
 
-    static {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                synchronized (logs_) {
-                    logs_.add("Log #" + (logs_.size() + 1));
-                }
-            }
-        }, 0, 1000);
+    /**
+     * Adds a log entry.
+     * @param log the log
+     */
+    static void addLog(final String log) {
+        synchronized (logs_) {
+            logs_.add(new Date() + ":" + log);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public String[] getLog(final int index) {
-        while (true) {
-            synchronized (logs_) {
-                if (index < logs_.size()) {
-                    final String[] list = new String[logs_.size() - index];
-                    for (int i = 0; i < list.length; i++) {
-                        list[i] = logs_.get(index + i);
-                    }
-                    return list;
+        synchronized (logs_) {
+            if (index < logs_.size()) {
+                final String[] list = new String[logs_.size() - index];
+                for (int i = 0; i < list.length; i++) {
+                    list[i] = logs_.get(index + i);
                 }
+                return list;
             }
-            try {
-                Thread.sleep(100);
-            }
-            catch (final Exception e) {
-                e.printStackTrace();
-            }
+            return new String[0];
         }
     }
 }

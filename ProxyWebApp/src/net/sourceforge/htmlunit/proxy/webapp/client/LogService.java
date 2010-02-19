@@ -23,7 +23,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * @author Ahmed Ashour
  * @version $Revision$
  */
-@RemoteServiceRelativePath("log")
+@RemoteServiceRelativePath("getLog")
 public interface LogService extends RemoteService {
 
     /**

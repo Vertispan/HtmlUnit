@@ -4,6 +4,6 @@
   <inherits name='net.sourceforge.htmlunit.proxy.webapp.ProxyWebApp'/>
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/proxywebapp/log" class="net.sourceforge.htmlunit.proxy.webapp.server.LogServiceImpl" />
+  <servlet path="/proxywebapp/getLog" class="net.sourceforge.htmlunit.proxy.webapp.server.LogServiceImpl" />
 
 </module>
