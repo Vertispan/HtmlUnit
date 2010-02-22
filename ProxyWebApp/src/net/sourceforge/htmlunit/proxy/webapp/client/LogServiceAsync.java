@@ -14,6 +14,8 @@
  */
 package net.sourceforge.htmlunit.proxy.webapp.client;
 
+import net.sourceforge.htmlunit.proxy.webapp.shared.LogEntry;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -29,5 +31,5 @@ public interface LogServiceAsync {
     * @param index the starting index
     * @param callback the callback
     */
-    void getLog(int index, AsyncCallback<String[]> callback);
+    void getLog(int index, AsyncCallback<LogEntry[]> callback);
 }

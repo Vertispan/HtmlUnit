@@ -15,10 +15,6 @@
 package net.sourceforge.htmlunit.proxy.webapp.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
@@ -29,41 +25,11 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
  */
 public class ProxyWebApp implements EntryPoint {
 
-    private final LogServiceAsync logService_ = GWT.create(LogService.class);
-
-    private int counter_;
-    private boolean isError_;
-
     /**
      * This is the entry point method.
      */
     public void onModuleLoad() {
         final MainPanel main = new MainPanel();
         RootLayoutPanel.get().add(main);
-        final Timer timer = new Timer() {
-
-            @Override
-            public void run() {
-                if (!isError_) {
-                    logService_.getLog(counter_, new AsyncCallback<String[]>() {
-
-                        public void onSuccess(final String[] logs) {
-                            for (int i = 0; i < logs.length; i++) {
-                                main.logTextArea_.setText(main.logTextArea_.getText() + logs[i] + '\n');
-                            }
-                            counter_ += logs.length;
-                            main.logTextArea_.setCursorPos(main.logTextArea_.getText().length());
-                        }
-
-                        public void onFailure(final Throwable caught) {
-                            isError_ = true;
-                            Window.alert("Failure connecting to server " + caught);
-                            isError_ = false;
-                        }
-                    });
-                }
-            }
-        };
-        timer.scheduleRepeating(1000);
     }
 }

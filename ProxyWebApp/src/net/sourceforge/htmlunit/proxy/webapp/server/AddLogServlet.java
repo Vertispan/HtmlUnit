@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sourceforge.htmlunit.proxy.webapp.shared.LogEntry;
+
 /**
  * Servlet to add a log entry.
  *
@@ -44,7 +46,7 @@ public class AddLogServlet extends HttpServlet {
             sb.append((char) ch);
         }
         reader.close();
-        LogServiceImpl.addLog(sb.toString());
+        LogServiceImpl.addLog(new LogEntry(sb.toString()));
         resp.setStatus(HttpServletResponse.SC_OK);
         final Writer writer = resp.getWriter();
         writer.write("Ok!");

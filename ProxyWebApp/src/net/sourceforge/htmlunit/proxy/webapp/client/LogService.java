@@ -14,6 +14,8 @@
  */
 package net.sourceforge.htmlunit.proxy.webapp.client;
 
+import net.sourceforge.htmlunit.proxy.webapp.shared.LogEntry;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -31,6 +33,6 @@ public interface LogService extends RemoteService {
      * @param index the starting index
      * @return the logs
      */
-    String[] getLog(final int index);
+    LogEntry[] getLog(final int index);
 
 }

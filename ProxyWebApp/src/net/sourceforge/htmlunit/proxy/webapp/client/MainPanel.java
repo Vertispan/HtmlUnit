@@ -14,12 +14,19 @@
  */
 package net.sourceforge.htmlunit.proxy.webapp.client;
 
+import net.sourceforge.htmlunit.proxy.webapp.shared.LogEntry;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,19 +42,78 @@ public class MainPanel extends Composite {
     interface Binder extends UiBinder<Widget, MainPanel> { }
     private static final Binder binder_ = GWT.create(Binder.class);
 
+    @UiField CheckBox timeCheckBox_;
     @UiField Button clearButton_;
     @UiField TextArea logTextArea_;
+
+    private final LogServiceAsync logService_ = GWT.create(LogService.class);
+
+    private int counter_;
+    private boolean isError_;
+
+    private LogEntry[] entries_ = new LogEntry[0];
 
     /**
      * Constructor.
      */
     public MainPanel() {
         initWidget(binder_.createAndBindUi(this));
-        clearButton_.addClickHandler(new ClickHandler() {
 
-            public void onClick(final ClickEvent event) {
-                logTextArea_.setText("");
+        final Timer timer = new Timer() {
+
+            @Override
+            public void run() {
+                if (!isError_) {
+                    logService_.getLog(counter_, new AsyncCallback<LogEntry[]>() {
+
+                        public void onSuccess(final LogEntry[] logs) {
+                            if (logs.length != 0) {
+                                final LogEntry[] newEntries = new LogEntry[entries_.length + logs.length];
+                                System.arraycopy(entries_, 0, newEntries, 0, entries_.length);
+                                System.arraycopy(logs, 0, newEntries, entries_.length, logs.length);
+                                entries_ = newEntries;
+                                counter_ += logs.length;
+                                updateTextArea();
+                            }
+                        }
+
+                        public void onFailure(final Throwable caught) {
+                            isError_ = true;
+                            Window.alert("Failure connecting to server " + caught);
+                            isError_ = false;
+                        }
+                    });
+                }
             }
-        });
+        };
+        timer.scheduleRepeating(1000);
+    }
+
+    /**
+     * A handler.
+     * @param e the value change event
+     */
+    @UiHandler("timeCheckBox_")
+    protected void doChangeValue(final ValueChangeEvent<Boolean> e) {
+        updateTextArea();
+    }
+
+    /**
+     * A handler.
+     * @param event the click event
+     */
+    @UiHandler("clearButton_")
+    public void onClick(final ClickEvent event) {
+        entries_ = new LogEntry[0];
+        updateTextArea();
+    }
+
+    private void updateTextArea() {
+        String data = "";
+        for (final LogEntry log : entries_) {
+            data += (timeCheckBox_.getValue() ? (log.getTime() + " : ") : "") + log.getValue() + '\n';
+        }
+        logTextArea_.setText(data);
+        logTextArea_.setCursorPos(data.length());
     }
 }

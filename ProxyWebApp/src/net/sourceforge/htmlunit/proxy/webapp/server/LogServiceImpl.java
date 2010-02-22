@@ -15,10 +15,10 @@
 package net.sourceforge.htmlunit.proxy.webapp.server;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.sourceforge.htmlunit.proxy.webapp.client.LogService;
+import net.sourceforge.htmlunit.proxy.webapp.shared.LogEntry;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -32,31 +32,31 @@ public class LogServiceImpl extends RemoteServiceServlet implements LogService {
 
     private static final long serialVersionUID = 3951561955277264689L;
 
-    private static final List<String> logs_ = new ArrayList<String>();
+    private static final List<LogEntry> logs_ = new ArrayList<LogEntry>();
 
     /**
      * Adds a log entry.
      * @param log the log
      */
-    static void addLog(final String log) {
+    static void addLog(final LogEntry log) {
         synchronized (logs_) {
-            logs_.add(new Date() + ":" + log);
+            logs_.add(log);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public String[] getLog(final int index) {
+    public LogEntry[] getLog(final int index) {
         synchronized (logs_) {
             if (index < logs_.size()) {
-                final String[] list = new String[logs_.size() - index];
+                final LogEntry[] list = new LogEntry[logs_.size() - index];
                 for (int i = 0; i < list.length; i++) {
                     list[i] = logs_.get(index + i);
                 }
                 return list;
             }
-            return new String[0];
+            return new LogEntry[0];
         }
     }
 }
