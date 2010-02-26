@@ -13,10 +13,13 @@ To run the server, type:
 
 To shutdown the server, click the icon in the system tray (with Java 6), or close from the admin GUI.
 
-To see the logs, make the web browser opens the application at the proxy hostname and port, e.g. http://localhost:8080
-
 To run the admin GUI, type:
     ant run-gui
+
+The Admin GUI is used to stop the server, change the configurations, modify filters and handlers.
+
+To see the logs of instrumented JavaScript, make the web browser opens the application
+at the proxy hostname and port, e.g. http://localhost:8080
 
 You can configure JavaScriptBeautifierFilter in conf/filter.xml to beautify all JavaScript files returned 
 from the server side.
