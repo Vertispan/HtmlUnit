@@ -19,10 +19,24 @@ public class Utilities {
 		{
 			public Object run(Context cx) {
 				final Scriptable scope = cx.initStandardObjects();
-				return cx.evaluateString(scope, script, "test", 0, null);
+				return cx.evaluateString(scope, script, "myScript.js", 1, null);
 			}
 		};
-		ContextFactory.getGlobal().call(action);
+		Utils.runWithAllOptimizationLevels(action);
 	}
 
+	/**
+	 * Execute the provided script in a fresh context
+	 * @param script the script
+	 */
+	static void executeScript(final String script, final int optimizationLevel) {
+		final ContextAction action = new ContextAction()
+		{
+			public Object run(Context cx) {
+				final Scriptable scope = cx.initStandardObjects();
+				return cx.evaluateString(scope, script, "myScript.js", 1, null);
+			}
+		};
+		Utils.runWithOptimizationLevel(action, optimizationLevel);
+	}
 }
