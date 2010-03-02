@@ -81,6 +81,9 @@ final class NativeError extends IdScriptableObject
                     int line = ScriptRuntime.toInt32(args[2]);
                     ScriptableObject.putProperty(obj, "lineNumber",
                             Integer.valueOf(line));
+                    if (arglen >= 4) {
+                        ScriptableObject.putProperty(obj, "stack", args[3]);
+                    }
                 }
             }
         }

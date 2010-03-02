@@ -3348,10 +3348,23 @@ public class ScriptRuntime {
             if (sourceUri == null) {
                 sourceUri = "";
             }
-            int line = re.lineNumber();
-            Object args[];
+            final int line = re.lineNumber();
+            final Object args[];
             if (line > 0) {
-                args = new Object[] { errorMsg, sourceUri, Integer.valueOf(line) };
+            	final String lineSeparator = SecurityUtilities.getSystemProperty("line.separator");
+            	final String[] stackLines = re.getScriptStackTrace().split(lineSeparator);
+            	final StringBuilder sb = new StringBuilder();
+            	for (final String stackLine : stackLines) {
+            		String[] parts = stackLine.split(" ");
+            		if (parts.length > 2) {
+            			sb.append(parts[2].substring(1, parts[2].length() - 1)).append("()");
+            		}
+            		sb.append("@");
+            		sb.append(parts[1]);
+            		sb.append(lineSeparator);
+            	}
+            	final String stack = sb.toString();
+                args = new Object[] { errorMsg, sourceUri, Integer.valueOf(line), stack };
             } else {
                 args = new Object[] { errorMsg, sourceUri };
             }

@@ -266,6 +266,13 @@ public abstract class RhinoException extends RuntimeException
                 buffer.append(e.getFileName());
                 buffer.append(':');
                 buffer.append(e.getLineNumber());
+                // get function name
+                final String functionName = e.getMethodName().replaceFirst("_c_(.*)_\\d+", "$1"); // see CodeGen.getBodyMethodName
+                if (!"script".equals(functionName)) { // sad for function called "script" :-(
+                    buffer.append(" (");
+                    buffer.append(functionName);
+                    buffer.append(")");
+                }
                 buffer.append(lineSeparator);
             } else if (interpreterStack != null &&
                 interpreterStack.size() > interpreterStackIndex && 
