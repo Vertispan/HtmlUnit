@@ -3356,8 +3356,9 @@ public class ScriptRuntime {
             	final StringBuilder sb = new StringBuilder();
             	for (final String stackLine : stackLines) {
             		String[] parts = stackLine.split(" ");
-            		if (parts.length > 2) {
-            			sb.append(parts[2].substring(1, parts[2].length() - 1)).append("()");
+            		if (parts.length > 2 && stackLine.endsWith(")")) {
+            			final String methodNameInParentheses = parts[parts.length-1];
+            			sb.append(methodNameInParentheses.substring(1, methodNameInParentheses.length() - 1)).append("()");
             		}
             		sb.append("@");
             		sb.append(parts[1]);
