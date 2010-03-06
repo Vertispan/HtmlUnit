@@ -15,7 +15,7 @@ The fully qualified class name of JavaScriptBeautifier, or a subclass.</descript
             <param name="JavaScriptBeautifierFilter.beautifier" value="net.sourceforge.htmlunit.proxy.JavaScriptFunctionLogger" />
         </params>
     </filter>
-    <filter status="active" type="httpProxy">
+    <filter status="inactive" type="httpProxy">
         <name>Visualization Filter</name>
         <description>Logs HTTP Protocol conversation between Client and Server.
 Output is written to logfile.

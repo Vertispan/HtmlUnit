@@ -34,10 +34,16 @@ import sunlabs.brazil.util.http.MimeHeaders;
 public class JavaScriptBeautifierFilter implements Filter {
 
     private static String LOCALHOST_ADDRESS_;
-    private static final int SERVER_PORT_ = PawMain.getServer().getPort();
+    private static final int SERVER_PORT_;
     private JavaScriptBeautifier beautifier_;
 
     static {
+        if (PawMain.getServer() != null) {
+            SERVER_PORT_ = PawMain.getServer().getPort();
+        }
+        else {
+            SERVER_PORT_ = -1;
+        }
         try {
             LOCALHOST_ADDRESS_ = InetAddress.getLocalHost().getHostAddress();
         }
@@ -66,7 +72,8 @@ public class JavaScriptBeautifierFilter implements Filter {
      * {@inheritDoc}
      */
     public boolean respond(final Request request) throws IOException {
-        if (request.url.endsWith("/__HtmlUnitLogger") && request.postData != null) {
+        if (request.url.endsWith("/__HtmlUnitLogger") && request.postData != null
+                && beautifier_.getClass() != JavaScriptBeautifier.class) {
             final String log = new String(request.postData);
             WebApplUtils.addLog(log);
             request.sendResponse("");
@@ -97,25 +104,69 @@ public class JavaScriptBeautifierFilter implements Filter {
     public boolean shouldFilter(final Request request, final MimeHeaders headers) {
         final String type = headers.get("Content-Type");
         return type != null
-            && (type.equals("text/javascript") || type.equals("application/x-javascript"));
+            && (type.equals("text/javascript") || type.equals("application/x-javascript")
+                || type.equals("text/html"));
     }
 
     /**
      * {@inheritDoc}
      */
     public byte[] filter(final Request request, final MimeHeaders headers, final byte[] content) {
-        String beauty = beautifier_.beautify(new String(content));
-        beauty = "if (!window.top.__HtmlUnitLog) {\n"
-            + "  window.top.__HtmlUnitLogger = window.XMLHttpRequest "
-            + "? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');\n"
-            + "  window.top.__HtmlUnitLog = function(data) {\n"
-            + "    var req = window.top.__HtmlUnitLogger;\n"
-            + "    req.open('POST', '/__HtmlUnitLogger', false);\n"
-            + "    req.send(data);\n"
-            + "  }\n"
-            + "}\n"
-            + beauty;
+        final String type = headers.get("Content-Type");
+        if (type.equals("text/html")) {
+            return filterHtml(new String(content));
+        }
+        return filterJavaScript(new String(content), true);
+    }
+
+    private byte[] filterJavaScript(final String content, final boolean addLogMethods) {
+        String beauty = beautifier_.beautify(content);
+        if (addLogMethods && beautifier_.getClass() != JavaScriptBeautifier.class) {
+            beauty = "if (!window.top.__HtmlUnitLog) {\n"
+                + "  window.top.__HtmlUnitLogged = '';\n"
+                + "  window.top.__HtmlUnitLogger = window.XMLHttpRequest "
+                + "? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');\n"
+                + "  window.top.__HtmlUnitLog = function(data) {\n"
+                + "    window.top.__HtmlUnitLogged += data + '\\n';\n"
+                + "  }\n"
+                + "  window.top.__HtmlUnitSendLog = function() {\n"
+                + "    var req = window.top.__HtmlUnitLogger;\n"
+                + "    req.open('POST', '/__HtmlUnitLogger', false);\n"
+                + "    req.send(window.top.__HtmlUnitLogged);\n"
+                + "    window.top.__HtmlUnitLogged = '';\n"
+                + "  }\n"
+                + "  window.top.setInterval(window.top.__HtmlUnitSendLog, 1000);\n"
+                + "}\n"
+                + beauty;
+        }
         return beauty.getBytes();
+    }
+
+    private byte[] filterHtml(String content) {
+        boolean firstJavaScript = true;
+        int p0 = content.indexOf("<script>", 0);
+        while (p0 != -1) {
+            int p1 = content.indexOf("</script>", p0);
+            p0 += 8;
+            while (Character.isWhitespace(content.charAt(p0))) {
+                p0++;
+            }
+            if (content.substring(p0, p0 + 4).equals("<!--")) {
+                while (content.charAt(p0) != '\n') {
+                    p0++;
+                }
+                p0++;
+                while (content.charAt(p1) != '\n' && p1 > p0 + 1) {
+                    p1--;
+                }
+            }
+            final String js = content.substring(p0, p1);
+            content = content.substring(0, p0)
+                + new String(filterJavaScript(js, firstJavaScript)) + content.substring(p1);
+            p0 = content.indexOf("<script>", p1);
+            firstJavaScript = false;
+        }
+        return content.getBytes();
     }
 
 }
