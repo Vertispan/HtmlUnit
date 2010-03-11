@@ -122,7 +122,7 @@ public class JavaScriptBeautifierFilter implements Filter {
     private byte[] filterJavaScript(final String content, final boolean addLogMethods) {
         String beauty = beautifier_.beautify(content);
         if (addLogMethods && beautifier_.getClass() != JavaScriptBeautifier.class) {
-            beauty = "if (!window.top.__HtmlUnitLog) {\n"
+            beauty = "\nif (!window.top.__HtmlUnitLog) {\n"
                 + "  window.top.__HtmlUnitLogged = '';\n"
                 + "  window.top.__HtmlUnitLogger = window.XMLHttpRequest "
                 + "? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');\n"
@@ -135,6 +135,7 @@ public class JavaScriptBeautifierFilter implements Filter {
                 + "    req.send(window.top.__HtmlUnitLogged);\n"
                 + "    window.top.__HtmlUnitLogged = '';\n"
                 + "  }\n"
+                + "  window.top.__HtmlUnitLogging = false;\n"
                 + "  window.top.setInterval(window.top.__HtmlUnitSendLog, 1000);\n"
                 + "}\n"
                 + beauty;

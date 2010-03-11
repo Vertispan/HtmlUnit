@@ -36,6 +36,13 @@ public class JavaScriptFunctionLogger extends JavaScriptBeautifier {
                 makeIndent(depth);
                 sb.append("{\n");
                 makeIndent(depth + 1);
+                if (!parent.getParams().isEmpty()) {
+                    sb.append("if (!window.top.__HtmlUnitLogging) {\n");
+                    makeIndent(depth + 1);
+                    sb.append("  window.top.__HtmlUnitLogging = true;\n");
+                    makeIndent(depth + 2);
+                    sb.append("try{");
+                }
                 sb.append(getLogginFunctionName()).append("('Entering Function: ");
                 print(parent.getFunctionName(), 0);
                 sb.append("(");
@@ -54,7 +61,19 @@ public class JavaScriptFunctionLogger extends JavaScriptBeautifier {
                     }
                     sb.append(" + '");
                 }
-                sb.append(")');\n");
+                sb.append(")');");
+                if (!parent.getParams().isEmpty()) {
+                    sb.append("}catch(htmlunitExp){");
+                    sb.append(getLogginFunctionName()).append("('Entering Function: ");
+                    print(parent.getFunctionName(), 0);
+                    sb.append("(error printing parameters)');");
+                    sb.append("}\n");
+                    makeIndent(depth + 2);
+                    sb.append("window.top.__HtmlUnitLogging = false;\n");
+                    makeIndent(depth + 1);
+                    sb.append("}");
+                }
+                sb.append("\n");
                 for (final Node kid : node) {
                     print(kid, depth + 1);
                 }

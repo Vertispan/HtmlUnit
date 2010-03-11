@@ -43,6 +43,9 @@ public class JavaScriptFunctionLoggerTest {
         assertTrue(beautified.replaceAll("\\s", "").contains(
             "functiontest(){window.top.__HtmlUnitLog('EnteringFunction:test()');test2('hello','there');}"));
         assertTrue(beautified.replaceAll("\\s", "").contains(
-            "functiontest2(a,b){window.top.__HtmlUnitLog('EnteringFunction:test2('+'a:'+a+','+'b:'+b+')');"));
+            "functiontest2(a,b){if(!window.top.__HtmlUnitLogging){window.top.__HtmlUnitLogging=true;try{"
+                + "window.top.__HtmlUnitLog('EnteringFunction:test2('+'a:'+a+','+'b:'+b+')');}catch(htmlunitExp){"
+                + "window.top.__HtmlUnitLog('EnteringFunction:test2(errorprintingparameters)');}"
+                + "window.top.__HtmlUnitLogging=false;}"));
     }
 }
