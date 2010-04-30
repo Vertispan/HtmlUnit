@@ -68,6 +68,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -771,13 +773,11 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
         throw new WebDriverException("You may not set cookies on a page that is not HTML");
       }
 
-      // Cookies only make sense if the page is
-
       String domain = getDomainForCookie();
       verifyDomain(cookie, domain);
 
       webClient.getCookieManager().addCookie(
-          new org.apache.commons.httpclient.Cookie(domain, cookie.getName(), cookie.getValue(),
+          new com.gargoylesoftware.htmlunit.util.Cookie(domain, cookie.getName(), cookie.getValue(),
                                                    cookie.getPath(), cookie.getExpiry(), cookie.isSecure()));
     }
 
@@ -792,6 +792,11 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
             "Domain must not be an empty string. Consider using null instead");
       }
 
+      // Line-noise-tastic
+      if (domain.matches(".*[^:]:\\d+$")) {
+        domain = domain.replaceFirst(":\\d+$", "");
+      }
+
       expectedDomain = expectedDomain.startsWith(".") ? expectedDomain : "." + expectedDomain;
       domain = domain.startsWith(".") ? domain : "." + domain;
 
@@ -803,13 +808,23 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       }
     }
 
+    public Cookie getCookieNamed(String name) {
+      Set<Cookie> allCookies = getCookies();
+      for (Cookie cookie : allCookies) {
+        if (name.equals(cookie.getName())) {
+          return cookie;
+        }
+      }
+
+      return null;
+    }
+
     public void deleteCookieNamed(String name) {
       CookieManager cookieManager = webClient.getCookieManager();
-
-      Set<org.apache.commons.httpclient.Cookie>
-          rawCookies =
-          webClient.getCookieManager().getCookies(getHostName());
-      for (org.apache.commons.httpclient.Cookie cookie : rawCookies) {
+      URL url = lastPage().getWebResponse().getWebRequest().getUrl();
+      Set<com.gargoylesoftware.htmlunit.util.Cookie> rawCookies =
+                webClient.getCookieManager().getCookies(url);
+      for (com.gargoylesoftware.htmlunit.util.Cookie cookie : rawCookies) {
         if (name.equals(cookie.getName())) {
           cookieManager.removeCookie(cookie);
         }
@@ -825,15 +840,15 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
     }
 
     public Set<Cookie> getCookies() {
-      Set<org.apache.commons.httpclient.Cookie>
-          rawCookies =
-          webClient.getCookieManager().getCookies(getHostName());
+      URL url = lastPage().getWebResponse().getWebRequest().getUrl();
+      Set<com.gargoylesoftware.htmlunit.util.Cookie> rawCookies =
+               webClient.getCookieManager().getCookies(url);
 
       Set<Cookie> retCookies = new HashSet<Cookie>();
-      for (org.apache.commons.httpclient.Cookie c : rawCookies) {
+      for (com.gargoylesoftware.htmlunit.util.Cookie c : rawCookies) {
         if (c.getPath() != null && getPath().startsWith(c.getPath())) {
           retCookies.add(new ReturnedCookie(c.getName(), c.getValue(), c.getDomain(), c.getPath(),
-                                            c.getExpiryDate(), c.getSecure()));
+                  c.getExpires(), c.isSecure()));
         }
       }
       return retCookies;
@@ -857,11 +872,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
 
     private String getDomainForCookie() {
       URL current = lastPage().getWebResponse().getRequestUrl();
-      if (current.getPort() == 80) {
-        return current.getHost();
-      }
-
-      return String.format("%s:%s", current.getHost(), current.getPort());
+      return current.getHost();
     }
   }
 

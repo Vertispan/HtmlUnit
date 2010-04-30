@@ -19,18 +19,17 @@ limitations under the License.
 
 package org.openqa.selenium.htmlunit;
 
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.StyledElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
-
-import org.openqa.selenium.RenderedWebElement;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.WebDriverException;
-
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
 
 import net.sourceforge.htmlunit.corejs.javascript.Undefined;
+
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.RenderedWebElement;
+import org.openqa.selenium.WebDriverException;
+
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 
 public class RenderedHtmlUnitDriverWebElement extends HtmlUnitWebElement
     implements RenderedWebElement {
@@ -159,13 +158,9 @@ public class RenderedHtmlUnitDriverWebElement extends HtmlUnitWebElement
   }
 
   private String getEffectiveStyle(HtmlElement htmlElement, String propertyName) {
-    if (!(htmlElement instanceof StyledElement)) {
-      return "";
-    }
-
     HtmlElement current = htmlElement;
     String value = "inherit";
-    while (current instanceof StyledElement && "inherit".equals(value)) {
+    while ("inherit".equals(value)) {
       // Hat-tip to the Selenium team
       Object result = parent.executeScript(
           "if (window.getComputedStyle) { " +

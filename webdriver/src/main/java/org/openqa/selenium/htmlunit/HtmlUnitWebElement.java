@@ -65,6 +65,7 @@ import org.openqa.selenium.internal.FindsById;
 import org.openqa.selenium.internal.FindsByLinkText;
 import org.openqa.selenium.internal.FindsByTagName;
 import org.openqa.selenium.internal.FindsByXPath;
+import org.openqa.selenium.internal.WrapsElement;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
@@ -645,5 +646,24 @@ public class HtmlUnitWebElement implements WebElement,
       throw new StaleElementReferenceException("The element seems to be disconnected from the DOM. "
                                                + " This means that a user cannot interact with it.");
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof WebElement)) {
+      return false;
+    }
+
+    WebElement other = (WebElement) obj;
+    if (other instanceof WrapsElement) {
+      other = ((WrapsElement) obj).getWrappedElement();
+    }
+
+    return other instanceof HtmlUnitWebElement && element.equals(((HtmlUnitWebElement) other).element);
+  }
+
+  @Override
+  public int hashCode() {
+    return element.hashCode();
   }
 }
