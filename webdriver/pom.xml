@@ -103,7 +103,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-            <id>htmlUnitSnapshots</id>
+            <id>HtmlUnitSnapshots</id>
             <name>HtmlUnit Snapshots</name>
             <url>http://htmlunit.sourceforge.net/m2-repo-snapshots</url>
             <layout>default</layout>
