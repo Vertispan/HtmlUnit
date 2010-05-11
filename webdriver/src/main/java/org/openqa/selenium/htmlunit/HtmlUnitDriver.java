@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.CookieManager;
@@ -59,12 +60,14 @@ import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.InvalidCookieDomainException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.Speed;
+import org.openqa.selenium.UnableToSetCookieException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -88,6 +91,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
   private ProxyConfig proxyConfig;
   private final BrowserVersion version;
   private Speed speed = Speed.FAST;
+  private long implicitWait = 0;
 
   public HtmlUnitDriver(BrowserVersion version) {
     this.version = version;
@@ -264,7 +268,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
     }
 
     WebResponse response = page.getWebResponse();
-    return response.getRequestUrl().toString();
+    return response.getRequestSettings().getUrl().toString();
   }
 
   public String getTitle() {
@@ -276,11 +280,11 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
   }
 
   public WebElement findElement(By by) {
-    return by.findElement(this);
+    return findElement(by, this);
   }
 
   public List<WebElement> findElements(By by) {
-    return by.findElements(this);
+    return findElements(by, this);
   }
 
   public String getPageSource() {
@@ -659,7 +663,9 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
 
       // Walk over all parts of the frame identifier, each time looking for a frame
       // with a name or ID matching this part of the identifier (separated by '.').
-      for (String currentFrameId : name.split("\\.")) {
+      String[] frames = name.split("\\.");
+      for (int i = 0; i < frames.length; ++i) {
+        final String currentFrameId = frames[i];
         final HtmlPage page = (HtmlPage) window.getEnclosedPage();
         
         if (isNumericFrameIdValid(currentFrameId, page)) {
@@ -672,7 +678,12 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
           boolean nextFrameFound = false;
           for (final FrameWindow frameWindow : page.getFrames()) {
             final String frameName = frameWindow.getName();
-            final String frameId = frameWindow.getFrameElement().getId(); 
+            final String frameId = frameWindow.getFrameElement().getId();
+            final String remainingFrameId = joinFrom(frames, i, '.');
+            if (frameName.equals(remainingFrameId) || frameId.equals(remainingFrameId)) {
+              currentWindow = frameWindow;
+              return HtmlUnitDriver.this;
+            }
             if (frameName.equals(currentFrameId) || frameId.equals(currentFrameId)) {
               window = frameWindow;
               nextFrameFound = true;
@@ -688,6 +699,17 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       
       currentWindow = window;
       return HtmlUnitDriver.this;
+    }
+
+    private String joinFrom(String[] frames, int initial, char joiner) {
+      StringBuilder builder = new StringBuilder();
+      for (int i = initial; i < frames.length; ++i) {
+        builder.append(frames[i]).append(joiner);
+      }
+      if (builder.length() > 0) {
+        builder.deleteCharAt(builder.length() - 1);
+      }
+      return builder.toString();
     }
 
     private boolean isNumericFrameIdValid(String currentFrameId, HtmlPage page) {
@@ -833,7 +855,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
     public void addCookie(Cookie cookie) {
       Page page = lastPage();
       if (!(page instanceof HtmlPage)) {
-        throw new WebDriverException("You may not set cookies on a page that is not HTML");
+        throw new UnableToSetCookieException("You may not set cookies on a page that is not HTML");
       }
 
       String domain = getDomainForCookie();
@@ -841,7 +863,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
 
       webClient.getCookieManager().addCookie(
           new com.gargoylesoftware.htmlunit.util.Cookie(domain, cookie.getName(), cookie.getValue(),
-                                                   cookie.getPath(), cookie.getExpiry(), cookie.isSecure()));
+                               cookie.getPath(), cookie.getExpiry(), cookie.isSecure()));
     }
 
     private void verifyDomain(Cookie cookie, String expectedDomain) {
@@ -851,7 +873,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       }
 
       if ("".equals(domain)) {
-        throw new WebDriverException(
+        throw new InvalidCookieDomainException(
             "Domain must not be an empty string. Consider using null instead");
       }
 
@@ -864,7 +886,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       domain = domain.startsWith(".") ? domain : "." + domain;
 
       if (!expectedDomain.endsWith(domain)) {
-        throw new WebDriverException(
+        throw new InvalidCookieDomainException(
             String.format(
                 "You may only add cookies that would be visible to the current domain: %s => %s",
                 domain, expectedDomain));
@@ -884,9 +906,9 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
 
     public void deleteCookieNamed(String name) {
       CookieManager cookieManager = webClient.getCookieManager();
-      URL url = lastPage().getWebResponse().getWebRequest().getUrl();
-      Set<com.gargoylesoftware.htmlunit.util.Cookie>
-          rawCookies =
+
+      URL url = lastPage().getWebResponse().getRequestSettings().getUrl();
+      Set<com.gargoylesoftware.htmlunit.util.Cookie> rawCookies =
           webClient.getCookieManager().getCookies(url);
       for (com.gargoylesoftware.htmlunit.util.Cookie cookie : rawCookies) {
         if (name.equals(cookie.getName())) {
@@ -904,7 +926,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
     }
 
     public Set<Cookie> getCookies() {
-      URL url = lastPage().getWebResponse().getWebRequest().getUrl();
+      URL url = lastPage().getWebResponse().getRequestSettings().getUrl();
       Set<com.gargoylesoftware.htmlunit.util.Cookie>
           rawCookies =
           webClient.getCookieManager().getCookies(url);
@@ -946,6 +968,18 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       URL current = lastPage().getWebResponse().getRequestUrl();
       return current.getHost();
     }
+
+    public Timeouts timeouts() {
+      return new HtmlUnitTimeouts();
+    }
+  }
+
+  class HtmlUnitTimeouts implements Timeouts {
+    public Timeouts implicitlyWait(long time, TimeUnit unit) {
+      HtmlUnitDriver.this.implicitWait =
+          TimeUnit.MILLISECONDS.convert(Math.max(0, time), unit);
+      return this;
+    }
   }
 
   public WebElement findElementByPartialLinkText(String using) {
@@ -974,5 +1008,40 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
       }
     }
     return elements;
+  }
+
+  WebElement findElement(By locator, SearchContext context) {
+    long start = System.currentTimeMillis();
+    while (true) {
+      try {
+        return locator.findElement(context);
+      } catch (NoSuchElementException e) {
+        if (System.currentTimeMillis() - start > implicitWait) {
+          throw e;
+        }
+        sleepQuietly(100);
+      }
+    }
+  }
+
+  List<WebElement> findElements(By by, SearchContext context) {
+    long start = System.currentTimeMillis();
+    List<WebElement> found;
+    do {
+      found = by.findElements(context);
+      if (found.isEmpty()) {
+        sleepQuietly(100);
+      } else {
+        break;
+      }
+    } while (System.currentTimeMillis() - start <= implicitWait);
+    return found;
+  }
+
+  private static void sleepQuietly(long ms) {
+    try {
+      Thread.sleep(ms);
+    } catch (InterruptedException ignored) {
+    }
   }
 }

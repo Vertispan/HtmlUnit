@@ -35,36 +35,10 @@ limitations under the License.
 
 package org.openqa.selenium.htmlunit;
 
-import static org.openqa.selenium.Keys.ENTER;
-import static org.openqa.selenium.Keys.RETURN;
-
-import java.awt.Dimension;
-import java.awt.Point;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.sourceforge.htmlunit.corejs.javascript.Undefined;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.RenderedWebElement;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.FindsById;
-import org.openqa.selenium.internal.FindsByLinkText;
-import org.openqa.selenium.internal.FindsByTagName;
-import org.openqa.selenium.internal.FindsByXPath;
-import org.openqa.selenium.internal.WrapsElement;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
-
 import com.gargoylesoftware.htmlunit.Page;
+
 import com.gargoylesoftware.htmlunit.ScriptException;
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.SgmlPage;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomText;
@@ -73,7 +47,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlHtml;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -83,9 +56,40 @@ import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.RenderedWebElement;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.internal.FindsById;
+import org.openqa.selenium.internal.FindsByLinkText;
+import org.openqa.selenium.internal.FindsByTagName;
+import org.openqa.selenium.internal.FindsByXPath;
+import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.internal.WrapsElement;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.awt.Point;
+import java.awt.Dimension;
+
+import static org.openqa.selenium.Keys.ENTER;
+import static org.openqa.selenium.Keys.RETURN;
+import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 
 public class HtmlUnitWebElement implements RenderedWebElement,
-    FindsById, FindsByLinkText, FindsByXPath, FindsByTagName {
+    FindsById, FindsByLinkText, FindsByXPath, FindsByTagName, WrapsDriver {
 
   protected final HtmlUnitDriver parent;
   protected final HtmlElement element;
@@ -174,7 +178,15 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     }
 
     if (submit == null) {
-      throw new WebDriverException("Cannot locate element used to submit form");
+      if (parent.isJavascriptEnabled()) {
+        ScriptResult eventResult = form.fireEvent("submit");
+        if (!ScriptResult.isFalse(eventResult)) {
+          parent.executeScript("arguments[0].submit()", form);
+        }
+        return;
+      } else {
+        throw new WebDriverException("Cannot locate element used to submit form");
+      }
     }
     try {
       submit.click();
@@ -587,14 +599,12 @@ public class HtmlUnitWebElement implements RenderedWebElement,
 
   public WebElement findElement(By by) {
     assertElementNotStale();
-
-    return by.findElement(this);
+    return parent.findElement(by, this);
   }
 
   public List<WebElement> findElements(By by) {
     assertElementNotStale();
-
-    return by.findElements(this);
+    return parent.findElements(by, this);
   }
 
   public WebElement findElementById(String id) {
@@ -831,5 +841,12 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   @Override
   public int hashCode() {
     return element.hashCode();
+  }
+
+  /* (non-Javadoc)
+   * @see org.openqa.selenium.internal.WrapsDriver#getContainingDriver()
+   */
+  public WebDriver getWrappedDriver() {
+    return parent;
   }
 }
