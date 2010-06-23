@@ -108,9 +108,5 @@
             <url>http://htmlunit.sourceforge.net/m2-repo-snapshots</url>
             <layout>default</layout>
         </repository>
-        <repository>
-            <id>selenium-repository</id>
-            <url>http://selenium.googlecode.com/svn/repository/</url>
-        </repository>
     </repositories>
 </project>
