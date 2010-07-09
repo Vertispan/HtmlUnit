@@ -2596,6 +2596,8 @@ public class ScriptRuntime {
             return "undefined";
         if (value instanceof ScriptableObject)
         	return ((ScriptableObject) value).getTypeOf();
+        if (value instanceof Delegator)
+            return typeof(((Delegator) value).getDelegee());
         if (value instanceof Scriptable)
             return (value instanceof Callable) ? "function" : "object";
         if (value instanceof String)
