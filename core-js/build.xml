@@ -13,6 +13,7 @@ the terms of the MPL.
 Marc Guillemot                                                                
 ====================================================================== -->
 <project default="default" xmlns:artifact="urn:maven-artifact-ant">
+	<property name="deploy-mvn-local.dir" location="${user.home}/.m2/repository"/>
 	<property name="test.classes" location="target/test-classes" />
 	<property name="test.src" location="src" />
 	<property name="patchedRhino.classes" location="target/rhino-patched-classes" />
@@ -20,7 +21,7 @@ Marc Guillemot
 	<property name="patchedRhino.tools.src" location="rhino/toolsrc" />
 	<property name="originalRhino.classes" location="target/rhino-original-classes" />
 	<property name="src.test.dir" location="src" />
-	<property name="junit.jar" location="lib/junit-4.4.jar" />
+	<property name="junit.jar" location="lib/junit-4.8.1.jar" />
 	
 	<property name="version" value="2.8-SNAPSHOT"/>
 	<property name="jar" location="target/htmlunit-core-js-${version}.jar" />
@@ -152,11 +153,11 @@ Marc Guillemot
 	</target>
 
 	<target name="deploy-snapshot" depends="jar-all" description="Deploys a snapshot to HTMLUnit snapshot repository">
-		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.8.jar" />
+		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.0.jar" />
 		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
 			classpathref="maven-ant-tasks.classpath" />
 		<artifact:pom id="maven.project" file="pom.xml" />
-		<artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
+		<artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-6"/>
 		<artifact:deploy file="${jar}">
 			<pom refid="maven.project"/>
 			<attach file="${jar.sources}" classifier="sources" /> 
@@ -165,7 +166,7 @@ Marc Guillemot
 
 	<target name="deploy-mvn-local" depends="jar-all" description="Deploys jars to a local folder">
 		<echo message="Deploying locally to ${deploy-mvn-local.dir}"/>
-		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.8.jar" />
+		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.0.jar" />
 		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
 			classpathref="maven-ant-tasks.classpath" />
 		<artifact:pom id="maven.project" file="pom.xml" />
