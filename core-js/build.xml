@@ -37,7 +37,7 @@ Marc Guillemot
 		<delete dir="target" />
 	</target>
 
-	<target name="compile" description="--> description">
+	<target name="compile" description="Compiles the project">
 		<mkdir dir="${patchedRhino.classes}" />
 		<ant dir="rhino" antfile="src/build.xml" target="compile">
 			<property name="classes" value="${patchedRhino.classes}" />
@@ -82,7 +82,7 @@ Marc Guillemot
 		</sequential>
 	</macrodef>
 
-	<target name="checkPatchNeeded" depends="updateRhinoOriginal" description="checks that the pb are not yet fixed in Rhino and the patches still needed">
+	<target name="checkPatchNeeded" depends="updateRhinoOriginal" description="Checks that the pb are not yet fixed in Rhino and the patches still needed">
 		<mkdir dir="${originalRhino.classes}" />
 		<ant dir="rhino_original/mozilla/js/rhino" antfile="src/build.xml" target="compile">
 			<property name="classes" value="${originalRhino.classes}" />
@@ -95,7 +95,7 @@ Marc Guillemot
 		<cvs cvsRoot=":pserver:anonymous:anonymous@cvs-mirror.mozilla.org:/cvsroot" package="mozilla/js/rhino" dest="rhino_original" failonerror="true" />
 	</target>
 
-	<target name="generateRhinoDiff">
+	<target name="generateRhinoDiff" description="Generates the 'diff' file against Rhino head">
 		<echo message="Generating diff to rhinoDiff.txt against head from trunk on ${rhino.base.date}"/>
 		<cvs command="diff -D ${rhino.base.date} -u -N" output="rhinoDiff.txt" dest="rhino" failonerror="false" />
 		<echo message="Don't forget to clean the generated diff (for instance removing all lines with .svn)"/>
