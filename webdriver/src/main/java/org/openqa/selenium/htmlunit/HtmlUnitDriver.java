@@ -59,18 +59,22 @@ import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.InvalidCookieDomainException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.Speed;
 import org.openqa.selenium.UnableToSetCookieException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.browserlaunchers.CapabilityType;
+import org.openqa.selenium.browserlaunchers.Proxies;
 import org.openqa.selenium.internal.FindsById;
 import org.openqa.selenium.internal.FindsByLinkText;
 import org.openqa.selenium.internal.FindsByName;
@@ -143,6 +147,51 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
   private HtmlUnitDriver(boolean enableJavascript, WebWindow currentWindow) {
     this(enableJavascript);
     this.currentWindow = currentWindow;
+  }
+
+  public HtmlUnitDriver(Capabilities capabilities) {
+    this(determineBrowserVersion(capabilities));
+
+    setJavascriptEnabled(capabilities.isJavascriptEnabled());
+
+    if (capabilities.getCapability(CapabilityType.PROXY) != null) {
+      Proxy proxy = Proxies.extractProxy(capabilities);
+      String fullProxy = proxy.getHttpProxy();
+      if (fullProxy != null) {
+        int index = fullProxy.indexOf(":");
+        if (index != -1) {
+          String host = fullProxy.substring(0, index);
+          int port = Integer.parseInt(fullProxy.substring(index + 1));
+          setProxy(host, port);
+        } else {
+          setProxy(fullProxy, 0);
+        }
+      }
+    }
+  }
+
+  private static BrowserVersion determineBrowserVersion(Capabilities capabilities) {
+    String browserName = capabilities.getBrowserName();
+    if ("firefox".equals(browserName)) {
+      return BrowserVersion.FIREFOX_3;
+    }
+    if ("internet explorer".equals(browserName)) {
+      // Try and convert the version
+      try {
+        int version = Integer.parseInt(capabilities.getVersion());
+        switch (version) {
+          case 6:
+            return BrowserVersion.INTERNET_EXPLORER_6;
+          case 7:
+            return BrowserVersion.INTERNET_EXPLORER_7;
+          case 8:
+            return BrowserVersion.INTERNET_EXPLORER_8;
+        }
+      } catch (NumberFormatException e) {
+        return BrowserVersion.INTERNET_EXPLORER_8;
+      }
+    }
+    return BrowserVersion.getDefault();
   }
 
   private WebClient createWebClient(BrowserVersion version) {
@@ -634,13 +683,20 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
 
   private class HtmlUnitTargetLocator implements TargetLocator {
 
-    public WebDriver frame(int frameIndex) {
-      WebWindow window = currentWindow.getTopWindow();
-      HtmlPage page = (HtmlPage) window.getEnclosedPage();
+    public WebDriver frame(int index) {
+      HtmlPage currentPage = (HtmlPage) currentWindow.getEnclosedPage();
       try {
-        currentWindow = page.getFrames().get(frameIndex);
-      } catch (final IndexOutOfBoundsException e) {
-        throw new NoSuchFrameException("Cannot find frame: " + frameIndex);
+        // 1.) try to find frame in current window ...
+        currentWindow = currentPage.getFrames().get(index);
+      } catch (IndexOutOfBoundsException ignored) {
+        // 2.) try to find frame in top window ...
+        final WebWindow topWindow = currentWindow.getTopWindow();
+        final HtmlPage topPage = (HtmlPage) topWindow.getEnclosedPage();
+        try {
+          currentWindow = topPage.getFrames().get(index);
+        } catch (IndexOutOfBoundsException e) {
+          throw new NoSuchFrameException("Cannot find frame: " + index);
+        }
       }
       return HtmlUnitDriver.this;
     }
@@ -649,21 +705,47 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
      * Switches to a given frame according to name or numeric ID.
      * Since the method can receive a concatenation of identifiers (separated
      * by a dot), it traverses the frames, each time looking for a frame with
-     * the current identifier. For eample:
-     * 
+     * the current identifier. For example:
+     *
      * frame("foo.1.bar") will switch to frame "foo", than frame number 1 under
      * frame "foo", then frame "bar" under frame number 1.
-     * 
-     * @param name Frame index, name or a concatenation of frame identifiers
+     *
+     * @param nameOrIdOrIndex Frame name, id, (zero-based) index, or a concatenation of frame identifiers
      * that uniquely point to a specific frame.
-     * @returns This instance. 
+     * @return This instance.
      */
-    public WebDriver frame(final String name) {
-      WebWindow window = currentWindow.getTopWindow();
+    public WebDriver frame(final String nameOrIdOrIndex) {
+      try {
+        // 1.) try to find frame in current window ...
+        currentWindow = findFrame(currentWindow, nameOrIdOrIndex);
+      } catch (NoSuchFrameException ignored) {
+        // 2.) try to find frame in top window ...
+        final WebWindow topWindow = currentWindow.getTopWindow();
+        currentWindow = findFrame(topWindow, nameOrIdOrIndex);
+      }
+      return HtmlUnitDriver.this;
+    }
 
+    private WebWindow findFrame(WebWindow startWindow, String nameOrIdOrIndex) {
+      // 1.) Check if there is a frame with the given name or id ...
+      final HtmlPage startPage = (HtmlPage) startWindow.getEnclosedPage();
+      for (final FrameWindow frameWindow : startPage.getFrames()) {
+        final String frameName = frameWindow.getName();
+        final String frameId = frameWindow.getFrameElement().getId();
+        if (frameName.equals(nameOrIdOrIndex) || frameId.equals(nameOrIdOrIndex)) {
+          return frameWindow;
+        }
+      }
+      // 2.) Check if the given nameOrIdOrIndex string is actually an index ...
+      if (isNumericFrameIdValid(nameOrIdOrIndex, startPage)) {
+        return getWindowByNumericFrameId(nameOrIdOrIndex, startPage);
+      }
+      // 3.) Fall back to old behaviour: nameOrIdOrIndex might be a concatenation
+      //     of several '.' separated names, ids, or indexes ...
+      WebWindow window = startWindow;
       // Walk over all parts of the frame identifier, each time looking for a frame
       // with a name or ID matching this part of the identifier (separated by '.').
-      String[] frames = name.split("\\.");
+      final String[] frames = nameOrIdOrIndex.split("\\.");
       for (int i = 0; i < frames.length; ++i) {
         final String currentFrameId = frames[i];
         final HtmlPage page = (HtmlPage) window.getEnclosedPage();
@@ -681,8 +763,7 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
             final String frameId = frameWindow.getFrameElement().getId();
             final String remainingFrameId = joinFrom(frames, i, '.');
             if (frameName.equals(remainingFrameId) || frameId.equals(remainingFrameId)) {
-              currentWindow = frameWindow;
-              return HtmlUnitDriver.this;
+              return frameWindow;
             }
             if (frameName.equals(currentFrameId) || frameId.equals(currentFrameId)) {
               window = frameWindow;
@@ -691,14 +772,13 @@ public class HtmlUnitDriver implements WebDriver, SearchContext, JavascriptExecu
           } // End for.
           
           if (!nextFrameFound) {
-            throw new NoSuchFrameException("Cannot find frame: " + name);
+            throw new NoSuchFrameException("Cannot find frame: " + nameOrIdOrIndex);
           }
         } // End else
 
       } // End for
       
-      currentWindow = window;
-      return HtmlUnitDriver.this;
+      return window;
     }
 
     private String joinFrom(String[] frames, int initial, char joiner) {
