@@ -50,4 +50,14 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+    <developers>
+        <developer>
+            <name>Mozilla Rhino Team</name>
+            <id>MozillaRhino</id>
+        </developer>
+        <developer>
+            <name>HtmlUnit Team</name>
+            <id>HtmlUnitTeam</id>
+        </developer>
+    </developers>
 </project>

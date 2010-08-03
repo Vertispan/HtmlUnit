@@ -22,10 +22,12 @@ Marc Guillemot
 	<property name="originalRhino.classes" location="target/rhino-original-classes" />
 	<property name="src.test.dir" location="src" />
 	<property name="junit.jar" location="lib/junit-4.8.1.jar" />
-	
+
 	<property name="version" value="2.8"/>
 	<property name="jar" location="target/htmlunit-core-js-${version}.jar" />
 	<property name="jar.sources" location="target/htmlunit-core-js-${version}-sources.jar" />
+	<property name="javadoc.dir" value="target/javadoc"/>
+	<property name="jar.javadoc" location="target/htmlunit-core-js-${version}-javadoc.jar" />
 	
 	<property name="rhino.base.date" value="20100107" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
 	
@@ -135,7 +137,7 @@ Marc Guillemot
 		</copy>
 	</target>
 
-	<target name="jar-all" depends="repackage">
+	<target name="jar-all" depends="repackage,javadoc">
 		<jar destfile="${jar.sources}">
 		    <fileset dir='${repackaged-rhino.dir}/src'>
 				<include name="**/*"/>
@@ -150,6 +152,43 @@ Marc Guillemot
 				<include name="rhinoDiff.txt"/>
 		    </fileset>
 		</jar>
+	 	<jar destfile="${jar.javadoc}">
+		    <fileset dir='${javadoc.dir}' />
+		</jar>
+	</target>
+
+	<target name="bundle" depends="clean, jar-all">
+		<gpg file="pom.xml"/>
+		<gpg file="${jar}"/>
+		<gpg file="${jar.sources}"/>
+		<gpg file="${jar.javadoc}"/>
+	 	<jar destfile="target/bundle.jar">
+		    <fileset dir='.'>
+				<include name="pom.xml"/>
+				<include name="pom.xml.asc"/>
+		    </fileset>
+    	   <fileset dir="target" includes="*.jar,*.jar.asc" />
+		</jar>
+		<delete file="pom.xml.asc"/>
+	</target>
+	
+	<macrodef name="gpg" description="Sign the file with gpg (which should be available on path)">
+		<attribute name="file"/>
+		<sequential>
+			  <exec executable="gpg">
+			    <arg value="-ab"/>
+			    <arg value="@{file}"/>
+			  </exec>
+		</sequential>
+	</macrodef>
+	
+	<target name="javadoc" depends="repackage" description="Generates the JavaDoc for the repackaged sources">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc sourcepath='${repackaged-rhino.dir}/src' destdir='${javadoc.dir}'
+		           author='true' version='true' use='true'
+		           windowtitle="HtmlUnit core-js-${version}"
+		           doctitle="HtmlUnit core-js-${version}" encoding="ISO-8859-1"
+		  />
 	</target>
 
 	<target name="deploy-snapshot" depends="jar-all" description="Deploys a snapshot to HTMLUnit snapshot repository">
