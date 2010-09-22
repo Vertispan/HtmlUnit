@@ -12,7 +12,7 @@ the terms of the MPL.
 
 Marc Guillemot                                                                
 ====================================================================== -->
-<project default="default" xmlns:artifact="urn:maven-artifact-ant">
+<project name="htmlunit-core-js build" default="default" xmlns:artifact="urn:maven-artifact-ant">
 	<property name="deploy-mvn-local.dir" location="${user.home}/.m2/repository"/>
 	<property name="test.classes" location="target/test-classes" />
 	<property name="test.src" location="src" />
