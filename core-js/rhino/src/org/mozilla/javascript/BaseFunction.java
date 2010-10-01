@@ -529,7 +529,7 @@ public class BaseFunction extends IdScriptableObject implements Function
             String funBody = ScriptRuntime.toString(args[arglen - 1]);
             sourceBuf.append(funBody);
         }
-        sourceBuf.append('}');
+        sourceBuf.append("\n}");
         String source = sourceBuf.toString();
 
         int[] linep = new int[1];
