@@ -3806,7 +3806,7 @@ public class ScriptRuntime {
 
     public static RuntimeException undefReadError(Object object, Object id)
     {
-        String idStr = (id == null) ? "null" : id.toString();
+        final String idStr = toString(id);
         return typeError2("msg.undef.prop.read", toString(object), idStr);
     }
 
@@ -3820,9 +3820,8 @@ public class ScriptRuntime {
                                                    Object id,
                                                    Object value)
     {
-        String idStr = (id == null) ? "null" : id.toString();
-        String valueStr = (value instanceof Scriptable)
-                          ? value.toString() : toString(value);
+        final String idStr = toString(id);
+        String valueStr = toString(value);
         return typeError3("msg.undef.prop.write", toString(object), idStr,
                           valueStr);
     }

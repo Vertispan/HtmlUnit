@@ -27,8 +27,38 @@ public class ExceptionMessageTest extends TestCase {
     	Locale.setDefault(Locale.ENGLISH); // to be sure that error messages are in English
     }
 
-
     /**
+     * Unit test for bug 608235
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=608235
+     */
+	public void testUndefinedFromUndefined() {
+		testExceptionMessage("undefined[undefined]", "TypeError: Cannot read property \"undefined\" from undefined");
+		testExceptionMessage("undefined[undefined] = 1", "TypeError: Cannot set property \"undefined\" of undefined to \"1\"");
+	}
+
+	private void testExceptionMessage(final String script, final String expectedMesage) {
+		final ContextAction action = new ContextAction() {
+			public Object run(final Context cx) {
+				try {
+					Scriptable scope = cx.initStandardObjects();
+
+					cx.evaluateString(scope, script, "test_script", 1, null);
+					throw new RuntimeException("Should have failed!");
+				}
+				catch (final EcmaError e) {
+					assertEquals(expectedMesage + " (test_script#1)", e.getMessage());
+					return null;
+				}
+				catch (final Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+		Utils.runWithAllOptimizationLevels(action);
+	}
+
+	/**
      * Unit test for bug 604674
      * https://bugzilla.mozilla.org/show_bug.cgi?id=604674
      */
