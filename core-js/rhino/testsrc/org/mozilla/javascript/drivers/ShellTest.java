@@ -64,7 +64,10 @@ public class ShellTest {
     public static final FileFilter TEST_FILTER = new FileFilter() {
         public boolean accept(File pathname)
         {
-            return pathname.getName().endsWith(".js") && !pathname.getName().equals("shell.js") && !pathname.getName().equals("browser.js") && !pathname.getName().equals("template.js");
+            return pathname.getName().endsWith(".js")
+                    && !pathname.getName().equals("shell.js")
+                    && !pathname.getName().equals("browser.js")
+                    && !pathname.getName().equals("template.js");
         }
     };
 
@@ -105,6 +108,14 @@ public class ShellTest {
                 failed("JavaScript errors:\n" + JsError.toString(errors));
             } else if (negative && errors.length == 0) {
                 failed("Should have produced runtime error.");
+            }
+        }
+
+        public final void hadErrors(File jsFile, JsError[] errors) {
+            if (!negative && errors.length > 0) {
+                failed("JavaScript errors in " + jsFile + ":\n" + JsError.toString(errors));
+            } else if (negative && errors.length == 0) {
+                failed("Should have produced runtime error in " + jsFile + ".");
             }
         }
 
@@ -286,12 +297,14 @@ public class ShellTest {
                 new String[] { "options" }, ShellTest.class,
                 ScriptableObject.DONTENUM | ScriptableObject.PERMANENT |
                   ScriptableObject.READONLY);
+        // test suite expects keywords to be disallowed as identifiers
+        shellContextFactory.setAllowReservedKeywords(false);
         final TestState testState = new TestState();
         if (jsFile.getName().endsWith("-n.js")) {
             status.setNegative();
         }
         final Throwable thrown[] = {null};
-        
+
         Thread t = new Thread(new Runnable()
         {
             public void run()
@@ -311,7 +324,7 @@ public class ShellTest {
                                 runFileIfExists(cx, global, new File(jsFile.getParentFile().getParentFile(), "shell.js"));
                                 runFileIfExists(cx, global, new File(jsFile.getParentFile(), "shell.js"));
                                 runFileIfExists(cx, global, jsFile);
-                                status.hadErrors(testState.errors.errors.toArray(new Status.JsError[0]));
+                                status.hadErrors(jsFile, testState.errors.errors.toArray(new Status.JsError[0]));
                             } catch (ThreadDeath e) {
                             } catch (Throwable t) {
                                 status.threw(t);

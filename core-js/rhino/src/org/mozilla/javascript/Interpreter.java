@@ -59,7 +59,6 @@ import org.mozilla.javascript.debug.DebugFrame;
 public final class Interpreter extends Icode implements Evaluator
 {
     // data for parsing
-    CompilerEnvirons compilerEnv;
     InterpreterData itsData;
 
     static final int EXCEPTION_TRY_START_SLOT  = 0;
@@ -230,7 +229,6 @@ public final class Interpreter extends Icode implements Evaluator
                           String encodedSource,
                           boolean returnFunction)
     {
-        this.compilerEnv = compilerEnv;
         CodeGenerator cgen = new CodeGenerator();
         itsData = cgen.compile(compilerEnv, tree, encodedSource, returnFunction);
         return itsData;
@@ -758,15 +756,29 @@ public final class Interpreter extends Icode implements Evaluator
         return sb.toString();
     }
 
-    public List<String> getScriptStack(RhinoException ex)
+    public List<String> getScriptStack(RhinoException ex) {
+        ScriptStackElement[][] stack = getScriptStackElements(ex);
+        List<String> list = new ArrayList<String>(stack.length);
+        String lineSeparator =
+                SecurityUtilities.getSystemProperty("line.separator");
+        for (ScriptStackElement[] group : stack) {
+            StringBuilder sb = new StringBuilder();
+            for (ScriptStackElement elem : group) {
+                elem.renderJavaStyle(sb);
+                sb.append(lineSeparator);
+            }
+            list.add(sb.toString());
+        }
+        return list;
+    }
+
+    public ScriptStackElement[][] getScriptStackElements(RhinoException ex)
     {
         if (ex.interpreterStackInfo == null) {
             return null;
         }
 
-        List<String> list = new ArrayList<String>();
-        String lineSeparator =
-                SecurityUtilities.getSystemProperty("line.separator");
+        List<ScriptStackElement[]> list = new ArrayList<ScriptStackElement[]>();
 
         CallFrame[] array = (CallFrame[])ex.interpreterStackInfo;
         int[] linePC = ex.interpreterLineData;
@@ -774,31 +786,28 @@ public final class Interpreter extends Icode implements Evaluator
         int linePCIndex = linePC.length;
         while (arrayIndex != 0) {
             --arrayIndex;
-            StringBuilder sb = new StringBuilder();
             CallFrame frame = array[arrayIndex];
+            List<ScriptStackElement> group = new ArrayList<ScriptStackElement>();
             while (frame != null) {
                 if (linePCIndex == 0) Kit.codeBug();
                 --linePCIndex;
                 InterpreterData idata = frame.idata;
-                sb.append("\tat ");
-                sb.append(idata.itsSourceFile);
+                String fileName = idata.itsSourceFile;
+                String functionName = null;
+                int lineNumber = -1;
                 int pc = linePC[linePCIndex];
                 if (pc >= 0) {
-                    // Include line info only if available
-                    sb.append(':');
-                    sb.append(getIndex(idata.itsICode, pc));
+                    lineNumber = getIndex(idata.itsICode, pc);
                 }
                 if (idata.itsName != null && idata.itsName.length() != 0) {
-                    sb.append(" (");
-                    sb.append(idata.itsName);
-                    sb.append(')');
+                    functionName = idata.itsName;
                 }
-                sb.append(lineSeparator);
                 frame = frame.parentFrame;
+                group.add(new ScriptStackElement(fileName, functionName, lineNumber));
             }
-            list.add(sb.toString());
+            list.add(group.toArray(new ScriptStackElement[group.size()]));
         }
-        return list;
+        return list.toArray(new ScriptStackElement[list.size()][]);
     }
 
     static String getEncodedSource(InterpreterData idata)
@@ -1039,20 +1048,6 @@ switch (op) {
           frame.idata.itsSourceFile, sourceLine);
       break Loop;
     }
-    case Token.STRICT_SETNAME: {
-        Object rhs = stack[stackTop];
-        if (rhs == DBL_MRK) rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
-        --stackTop;
-        Scriptable lhs = (Scriptable)stack[stackTop];
-        if (lhs != null) {
-            stack[stackTop] = ScriptRuntime.setName(lhs, rhs, cx,
-                                                    frame.scope, stringReg);
-            continue Loop;
-        }
-        stack[stackTop] = cx.newObject(frame.scope, "ReferenceError",
-                                       new Object[] { stringReg });
-    }
-    /* fall through */
     case Token.THROW: {
         Object value = stack[stackTop];
         if (value == DBL_MRK) value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
@@ -1361,13 +1356,17 @@ switch (op) {
     case Token.BINDNAME :
         stack[++stackTop] = ScriptRuntime.bind(cx, frame.scope, stringReg);
         continue Loop;
+    case Token.STRICT_SETNAME:
     case Token.SETNAME : {
         Object rhs = stack[stackTop];
         if (rhs == DBL_MRK) rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
         --stackTop;
         Scriptable lhs = (Scriptable)stack[stackTop];
-        stack[stackTop] = ScriptRuntime.setName(lhs, rhs, cx,
-                                                frame.scope, stringReg);
+        stack[stackTop] = op == Token.SETNAME ?
+                ScriptRuntime.setName(lhs, rhs, cx,
+                                      frame.scope, stringReg) :
+                ScriptRuntime.strictSetName(lhs, rhs, cx,
+                                      frame.scope, stringReg);
         continue Loop;
     }
     case Icode_SETCONST: {

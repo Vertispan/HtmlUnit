@@ -34,6 +34,7 @@ public class ExceptionMessageTest extends TestCase {
 	public void testUndefinedFromUndefined() {
 		testExceptionMessage("undefined[undefined]", "TypeError: Cannot read property \"undefined\" from undefined");
 		testExceptionMessage("undefined[undefined] = 1", "TypeError: Cannot set property \"undefined\" of undefined to \"1\"");
+		testExceptionMessage("undefined.undefined()", "TypeError: Cannot call method \"undefined\" of undefined");
 	}
 
 	private void testExceptionMessage(final String script, final String expectedMesage) {

@@ -63,10 +63,9 @@ Requires Ant version 1.2
            excludes="org/**/jdk15/*.java"
            deprecation="on"
            debug="${debug}"
-       target="${target-jvm}"
-       source="${source-level}"
-       >
-    </javac>
+           includeAntRuntime="false"
+           target="${target-jvm}"
+           source="${source-level}" />
     <copy todir="${classes}">
       <fileset dir="src" includes="org/**/*.properties" />
       <filterset>
@@ -82,10 +81,9 @@ Requires Ant version 1.2
            includes="org/**/jdk15/*.java"
            deprecation="on"
            debug="${debug}"
-       target="${target-jvm}"
-       source="${source-level}"
-       >
-    </javac>
+           includeAntRuntime="false"
+           target="${target-jvm}"
+           source="${source-level}" />
   </target>
 
   <target name="copy-source">

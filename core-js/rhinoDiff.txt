@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Arguments.java,v
 retrieving revision 1.36
 diff -u -r1.36 Arguments.java
 --- src/org/mozilla/javascript/Arguments.java	6 Jan 2010 18:17:53 -0000	1.36
-+++ src/org/mozilla/javascript/Arguments.java	15 Oct 2010 16:27:27 -0000
++++ src/org/mozilla/javascript/Arguments.java	5 May 2011 16:42:45 -0000
 @@ -85,7 +85,7 @@
      @Override
      public String getClassName()
@@ -14,29 +14,13 @@ diff -u -r1.36 Arguments.java
      }
  
      private Object arg(int index) {
-Index: src/org/mozilla/javascript/BaseFunction.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/BaseFunction.java,v
-retrieving revision 1.72
-diff -u -r1.72 BaseFunction.java
---- src/org/mozilla/javascript/BaseFunction.java	22 Dec 2009 13:03:53 -0000	1.72
-+++ src/org/mozilla/javascript/BaseFunction.java	15 Oct 2010 16:27:27 -0000
-@@ -529,7 +529,7 @@
-             String funBody = ScriptRuntime.toString(args[arglen - 1]);
-             sourceBuf.append(funBody);
-         }
--        sourceBuf.append('}');
-+        sourceBuf.append("\n}");
-         String source = sourceBuf.toString();
- 
-         int[] linep = new int[1];
 Index: src/org/mozilla/javascript/Context.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Context.java,v
-retrieving revision 1.282
-diff -u -r1.282 Context.java
---- src/org/mozilla/javascript/Context.java	23 Dec 2009 21:47:43 -0000	1.282
-+++ src/org/mozilla/javascript/Context.java	15 Oct 2010 16:27:31 -0000
+retrieving revision 1.284
+diff -u -r1.284 Context.java
+--- src/org/mozilla/javascript/Context.java	6 Mar 2011 14:52:49 -0000	1.284
++++ src/org/mozilla/javascript/Context.java	5 May 2011 16:42:46 -0000
 @@ -315,6 +315,22 @@
       */
      public static final int FEATURE_ENHANCED_JAVA_ACCESS = 13;
@@ -72,10 +56,10 @@ diff -u -r1.282 Context.java
 Index: src/org/mozilla/javascript/ContextFactory.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ContextFactory.java,v
-retrieving revision 1.36
-diff -u -r1.36 ContextFactory.java
---- src/org/mozilla/javascript/ContextFactory.java	23 Oct 2009 15:28:16 -0000	1.36
-+++ src/org/mozilla/javascript/ContextFactory.java	15 Oct 2010 16:27:31 -0000
+retrieving revision 1.37
+diff -u -r1.37 ContextFactory.java
+--- src/org/mozilla/javascript/ContextFactory.java	29 Mar 2011 15:17:49 -0000	1.37
++++ src/org/mozilla/javascript/ContextFactory.java	5 May 2011 16:42:46 -0000
 @@ -310,7 +310,10 @@
              return false;
  
@@ -93,7 +77,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/DToA.java,v
 retrieving revision 1.18
 diff -u -r1.18 DToA.java
 --- src/org/mozilla/javascript/DToA.java	5 Apr 2007 14:59:49 -0000	1.18
-+++ src/org/mozilla/javascript/DToA.java	15 Oct 2010 16:27:32 -0000
++++ src/org/mozilla/javascript/DToA.java	5 May 2011 16:42:47 -0000
 @@ -1187,6 +1187,15 @@
          decPt = JS_dtoa(d, dtoaModes[mode], mode >= DTOSTR_FIXED, precision, sign, buffer);
          nDigits = buffer.length();
@@ -116,7 +100,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Delegator.java,v
 retrieving revision 1.15
 diff -u -r1.15 Delegator.java
 --- src/org/mozilla/javascript/Delegator.java	18 Mar 2008 15:10:16 -0000	1.15
-+++ src/org/mozilla/javascript/Delegator.java	15 Oct 2010 16:27:32 -0000
++++ src/org/mozilla/javascript/Delegator.java	5 May 2011 16:42:47 -0000
 @@ -116,85 +116,85 @@
       * @see org.mozilla.javascript.Scriptable#getClassName
       */
@@ -266,7 +250,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/FunctionObject.ja
 retrieving revision 1.85
 diff -u -r1.85 FunctionObject.java
 --- src/org/mozilla/javascript/FunctionObject.java	2 Jan 2009 01:42:14 -0000	1.85
-+++ src/org/mozilla/javascript/FunctionObject.java	15 Oct 2010 16:27:33 -0000
++++ src/org/mozilla/javascript/FunctionObject.java	5 May 2011 16:42:47 -0000
 @@ -424,6 +424,9 @@
          } else {
              if (!isStatic) {
@@ -283,7 +267,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/InterpretedFuncti
 retrieving revision 1.59
 diff -u -r1.59 InterpretedFunction.java
 --- src/org/mozilla/javascript/InterpretedFunction.java	26 Jun 2008 13:57:11 -0000	1.59
-+++ src/org/mozilla/javascript/InterpretedFunction.java	15 Oct 2010 16:27:35 -0000
++++ src/org/mozilla/javascript/InterpretedFunction.java	5 May 2011 16:42:47 -0000
 @@ -231,5 +231,14 @@
      {
          return idata.argIsConst[index];
@@ -302,11 +286,11 @@ diff -u -r1.59 InterpretedFunction.java
 Index: src/org/mozilla/javascript/Interpreter.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/Interpreter.java,v
-retrieving revision 1.357
-diff -u -r1.357 Interpreter.java
---- src/org/mozilla/javascript/Interpreter.java	21 Sep 2009 13:32:33 -0000	1.357
-+++ src/org/mozilla/javascript/Interpreter.java	15 Oct 2010 16:27:37 -0000
-@@ -2812,6 +2812,9 @@
+retrieving revision 1.362
+diff -u -r1.362 Interpreter.java
+--- src/org/mozilla/javascript/Interpreter.java	9 Feb 2011 10:55:42 -0000	1.362
++++ src/org/mozilla/javascript/Interpreter.java	5 May 2011 16:42:48 -0000
+@@ -2811,6 +2811,9 @@
      private static void enterFrame(Context cx, CallFrame frame, Object[] args,
                                     boolean continuationRestart)
      {
@@ -316,7 +300,7 @@ diff -u -r1.357 Interpreter.java
          boolean usesActivation = frame.idata.itsNeedsActivation;
          boolean isDebugged = frame.debuggerFrame != null;
          if(usesActivation || isDebugged) {
-@@ -2860,6 +2863,8 @@
+@@ -2859,6 +2862,8 @@
      private static void exitFrame(Context cx, CallFrame frame,
                                    Object throwable)
      {
@@ -331,7 +315,7 @@ RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/MemberBox.java,v
 retrieving revision 1.19
 diff -u -r1.19 MemberBox.java
 --- src/org/mozilla/javascript/MemberBox.java	26 Jun 2008 13:57:11 -0000	1.19
-+++ src/org/mozilla/javascript/MemberBox.java	15 Oct 2010 16:27:38 -0000
++++ src/org/mozilla/javascript/MemberBox.java	5 May 2011 16:42:48 -0000
 @@ -156,6 +156,17 @@
      Object invoke(Object target, Object[] args)
      {
@@ -366,49 +350,29 @@ diff -u -r1.19 MemberBox.java
 Index: src/org/mozilla/javascript/NativeError.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/NativeError.java,v
-retrieving revision 1.49
-diff -u -r1.49 NativeError.java
---- src/org/mozilla/javascript/NativeError.java	19 Nov 2009 08:06:57 -0000	1.49
-+++ src/org/mozilla/javascript/NativeError.java	15 Oct 2010 16:27:41 -0000
-@@ -81,6 +81,9 @@
-                     int line = ScriptRuntime.toInt32(args[2]);
-                     ScriptableObject.putProperty(obj, "lineNumber",
-                             Integer.valueOf(line));
-+                    if (arglen >= 4) {
-+                        ScriptableObject.putProperty(obj, "stack", args[3]);
-+                    }
-                 }
-             }
-         }
-Index: src/org/mozilla/javascript/RhinoException.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/RhinoException.java,v
-retrieving revision 1.11
-diff -u -r1.11 RhinoException.java
---- src/org/mozilla/javascript/RhinoException.java	13 Nov 2008 18:03:40 -0000	1.11
-+++ src/org/mozilla/javascript/RhinoException.java	15 Oct 2010 16:27:47 -0000
-@@ -266,6 +266,13 @@
-                 buffer.append(e.getFileName());
-                 buffer.append(':');
-                 buffer.append(e.getLineNumber());
-+                // get function name
-+                final String functionName = e.getMethodName().replaceFirst("_c_(.*)_\\d+", "$1"); // see CodeGen.getBodyMethodName
-+                if (!"script".equals(functionName)) { // sad for function called "script" :-(
-+                    buffer.append(" (");
-+                    buffer.append(functionName);
-+                    buffer.append(")");
-+                }
-                 buffer.append(lineSeparator);
-             } else if (interpreterStack != null &&
-                 interpreterStack.size() > interpreterStackIndex && 
+retrieving revision 1.52
+diff -u -r1.52 NativeError.java
+--- src/org/mozilla/javascript/NativeError.java	31 Mar 2010 15:12:43 -0000	1.52
++++ src/org/mozilla/javascript/NativeError.java	5 May 2011 16:42:49 -0000
+@@ -157,8 +157,10 @@
+     }
+ 
+     public Object getStack() {
++    	RhinoException.useMozillaStackStyle(true);
+         Object value =  stackProvider == null ?
+                 NOT_FOUND : stackProvider.getScriptStackTrace();
++    	RhinoException.useMozillaStackStyle(false);
+         // We store the stack as local property both to cache it
+         // and to make the property writable
+         setStack(value);
 Index: src/org/mozilla/javascript/ScriptRuntime.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ScriptRuntime.java,v
-retrieving revision 1.322
-diff -u -r1.322 ScriptRuntime.java
---- src/org/mozilla/javascript/ScriptRuntime.java	21 Sep 2009 13:32:34 -0000	1.322
-+++ src/org/mozilla/javascript/ScriptRuntime.java	15 Oct 2010 16:27:49 -0000
-@@ -978,7 +978,10 @@
+retrieving revision 1.333
+diff -u -r1.333 ScriptRuntime.java
+--- src/org/mozilla/javascript/ScriptRuntime.java	21 Apr 2011 13:08:51 -0000	1.333
++++ src/org/mozilla/javascript/ScriptRuntime.java	5 May 2011 16:42:50 -0000
+@@ -982,7 +982,10 @@
      public static Scriptable toObjectOrNull(Context cx, Object obj,
                                              final Scriptable scope)
      {
@@ -420,7 +384,7 @@ diff -u -r1.322 ScriptRuntime.java
              return (Scriptable)obj;
          } else if (obj != null && obj != Undefined.instance) {
              return toObject(cx, scope, obj);
-@@ -2593,6 +2596,8 @@
+@@ -2610,6 +2613,8 @@
              return "undefined";
          if (value instanceof ScriptableObject)
          	return ((ScriptableObject) value).getTypeOf();
@@ -429,149 +393,71 @@ diff -u -r1.322 ScriptRuntime.java
          if (value instanceof Scriptable)
              return (value instanceof Callable) ? "function" : "object";
          if (value instanceof String)
-@@ -3345,10 +3350,24 @@
-             if (sourceUri == null) {
-                 sourceUri = "";
-             }
--            int line = re.lineNumber();
--            Object args[];
-+            final int line = re.lineNumber();
-+            final Object args[];
-             if (line > 0) {
--                args = new Object[] { errorMsg, sourceUri, Integer.valueOf(line) };
-+            	final String lineSeparator = SecurityUtilities.getSystemProperty("line.separator");
-+            	final String[] stackLines = re.getScriptStackTrace().split(lineSeparator);
-+            	final StringBuilder sb = new StringBuilder();
-+            	for (final String stackLine : stackLines) {
-+            		String[] parts = stackLine.split(" ");
-+            		if (parts.length > 2 && stackLine.endsWith(")")) {
-+            			final String methodNameInParentheses = parts[parts.length-1];
-+            			sb.append(methodNameInParentheses.substring(1, methodNameInParentheses.length() - 1)).append("()");
-+            		}
-+            		sb.append("@");
-+            		sb.append(parts[1]);
-+            		sb.append(lineSeparator);
-+            	}
-+            	final String stack = sb.toString();
-+                args = new Object[] { errorMsg, sourceUri, Integer.valueOf(line), stack };
-             } else {
-                 args = new Object[] { errorMsg, sourceUri };
-             }
+@@ -3819,13 +3824,13 @@
+ 
+     public static RuntimeException undefReadError(Object object, Object id)
+     {
+-        String idStr = (id == null) ? "null" : id.toString();
++        final String idStr = toString(id);
+         return typeError2("msg.undef.prop.read", toString(object), idStr);
+     }
+ 
+     public static RuntimeException undefCallError(Object object, Object id)
+     {
+-        String idStr = (id == null) ? "null" : id.toString();
++        final String idStr = toString(id);
+         return typeError2("msg.undef.method.call", toString(object), idStr);
+     }
+ 
+@@ -3833,9 +3838,8 @@
+                                                    Object id,
+                                                    Object value)
+     {
+-        String idStr = (id == null) ? "null" : id.toString();
+-        String valueStr = (value instanceof Scriptable)
+-                          ? value.toString() : toString(value);
++        final String idStr = toString(id);
++        final String valueStr = toString(value);
+         return typeError3("msg.undef.prop.write", toString(object), idStr,
+                           valueStr);
+     }
 Index: src/org/mozilla/javascript/ScriptableObject.java
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/ScriptableObject.java,v
-retrieving revision 1.162
-diff -u -r1.162 ScriptableObject.java
---- src/org/mozilla/javascript/ScriptableObject.java	27 Nov 2009 18:30:16 -0000	1.162
-+++ src/org/mozilla/javascript/ScriptableObject.java	15 Oct 2010 16:27:51 -0000
-@@ -2424,6 +2424,8 @@
-             }
-             slot = getSlot(name, index, SLOT_MODIFY);
-         }
-+        if ((slot.getAttributes() & READONLY) != 0)
-+            return true;
-         if (slot instanceof GetterSlot) {
-             final GetterSlot getterSlot = (GetterSlot)slot;
-             final Object setterObj = getterSlot.setter;
-@@ -2432,11 +2434,18 @@
-                   if (Context.getContext().hasFeature(Context.FEATURE_STRICT_MODE)) {
-                       // Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
-                       // we should throw a TypeError in this case.
--                      throw ScriptRuntime.typeError1("msg.set.prop.no.setter", name);
-+                      throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, start.getClassName(), Context.toString(value));
-                   }
--                  // Assignment to a property with only a getter defined. The
--                  // assignment is ignored. See bug 478047.
--                  return true;
+retrieving revision 1.172
+diff -u -r1.172 ScriptableObject.java
+--- src/org/mozilla/javascript/ScriptableObject.java	8 Apr 2011 08:20:13 -0000	1.172
++++ src/org/mozilla/javascript/ScriptableObject.java	5 May 2011 16:42:52 -0000
+@@ -281,11 +281,18 @@
+                     if (Context.getContext().hasFeature(Context.FEATURE_STRICT_MODE)) {
+                         // Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
+                         // we should throw a TypeError in this case.
+-                        throw ScriptRuntime.typeError1("msg.set.prop.no.setter", name);
++                        throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, start.getClassName(), Context.toString(value));
+                     }
+-                    // Assignment to a property with only a getter defined. The
+-                    // assignment is ignored. See bug 478047.
+-                    return true;
 +                	if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES)) {
 +                        // Odd case: Assignment to a property with only a getter 
 +                        // defined. The assignment cancels out the getter.
-+                        ((GetterSlot)slot).getter = null;
++                        getter = null;
 +                	}
 +                	else {
-+                  // Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
-+                  // we should throw a TypeError in this case.
++                		// Based on TC39 ES3.1 Draft of 9-Feb-2009, 8.12.4, step 2,
++                		// we should throw a TypeError in this case.
 +                        throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, start.getClassName(), Context.toString(value));
 +                	}
                  }
              } else {
                  Context cx = Context.getContext();
-Index: src/org/mozilla/javascript/regexp/RegExpImpl.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/regexp/RegExpImpl.java,v
-retrieving revision 1.37
-diff -u -r1.37 RegExpImpl.java
---- src/org/mozilla/javascript/regexp/RegExpImpl.java	2 Jan 2009 02:28:04 -0000	1.37
-+++ src/org/mozilla/javascript/regexp/RegExpImpl.java	15 Oct 2010 16:27:57 -0000
-@@ -728,14 +728,14 @@
-         return (i != -1) ? i : length;
-     }
- 
--    String          input;         /* input string to match (perl $_, GC root) */
--    boolean         multiline;     /* whether input contains newlines (perl $*) */
--    SubString[]     parens;        /* Vector of SubString; last set of parens
-+    protected String          input;         /* input string to match (perl $_, GC root) */
-+    protected boolean         multiline;     /* whether input contains newlines (perl $*) */
-+    protected SubString[]     parens;        /* Vector of SubString; last set of parens
-                                       matched (perl $1, $2) */
--    SubString       lastMatch;     /* last string matched (perl $&) */
--    SubString       lastParen;     /* last paren matched (perl $+) */
--    SubString       leftContext;   /* input to left of last match (perl $`) */
--    SubString       rightContext;  /* input to right of last match (perl $') */
-+    protected SubString       lastMatch;     /* last string matched (perl $&) */
-+    protected SubString       lastParen;     /* last paren matched (perl $+) */
-+    protected SubString       leftContext;   /* input to left of last match (perl $`) */
-+    protected SubString       rightContext;  /* input to right of last match (perl $') */
- }
- 
- 
-Index: src/org/mozilla/javascript/regexp/SubString.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/regexp/SubString.java,v
-retrieving revision 1.10
-diff -u -r1.10 SubString.java
---- src/org/mozilla/javascript/regexp/SubString.java	21 Apr 2008 19:54:01 -0000	1.10
-+++ src/org/mozilla/javascript/regexp/SubString.java	15 Oct 2010 16:27:57 -0000
-@@ -37,7 +37,7 @@
- 
- package org.mozilla.javascript.regexp;
- 
--class SubString {
-+public class SubString {
- 
-     public SubString()
-     {
-@@ -52,12 +52,11 @@
- 
-     public SubString(char[] source, int start, int len)
-     {
--    // there must be a better way of doing this??
-         index = 0;
-         length = len;
-         charArray = new char[len];
--        for (int j = 0; j < len; j++)
--            charArray[j] = source[start + j];
-+        // is this copy needed?
-+        System.arraycopy(source, start, charArray, 0, len);
-     }
- 
-     @Override
-@@ -67,7 +66,7 @@
-                : new String(charArray, index, length);
-     }
- 
--    static final SubString emptySubString = new SubString();
-+    public static final SubString emptySubString = new SubString();
- 
-     char[] charArray;
-     int    index;
 Index: src/org/mozilla/javascript/resources/Messages.properties
 ===================================================================
 RCS file: /cvsroot/mozilla/js/rhino/src/org/mozilla/javascript/resources/Messages.properties,v
 retrieving revision 1.100
 diff -u -r1.100 Messages.properties
 --- src/org/mozilla/javascript/resources/Messages.properties	21 Sep 2009 13:32:36 -0000	1.100
-+++ src/org/mozilla/javascript/resources/Messages.properties	15 Oct 2010 16:27:58 -0000
++++ src/org/mozilla/javascript/resources/Messages.properties	5 May 2011 16:42:52 -0000
 @@ -563,7 +563,7 @@
      Property {0} not found.
  
@@ -581,35 +467,3 @@ diff -u -r1.100 Messages.properties
  
  msg.invalid.type =\
      Invalid JavaScript value of type {0}
-Index: testsrc/org/mozilla/javascript/drivers/StandardTests.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/testsrc/org/mozilla/javascript/drivers/StandardTests.java,v
-retrieving revision 1.15
-diff -u -r1.15 StandardTests.java
---- testsrc/org/mozilla/javascript/drivers/StandardTests.java	21 Jul 2009 17:39:05 -0000	1.15
-+++ testsrc/org/mozilla/javascript/drivers/StandardTests.java	15 Oct 2010 16:28:01 -0000
-@@ -51,7 +51,7 @@
-  * Executes the tests in the js/tests directory, much like jsDriver.pl does.
-  * Excludes tests found in the js/tests/rhino-n.tests file.
-  * @author Attila Szegedi
-- * @version $Id: StandardTests.java,v 1.15 2009/07/21 17:39:05 nboyd%atg.com Exp $
-+ * @version $Id: StandardTests.java 4990 2009-09-21 13:03:42Z mguillem $
-  */
- public class StandardTests extends TestSuite
- {
-Index: toolsrc/org/mozilla/javascript/tools/debugger/SourceProvider.java
-===================================================================
-RCS file: /cvsroot/mozilla/js/rhino/toolsrc/org/mozilla/javascript/tools/debugger/SourceProvider.java,v
-retrieving revision 1.1
-diff -u -r1.1 SourceProvider.java
---- toolsrc/org/mozilla/javascript/tools/debugger/SourceProvider.java	23 Oct 2009 12:49:58 -0000	1.1
-+++ toolsrc/org/mozilla/javascript/tools/debugger/SourceProvider.java	15 Oct 2010 16:28:04 -0000
-@@ -43,7 +43,7 @@
- 
- /**
-  * Interface to provide a source of scripts to the debugger.
-- * @version $Id: SourceProvider.java,v 1.1 2009/10/23 12:49:58 szegedia%freemail.hu Exp $
-+ * @version $Id: SourceProvider.java 5317 2010-01-07 10:47:20Z mguillem $
-  */
- public interface SourceProvider {
- 

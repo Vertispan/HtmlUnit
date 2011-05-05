@@ -144,12 +144,11 @@ public class JsonParser {
                     consume(':');
                     value = readValue();
 
-                    double d = ScriptRuntime.toNumber(id);
-                    int index = (int) d;
-                    if (d != index) {
+                    long index = ScriptRuntime.indexFromString(id);
+                    if (index < 0) {
                       object.put(id, object, value);
                     } else {
-                      object.put(index, object, value);
+                      object.put((int)index, object, value);
                     }
 
                     needsComma = true;
@@ -285,11 +284,12 @@ public class JsonParser {
                     break;
                 }
             }
-            double d = Double.valueOf(num);
-            if ((int)d == d) {
-                return new Integer((int) d);
+            final double dval = Double.parseDouble(num);
+            final int ival = (int)dval;
+            if (ival == dval) {
+                return Integer.valueOf(ival);
             } else {
-                return new Double(d);
+                return Double.valueOf(dval);
             }
         } catch (NumberFormatException nfe) {
             throw new ParseException("Unsupported number format: " + num);

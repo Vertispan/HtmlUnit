@@ -354,9 +354,12 @@ class JavaMembers
                                     Modifier.isProtected(mods) ||
                                     includePrivate)
                                 {
-                                    if (includePrivate)
-                                        method.setAccessible(true);
-                                    map.put(new MethodSignature(method), method);
+                                    MethodSignature sig = new MethodSignature(method);
+                                    if (!map.containsKey(sig)) {
+                                        if (includePrivate && !method.isAccessible())
+                                            method.setAccessible(true);
+                                        map.put(sig, method);
+                                    }
                                 }
                             }
                             clazz = clazz.getSuperclass();
@@ -369,7 +372,7 @@ class JavaMembers
                                 Method method = methods[i];
                                 MethodSignature sig 
                                     = new MethodSignature(method);
-                                if (map.get(sig) == null)
+                                if (!map.containsKey(sig))
                                     map.put(sig, method);
                             }
                             break; // getMethods gets superclass methods, no
@@ -381,7 +384,9 @@ class JavaMembers
                     for (int i = 0; i < methods.length; i++) {
                         Method method = methods[i];
                         MethodSignature sig = new MethodSignature(method);
-                        map.put(sig, method);
+                        // Array may contain methods with same signature but different return value!
+                        if (!map.containsKey(sig))
+                            map.put(sig, method);
                     }
                 }
                 return;
@@ -831,10 +836,15 @@ class JavaMembers
         for (;;) {
             members = ct.get(cl);
             if (members != null) {
+                if (cl != dynamicType) {
+                    // member lookup for the original class failed because of
+                    // missing privileges, cache the result so we don't try again
+                    ct.put(dynamicType, members);
+                }
                 return members;
             }
             try {
-                members = new JavaMembers(cache.getAssociatedScope(), cl, 
+                members = new JavaMembers(cache.getAssociatedScope(), cl,
                         includeProtected);
                 break;
             } catch (SecurityException e) {
@@ -860,8 +870,14 @@ class JavaMembers
             }
         }
 
-        if (cache.isCachingEnabled())
+        if (cache.isCachingEnabled()) {
             ct.put(cl, members);
+            if (cl != dynamicType) {
+                // member lookup for the original class failed because of
+                // missing privileges, cache the result so we don't try again
+                ct.put(dynamicType, members);
+            }
+        }
         return members;
     }
 

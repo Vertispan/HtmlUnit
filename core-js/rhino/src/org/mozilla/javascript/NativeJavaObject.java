@@ -144,7 +144,7 @@ public class NativeJavaObject implements Scriptable, Wrapper, Serializable
 
     public Scriptable getPrototype() {
         if (prototype == null && javaObject instanceof String) {
-            return ScriptableObject.getClassPrototype(parent, "String");
+            return TopLevel.getBuiltinPrototype(parent, TopLevel.Builtins.String);
         }
         return prototype;
     }
@@ -992,7 +992,7 @@ WrapFactory#wrap(Context, Scriptable, Object, Class)}
                 adapter_readAdapterObject = cl.getMethod("readAdapterObject",
                                                          sig2);
 
-            } catch (Exception ex) {
+            } catch (NoSuchMethodException e) {
                 adapter_writeAdapterObject = null;
                 adapter_readAdapterObject = null;
             }

@@ -29,7 +29,7 @@ Marc Guillemot
 	<property name="javadoc.dir" value="target/javadoc"/>
 	<property name="jar.javadoc" location="target/htmlunit-core-js-${version}-javadoc.jar" />
 	
-	<property name="rhino.base.date" value="20100107" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
+	<property name="rhino.base.date" value="20110505" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
 	
 	<target name="default" depends="test, checkPatchNeeded">
 

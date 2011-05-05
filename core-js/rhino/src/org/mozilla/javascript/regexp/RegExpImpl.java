@@ -100,7 +100,6 @@ public class RegExpImpl implements RegExpProxy {
                 data.leftIndex = 0;
                 Object val = matchOrReplace(cx, scope, thisObj, args,
                                             this, data, true);
-                SubString rc = this.rightContext;
 
                 if (data.charBuf == null) {
                     if (data.global || val == null
@@ -112,7 +111,8 @@ public class RegExpImpl implements RegExpProxy {
                     SubString lc = this.leftContext;
                     replace_glob(data, cx, scope, this, lc.index, lc.length);
                 }
-                data.charBuf.append(rc.charArray, rc.index, rc.length);
+                SubString rc = this.rightContext;
+                data.charBuf.append(rc.str, rc.index, rc.index + rc.length);
                 return data.charBuf.toString();
             }
 
@@ -152,7 +152,6 @@ public class RegExpImpl implements RegExpProxy {
             Object compiled = NativeRegExp.compileRE(cx, src, opt, forceFlat);
             re = new NativeRegExp(topScope, compiled);
         }
-        data.regexp = re;
 
         data.global = (re.getFlags() & NativeRegExp.JSREG_GLOB) != 0;
         int[] indexp = { 0 };
@@ -293,8 +292,7 @@ public class RegExpImpl implements RegExpProxy {
                                    RegExpImpl reImpl)
     {
         if (mdata.arrayobj == null) {
-            Scriptable s = ScriptableObject.getTopLevelScope(scope);
-            mdata.arrayobj = ScriptRuntime.newObject(cx, s, "Array", null);
+            mdata.arrayobj = cx.newArray(scope, 0);
         }
         SubString matchsub = reImpl.lastMatch;
         String matchstr = matchsub.toString();
@@ -325,7 +323,7 @@ public class RegExpImpl implements RegExpProxy {
                     args[i+1] = Undefined.instance;
                 }
             }
-            args[parenCount+1] = new Integer(reImpl.leftContext.length);
+            args[parenCount+1] = Integer.valueOf(reImpl.leftContext.length);
             args[parenCount+2] = rdata.str;
             // This is a hack to prevent expose of reImpl data to
             // JS function which can run new regexps modifing
@@ -365,15 +363,15 @@ public class RegExpImpl implements RegExpProxy {
         }
 
         int growth = leftlen + replen + reImpl.rightContext.length;
-        StringBuffer charBuf = rdata.charBuf;
+        StringBuilder charBuf = rdata.charBuf;
         if (charBuf == null) {
-            charBuf = new StringBuffer(growth);
+            charBuf = new StringBuilder(growth);
             rdata.charBuf = charBuf;
         } else {
             charBuf.ensureCapacity(rdata.charBuf.length() + growth);
         }
 
-        charBuf.append(reImpl.leftContext.charArray, leftIndex, leftlen);
+        charBuf.append(reImpl.leftContext.str, leftIndex, leftIndex + leftlen);
         if (rdata.lambda != null) {
             charBuf.append(lambdaStr);
         } else {
@@ -477,7 +475,7 @@ public class RegExpImpl implements RegExpProxy {
     private static void do_replace(GlobData rdata, Context cx,
                                    RegExpImpl regExpImpl)
     {
-        StringBuffer charBuf = rdata.charBuf;
+        StringBuilder charBuf = rdata.charBuf;
         int cp = 0;
         String da = rdata.repstr;
         int dp = rdata.dollar;
@@ -492,7 +490,7 @@ public class RegExpImpl implements RegExpProxy {
                 if (sub != null) {
                     len = sub.length;
                     if (len > 0) {
-                        charBuf.append(sub.charArray, sub.index, len);
+                        charBuf.append(sub.str, sub.index, sub.index + len);
                     }
                     cp += skip[0];
                     dp += skip[0];
@@ -517,8 +515,7 @@ public class RegExpImpl implements RegExpProxy {
                                    String target, Object[] args)
     {
         // create an empty Array to return;
-        Scriptable top = ScriptableObject.getTopLevelScope(scope);
-        Scriptable result = ScriptRuntime.newObject(cx, top, "Array", null);
+        Scriptable result = cx.newArray(scope, 0);
 
         // return an array consisting of the target if no separator given
         // don't check against undefined, because we want
@@ -745,7 +742,6 @@ final class GlobData
     int      optarg;    /* input: index of optional flags argument */
     boolean  global;    /* output: whether regexp was global */
     String   str;       /* output: 'this' parameter object as string */
-    NativeRegExp regexp;/* output: regexp parameter object private data */
 
     // match-specific data
 
@@ -756,6 +752,6 @@ final class GlobData
     Function      lambda;        /* replacement function object or null */
     String        repstr;        /* replacement string */
     int           dollar = -1;   /* -1 or index of first $ in repstr */
-    StringBuffer  charBuf;       /* result characters, null initially */
+    StringBuilder charBuf;       /* result characters, null initially */
     int           leftIndex;     /* leftContext index, always 0 for JS1.2 */
 }
