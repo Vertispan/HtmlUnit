@@ -23,7 +23,7 @@ Marc Guillemot
 	<property name="src.test.dir" location="src" />
 	<property name="junit.jar" location="lib/junit-4.8.1.jar" />
 
-	<property name="version" value="2.9-SNAPSHOT"/>
+	<property name="version" value="2.9"/>
 	<property name="jar" location="target/htmlunit-core-js-${version}.jar" />
 	<property name="jar.sources" location="target/htmlunit-core-js-${version}-sources.jar" />
 	<property name="javadoc.dir" value="target/javadoc"/>
