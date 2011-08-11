@@ -15,7 +15,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-public class SampleContentHandler implements ContentHandler, XMLDocumentHandler {
+class OutContentHandler implements ContentHandler, XMLDocumentHandler {
 
     @Override
     public void setDocumentLocator(Locator locator) {
@@ -83,13 +83,13 @@ public class SampleContentHandler implements ContentHandler, XMLDocumentHandler 
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        System.out.println("characters 1 " + new String(ch, start, length));
+        System.out.println("characters 1: " + new String(ch, start, length));
     }
 
     @Override
     public void characters(XMLString text, Augmentations augs)
             throws XNIException {
-        System.out.println("characters 2" + text);
+        System.out.println("characters 2: " + text);
     }
 
     @Override

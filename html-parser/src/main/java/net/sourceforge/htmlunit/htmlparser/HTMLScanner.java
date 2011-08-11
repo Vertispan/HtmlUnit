@@ -11,7 +11,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class HTMLScanner {
 
-    private ContentHandler contentHandler_;
+    private TagBalancer tagBalancer_ = new TagBalancer();
     private Reader reader_;
 
     /** Null means empty, -1 means we reached end of stream. */
@@ -19,9 +19,13 @@ public class HTMLScanner {
     
 
     public void setContentHandler(ContentHandler handler) {
-        contentHandler_ = handler;
+        tagBalancer_.setContentHandler(handler);
     }
-    
+
+    public ContentHandler getContentHandler() {
+        return tagBalancer_.getContentHandler();
+    }
+
     public void parse(final InputSource source) throws IOException, SAXException {
         reader_ = source.getCharacterStream();
         scanDocument();
@@ -61,19 +65,24 @@ outer:  while (true) {
     }
 
     protected void startDocument() throws SAXException {
-        contentHandler_.startDocument();
+        tagBalancer_.startDocument();
+    }
+
+    protected void characters(char[] ch, int start, int length) throws SAXException {
+        tagBalancer_.characters(ch, start, length);
     }
 
     protected void endDocument() throws SAXException {
-        contentHandler_.endDocument();
+        tagBalancer_.endDocument();
     }
 
     protected void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        contentHandler_.startElement(uri, localName, qName, atts);
+        tagBalancer_.startElement(uri, localName, qName, atts);
     }
 
     protected void endElement(String uri, String localName, String qName) throws SAXException {
-        contentHandler_.endElement(uri, localName, qName);
+        qName = qName.toUpperCase();
+        tagBalancer_.endElement(uri, localName, qName);
     }
 
     protected int next() throws IOException {
@@ -96,21 +105,26 @@ outer:  while (true) {
         startDocument();
         int ch;
         while ((ch = peek()) != -1) {
-            switch (ch) {
-                case '<':
+            if (ch == '<') {
+                next();
+                ch = peek();
+                if (ch == '?') {
+                    //processing instruction
+                }
+                if (ch == '/') {
                     next();
-                    ch = peek();
-                    if (ch == '?') {
-                        //processing instruction
-                    }
-                    if (ch == '/') {
-                        next();
-                        parseEndElement();
-                    }
-                    else {
-                        parseStartElement();
-                    }
-                    break;
+                    parseEndElement();
+                }
+                else {
+                    parseStartElement();
+                }
+            }
+            else if (Character.isWhitespace(ch)) {
+                next();
+            }
+            else {
+                String character = consumeUntil(true, '<');
+                characters(character.toCharArray(), 0, character.length());
             }
         }
         endDocument();
@@ -118,11 +132,11 @@ outer:  while (true) {
 
     protected void parseStartElement() throws IOException, SAXException {
         String tagName = consumeUntil(true, ' ', '>');
+        tagName = tagName.toUpperCase();
         int ch = peek();
-        AttributesImpl attributes = null;
+        AttributesImpl attributes = new AttributesImpl();
         if (ch != '>') {
             next();
-            attributes = new AttributesImpl();
             while (peek() != '>') {
                 parseAttribute(attributes);
             }
