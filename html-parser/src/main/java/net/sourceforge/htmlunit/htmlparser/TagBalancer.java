@@ -15,9 +15,10 @@ public class TagBalancer implements ContentHandler {
 
     private ContentHandler contentHandler_;
 
-    private boolean headCreated;
+    private boolean isHeadCreated;
+    private boolean isBodyCreated;
 
-    private List<HTMLElement> stack_ = new ArrayList<HTMLElement>();
+    private List<Element> stack_ = new ArrayList<Element>();
 
     public void setContentHandler(ContentHandler handler) {
         contentHandler_ = handler;
@@ -44,7 +45,7 @@ public class TagBalancer implements ContentHandler {
     @Override
     public void endDocument() throws SAXException {
         for (int i = stack_.size() - 1; i >= 0; i--) {
-            endElement("", "", stack_.get(i).name());
+            endElement("", "", stack_.get(i).getQName());
         }
         if (contentHandler_ != null) {
             contentHandler_.endDocument();
@@ -70,15 +71,18 @@ public class TagBalancer implements ContentHandler {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
         HTMLElement e = HTMLElement.getElement(qName);
         if (e == HTMLElement.HEAD) {
-            headCreated = true;
+            isHeadCreated = true;
         }
-        else if (e == HTMLElement.BODY && !headCreated) {
+        else if (e == HTMLElement.BODY) {
+            isBodyCreated = true;
+        }
+        if (e == HTMLElement.BODY && !isHeadCreated) {
             startElement(uri, "", HTMLElement.HEAD.name(), new AttributesImpl());
         }
         if (e.getParent() != null) {
             boolean found = false;
-            for (HTMLElement parent : stack_) {
-                if (parent == e.getParent()) {
+            for (Element parent : stack_) {
+                if (parent.getQName().equals(e.getParent().name())) {
                     found = true;
                     break;
                 }
@@ -89,8 +93,8 @@ public class TagBalancer implements ContentHandler {
         }
         for (HTMLElement c : e.getCloses()) {
             for (int i = stack_.size() -1; i >= 0; i--) {
-                HTMLElement current  = stack_.get(i);
-                if (current == c) {
+                Element current  = stack_.get(i);
+                if (current.getQName().equals(c.name())) {
                     endElement(uri, "", c.name());
                 }
             }
@@ -98,21 +102,60 @@ public class TagBalancer implements ContentHandler {
         if (contentHandler_ != null) {
             contentHandler_.startElement(uri, localName, qName, atts);
         }
-        stack_.add(e);
+
+        stack_.add(new Element(uri, localName, qName, atts));
     }
 
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
+        endElement(uri, localName, qName, true);
+    }
+
+    private void endElement(String uri, String localName, String qName, boolean deleteOtherInline)
+            throws SAXException {
+        HTMLElement e = HTMLElement.getElement(qName);
+
+        int parentStackIndex = -1;
+        for (int i = stack_.size() - 1; i >= 0; i--) {
+            if (stack_.get(i).getQName().equals(e.name())) {
+                parentStackIndex = i;
+                break;
+            }
+        }
+        
+        
+        List<Element> inlineList = null;
+        if (e.isInline() && deleteOtherInline) {
+            inlineList = new ArrayList<Element>();
+            for (int i = stack_.size() - 1; i > parentStackIndex; i--) {
+                Element el = stack_.get(i);
+                if (HTMLElement.getElement(el.getQName()).isInline()) {
+                    inlineList.add(el);
+                    endElement(uri, "", el.getQName(), false);
+                }
+            }
+        }
+
         if (contentHandler_ != null) {
             contentHandler_.endElement(uri, localName, qName);
         }
-        stack_.remove(stack_.size() - 1);
+        if (inlineList != null) {
+            for (int i = inlineList.size() - 1; i >= 0; i--) {
+                startElement(uri, "", inlineList.get(i).getQName(), inlineList.get(i).getAttributes());
+            }
+        }
+        if (parentStackIndex != -1) {
+            stack_.remove(parentStackIndex);
+        }
     }
 
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
+        if (!isHeadCreated && !isBodyCreated) {
+            startElement("", "", HTMLElement.BODY.name(), new AttributesImpl());
+        }
         if (contentHandler_ != null) {
             contentHandler_.characters(ch, start, length);
         }

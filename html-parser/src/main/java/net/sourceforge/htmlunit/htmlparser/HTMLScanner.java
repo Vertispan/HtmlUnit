@@ -18,6 +18,7 @@ public class HTMLScanner {
     /** Null means empty, -1 means we reached end of stream. */
     private Integer nextChar_;
     
+    private StringBuffer emptySpacesBuffer = new StringBuffer();
 
     public void setContentHandler(ContentHandler handler) {
         tagBalancer_.setContentHandler(handler);
@@ -91,7 +92,6 @@ outer:  while (true) {
             int ch = reader_.read();
             if (ch == -1) {
                 nextChar_ = -1;
-                reader_.read();
             }
             return ch;
         }
@@ -108,6 +108,7 @@ outer:  while (true) {
         int ch;
         while ((ch = peek()) != -1) {
             if (ch == '<') {
+                emptySpacesBuffer.setLength(0);
                 next();
                 ch = peek();
                 if (ch == '?') {
@@ -122,10 +123,13 @@ outer:  while (true) {
                 }
             }
             else if (Character.isWhitespace(ch)) {
-                next();
+                emptySpacesBuffer.append((char) next());
             }
             else {
                 String character = consumeUntil(true, '<');
+                if (emptySpacesBuffer.length() > 0) {
+                    character = emptySpacesBuffer.toString() + character;
+                }
                 characters(character.toCharArray(), 0, character.length());
             }
         }

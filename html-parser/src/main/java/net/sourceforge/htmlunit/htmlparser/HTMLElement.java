@@ -1,33 +1,39 @@
 package net.sourceforge.htmlunit.htmlparser;
 
 public enum HTMLElement {
-    HTML,
-    HEAD(HTML),
-    BODY(HTML, new HTMLElement[] {HEAD}),
-    H1(BODY),
-    P(BODY),
-    SCRIPT(HEAD),
-    UNKNOWN
-    ;
+    HTML(Type.UNDEFINED),
+    HEAD(Type.UNDEFINED, HTML),
+    BODY(Type.CONTAINER,  HTML, new HTMLElement[] {HEAD}),
+
+    B(Type.INLINE, BODY),
+    H1(Type.BLOCK, BODY),
+    I(Type.INLINE, BODY),
+    P(Type.CONTAINER, BODY),
+    SCRIPT(Type.SPECIAL, HEAD),
+    U(Type.INLINE, BODY),
+    UNKNOWN(Type.CONTAINER);
 
     static {
         P.closes_ = new HTMLElement[] {P};
     }
 
-    //private enum FLAG {INLINE, BLOCK, EMPTY, CONTAINER, SPECIAL};
+    private enum Type {UNDEFINED, INLINE, BLOCK, EMPTY, CONTAINER, SPECIAL};
     
     private HTMLElement parent_;
     private HTMLElement[] closes_;
 
-    HTMLElement() {
-        this(null);
+    private Type type_;
+
+    HTMLElement(Type flags) {
+        this(flags, null);
     }
 
-    HTMLElement(HTMLElement parent) {
-        this(parent, TagBalancer.EMPTY_ELEMENTS);
+    HTMLElement(Type flags, HTMLElement parent) {
+        this(flags, parent, TagBalancer.EMPTY_ELEMENTS);
     }
 
-    HTMLElement(HTMLElement parent, HTMLElement[] closes) {
+    HTMLElement(Type type, HTMLElement parent, HTMLElement[] closes) {
+        type_ = type;
         parent_ = parent;
         closes_ = closes;
     }
@@ -50,4 +56,7 @@ public enum HTMLElement {
         return UNKNOWN;
     }
 
+    public boolean isInline() {
+        return type_ == Type.INLINE;
+    }
 }
