@@ -1,5 +1,6 @@
 package net.sourceforge.htmlunit.htmlparser;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -90,11 +91,12 @@ outer:  while (true) {
             int ch = reader_.read();
             if (ch == -1) {
                 nextChar_ = -1;
+                reader_.read();
             }
             return ch;
         }
         else if (nextChar_ == -1) {
-            return -1;
+            throw new EOFException();
         }
         int ch = nextChar_;
         nextChar_ = null;
@@ -143,6 +145,55 @@ outer:  while (true) {
         }
         next();
         startElement("", "", tagName, attributes);
+        if ("SCRIPT".equals(tagName)) {
+            parseScript(tagName);
+        }
+    }
+
+    protected void parseScript(final String tagName) throws IOException, SAXException {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 9; i++) {
+            if(peek() == -1) {
+                break;
+            }
+            builder.append((char) next());
+        }
+        String s;
+        boolean valid = false;
+        while ((!(s = builder.toString()).endsWith("</script>") || !(valid = isValidScriptClosing(s)))) {
+            if(peek() == -1) {
+                break;
+            }
+            builder.append((char) next());
+        }
+        if (valid) {
+            s = s.substring(0, s.length() - 9);
+            characters(s.toCharArray(), 0, s.length());
+        }
+        endElement("", "", tagName);
+    }
+
+    /**
+     * Checks if the specified script is valid or not. The script will always end with "&lt;/script;&gt;",
+     * but there are cases in which that is inside a string constant or comment for example,
+     * so it will not be consider a valid script closing tag
+     *
+     * @param script the script to verify if it is complete
+     * @return whether the script is valid or not 
+     */
+    protected boolean isValidScriptClosing(final String script) {
+        boolean valid = true;
+        for (int i = 0; i < script.length() - 9; i++) {
+            char ch = script.charAt(i);
+            //TODO :-)
+            switch (ch) {
+                case '\'':
+                    
+                    break;
+                    
+            }
+        }
+        return valid;
     }
 
     protected void parseAttribute(AttributesImpl attributes) throws IOException, SAXException {
@@ -157,10 +208,12 @@ outer:  while (true) {
                 value = consumeUntil(true, (char) surroundingChar);
             }
             else {
-                value = consumeUntil(true, ' ', '<');
+                value = consumeUntil(true, ' ', '>');
             }
         }
-        next();
+        if (peek() != '>') {
+            next();
+        }
         attributes.addAttribute("", "", attributeName, "sometype", value);
     }
 

@@ -5,7 +5,10 @@ public enum HTMLElement {
     HEAD(HTML),
     BODY(HTML, new HTMLElement[] {HEAD}),
     H1(BODY),
-    P(BODY);
+    P(BODY),
+    SCRIPT(HEAD),
+    UNKNOWN
+    ;
 
     static {
         P.closes_ = new HTMLElement[] {P};
@@ -36,4 +39,15 @@ public enum HTMLElement {
     public HTMLElement[] getCloses() {
         return closes_;
     }
+
+    public static HTMLElement getElement(String tagName) {
+        tagName = tagName.toUpperCase();
+        for (HTMLElement e : values()) {
+            if (e.name().equals(tagName)) {
+                return e;
+            }
+        }
+        return UNKNOWN;
+    }
+
 }

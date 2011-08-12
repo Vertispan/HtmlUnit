@@ -68,7 +68,7 @@ public class TagBalancer implements ContentHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        HTMLElement e = HTMLElement.valueOf(qName.toUpperCase());
+        HTMLElement e = HTMLElement.getElement(qName);
         if (e == HTMLElement.HEAD) {
             headCreated = true;
         }

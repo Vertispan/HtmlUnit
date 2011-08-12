@@ -23,6 +23,8 @@ import org.xml.sax.SAXException;
 @RunWith(Parameterized.class)
 public class CanonicalTest {
 
+    private static String LINE_SEPARATOR = System.getProperty("line.separator");
+
     @Parameters
     public static Collection<Object[]> data() {
         Collection<Object[]> collection = new ArrayList<Object[]>();
@@ -87,6 +89,9 @@ public class CanonicalTest {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
             builder.append('(').append(qName).append('\n');
+            for (int i = 0; i < atts.getLength(); i++) {
+                builder.append('A').append(atts.getQName(i)).append(' ').append(atts.getValue(i)).append('\n');
+            }
         }
 
         @Override
@@ -98,7 +103,9 @@ public class CanonicalTest {
         @Override
         public void characters(char[] ch, int start, int length)
                 throws SAXException {
-            builder.append('"').append(new String(ch, start, length)).append('\n');
+            builder.append('"')
+                .append(new String(ch, start, length).replaceAll(LINE_SEPARATOR, "\\\\n"))
+                    .append('\n');
         }
 
         @Override
