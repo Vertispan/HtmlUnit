@@ -31,6 +31,12 @@ Marc Guillemot
 	
 	<property name="rhino.base.date" value="20110505" description="the date of the Rhino version we take as basis. Used to generate the diff"/>
 	
+	<!-- defined maven snapshots and staging repository id and url -->
+	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
+	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
+	<property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
+	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+
 	<target name="default" depends="test, checkPatchNeeded">
 
 	</target>
@@ -191,21 +197,23 @@ Marc Guillemot
 		  />
 	</target>
 
-	<target name="deploy-snapshot" depends="jar-all" description="Deploys a snapshot to HTMLUnit snapshot repository">
-		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.0.jar" />
+	<target name="deploy-snapshot" depends="jar-all" description="Deploys a snapshot to Sonatype snapshot repository">
+		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
 		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
 			classpathref="maven-ant-tasks.classpath" />
-		<artifact:pom id="maven.project" file="pom.xml" />
-		<artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-6"/>
-		<artifact:deploy file="${jar}">
-			<pom refid="maven.project"/>
-			<attach file="${jar.sources}" classifier="sources" /> 
-		</artifact:deploy>
+
+		<artifact:mvn>
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${jar}" />
+		</artifact:mvn>
 	</target>
 
 	<target name="deploy-mvn-local" depends="jar-all" description="Deploys jars to a local folder">
 		<echo message="Deploying locally to ${deploy-mvn-local.dir}"/>
-		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.0.jar" />
+		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
 		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
 			classpathref="maven-ant-tasks.classpath" />
 		<artifact:pom id="maven.project" file="pom.xml" />
