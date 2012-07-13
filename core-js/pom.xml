@@ -32,24 +32,6 @@
 		<url>http://htmlunit.svn.sourceforge.net/viewvc/htmlunit</url>
 	</scm>
 
-	<distributionManagement>
-        <repository>
-            <id>htmlunit-m2-repo</id>
-            <url>
-                sftp://web.sourceforge.net/home/groups/h/ht/htmlunit/htdocs/m2-repo
-            </url>
-            <name>HtmlUnit Maven 2 Repository</name>
-        </repository>
-		<snapshotRepository>
-			<id>htmlunit-m2-repo-snapshots</id>
-			<url>
-				sftp://web.sourceforge.net/home/groups/h/ht/htmlunit/htdocs/m2-repo-snapshots
-			</url>
-			<name>HtmlUnit Maven 2 Snapshots Repository</name>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-
     <developers>
         <developer>
             <name>Mozilla Rhino Team</name>
