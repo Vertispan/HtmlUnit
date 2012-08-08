@@ -19,8 +19,7 @@ import org.mozilla.javascript.Scriptable;
  * Open Context class for extension</a>  
  * @author Marc Guillemot
  */
-public class ContextMethodsTest
-{
+public class ContextMethodsTest {
 	
 	/**
 	 * When {@link Context#compileString(String, String, int, Object)} is protected and not final,

@@ -74,22 +74,18 @@ public class WriteReadOnlyPropertyTest {
 	/**
 	 * Simple utility allowing to better see the concerned scope while debugging
 	 */
-	static class Foo extends ScriptableObject
-	{
+	static class Foo extends ScriptableObject {
 		final String prop_;
-		Foo(final String label)
-		{
+		Foo(final String label) {
 			prop_ = label;
 		}
 
 		@Override
-		public String getClassName()
-		{
+		public String getClassName() {
 			return "Foo";
 		}
 		
-		public String getMyProp()
-		{
+		public String getMyProp() {
 			return prop_;
 		}
 	};

@@ -7,9 +7,9 @@ import org.junit.Test;
  * with EcmaScript 5 it is now '[object Arguments]' what is not good for HtmlUnit.
  * @author Marc Guillemot
  */
-public class ArgumentsTest
-{
-	/**
+public class ArgumentsTest {
+
+    /**
 	 * @throws Exception if the test fails
 	 */
 	@Test

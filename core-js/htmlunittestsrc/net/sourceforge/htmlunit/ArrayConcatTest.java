@@ -7,9 +7,9 @@ import org.junit.Test;
  * Array.concat causes ArrayIndexOutOfBoundException with non dense array</a>  
  * @author Marc Guillemot
  */
-public class ArrayConcatTest
-{
-	/**
+public class ArrayConcatTest {
+
+    /**
 	 * @throws Exception if the test fails
 	 */
 	@Test

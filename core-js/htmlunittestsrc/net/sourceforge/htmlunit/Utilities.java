@@ -14,8 +14,7 @@ public class Utilities {
 	 * @param script the script
 	 */
 	static void executeScript(final String script) {
-		final ContextAction action = new ContextAction()
-		{
+		final ContextAction action = new ContextAction() {
 			public Object run(Context cx) {
 				final Scriptable scope = cx.initStandardObjects();
 				return cx.evaluateString(scope, script, "myScript.js", 1, null);
@@ -29,8 +28,7 @@ public class Utilities {
 	 * @param script the script
 	 */
 	static void executeScript(final String script, final int optimizationLevel) {
-		final ContextAction action = new ContextAction()
-		{
+		final ContextAction action = new ContextAction() {
 			public Object run(Context cx) {
 				final Scriptable scope = cx.initStandardObjects();
 				return cx.evaluateString(scope, script, "myScript.js", 1, null);

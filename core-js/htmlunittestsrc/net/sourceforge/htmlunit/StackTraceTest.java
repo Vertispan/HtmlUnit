@@ -12,8 +12,7 @@ import org.mozilla.javascript.Scriptable;
  * https://bugzilla.mozilla.org/show_bug.cgi?id=376717
  * @author Marc Guillemot
  */
-public class StackTraceTest
-{
+public class StackTraceTest {
     
 	/**
 	 * As of CVS head on May, 11. 2009, stacktrace information is lost when a call to some
@@ -28,16 +27,14 @@ public class StackTraceTest
         runWithExpectedStackTrace(source2, "	at test.js (f2)\n\tat test.js\n"); // fails
     }
 
-	private void runWithExpectedStackTrace(final String _source, final String _expectedStackTrace)
-	{
+	private void runWithExpectedStackTrace(final String _source, final String _expectedStackTrace) {
         final ContextAction action = new ContextAction() {
         	public Object run(final Context cx) {
         		final Scriptable scope = cx.initStandardObjects();
         		try {
         			cx.evaluateString(scope, _source, "test.js", 0, null);
         		}
-        		catch (final JavaScriptException e)
-        		{
+        		catch (final JavaScriptException e) {
         			Assert.assertEquals(_expectedStackTrace, e.getScriptStackTrace());
         			return null;
         		}

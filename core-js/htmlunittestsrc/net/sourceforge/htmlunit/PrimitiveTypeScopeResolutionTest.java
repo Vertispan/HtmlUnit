@@ -15,8 +15,8 @@ import org.mozilla.javascript.ScriptableObject;
  * @author Marc Guillemot
  */
 @RunWith(RhinoPatchedRunner.class)
-public class PrimitiveTypeScopeResolutionTest
-{
+public class PrimitiveTypeScopeResolutionTest {
+
     /**
      */
     @Test
@@ -65,24 +65,19 @@ public class PrimitiveTypeScopeResolutionTest
 	/**
 	 * Simple utility allowing to better see the concerned scope while debugging
 	 */
-	static class MySimpleScriptableObject extends ScriptableObject
-	{
+	static class MySimpleScriptableObject extends ScriptableObject {
 		private String label_;
-		MySimpleScriptableObject(String label)
-		{
+		MySimpleScriptableObject(String label) {
 			label_ = label;
 		}
 		@Override
-		public String getClassName()
-		{
+		public String getClassName() {
 			return "MySimpleScriptableObject";
 		}
 		
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return label_;
 		}
-		
 	};
 }

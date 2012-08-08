@@ -7,9 +7,9 @@ import org.junit.Test;
  * Number.toString fails for 2.274341322658976E-309</a>  
  * @author Marc Guillemot
  */
-public class NumberTest
-{
-	/**
+public class NumberTest {
+
+    /**
 	 * @throws Exception if the test fails
 	 */
 	@Test
