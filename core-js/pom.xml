@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sourceforge.htmlunit</groupId>
 	<artifactId>htmlunit-core-js</artifactId>
-    <version>2.10</version>
+    <version>2.11-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>HtmlUnit Core JS</name>
 	<url>http://htmlunit.sourceforge.net</url>
@@ -16,8 +16,8 @@
 	</description>
 	<licenses>
 		<license>
-			<name>Mozilla Public License version 1.1</name>
-			<url>http://www.mozilla.org/MPL/MPL-1.1.html</url>
+			<name>Mozilla Public License version 2.0</name>
+			<url>http://www.mozilla.org/MPL/2.0/</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
