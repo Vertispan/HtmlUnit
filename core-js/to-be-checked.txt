@@ -1,0 +1,4 @@
+- LookupSetterTest: was failing. typeof() was fixed, but toStringConversion still fails.
+- StackTraceTest: was and still failing
+- ExceptionMessageTest.testOnlyGetterError() : the is no use of 'feature' parameter at all
+- WriteReadOnlyPropertyTest: there is System.out, should this be used in assertion?

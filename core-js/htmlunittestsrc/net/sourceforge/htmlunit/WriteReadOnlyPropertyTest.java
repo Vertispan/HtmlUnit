@@ -62,7 +62,7 @@ public class WriteReadOnlyPropertyTest {
 		final ContextFactory contextFactory = new ContextFactory() {
 			@Override
 			protected boolean hasFeature(final Context cx, final int featureIndex) {
-				if (Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES == featureIndex) {
+				if (Context.FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY == featureIndex) {
 					return acceptWriteReadOnly;
 				}
 				return super.hasFeature(cx, featureIndex);

@@ -62,7 +62,7 @@ public class ExceptionMessageTest extends TestCase {
      */
 	public void testOnlyGetterError() {
 		testOnlyGetterError(Context.FEATURE_STRICT_MODE);
-		testOnlyGetterError(Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES);
+		testOnlyGetterError(Context.FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY);
 	}
 
 	private void testOnlyGetterError(final int feature) {

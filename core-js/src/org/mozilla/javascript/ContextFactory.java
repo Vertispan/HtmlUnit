@@ -280,7 +280,7 @@ public class ContextFactory
           case Context.FEATURE_ENHANCED_JAVA_ACCESS:
             return false;
 
-          case Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES:
+          case Context.FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY:
             return false;
 
           case Context.FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION:

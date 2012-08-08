@@ -285,11 +285,16 @@ public class Context
 
     /**
      * Special to HtmlUnit's Rhino fork.
-     * Enable assignment to properties with only a getter defined.
-     * This was Rhino's standard behaviour until 1.7R2.
+     *
+     * The same web browser (e.g. FF) may allow setting read-only property, 
+     * ignores setting the read-only property, or even throw an exception.
+     *
+     * So, by having this feature, ScriptableObject itself is asked throw
+     * {@link ScriptableObject#isReadOnlySettable} whether to allow, ignore or throw an exception.
+     *
      * By default {@link #hasFeature(int)} returns false.
      */
-    public static final int FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES = 14;
+    public static final int FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY = 14;
 
     /**
      * Special to HtmlUnit's Rhino fork.

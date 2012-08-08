@@ -243,9 +243,13 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                         // we should throw a TypeError in this case.
                         throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, start.getClassName(), Context.toString(value));
                     }
-                    if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_WRITE_READONLY_PROPERTIES)) {
-                        // Odd case: Assignment to a property with only a getter 
-                        // defined. The assignment cancels out the getter.
+                    if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY)) {
+                        if (start instanceof ScriptableObject) {
+                            boolean allowSetting = ((ScriptableObject) start).isReadOnlySettable(name, value);
+                            if (!allowSetting) {
+                                return true;
+                            }
+                        }
                         getter = null;
                     }
                     else {
@@ -3111,4 +3115,20 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
         }
     }
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     *
+     * Decides what to do when setting a ReadOnly property.
+     * The SimpleScriptable can return <tt>true<tt> for allowing to value to be set, <tt>false<tt> for not allowing (ignoring),
+     * or can simply throw {@link ScriptRuntime#typeError3(String, String, String, String)} with
+     * "msg.set.prop.no.setter", name, this.getClassName() and Context.toString(value).
+     *
+     * By default, this method returns <tt>true</tt>
+     * @param name the property name
+     * @param value the value
+     * @return <tt>true<tt> for allowing setting the value, <tt>false</tt> for ignoring the setting, or we can throw an exception
+     */
+    protected boolean isReadOnlySettable(final String name, final Object value) {
+        return true;
+    }
 }
