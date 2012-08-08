@@ -2532,6 +2532,10 @@ public class ScriptRuntime {
             return "number";
         if (value instanceof Boolean)
             return "boolean";
+        if (value instanceof MemberBox)
+            return typeof(((MemberBox) value).member());
+        if (value instanceof Method)
+            return "function";
         throw errorWithClassName("msg.invalid.type", value);
     }
 
