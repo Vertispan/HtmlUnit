@@ -130,4 +130,19 @@ Ahmed Ashour
 			<arg value="-Dfile=${jar}" />
 		</artifact:mvn>
 	</target>
+
+	<target name="deploy-mvn-local" depends="check-maven-ant-tasks,jar-all"
+			description="Deploys jars to the local repository">
+		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+			classpathref="maven-ant-tasks.classpath" />
+
+		<artifact:pom id="maven.project" file="pom.xml" />
+		<artifact:deploy file="${jar}">
+			<pom refid="maven.project"/>
+			<remoteRepository url="file://${user.home}/.m2/repository"/>
+			<attach file="${jar.sources}" classifier="sources" /> 
+		</artifact:deploy>
+	</target>
+
 </project>

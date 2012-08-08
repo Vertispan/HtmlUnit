@@ -244,8 +244,14 @@ public abstract class ScriptableObject implements Scriptable, Serializable,
                         throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, start.getClassName(), Context.toString(value));
                     }
                     if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_ASK_OBJECT_TO_WRITE_READONLY)) {
-                        if (start instanceof ScriptableObject) {
-                            boolean allowSetting = ((ScriptableObject) start).isReadOnlySettable(name, value);
+                        Scriptable scriptable = start;
+
+                        if (scriptable instanceof Delegator) {
+                            scriptable = ((Delegator) scriptable).getDelegee();
+                        }
+
+                        if (scriptable instanceof ScriptableObject) {
+                            boolean allowSetting = ((ScriptableObject) scriptable).isReadOnlySettable(name, value);
                             if (!allowSetting) {
                                 return true;
                             }
