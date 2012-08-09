@@ -304,6 +304,15 @@ public class Context
      */
     public static final int FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION = 15;
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     *
+     * Is the default value of {@link Arguments} "Object" or "Arguments"
+     *
+     * By default {@link #hasFeature(int)} returns false.
+     */
+    public static final int FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT = 16;
+
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";
 

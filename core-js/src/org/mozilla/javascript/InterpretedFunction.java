@@ -178,7 +178,7 @@ final class InterpretedFunction extends NativeFunction implements Script
     }
 
     /**
-     * Provides the decompiled source of the function what is helpful
+     * Not needed for a specific test, but it provides the decompiled source of the function which is helpful
      * while debugging.
      */
     @Override

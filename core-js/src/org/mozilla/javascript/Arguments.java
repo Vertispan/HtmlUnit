@@ -47,14 +47,27 @@ final class Arguments extends IdScriptableObject
         }
     }
 
+    Arguments(Object[] args) {
+        this.args = args;
+        if (args == null) {
+            lengthObj = 0;
+        }
+        else {
+            lengthObj = Integer.valueOf(args.length);
+        }
+    }
+
     @Override
     public String getClassName()
     {
-        return "Object";
+        if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT)) {
+            return "Object";
+        }
+        return FTAG;
     }
 
     private Object arg(int index) {
-      if (index < 0 || args.length <= index) return NOT_FOUND;
+      if (index < 0 || args == null || args.length <= index) return NOT_FOUND;
       return args[index];
     }
 
@@ -354,6 +367,11 @@ final class Arguments extends IdScriptableObject
       if (isFalse(getProperty(desc, "writable"))) {
         removeArg(index);
       }
+    }
+
+    @Override
+    public Object getDefaultValue(Class<?> typeHint) {
+        return "[object " + getClassName() + "]";
     }
 
 // Fields to hold caller, callee and length properties,

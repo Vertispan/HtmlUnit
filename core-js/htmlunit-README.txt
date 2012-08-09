@@ -9,10 +9,13 @@ This is meant for project committers:
     making build/classes as the output folder 
   - Add 'lib' and 'build' to svn:ignore
   - Add 'htmlunittestsrc' which contains 'build.xml' and the test cases
-  - Use only 'htmlunit.xml' to 'test' by:
+
+- To run HtmlUnit fork tests:
     ant -f htmlunit.xml test
 
-   
+- To run original Rhino tests:
+    ant junit-all
+
 - Deploy snapshot:
   - Ensure that you have pgp installed and that you create own keys, see
       https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven

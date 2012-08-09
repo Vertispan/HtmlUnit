@@ -2845,6 +2845,14 @@ switch (op) {
        if (frame.parentFrame != null && !frame.parentFrame.fnOrScript.isScript()) {
            frame.fnOrScript.defaultPut("caller", frame.parentFrame.fnOrScript);
        }
+       Object[] parameters = null;
+       final int paramCount = frame.idata.getParamCount();
+       if (paramCount != 0 && paramCount <= args.length) {
+           parameters = new Object[paramCount];
+           System.arraycopy(args, args.length - parameters.length,
+                   parameters, 0, parameters.length);
+       }
+       frame.fnOrScript.defaultPut("arguments", new Arguments(parameters));
 
        boolean usesActivation = frame.idata.itsNeedsActivation;
         boolean isDebugged = frame.debuggerFrame != null;
@@ -2896,6 +2904,7 @@ switch (op) {
                                   Object throwable)
     {
         frame.fnOrScript.delete("caller");
+        frame.fnOrScript.delete("arguments");
 
         if (frame.idata.itsNeedsActivation) {
             ScriptRuntime.exitActivationFunction(cx);
