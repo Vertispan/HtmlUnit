@@ -10,7 +10,9 @@ import org.mozilla.javascript.Scriptable;
 /**
  * String conversion of Arguments array used to be '[object Object]',
  * with EcmaScript 5 it is now '[object Arguments]' what is not good for HtmlUnit.
+ *
  * @author Marc Guillemot
+ * @author Ahmed Ashour
  */
 public class ArgumentsTest {
 
@@ -28,7 +30,7 @@ public class ArgumentsTest {
         final ContextFactory cf = new ContextFactory() {
             @Override
             protected boolean hasFeature(Context cx, int featureIndex) {
-                if (Context.FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT == featureIndex) {
+                if (Context.FEATURE_HTMLUNIT_ARGUMENTS_IS_OBJECT == featureIndex) {
                     return hasFeature;
                 }
                 return super.hasFeature(cx, featureIndex);
@@ -48,7 +50,6 @@ public class ArgumentsTest {
                 return null;
             }
         };
-
 
         Utils.runWithAllOptimizationLevels(cf, action);
     }

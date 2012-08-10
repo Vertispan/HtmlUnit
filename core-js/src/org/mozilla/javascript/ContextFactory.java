@@ -286,7 +286,10 @@ public class ContextFactory
           case Context.FEATURE_HTMLUNIT_JS_CATCH_JAVA_EXCEPTION:
             return true;
 
-          case Context.FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT:
+          case Context.FEATURE_HTMLUNIT_ARGUMENTS_IS_OBJECT:
+            return false;
+
+          case Context.FEATURE_HTMLUNIT_FUNCTION_NULL_SETTER:
             return false;
         }
         // It is a bug to call the method with unknown featureIndex

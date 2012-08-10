@@ -2,3 +2,5 @@
 - StackTraceTest: was and still failing
 - ExceptionMessageTest.testOnlyGetterError() : the is no use of 'feature' parameter at all
 - WriteReadOnlyPropertyTest: there is System.out, should this be used in assertion?
+- If a 'feature' is always true by HtmlUnit, why we are making it configurable?
+  Is htmlunit fork is meant to be used as plain 'rhino'?

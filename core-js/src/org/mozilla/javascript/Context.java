@@ -311,7 +311,20 @@ public class Context
      *
      * By default {@link #hasFeature(int)} returns false.
      */
-    public static final int FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT = 16;
+    public static final int FEATURE_HTMLUNIT_ARGUMENTS_IS_OBJECT = 16;
+
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     *
+     * When setting the function name to call, call thisObject.setter.
+     *
+     * This is needed for something like "function onclick() {onclick = null}"
+     *
+     * Implemented by transforming it into "function onclick() {<b>this.</b>onclick = null}"
+     *
+     * By default {@link #hasFeature(int)} returns false.
+     */
+    public static final int FEATURE_HTMLUNIT_FUNCTION_NULL_SETTER = 17;
 
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";

@@ -60,7 +60,7 @@ final class Arguments extends IdScriptableObject
     @Override
     public String getClassName()
     {
-        if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_ARGUMENT_IS_OBJECT)) {
+        if (Context.getContext().hasFeature(Context.FEATURE_HTMLUNIT_ARGUMENTS_IS_OBJECT)) {
             return "Object";
         }
         return FTAG;

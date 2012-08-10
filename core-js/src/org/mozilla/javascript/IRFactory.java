@@ -356,6 +356,7 @@ public final class IRFactory extends Parser
 
     private Node transformAssignment(Assignment node) {
         AstNode left = removeParens(node.getLeft());
+        left = transformAssignmentLeft(node, left);
         Node target = null;
         if (isDestructuring(left)) {
             decompile(left);
@@ -367,6 +368,31 @@ public final class IRFactory extends Parser
         return createAssignment(node.getType(),
                                 target,
                                 transform(node.getRight()));
+    }
+
+    private AstNode transformAssignmentLeft(Assignment node, AstNode left) {
+        AstNode right = node.getRight();
+
+        if (right.getType() == Token.NULL && node.getType() == Token.ASSIGN
+                && left instanceof Name && right instanceof KeywordLiteral
+                && Context.getCurrentContext().hasFeature(Context.FEATURE_HTMLUNIT_FUNCTION_NULL_SETTER)) {
+
+            final String identifier = ((Name) left).getIdentifier();
+            for (AstNode p = node.getParent(); p != null; p = p.getParent()) {
+                if (p instanceof FunctionNode &&
+                        ((FunctionNode) p).getFunctionName().getIdentifier().equals(identifier)) {
+
+                    final PropertyGet propertyGet = new PropertyGet();
+                    final KeywordLiteral thisKeyword = new KeywordLiteral();
+                    thisKeyword.setType(Token.THIS);
+                    propertyGet.setLeft(thisKeyword);
+                    propertyGet.setRight(left);
+                    node.setLeft(propertyGet);
+                    return propertyGet;
+                }
+            }
+        }
+        return left;
     }
 
     private Node transformBlock(AstNode node) {

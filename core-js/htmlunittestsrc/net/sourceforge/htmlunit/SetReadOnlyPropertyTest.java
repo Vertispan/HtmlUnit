@@ -110,6 +110,5 @@ public class SetReadOnlyPropertyTest extends TestCase {
             }
             return false;
         }
-
 	}
 }
