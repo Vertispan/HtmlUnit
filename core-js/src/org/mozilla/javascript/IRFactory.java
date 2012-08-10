@@ -379,16 +379,17 @@ public final class IRFactory extends Parser
 
             final String identifier = ((Name) left).getIdentifier();
             for (AstNode p = node.getParent(); p != null; p = p.getParent()) {
-                if (p instanceof FunctionNode &&
-                        ((FunctionNode) p).getFunctionName().getIdentifier().equals(identifier)) {
-
-                    final PropertyGet propertyGet = new PropertyGet();
-                    final KeywordLiteral thisKeyword = new KeywordLiteral();
-                    thisKeyword.setType(Token.THIS);
-                    propertyGet.setLeft(thisKeyword);
-                    propertyGet.setRight(left);
-                    node.setLeft(propertyGet);
-                    return propertyGet;
+                if (p instanceof FunctionNode) {
+                    final Name functionName = ((FunctionNode) p).getFunctionName();
+                    if (functionName != null && functionName.getIdentifier().equals(identifier)) {
+                        final PropertyGet propertyGet = new PropertyGet();
+                        final KeywordLiteral thisKeyword = new KeywordLiteral();
+                        thisKeyword.setType(Token.THIS);
+                        propertyGet.setLeft(thisKeyword);
+                        propertyGet.setRight(left);
+                        node.setLeft(propertyGet);
+                        return propertyGet;
+                    }
                 }
             }
         }
