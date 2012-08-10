@@ -2846,11 +2846,15 @@ switch (op) {
            frame.fnOrScript.defaultPut("caller", frame.parentFrame.fnOrScript);
        }
        Object[] parameters = null;
-       final int paramCount = frame.idata.getParamCount();
-       if (paramCount != 0 && paramCount <= args.length) {
-           parameters = new Object[paramCount];
-           System.arraycopy(args, args.length - parameters.length,
-                   parameters, 0, parameters.length);
+       if (frame.scope instanceof NativeCall) {
+           parameters = args;
+       }
+       else {
+           int paramCount = frame.idata.getParamCount();
+           if (paramCount != 0 && paramCount <= args.length) {
+               parameters = new Object[paramCount];
+               System.arraycopy(args, args.length - parameters.length, parameters, 0, parameters.length);
+           }
        }
        frame.fnOrScript.defaultPut("arguments", new Arguments(parameters));
 

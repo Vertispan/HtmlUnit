@@ -134,6 +134,7 @@ final class Arguments extends IdScriptableObject
 
     private boolean sharedWithActivation(int index)
     {
+        if (activation == null) return false;
         NativeFunction f = activation.function;
         int definedCount = f.getParamCount();
         if (index < definedCount) {

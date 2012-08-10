@@ -77,4 +77,37 @@ public class FunctionCaller {
         };
         Utils.runWithOptimizationLevel(action, -1);
     }
+
+    /**
+     * Tests the caller arguments
+     */
+    @Test
+    public void arguments() throws Exception {
+        final String script =
+              "function f() {\n"
+            + "  g('hello', 'world');\n"
+            + "}\n"
+            + "function g() {\n"
+            + "  output += g.arguments.length + '-';\n"
+            + "  output += g.arguments[0] + '-';\n"
+            + "  h('i', 'you');\n"
+            + "}\n"
+            + "function h() {\n"
+            + "  output += g.arguments.length;\n"
+            + "}\n"
+            + "var output = '';\n"
+            + "f();\n"
+            + "output";
+        
+        final ContextAction action = new ContextAction() {
+            public Object run(final Context cx) {
+                final Scriptable scope = cx.initStandardObjects();
+                
+                final Object result = cx.evaluateString(scope, script, "test.js", 1, null);
+                Assert.assertEquals("2-hello-2", result);
+                return null;
+            }
+        };
+        Utils.runWithOptimizationLevel(action, -1);
+    }
 }
