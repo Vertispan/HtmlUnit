@@ -326,6 +326,15 @@ public class Context
      */
     public static final int FEATURE_HTMLUNIT_FUNCTION_NULL_SETTER = 17;
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     *
+     * Whether the "arguments" object read-only or not.
+     *
+     * By default {@link #hasFeature(int)} returns false.
+     */
+    public static final int FEATURE_HTMLUNIT_ARGUMENTS_IS_READ_ONLY = 18;
+
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";
 

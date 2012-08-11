@@ -98,7 +98,7 @@ public class FunctionCaller {
             + "var output = '';\n"
             + "f();\n"
             + "output";
-        
+
         final ContextAction action = new ContextAction() {
             public Object run(final Context cx) {
                 final Scriptable scope = cx.initStandardObjects();
@@ -108,6 +108,6 @@ public class FunctionCaller {
                 return null;
             }
         };
-        Utils.runWithOptimizationLevel(action, -1);
+        Utils.runWithAllOptimizationLevels(action);
     }
 }

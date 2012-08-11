@@ -88,7 +88,7 @@ final class Arguments extends IdScriptableObject
         putIntoActivation(index, value);
       }
       synchronized (this) {
-        if (args == activation.originalArgs) {
+        if (activation != null && args == activation.originalArgs) {
           args = args.clone();
         }
         args[index] = value;
@@ -156,6 +156,9 @@ final class Arguments extends IdScriptableObject
     @Override
     public void put(int index, Scriptable start, Object value)
     {
+        if (Context.getCurrentContext().hasFeature(Context.FEATURE_HTMLUNIT_ARGUMENTS_IS_READ_ONLY)) {
+            return;
+        }
         if (arg(index) == NOT_FOUND) {
           super.put(index, start, value);
         } else {
