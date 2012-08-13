@@ -465,6 +465,16 @@ public final class IRFactory extends Parser
     }
 
     private Node transformElementGet(ElementGet node) {
+        //Ensure "function['eval']" is transformed into "function.eval"
+        if (node.getElement().type == Token.STRING
+                && "eval".equals(((StringLiteral) node.getElement()).getValue())) {
+            final PropertyGet propertyGet = new PropertyGet();
+            propertyGet.setLeft(node.getTarget());
+            final Name name = new Name();
+            name.setIdentifier("eval");
+            propertyGet.setRight(name);
+            return transform(propertyGet);
+        }
         // OPT: could optimize to createPropertyGet
         // iff elem is string that can not be number
         Node target = transform(node.getTarget());
