@@ -66,16 +66,7 @@ Ahmed Ashour
 		</copy>
 	</target>
 
-	<target name="javadoc" depends="repackage" description="Generates the JavaDoc for the repackaged sources">
-		<mkdir dir="${javadoc.dir}"/>
-		<javadoc sourcepath='${repackaged-rhino.dir}/src' destdir='${javadoc.dir}'
-		           author='true' version='true' use='true'
-		           windowtitle="HtmlUnit core-js-${version}"
-		           doctitle="HtmlUnit core-js-${version}" encoding="ISO-8859-1"
-		 />
-	</target>
-
-	<target name="jar-all" depends="javadoc">
+	<target name="jar-with-source" depends="repackage">
 		<jar destfile="${jar.sources}">
 		    <fileset dir='${repackaged-rhino.dir}/src'>
 				<include name="**/*"/>
@@ -90,6 +81,15 @@ Ahmed Ashour
 				<include name="rhinoDiff.txt"/>
 		    </fileset>
 		</jar>
+	</target>
+
+	<target name="jar-all" depends="jar-with-source">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc sourcepath='${repackaged-rhino.dir}/src' destdir='${javadoc.dir}'
+		           author='true' version='true' use='true'
+		           windowtitle="HtmlUnit core-js-${version}"
+		           doctitle="HtmlUnit core-js-${version}" encoding="ISO-8859-1"
+		 />
 	 	<jar destfile="${jar.javadoc}">
 		    <fileset dir='${javadoc.dir}' />
 		</jar>
@@ -131,7 +131,7 @@ Ahmed Ashour
 		</artifact:mvn>
 	</target>
 
-	<target name="install-mvn-local" depends="check-maven-ant-tasks,jar-all"
+	<target name="install-mvn-local" depends="check-maven-ant-tasks,jar-with-source"
 			description="Installs the jars into the local repository">
 		<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
 		<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
