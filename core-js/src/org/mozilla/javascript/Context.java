@@ -335,6 +335,15 @@ public class Context
      */
     public static final int FEATURE_HTMLUNIT_ARGUMENTS_IS_READ_ONLY = 18;
 
+    /**
+     * Special to HtmlUnit's Rhino fork.
+     *
+     * Indicates that 'eval' function should have access to the local function scope.
+     *
+     * By default {@link #hasFeature(int)} returns true.
+     */
+    public static final int FEATURE_HTMLUNIT_EVAL_LOCAL_SCOPE = 19;
+
     public static final String languageVersionProperty = "language version";
     public static final String errorReporterProperty   = "error reporter";
 
