@@ -10,15 +10,15 @@
 	<name>HtmlUnit Flash</name>
 	<url>http://htmlunit.sourceforge.net</url>
 	<description>
-		HtmlUnit adaptation of Adobe Flex SDK.
+		HtmlUnit adaptation of Apache Flex SDK.
 		Changes are documented by a diff (rhinoDiff.txt) contained in the generated jar files.
 	</description>
 	<licenses>
-		<license>
-			<name>Mozilla Public License version 2.0</name>
-			<url>http://www.mozilla.org/MPL/2.0/</url>
-			<distribution>repo</distribution>
-		</license>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
 	</licenses>
 
 	<scm>
@@ -40,8 +40,8 @@
 	</dependencies>
 	<developers>
 		<developer>
-			<name>Adobe Flex SDK Team</name>
-			<id>AdobeFlex</id>
+			<name>Apache Flex Team</name>
+			<id>ApacheFlexTeam</id>
 		</developer>
 		<developer>
 			<name>HtmlUnit Team</name>
