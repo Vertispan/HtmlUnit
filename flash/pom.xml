@@ -10,8 +10,7 @@
 	<name>HtmlUnit Flash</name>
 	<url>http://htmlunit.sourceforge.net</url>
 	<description>
-		HtmlUnit adaptation of Apache Flex SDK.
-		Changes are documented by a diff (rhinoDiff.txt) contained in the generated jar files.
+		HtmlUnit adaptation of Apache Flex.
 	</description>
 	<licenses>
         <license>
@@ -31,13 +30,6 @@
 		<url>http://htmlunit.svn.sourceforge.net/viewvc/htmlunit</url>
 	</scm>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-svggen</artifactId>
-			<version>1.7</version>
-		</dependency>
-	</dependencies>
 	<developers>
 		<developer>
 			<name>Apache Flex Team</name>
