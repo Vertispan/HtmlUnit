@@ -432,7 +432,7 @@ public class GlobalOptimizer
 		List<InputAbc> mergedAbcs = new ArrayList<InputAbc>();
 		public String src_filename;
 		
-		InputAbc()
+		public InputAbc()
 		{
 			mergedAbcs.add(this);
 		}
@@ -453,7 +453,7 @@ public class GlobalOptimizer
 			return file_buffer.length;
 		}
 
-		void readAbc(byte[] abc) throws IOException
+		public void readAbc(byte[] abc) throws IOException
 		{
 			Reader p = new Reader(0, abc);
 			if (p.readU16() != 16 || p.readU16() != 46)
