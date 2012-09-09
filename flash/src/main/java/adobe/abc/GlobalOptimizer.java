@@ -422,10 +422,10 @@ public class GlobalOptimizer
 		Namespace namespaces[];
 		Nsset nssets[];
 		Name names[];
-		Method methods[];
+		public Method methods[];
 		Metadata metadata[];
 		Type classes[];
-		Type scripts[];
+		public Type scripts[];
 		boolean containsObject = false;
 		
 		Set<Type> toResolve;
@@ -530,8 +530,12 @@ public class GlobalOptimizer
 			for (int i = 0, n = scripts.length; i < n; i++)
 				scripts[i] = readScript(p, i);
 
-			for (int i = 0, n = p.readU30(); i < n; i++)
+			for (int i = 0, n = p.readU30(); i < n; i++) {
+			    if (i == 1) {
+			        System.out.println("here");
+			    }
 				readBody(p);
+			}
 			
 			// lazy resolve slot type names
 			for (Type t: toResolve)

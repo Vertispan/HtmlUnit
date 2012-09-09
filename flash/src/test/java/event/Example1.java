@@ -2,19 +2,16 @@ package event;
 
 import java.io.InputStream;
 
-import net.sourceforge.htmlunit.flash.SWF;
+import net.sourceforge.htmlunit.flash.Flash;
 
 import org.junit.Test;
 
-import flash.swf.Dictionary;
-
 public class Example1 {
-    Dictionary dict_;
 
     @Test
     public void test() throws Exception {
-        final InputStream in = getClass().getResourceAsStream("ev_example1.swf");
-        new SWF(in);
+        final InputStream in = getClass().getResourceAsStream("as3keyboard.swf");
+        new Flash(in);
     }
 
 }
