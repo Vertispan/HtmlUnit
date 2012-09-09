@@ -14,20 +14,21 @@
  */
 package net.sourceforge.htmlunit.flash.actionscript.flash.events;
 
-import net.sourceforge.htmlunit.flash.actionscript.Function;
+import net.sourceforge.htmlunit.flash.annotations.AsConstant;
 
 /**
- * The EventDispatcher class is the base class for all classes that dispatch events.
- * The EventDispatcher class implements the IEventDispatcher interface and is the base class for the
- * DisplayObject class. The EventDispatcher class allows any object on the display list to be an event
- * target and as such, to use the methods of the IEventDispatcher interface.
+ * A KeyboardEvent object id dispatched in response to user input through a keyboard. 
  *
  * @version $Revision$
  * @author Ahmed Ashour
  */
-public class EventDispatcher extends net.sourceforge.htmlunit.flash.actionscript.Object {
+public class KeyboardEvent extends Event {
 
-    public void addEventListener(String type, Function listener) {
-        
-    }
+    /** Defines the value of the type property of a keyDown event object. */
+    @AsConstant
+    public static final String KEY_DOWN = "keyDown";
+
+    /** Defines the value of the type property of a keyUp event object. */
+    @AsConstant
+    public static final String KEY_UP = "keyUp";
 }

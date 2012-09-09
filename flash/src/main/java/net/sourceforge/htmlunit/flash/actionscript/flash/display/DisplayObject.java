@@ -15,6 +15,7 @@
 package net.sourceforge.htmlunit.flash.actionscript.flash.display;
 
 import net.sourceforge.htmlunit.flash.actionscript.flash.events.EventDispatcher;
+import net.sourceforge.htmlunit.flash.annotations.AsGetter;
 
 /**
  * The DisplayObject class is the base class for all objects that can be placed on the display list.
@@ -28,4 +29,25 @@ import net.sourceforge.htmlunit.flash.actionscript.flash.events.EventDispatcher;
  */
 public class DisplayObject extends EventDispatcher {
 
+    private Stage stage_;
+    private DisplayObject root_;
+
+    /**
+     * For a display object in a loaded SWF file, the root property is the top-most display object
+     * in the portion of the display list's tree structure represented by that SWF file.
+     * @return
+     */
+    @AsGetter
+    public DisplayObject getRoot() {
+        return root_;
+    }
+
+    /**
+     * The Stage of the display object.
+     * @return the stage
+     */
+    @AsGetter
+    public Stage getStage() {
+        return stage_;
+    }
 }

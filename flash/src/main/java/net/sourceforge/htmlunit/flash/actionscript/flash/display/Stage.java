@@ -12,22 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash.actionscript.flash.events;
-
-import net.sourceforge.htmlunit.flash.actionscript.Function;
+package net.sourceforge.htmlunit.flash.actionscript.flash.display;
 
 /**
- * The EventDispatcher class is the base class for all classes that dispatch events.
- * The EventDispatcher class implements the IEventDispatcher interface and is the base class for the
- * DisplayObject class. The EventDispatcher class allows any object on the display list to be an event
- * target and as such, to use the methods of the IEventDispatcher interface.
+ * The Stage class represents the main drawing area.
  *
  * @version $Revision$
  * @author Ahmed Ashour
  */
-public class EventDispatcher extends net.sourceforge.htmlunit.flash.actionscript.Object {
+public class Stage extends DisplayObjectContainer {
 
-    public void addEventListener(String type, Function listener) {
-        
-    }
 }

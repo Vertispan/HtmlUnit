@@ -12,22 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash.actionscript.flash.events;
+package net.sourceforge.htmlunit.flash.actionscript;
 
-import net.sourceforge.htmlunit.flash.actionscript.Function;
 
 /**
- * The EventDispatcher class is the base class for all classes that dispatch events.
- * The EventDispatcher class implements the IEventDispatcher interface and is the base class for the
- * DisplayObject class. The EventDispatcher class allows any object on the display list to be an event
- * target and as such, to use the methods of the IEventDispatcher interface.
- *
+ * A function is the basic unit of code that can be invoked in ActionScript.
+ * 
  * @version $Revision$
  * @author Ahmed Ashour
  */
-public class EventDispatcher extends net.sourceforge.htmlunit.flash.actionscript.Object {
+public class Function extends Object {
 
-    public void addEventListener(String type, Function listener) {
-        
-    }
 }

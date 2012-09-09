@@ -12,22 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash.actionscript.flash.events;
+package net.sourceforge.htmlunit.flash.annotations;
 
-import net.sourceforge.htmlunit.flash.actionscript.Function;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The EventDispatcher class is the base class for all classes that dispatch events.
- * The EventDispatcher class implements the IEventDispatcher interface and is the base class for the
- * DisplayObject class. The EventDispatcher class allows any object on the display list to be an event
- * target and as such, to use the methods of the IEventDispatcher interface.
+ * An annotation to mark a Java method as ActionScript constant.
  *
  * @version $Revision$
  * @author Ahmed Ashour
  */
-public class EventDispatcher extends net.sourceforge.htmlunit.flash.actionscript.Object {
-
-    public void addEventListener(String type, Function listener) {
-        
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface AsConstant {
 }

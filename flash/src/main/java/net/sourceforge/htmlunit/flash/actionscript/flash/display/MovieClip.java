@@ -14,6 +14,9 @@
  */
 package net.sourceforge.htmlunit.flash.actionscript.flash.display;
 
+import net.sourceforge.htmlunit.flash.actionscript.Function;
+import net.sourceforge.htmlunit.flash.annotations.AsFunction;
+
 /**
  * Unlike the Sprite object, a MovieClip object has a timeline.
  *
@@ -22,4 +25,14 @@ package net.sourceforge.htmlunit.flash.actionscript.flash.display;
  */
 public class MovieClip extends Sprite {
 
+    /**
+     * Adds a specified script to the given frame.  
+     *
+     * @param frameIndex the frame index, 0-based
+     * @param function the function to call
+     */
+    @AsFunction
+    public void addFrameScript(int frameIndex, Function function) {
+        
+    }
 }
