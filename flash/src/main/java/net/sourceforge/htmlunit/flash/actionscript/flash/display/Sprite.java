@@ -12,25 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash;
+package net.sourceforge.htmlunit.flash.actionscript.flash.display;
 
-import java.lang.reflect.Field;
+/**
+ * The Sprite class is a basic display list building block: a display list node that can display graphics
+ * and can also contain children. 
+ *
+ * @version $Revision$
+ * @author Ahmed Ashour
+ */
+public class Sprite extends DisplayObjectContainer {
 
-import macromedia.asc.embedding.avmplus.ActionBlockConstants;
-
-public class Util {
-
-    public static String getOpcodeName(final int op) {
-        try {
-            for (final Field f : ActionBlockConstants.class.getFields()) {
-                if (f.getName().startsWith("OP_") && (Integer) f.get(null) == op) {
-                    return f.getName().substring(3);
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

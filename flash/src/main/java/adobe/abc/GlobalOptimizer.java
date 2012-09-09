@@ -531,9 +531,6 @@ public class GlobalOptimizer
 				scripts[i] = readScript(p, i);
 
 			for (int i = 0, n = p.readU30(); i < n; i++) {
-			    if (i == 1) {
-			        System.out.println("here");
-			    }
 				readBody(p);
 			}
 			

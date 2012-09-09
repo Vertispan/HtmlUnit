@@ -12,25 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash;
+package net.sourceforge.htmlunit.flash.actionscript;
 
-import java.lang.reflect.Field;
+import net.sourceforge.htmlunit.flash.annotations.AsFunction;
 
-import macromedia.asc.embedding.avmplus.ActionBlockConstants;
+/**
+ * The Object class is at the root of the ActionScript class hierarchy.
+ * 
+ * @version $Revision$
+ * @author Ahmed Ashour
+ */
+public class Object {
 
-public class Util {
-
-    public static String getOpcodeName(final int op) {
-        try {
-            for (final Field f : ActionBlockConstants.class.getFields()) {
-                if (f.getName().startsWith("OP_") && (Integer) f.get(null) == op) {
-                    return f.getName().substring(3);
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    /**
+     * Returns the string representation of the specified object.
+     */
+    @Override
+    @AsFunction
+    public String toString() {
+        return "[object " + getClass().getSimpleName() + "]";
     }
 }

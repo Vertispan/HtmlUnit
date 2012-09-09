@@ -12,25 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash;
+package net.sourceforge.htmlunit.flash.annotations;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import macromedia.asc.embedding.avmplus.ActionBlockConstants;
-
-public class Util {
-
-    public static String getOpcodeName(final int op) {
-        try {
-            for (final Field f : ActionBlockConstants.class.getFields()) {
-                if (f.getName().startsWith("OP_") && (Integer) f.get(null) == op) {
-                    return f.getName().substring(3);
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+/**
+ * An annotation to mark a Java method as ActionScript function.
+ *
+ * @version $Revision$
+ * @author Ahmed Ashour
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AsFunction {
 }

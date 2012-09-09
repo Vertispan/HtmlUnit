@@ -12,25 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash;
+package net.sourceforge.htmlunit.flash.actionscript.flash.events;
 
-import java.lang.reflect.Field;
+/**
+ * The EventDispatcher class is the base class for all classes that dispatch events.
+ * The EventDispatcher class implements the IEventDispatcher interface and is the base class for the
+ * DisplayObject class. The EventDispatcher class allows any object on the display list to be an event
+ * target and as such, to use the methods of the IEventDispatcher interface.
+ *
+ * @version $Revision$
+ * @author Ahmed Ashour
+ */
+public class EventDispatcher extends net.sourceforge.htmlunit.flash.actionscript.Object {
 
-import macromedia.asc.embedding.avmplus.ActionBlockConstants;
-
-public class Util {
-
-    public static String getOpcodeName(final int op) {
-        try {
-            for (final Field f : ActionBlockConstants.class.getFields()) {
-                if (f.getName().startsWith("OP_") && (Integer) f.get(null) == op) {
-                    return f.getName().substring(3);
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
