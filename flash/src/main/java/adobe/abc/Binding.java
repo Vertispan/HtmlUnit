@@ -47,7 +47,7 @@ public class Binding
 	Typeref type; // if slot
 	
 	// function, getter, setter, method
-	Method method;	
+	public Method method;	
 	
 	// metadata
 	Metadata[] md = nometadata;

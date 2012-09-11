@@ -424,7 +424,7 @@ public class GlobalOptimizer
 		Name names[];
 		public Method methods[];
 		Metadata metadata[];
-		Type classes[];
+		public Type classes[];
 		public Type scripts[];
 		boolean containsObject = false;
 		

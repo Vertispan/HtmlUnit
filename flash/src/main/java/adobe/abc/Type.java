@@ -27,9 +27,9 @@ public class Type
 	Name name;
 	public Type base;
 	Type[] interfaces = notypes;
-	Symtab<Binding> defs;
-	Method init;
-	Type itype;
+	public Symtab<Binding> defs;
+	public Method init;
+	public Type itype;
 	int flags;
 	Namespace protectedNs;
 	Typeref[] scopes = notyperefs; // captured outer scopes

@@ -12,27 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sourceforge.htmlunit.flash.actionscript.flash.display;
-
-import net.sourceforge.htmlunit.flash.actionscript.Function;
-import net.sourceforge.htmlunit.flash.annotations.AsFunction;
+package net.sourceforge.htmlunit.flash;
 
 /**
- * Unlike the Sprite object, a MovieClip object has a timeline.
+ * An actual object of actionscript, to be used inside the engine.
  *
  * @version $Revision$
  * @author Ahmed Ashour
  */
-public class MovieClip extends Sprite {
+public abstract class ScriptObject {
 
-    /**
-     * Adds a specified script to the given frame.  
-     *
-     * @param frameIndex the frame index, 0-based
-     * @param function the function to call
-     */
-    @AsFunction
-    public void addFrameScript(final int frameIndex, final Function function) {
-        System.out.println("Called with " + function.implementation);
-    }
+    public abstract String getClassName();
+
+    public abstract String getSuperClassName();
+
+    public abstract Object getProperty(final String property);
+
 }
