@@ -22,7 +22,7 @@ package adobe.abc;
 import static macromedia.asc.embedding.avmplus.ActionBlockConstants.*;
 
 
-class Namespace implements Comparable<Namespace>
+public class Namespace implements Comparable<Namespace>
 {
 	final int kind;
 	final String uri;

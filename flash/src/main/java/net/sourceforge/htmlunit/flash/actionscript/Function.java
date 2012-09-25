@@ -14,6 +14,9 @@
  */
 package net.sourceforge.htmlunit.flash.actionscript;
 
+import net.sourceforge.htmlunit.flash.Flash;
+import net.sourceforge.htmlunit.flash.ScriptObject;
+
 /**
  * A function is the basic unit of code that can be invoked in ActionScript.
  *
@@ -22,10 +25,25 @@ package net.sourceforge.htmlunit.flash.actionscript;
  */
 public class Function extends Object {
 
-    public java.lang.Object implementation;
+    private java.lang.Object implementation_;
+    private ScriptObject thisObj_;
+    private Flash flash_;
 
-    public Function(java.lang.Object method) {
-        implementation = method;
+    public Function(final Flash flash, final ScriptObject thisObj, java.lang.Object method) {
+        flash_ = flash;
+        implementation_ = method;
+        thisObj_ = thisObj;
     }
 
+    public java.lang.Object getImplementation() {
+        return implementation_;
+    }
+
+    public ScriptObject getThisObj() {
+        return thisObj_;
+    }
+
+    public Flash getFlash() {
+        return flash_;
+    }
 }

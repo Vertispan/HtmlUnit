@@ -14,10 +14,12 @@
  */
 package net.sourceforge.htmlunit.flash;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.htmlunit.flash.annotations.AsConstant;
 import net.sourceforge.htmlunit.flash.annotations.AsFunction;
 import net.sourceforge.htmlunit.flash.annotations.AsGetter;
 import net.sourceforge.htmlunit.flash.annotations.AsSetter;
@@ -34,7 +36,9 @@ public class NativeScriptObject extends ScriptObject {
     private Class<?> hostClass_;
     private Object object_;
     private String className_;
+    private String simpleClassName_;
     private String superClassName_;
+    private Map<String, Field> constants_ = new HashMap<String, Field>();
     private Map<String, Method> getters_ = new HashMap<String, Method>();
     private Map<String, Method> setters_ = new HashMap<String, Method>();
     private Map<String, Method> functions_ = new HashMap<String, Method>();
@@ -44,7 +48,11 @@ public class NativeScriptObject extends ScriptObject {
         if (hostClass_ == null) {
             new Exception().printStackTrace();
         }
-        className_ = className;
+        simpleClassName_ = className_ = className;
+        int p0 = className.lastIndexOf('.');
+        if (p0 != -1) {
+            simpleClassName_ = simpleClassName_.substring(p0 + 1);
+        }
         superClassName_ = superClassName;
         for (final Method m : c.getDeclaredMethods()) {
             String name = m.getName();
@@ -62,6 +70,11 @@ public class NativeScriptObject extends ScriptObject {
                 setters_.put(name, m);
             }
         }
+        for (final Field f : c.getDeclaredFields()) {
+            if (f.getAnnotation(AsConstant.class) != null) {
+                constants_.put(f.getName(), f);
+            }
+        }
     }
 
     NativeScriptObject(final NativeScriptObject prototype) {
@@ -71,6 +84,7 @@ public class NativeScriptObject extends ScriptObject {
     public String getClassName() {
         return className_;
     }
+
     public String getSuperClassName() {
         if (prototype_ != null) {
             return prototype_.getSuperClassName();
@@ -78,12 +92,26 @@ public class NativeScriptObject extends ScriptObject {
         return superClassName_;
     }
 
-    public Object getProperty(final String property) {
+    public Object getProperty(final Object start, final String property) {
         if (prototype_ != null) {
-            return prototype_.getProperty(property);
+            return prototype_.getProperty(start, property);
         }
         
         Object o = getters_.get(property);
+        if (o != null) {
+            try {
+                o = ((java.lang.reflect.Method) o).invoke(start, new Object[0]);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (property.equals(simpleClassName_)) {
+            return this;
+        }
+        if (o == null) {
+            o = constants_.get(property);
+        }
         if (o == null) {
             o = setters_.get(property);
         }
@@ -91,7 +119,7 @@ public class NativeScriptObject extends ScriptObject {
             o = functions_.get(property);
         }
         if (o == null) {
-            o = ActionScriptConfiguration.getPrototypeOf(superClassName_).getProperty(property);
+            o = ActionScriptConfiguration.getPrototypeOf(superClassName_).getProperty(start, property);
         }
         return o;
     }

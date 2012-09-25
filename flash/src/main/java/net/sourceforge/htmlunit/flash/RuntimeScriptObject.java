@@ -28,6 +28,7 @@ import adobe.abc.Method;
  */
 public class RuntimeScriptObject extends ScriptObject {
 
+    private Flash flash_;
     private RuntimeScriptObject prototype_;
     private String className_;
     private ScriptObject nativeObject_;
@@ -41,7 +42,8 @@ public class RuntimeScriptObject extends ScriptObject {
         nativeObject_ = new NativeScriptObject((NativeScriptObject) ActionScriptConfiguration.getPrototypeOf(superClassName_));
     }
 
-    RuntimeScriptObject(final RuntimeScriptObject prototype) {
+    RuntimeScriptObject(final Flash flash, final RuntimeScriptObject prototype) {
+        flash_ = flash;
         prototype_ = prototype;
     }
 
@@ -56,17 +58,17 @@ public class RuntimeScriptObject extends ScriptObject {
         return superClassName_;
     }
 
-    public Object getProperty(final String property) {
+    public Object getProperty(final Object start, final String property) {
         if (prototype_ != null) {
-            return prototype_.getProperty(property);
+            return prototype_.getProperty(start, property);
         }
         
         Object o = properties.get(property);
         if (o == null) {
-            o = ActionScriptConfiguration.getPrototypeOf(superClassName_).getProperty(property);
+            o = ActionScriptConfiguration.getPrototypeOf(superClassName_).getProperty(start, property);
         }
         if (o instanceof Method) {
-            o = new Function(o);
+            o = new Function(flash_, this, o);
         }
         return o;
     }

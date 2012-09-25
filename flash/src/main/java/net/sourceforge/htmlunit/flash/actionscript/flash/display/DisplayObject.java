@@ -50,4 +50,9 @@ public class DisplayObject extends EventDispatcher {
     public Stage getStage() {
         return stage_;
     }
+
+    public void setStage(final Stage stage) {
+        stage_ = stage;
+    }
+
 }

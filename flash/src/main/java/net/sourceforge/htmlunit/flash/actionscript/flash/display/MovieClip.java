@@ -14,6 +14,7 @@
  */
 package net.sourceforge.htmlunit.flash.actionscript.flash.display;
 
+import net.sourceforge.htmlunit.flash.ActionScriptEngine;
 import net.sourceforge.htmlunit.flash.actionscript.Function;
 import net.sourceforge.htmlunit.flash.annotations.AsFunction;
 
@@ -33,6 +34,11 @@ public class MovieClip extends Sprite {
      */
     @AsFunction
     public void addFrameScript(final int frameIndex, final Function function) {
-        System.out.println("Called with " + function.implementation);
+        try {
+            ActionScriptEngine.call(function, new Object[0]);
+        }
+        catch(final Exception e) {
+            e.printStackTrace();
+        }
     }
 }

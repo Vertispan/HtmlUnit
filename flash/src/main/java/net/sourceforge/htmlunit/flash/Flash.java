@@ -17,6 +17,7 @@ package net.sourceforge.htmlunit.flash;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.sourceforge.htmlunit.flash.actionscript.flash.display.Stage;
 import adobe.abc.GlobalOptimizer;
 import adobe.abc.GlobalOptimizer.InputAbc;
 import flash.swf.Tag;
@@ -32,12 +33,14 @@ import flash.swf.tags.DoABC;
  */
 public class Flash {
 
+    private Stage stage_ = new Stage();
+    
     public Flash(final InputStream is) throws IOException {
         TagDecoder decoder = new TagDecoder(is);
         decoder.parse(new FlashTagHandler());
     }
 
-    private static class FlashTagHandler extends TagHandler {
+    private class FlashTagHandler extends TagHandler {
         public void any(Tag tag) {
             //System.out.println(tag.getClass().getName());
         }
@@ -48,7 +51,7 @@ public class Flash {
                 final InputAbc ia = go.new InputAbc();
                 ia.readAbc(tag.abc);
 
-                ActionScriptEngine.execute(ia);
+                ActionScriptEngine.execute(ia, Flash.this);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -56,4 +59,7 @@ public class Flash {
         }
     };
 
+    public Stage getStage() {
+        return stage_;
+    }
 }

@@ -26,6 +26,6 @@ public abstract class ScriptObject {
 
     public abstract String getSuperClassName();
 
-    public abstract Object getProperty(final String property);
+    public abstract Object getProperty(final Object start, final String property);
 
 }
