@@ -21,7 +21,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
-public class CanonicalTest {
+public class NekoCanonicalTest {
 
     private static String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -41,7 +41,7 @@ public class CanonicalTest {
     }
 
     private File file_;
-    public CanonicalTest(final File file) {
+    public NekoCanonicalTest(final File file) {
         file_ = file;
     }
     

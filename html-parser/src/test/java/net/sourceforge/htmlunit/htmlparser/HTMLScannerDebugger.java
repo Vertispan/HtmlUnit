@@ -4,6 +4,9 @@ import java.io.StringReader;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import nu.validator.htmlparser.common.XmlViolationPolicy;
+import nu.validator.htmlparser.sax.HtmlParser;
+
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.apache.xerces.xni.parser.XMLParserConfiguration;
 import org.cyberneko.html.HTMLConfiguration;
@@ -19,6 +22,8 @@ public class HTMLScannerDebugger {
         nekoHtml(html);
         System.out.println("------------- HtmlParser -------------");
         htmlParser(html);
+        System.out.println("------------- Validator.nu -------------");
+        validatorNU(html);
         System.out.println("---------------- XML ----------------");
         xml(html);
     }
@@ -33,6 +38,13 @@ public class HTMLScannerDebugger {
     private static void htmlParser(String html) throws Exception {
         StringReader stringReader = new StringReader(html);
         HTMLScanner reader = new HTMLScanner();
+        reader.setContentHandler(new OutContentHandler());
+        reader.parse(new InputSource(stringReader));
+    }
+
+    private static void validatorNU(String html) throws Exception {
+        StringReader stringReader = new StringReader(html);
+        HtmlParser reader = new HtmlParser(XmlViolationPolicy.ALLOW);
         reader.setContentHandler(new OutContentHandler());
         reader.parse(new InputSource(stringReader));
     }

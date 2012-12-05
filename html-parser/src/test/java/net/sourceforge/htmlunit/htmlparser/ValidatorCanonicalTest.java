@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import junit.framework.Assert;
+import nu.validator.htmlparser.common.XmlViolationPolicy;
 import nu.validator.htmlparser.sax.HtmlParser;
 
 import org.apache.commons.io.IOUtils;
@@ -23,8 +24,6 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class ValidatorCanonicalTest {
-
-    private static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -50,7 +49,7 @@ public class ValidatorCanonicalTest {
     public void test() throws Exception {
         String html = IOUtils.toString(new FileReader(file_));
         StringReader stringReader = new StringReader(html);
-        HtmlParser parser = new HtmlParser();
+        HtmlParser parser = new HtmlParser(XmlViolationPolicy.ALLOW);
         CanonicalContentHandler contentHandler = new CanonicalContentHandler();
         parser.setContentHandler(contentHandler);
         parser.parse(new InputSource(stringReader));
@@ -59,12 +58,15 @@ public class ValidatorCanonicalTest {
         canonialName = canonialName.substring(0, canonialName.lastIndexOf('.')) + ".canonical";
         String expected = IOUtils.toString(new FileReader(new File(file_.getParent(), canonialName)));
         expected = expected.replace("\r\n", "\n").trim();
-        Assert.assertEquals(expected, actual);
+        if (!expected.replace(")HEAD", ")HEAD\n(BODY\n)BODY").equals(actual)) {
+            Assert.assertEquals(file_.getName(), expected, actual);
+        }
     }
 
     private static class CanonicalContentHandler implements ContentHandler {
 
         private StringBuilder builder = new StringBuilder();
+        private StringBuilder characters = new StringBuilder();
         
         @Override
         public void setDocumentLocator(Locator locator) {
@@ -89,7 +91,8 @@ public class ValidatorCanonicalTest {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-            builder.append('(').append(qName).append('\n');
+            flushCharacters();
+            builder.append('(').append(qName.toUpperCase()).append('\n');
             for (int i = 0; i < atts.getLength(); i++) {
                 builder.append('A').append(atts.getQName(i)).append(' ').append(atts.getValue(i)).append('\n');
             }
@@ -98,15 +101,14 @@ public class ValidatorCanonicalTest {
         @Override
         public void endElement(String uri, String localName, String qName)
                 throws SAXException {
-            builder.append(')').append(qName).append('\n');
+            flushCharacters();
+            builder.append(')').append(qName.toUpperCase()).append('\n');
         }
 
         @Override
         public void characters(char[] ch, int start, int length)
                 throws SAXException {
-            builder.append('"')
-                .append(new String(ch, start, length).replaceAll(LINE_SEPARATOR, "\\\\n"))
-                    .append('\n');
+            characters.append(new String(ch, start, length));
         }
 
         @Override
@@ -123,5 +125,13 @@ public class ValidatorCanonicalTest {
         public void skippedEntity(String name) throws SAXException {
         }
         
+        private void flushCharacters() {
+            if (characters.length() != 0) {
+                builder.append('"')
+                    .append(characters.toString().replaceAll("\n", "\\\\n"))
+                    .append('\n');
+                characters.setLength(0);
+            }
+        }
     }
 }
