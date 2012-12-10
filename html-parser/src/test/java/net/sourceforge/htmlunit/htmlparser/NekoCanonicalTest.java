@@ -1,22 +1,28 @@
 package net.sourceforge.htmlunit.htmlparser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import junit.framework.Assert;
+import java.util.StringTokenizer;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.xerces.xni.parser.XMLDocumentFilter;
+import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xerces.xni.parser.XMLParserConfiguration;
+import org.cyberneko.html.HTMLConfiguration;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
@@ -44,83 +50,25 @@ public class NekoCanonicalTest {
     public NekoCanonicalTest(final File file) {
         file_ = file;
     }
-    
+
     @Test
     public void test() throws Exception {
-        String html = IOUtils.toString(new FileReader(file_));
-        StringReader stringReader = new StringReader(html);
-        HTMLScanner reader = new HTMLScanner();
-        CanonicalContentHandler contentHandler = new CanonicalContentHandler();
-        reader.setContentHandler(contentHandler);
-        reader.parse(new InputSource(stringReader));
-        String actual = contentHandler.builder.toString().trim();
+        StringWriter out = new StringWriter();
+        XMLDocumentFilter[] filters = { new Writer(out) };
+        XMLParserConfiguration parser = new HTMLConfiguration();
+        parser.setProperty("http://cyberneko.org/html/properties/filters", filters);
+        parser.parse(new XMLInputSource(null, file_.toString(), null));
+        final BufferedReader reader = new BufferedReader(new StringReader(out.toString()));
+        final StringBuffer sb = new StringBuffer();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        String actual = sb.toString().trim();
         String canonialName = file_.getName();
         canonialName = canonialName.substring(0, canonialName.lastIndexOf('.')) + ".canonical";
         String expected = IOUtils.toString(new FileReader(new File(file_.getParent(), canonialName)));
         expected = expected.replace("\r\n", "\n").trim();
-        Assert.assertEquals(expected, actual);
-    }
-
-    private static class CanonicalContentHandler implements ContentHandler {
-
-        private StringBuilder builder = new StringBuilder();
-        
-        @Override
-        public void setDocumentLocator(Locator locator) {
-        }
-
-        @Override
-        public void startDocument() throws SAXException {
-        }
-
-        @Override
-        public void endDocument() throws SAXException {
-        }
-
-        @Override
-        public void startPrefixMapping(String prefix, String uri)
-                throws SAXException {
-        }
-
-        @Override
-        public void endPrefixMapping(String prefix) throws SAXException {
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-            builder.append('(').append(qName).append('\n');
-            for (int i = 0; i < atts.getLength(); i++) {
-                builder.append('A').append(atts.getQName(i)).append(' ').append(atts.getValue(i)).append('\n');
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName)
-                throws SAXException {
-            builder.append(')').append(qName).append('\n');
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length)
-                throws SAXException {
-            builder.append('"')
-                .append(new String(ch, start, length).replaceAll(LINE_SEPARATOR, "\\\\n"))
-                    .append('\n');
-        }
-
-        @Override
-        public void ignorableWhitespace(char[] ch, int start, int length)
-                throws SAXException {
-        }
-
-        @Override
-        public void processingInstruction(String target, String data)
-                throws SAXException {
-        }
-
-        @Override
-        public void skippedEntity(String name) throws SAXException {
-        }
-        
+        Assert.assertEquals(file_.getName(), expected, actual);
     }
 }
