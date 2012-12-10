@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.Assert;
 import nu.validator.htmlparser.common.XmlViolationPolicy;
@@ -24,6 +26,9 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class ValidatorCanonicalTest {
+
+    /** Tests that can be safely ignored (e.g. add missing "body", attribute order, etc. */
+    private static List<String> EXPECTED_FAILURES_ = Arrays.asList("test009");
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -54,11 +59,21 @@ public class ValidatorCanonicalTest {
         parser.setContentHandler(contentHandler);
         parser.parse(new InputSource(stringReader));
         String actual = contentHandler.builder.toString().trim();
-        String canonialName = file_.getName();
-        canonialName = canonialName.substring(0, canonialName.lastIndexOf('.')) + ".canonical";
+        String testName = file_.getName();
+        testName = testName.substring(0, testName.lastIndexOf('.'));
+        String canonialName = testName + ".canonical";
         String expected = IOUtils.toString(new FileReader(new File(file_.getParent(), canonialName)));
         expected = expected.replace("\r\n", "\n").trim();
-        if (!expected.replace(")HEAD", ")HEAD\n(BODY\n)BODY").equals(actual)) {
+        boolean success = expected.replace(")HEAD", ")HEAD\n(BODY\n)BODY").equals(actual);
+        if (!success) {
+            success = expected.equals(actual);
+        }
+        if (EXPECTED_FAILURES_.contains(testName)) {
+            if (success) {
+                Assert.fail("Test " + file_.getName() + " was expected to fail, but already works");
+            }
+        }
+        else if (!success) {
             Assert.assertEquals(file_.getName(), expected, actual);
         }
     }

@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.StringTokenizer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xerces.xni.parser.XMLDocumentFilter;
@@ -21,15 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class NekoCanonicalTest {
-
-    private static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @Parameters
     public static Collection<Object[]> data() {
