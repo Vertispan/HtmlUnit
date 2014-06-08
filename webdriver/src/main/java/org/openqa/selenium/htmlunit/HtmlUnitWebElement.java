@@ -1,7 +1,6 @@
 /*
-Copyright 2007-2009 WebDriver committers
-Copyright 2007-2009 Google Inc.
-Portions copyright 2007 ThoughtWorks, Inc
+Copyright 2007-2009 Selenium committers
+Portions copyright 2011 Software Freedom Conservancy
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,89 +13,120 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
-
-/*
- * Copyright 2007 ThoughtWorks, Inc
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
  */
+
 
 package org.openqa.selenium.htmlunit;
 
-import com.gargoylesoftware.htmlunit.Page;
+import com.google.common.base.Throwables;
 
-import com.gargoylesoftware.htmlunit.ScriptException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.InvalidElementStateException;
+import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.internal.Coordinates;
+import org.openqa.selenium.internal.FindsByCssSelector;
+import org.openqa.selenium.internal.FindsById;
+import org.openqa.selenium.internal.FindsByLinkText;
+import org.openqa.selenium.internal.FindsByTagName;
+import org.openqa.selenium.internal.FindsByXPath;
+import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.internal.WrapsElement;
+
 import com.gargoylesoftware.htmlunit.ScriptResult;
-import com.gargoylesoftware.htmlunit.SgmlPage;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlHtml;
+import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.RenderedWebElement;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.internal.FindsById;
-import org.openqa.selenium.internal.FindsByLinkText;
-import org.openqa.selenium.internal.FindsByTagName;
-import org.openqa.selenium.internal.FindsByXPath;
-import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.internal.WrapsElement;
+import com.gargoylesoftware.htmlunit.javascript.host.Event;
+import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.awt.Point;
-import java.awt.Dimension;
+import java.util.concurrent.Callable;
 
-import static org.openqa.selenium.Keys.ENTER;
-import static org.openqa.selenium.Keys.RETURN;
-import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 
-public class HtmlUnitWebElement implements RenderedWebElement,
-    FindsById, FindsByLinkText, FindsByXPath, FindsByTagName, WrapsDriver {
+public class HtmlUnitWebElement implements WrapsDriver,
+    FindsById, FindsByLinkText, FindsByXPath, FindsByTagName,
+    FindsByCssSelector, Locatable, WebElement {
 
   protected final HtmlUnitDriver parent;
   protected final HtmlElement element;
-  private final static char nbspChar = (char) 160;
-  private final static String[] blockLevelsTagNames =
-      {"p", "h1", "h2", "h3", "h4", "h5", "h6", "dl", "div", "noscript",
-       "blockquote", "form", "hr", "table", "fieldset", "address", "ul", "ol", "pre", "br"};
+  private static final char nbspChar = 160;
+  private static final String[] blockLevelsTagNames =
+  {"p", "h1", "h2", "h3", "h4", "h5", "h6", "dl", "div", "noscript",
+      "blockquote", "form", "hr", "table", "fieldset", "address", "ul", "ol", "pre", "br"};
+  private static final String[] booleanAttributes = {
+    "async",
+    "autofocus",
+    "autoplay",
+    "checked",
+    "compact",
+    "complete",
+    "controls",
+    "declare",
+    "defaultchecked",
+    "defaultselected",
+    "defer",
+    "disabled",
+    "draggable",
+    "ended",
+    "formnovalidate",
+    "hidden",
+    "indeterminate",
+    "iscontenteditable",
+    "ismap",
+    "itemscope",
+    "loop",
+    "multiple",
+    "muted",
+    "nohref",
+    "noresize",
+    "noshade",
+    "novalidate",
+    "nowrap",
+    "open",
+    "paused",
+    "pubdate",
+    "readonly",
+    "required",
+    "reversed",
+    "scoped",
+    "seamless",
+    "seeking",
+    "selected",
+    "spellcheck",
+    "truespeed",
+    "willvalidate"
+    };
+
   private String toString;
 
   public HtmlUnitWebElement(HtmlUnitDriver parent, HtmlElement element) {
@@ -105,46 +135,51 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   }
 
   public void click() {
-    assertElementNotStale();
-
-    if (!isDisplayed())
-      throw new ElementNotVisibleException("You may only click visible elements");
-
     try {
-      if (parent.isJavascriptEnabled()) {
-        if (!(element instanceof HtmlInput)) {
-          element.focus();
-        }
-        
-        element.mouseOver();
-        element.mouseMove();
-      }
+      verifyCanInteractWithElement();
+    } catch (InvalidElementStateException e) {
+      Throwables.propagateIfInstanceOf(e, ElementNotVisibleException.class);
+      // Swallow disabled element case
+      // Clicking disabled elements should still be passed through,
+      // we just don't expect any state change
 
-      element.click();
-    } catch (IOException e) {
-      throw new WebDriverException(e);
-    } catch (ScriptException e) {
-      // TODO(simon): This isn't good enough.
-      System.out.println(e.getMessage());
-      // Press on regardless
+      // TODO: The javadoc for this method implies we shouldn't throw for
+      // element not visible either
     }
+
+    if (element instanceof HtmlButton) {
+      String type = element.getAttribute("type");
+      if (type == DomElement.ATTRIBUTE_NOT_DEFINED || type == DomElement.ATTRIBUTE_VALUE_EMPTY) {
+        element.setAttribute("type", "submit");
+      }
+    }
+
+    HtmlUnitMouse mouse = (HtmlUnitMouse) parent.getMouse();
+    mouse.click(getCoordinates());
+
+    if (element instanceof HtmlLabel) {
+      HtmlElement referencedElement = ((HtmlLabel)element).getReferencedElement();
+      if (referencedElement != null) {
+        new HtmlUnitWebElement(parent, referencedElement).click();
+      }
+    }
+
   }
 
   public void submit() {
-    assertElementNotStale();
-
     try {
       if (element instanceof HtmlForm) {
         submitForm((HtmlForm) element);
         return;
-      } else if (element instanceof HtmlSubmitInput) {
+      } else if ((element instanceof HtmlSubmitInput) || (element instanceof HtmlImageInput)) {
         element.click();
         return;
-      } else if (element instanceof HtmlImageInput) {
-        ((HtmlImageInput) element).click();
-        return;
       } else if (element instanceof HtmlInput) {
-        submitForm(element.getEnclosingForm());
+        HtmlForm form = element.getEnclosingForm();
+        if (form == null) {
+          throw new NoSuchElementException("Unable to find the containing form");
+        }
+        submitForm(form);
         return;
       }
 
@@ -216,92 +251,107 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     return submit == null;
   }
 
-  public String getValue() {
-    assertElementNotStale();
-
-    if (element instanceof HtmlTextArea) {
-      return ((HtmlTextArea) element).getText();
-    }
-    String value = getAttribute("value");
-    return (value == null) ? "" : value;
-  }
-
   public void clear() {
     assertElementNotStale();
 
     if (element instanceof HtmlInput) {
-      ((HtmlInput) element).setValueAttribute("");
+      HtmlInput htmlInput = (HtmlInput) element;
+      if (htmlInput.isReadOnly()) {
+        throw new InvalidElementStateException("You may only edit editable elements");
+      }
+      if (htmlInput.isDisabled()) {
+        throw new InvalidElementStateException("You may only interact with enabled elements");
+      }
+      htmlInput.setValueAttribute("");
     } else if (element instanceof HtmlTextArea) {
-      ((HtmlTextArea) element).setText("");
+      HtmlTextArea htmlTextArea = (HtmlTextArea) element;
+      if (htmlTextArea.isReadOnly()) {
+        throw new InvalidElementStateException("You may only edit editable elements");
+      }
+      if (htmlTextArea.isDisabled()) {
+        throw new InvalidElementStateException("You may only interact with enabled elements");
+      }
+      htmlTextArea.setText("");
+    } else if (element.getAttribute("contenteditable") != HtmlElement.ATTRIBUTE_NOT_DEFINED) {
+      element.setTextContent("");
     }
   }
 
-  public void sendKeys(CharSequence... value) {
+  private void verifyCanInteractWithElement() {
     assertElementNotStale();
 
-    String originalValue = getValue();
-
-    if (!isDisplayed())
-      throw new ElementNotVisibleException("You may only sendKeys to visible elements");
-
-    StringBuilder builder = new StringBuilder();
-    for (CharSequence seq : value) {
-      builder.append(seq);
-    }
-
-    // If the element is an input element, and the string contains one of
-    // ENTER or RETURN, break the string at that point and submit the form
-    int indexOfSubmitKey = indexOfSubmitKey(element, builder);
-    if (indexOfSubmitKey != -1) {
-      builder.delete(indexOfSubmitKey, builder.length());
-    }
-
-    HtmlUnitWebElement oldActiveElement =
-        ((HtmlUnitWebElement)parent.switchTo().activeElement());
-    if (parent.isJavascriptEnabled() &&
-        !oldActiveElement.equals(this) &&
-        !oldActiveElement.getTagName().toLowerCase().equals("body")) {
-      oldActiveElement.element.blur();
-      element.focus();
-    }
-    if (parent.isJavascriptEnabled() && !(element instanceof HtmlFileInput)) {
-      try {
-        element.type(builder.toString());
-      } catch (IOException e) {
-        throw new WebDriverException(e);
+    Boolean displayed = parent.implicitlyWaitFor(new Callable<Boolean>() {
+      public Boolean call() throws Exception {
+        return isDisplayed();
       }
-    } else if (element instanceof HtmlInput) {
-      HtmlInput input = (HtmlInput) element;
+    });
 
-      String currentValue = getValue();
-      input.setValueAttribute((currentValue == null ? "" : currentValue) + builder.toString());
-    } else if (element instanceof HtmlTextArea) {
-      String currentValue = getValue();
-      ((HtmlTextArea) element).setText(
-          (currentValue == null ? "" : currentValue) + builder.toString());
-    } else {
-      throw new UnsupportedOperationException(
-          "You may only set the value of elements that are input elements");
+    if (displayed == null || !displayed.booleanValue()) {
+      throw new ElementNotVisibleException("You may only interact with visible elements");
     }
 
-    if (indexOfSubmitKey != -1) {
+    if (!isEnabled()) {
+      throw new InvalidElementStateException("You may only interact with enabled elements");
+    }
+  }
+
+  private void switchFocusToThisIfNeeded() {
+    HtmlUnitWebElement oldActiveElement =
+        ((HtmlUnitWebElement) parent.switchTo().activeElement());
+
+    boolean jsEnabled = parent.isJavascriptEnabled();
+    boolean oldActiveEqualsCurrent = oldActiveElement.equals(this);
+    try {
+      boolean isBody = oldActiveElement.getTagName().toLowerCase().equals("body");
+      if (jsEnabled &&
+          !oldActiveEqualsCurrent &&
+          !isBody) {
+        oldActiveElement.element.blur();
+      }
+    } catch (StaleElementReferenceException ex) {
+      // old element has gone, do nothing
+    }
+    element.focus();
+  }
+
+  /**
+   * @deprecated Visibility will soon be reduced.
+   */
+  public void sendKeyDownEvent(CharSequence modifierKey) {
+    sendSingleKeyEvent(modifierKey, Event.TYPE_KEY_DOWN);
+  }
+
+  /**
+   * @deprecated Visibility will soon be reduced.
+   */
+  public void sendKeyUpEvent(CharSequence modifierKey) {
+    sendSingleKeyEvent(modifierKey, Event.TYPE_KEY_UP);
+  }
+
+  private void sendSingleKeyEvent(CharSequence modifierKey, String eventDescription) {
+    verifyCanInteractWithElement();
+    switchFocusToThisIfNeeded();
+    HtmlUnitKeyboard keyboard = (HtmlUnitKeyboard) parent.getKeyboard();
+    keyboard.performSingleKeyAction(getElement(), modifierKey, eventDescription);
+  }
+
+  public void sendKeys(CharSequence... value) {
+    verifyCanInteractWithElement();
+
+    InputKeysContainer keysContainer = new InputKeysContainer(isInputElement(), value);
+
+    switchFocusToThisIfNeeded();
+
+    HtmlUnitKeyboard keyboard = (HtmlUnitKeyboard) parent.getKeyboard();
+    keyboard.sendKeys(element, getAttribute("value"), keysContainer);
+
+    if (isInputElement() && keysContainer.wasSubmitKeyFound()) {
       submit();
     }
   }
 
-  private int indexOfSubmitKey(HtmlElement element, StringBuilder builder) {
-    if (!(element instanceof HtmlInput))
-      return -1;
-
-    CharSequence[] terminators = { "\n", ENTER, RETURN };
-    for (CharSequence terminator : terminators) {
-      String needle = String.valueOf(terminator);
-      int index = builder.indexOf(needle);
-      if (index != -1) {
-        return index;
-      }
-    }
-    return -1;
+  private boolean isInputElement() {
+    return element instanceof HtmlInput;
   }
 
   public String getTagName() {
@@ -318,16 +368,38 @@ public class HtmlUnitWebElement implements RenderedWebElement,
 
     if (element instanceof HtmlInput &&
         ("selected".equals(lowerName) || "checked".equals(lowerName))) {
-      return ((HtmlInput)element).isChecked() ? "true" : null;
+      return trueOrNull(((HtmlInput) element).isChecked());
+    }
+
+    if ("href".equals(lowerName) || "src".equals(lowerName)) {
+      if (!element.hasAttribute(name)) {
+        return null;
+      }
+
+      String link = element.getAttribute(name).trim();
+      HtmlPage page = (HtmlPage) element.getPage();
+      try {
+        return page.getFullyQualifiedUrl(link).toString();
+      } catch (MalformedURLException e) {
+        return null;
+      }
     }
     if ("disabled".equals(lowerName)) {
-      return isEnabled() ? null : "true";
+      return trueOrNull(! isEnabled());
     }
-    if ("selected".equals(lowerName)) {
-      return (value.equalsIgnoreCase("selected") ? "true" : null);
+
+    if ("multiple".equals(lowerName) && element instanceof HtmlSelect) {
+      String multipleAttribute = ((HtmlSelect) element).getMultipleAttribute();
+      if ("".equals(multipleAttribute)) {
+        return trueOrNull(element.hasAttribute("multiple"));
+      }
+      return "true";
     }
-    if ("checked".equals(lowerName)) {
-      return (value.equalsIgnoreCase("checked") ? "true" : null);
+
+    for (String booleanAttribute : booleanAttributes) {
+      if (booleanAttribute.equals(lowerName)) {
+        return trueOrNull(element.hasAttribute(lowerName));
+      }
     }
     if ("index".equals(lowerName) && element instanceof HtmlOption) {
       HtmlSelect select = ((HtmlOption) element).getEnclosingSelect();
@@ -343,14 +415,30 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     }
     if ("readonly".equalsIgnoreCase(lowerName)) {
       if (element instanceof HtmlInput) {
-        return String.valueOf(((HtmlInput) element).isReadOnly());
+        return trueOrNull(((HtmlInput) element).isReadOnly());
       }
 
       if (element instanceof HtmlTextArea) {
-        return "".equals(((HtmlTextArea) element).getReadOnlyAttribute()) ? "false" : "true";
+        return trueOrNull("".equals(((HtmlTextArea) element).getReadOnlyAttribute()));
       }
 
       return null;
+    }
+
+    if ("value".equals(lowerName)) {
+      if (element instanceof HtmlTextArea) {
+        return ((HtmlTextArea) element).getText();
+      }
+
+      // According to 
+      // http://www.w3.org/TR/1999/REC-html401-19991224/interact/forms.html#adef-value-OPTION
+      // if the value attribute doesn't exist, getting the "value" attribute defers to the 
+      // option's content.
+      if (element instanceof HtmlOption && !element.hasAttribute("value")) {
+    	  return element.getTextContent();
+      }
+      
+      return value == null ? "" : value;
     }
 
     if (!"".equals(value)) {
@@ -364,34 +452,8 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     return null;
   }
 
-  public boolean toggle() {
-    assertElementNotStale();
-
-    if (!isDisplayed())
-      throw new ElementNotVisibleException("You may only toggle visible elements");
-
-
-    try {
-      if (element instanceof HtmlCheckBoxInput) {
-        element.click();
-        return isSelected();
-      }
-
-      if (element instanceof HtmlOption) {
-        HtmlOption option = (HtmlOption) element;
-        HtmlSelect select = option.getEnclosingSelect();
-        if (select.isMultipleSelectEnabled()) {
-          option.setSelected(!option.isSelected());
-          return isSelected();
-        }
-      }
-
-      throw new UnsupportedOperationException(
-          "You may only toggle checkboxes or options in a select which allows multiple selections: "
-          + getTagName());
-    } catch (IOException e) {
-      throw new WebDriverException("Unexpected exception: " + e);
-    }
+  private String trueOrNull(boolean condition) {
+    return condition ? "true" : null;
   }
 
   public boolean isSelected() {
@@ -407,32 +469,6 @@ public class HtmlUnitWebElement implements RenderedWebElement,
         "Unable to determine if element is selected. Tag name is: " + element.getTagName());
   }
 
-  public void setSelected() {
-    assertElementNotStale();
-
-    if (!isDisplayed())
-      throw new ElementNotVisibleException("You may only select visible elements");
-
-
-    String disabledValue = element.getAttribute("disabled");
-    if (disabledValue.length() > 0) {
-      throw new UnsupportedOperationException("You may not select a disabled element");
-    }
-
-    if (element instanceof HtmlInput) {
-      ((HtmlInput) element).setChecked(true);
-    } else if (element instanceof HtmlOption) {
-      ((HtmlOption) element).setSelected(true);
-    } else {
-      throw new UnsupportedOperationException(
-          "Unable to select element. Tag name is: " + element.getTagName());
-    }
-  }
-
-  public void hover() {
-    throw new UnsupportedOperationException("Hover is not supported by the htmlunit driver");
-  }
-
   public boolean isEnabled() {
     assertElementNotStale();
 
@@ -442,8 +478,10 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   public boolean isDisplayed() {
     assertElementNotStale();
 
-    if (!parent.isJavascriptEnabled())
+    if (!parent.isJavascriptEnabled()) {
       return true;
+    }
+
     return !(element instanceof HtmlHiddenInput) && element.isDisplayed();
   }
 
@@ -470,21 +508,11 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   }
 
   private int readAndRound(final String property) {
-    final String cssValue = getValueOfCssProperty(property).replaceAll("[^0-9\\.]", "");
+    final String cssValue = getCssValue(property).replaceAll("[^0-9\\.]", "");
     if (cssValue.length() == 0) {
       return 5; // wrong... but better than nothing
     }
     return Math.round(Float.parseFloat(cssValue));
-  }
-
-    public void dragAndDropBy(int moveRightBy, int moveDownBy) {
-    assertElementNotStale();
-    throw new UnsupportedOperationException("dragAndDropBy");
-  }
-
-  public void dragAndDropOn(RenderedWebElement element) {
-    assertElementNotStale();
-    throw new UnsupportedOperationException("dragAndDropOn");
   }
 
   // This isn't very pretty. Sorry.
@@ -494,11 +522,20 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     StringBuffer toReturn = new StringBuffer();
     StringBuffer textSoFar = new StringBuffer();
 
-    getTextFromNode(element, toReturn, textSoFar, element instanceof HtmlPreformattedText);
+    boolean isPreformatted = element instanceof HtmlPreformattedText;
+    getTextFromNode(element, toReturn, textSoFar, isPreformatted);
 
     String text = toReturn.toString() + collapseWhitespace(textSoFar);
 
-    return text.trim();
+    if (!isPreformatted) {
+      text = text.trim();
+    } else {
+      if (text.endsWith("\n")) {
+        text = text.substring(0, text.length()-1);
+      }
+    }
+
+    return text.replace(nbspChar, ' ');
   }
 
   protected HtmlUnitDriver getParent() {
@@ -510,51 +547,55 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   }
 
   private void getTextFromNode(DomNode node, StringBuffer toReturn, StringBuffer textSoFar,
-                               boolean isPreformatted) {
+      boolean isPreformatted) {
     if (node instanceof HtmlScript) {
       return;
     }
     if (isPreformatted) {
       getPreformattedText(node, toReturn);
-    }
 
-    for (DomNode child : node.getChildren()) {
-      // Do we need to collapse the text so far?
-      if (child instanceof HtmlPreformattedText) {
-        if (child.isDisplayed()) {
-          toReturn.append(collapseWhitespace(textSoFar));
-          textSoFar.delete(0, textSoFar.length());
+    } else {
+      for (DomNode child : node.getChildren()) {
+        // Do we need to collapse the text so far?
+        if (child instanceof HtmlPreformattedText) {
+          if (child.isDisplayed()) {
+            String textToAdd = collapseWhitespace(textSoFar);
+            if (! " ".equals(textToAdd)) {
+              toReturn.append(textToAdd);
+            }
+            textSoFar.delete(0, textSoFar.length());
+          }
+          getTextFromNode(child, toReturn, textSoFar, true);
+          continue;
         }
-        getTextFromNode(child, toReturn, textSoFar, true);
-        continue;
-      }
 
-      // Or is this just plain text?
-      if (child instanceof DomText) {
-        if (child.isDisplayed()) {
-          String textToAdd = ((DomText) child).getData();
-          textToAdd = textToAdd.replace(nbspChar, ' ');
-          textSoFar.append(textToAdd);
+        // Or is this just plain text?
+        if (child instanceof DomText) {
+          if (child.isDisplayed()) {
+            String textToAdd = ((DomText) child).getData();
+            textSoFar.append(textToAdd);
+          }
+          continue;
         }
-        continue;
-      }
 
-      // Treat as another child node.
-      getTextFromNode(child, toReturn, textSoFar, false);
+        // Treat as another child node.
+        getTextFromNode(child, toReturn, textSoFar, false);
+      }
     }
 
     if (isBlockLevel(node)) {
-      toReturn.append(collapseWhitespace(textSoFar)).append("\n");
+      toReturn.append(collapseWhitespace(textSoFar).trim()).append("\n");
       textSoFar.delete(0, textSoFar.length());
     }
   }
 
   private boolean isBlockLevel(DomNode node) {
     // From the HTML spec (http://www.w3.org/TR/html401/sgml/dtd.html#block)
-    //     <!ENTITY % block "P | %heading; | %list; | %preformatted; | DL | DIV | NOSCRIPT | BLOCKQUOTE | FORM | HR | TABLE | FIELDSET | ADDRESS">
-    //     <!ENTITY % heading "H1|H2|H3|H4|H5|H6">
-    //     <!ENTITY % list "UL | OL">
-    //     <!ENTITY % preformatted "PRE">
+    // <!ENTITY % block
+    // "P | %heading; | %list; | %preformatted; | DL | DIV | NOSCRIPT | BLOCKQUOTE | FORM | HR | TABLE | FIELDSET | ADDRESS">
+    // <!ENTITY % heading "H1|H2|H3|H4|H5|H6">
+    // <!ENTITY % list "UL | OL">
+    // <!ENTITY % preformatted "PRE">
 
     if (!(node instanceof HtmlElement)) {
       return false;
@@ -576,8 +617,7 @@ public class HtmlUnitWebElement implements RenderedWebElement,
 
   private void getPreformattedText(DomNode node, StringBuffer toReturn) {
     if (node.isDisplayed()) {
-      String xmlText = node.asXml();
-      toReturn.append(xmlText.replaceAll("^<pre.*?>", "").replaceAll("</pre.*>$", ""));
+      toReturn.append(node.getTextContent());
     }
   }
 
@@ -619,24 +659,86 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     return findElementsByXPath(".//*[@id = '" + id + "']");
   }
 
+  public List<WebElement> findElementsByCssSelector(String using) {
+    List<WebElement> allElements = parent.findElementsByCssSelector(using);
+
+    return findChildNodes(allElements);
+  }
+
+  public WebElement findElementByCssSelector(String using) {
+    List<WebElement> allElements = parent.findElementsByCssSelector(using);
+
+    allElements = findChildNodes(allElements);
+
+    if (allElements.isEmpty()) {
+      throw new NoSuchElementException("Cannot find child element using css: " + using);
+    }
+
+    return allElements.get(0);
+  }
+
+  private List<WebElement> findChildNodes(List<WebElement> allElements) {
+    List<WebElement> toReturn = new LinkedList<WebElement>();
+
+    for (WebElement current : allElements) {
+      HtmlElement candidate = ((HtmlUnitWebElement) current).element;
+      if (element.isAncestorOf(candidate) && element != candidate) {
+        toReturn.add(current);
+      }
+    }
+
+    return toReturn;
+  }
+
   public WebElement findElementByXPath(String xpathExpr) {
     assertElementNotStale();
 
-    HtmlElement match = (HtmlElement) element.getFirstByXPath(xpathExpr);
-    if (match == null) {
-      throw new NoSuchElementException("Unable to find element with xpath "
-                                       + xpathExpr);
+    Object node;
+    try {
+      node = element.getFirstByXPath(xpathExpr);
+    } catch (Exception ex) {
+      // The xpath expression cannot be evaluated, so the expression is invalid
+      throw new InvalidSelectorException(
+          String.format(HtmlUnitDriver.INVALIDXPATHERROR, xpathExpr), ex);
     }
-    return getParent().newHtmlUnitWebElement(match);
+
+    if (node == null) {
+      throw new NoSuchElementException("Unable to find an element with xpath " + xpathExpr);
+    }
+    if (node instanceof HtmlElement) {
+      return getParent().newHtmlUnitWebElement((HtmlElement) node);
+    }
+    // The xpath selector selected something different than a WebElement. The selector is therefore
+    // invalid
+    throw new InvalidSelectorException(
+        String.format(HtmlUnitDriver.INVALIDSELECTIONERROR, xpathExpr, node.getClass().toString()));
   }
 
   public List<WebElement> findElementsByXPath(String xpathExpr) {
     assertElementNotStale();
 
     List<WebElement> webElements = new ArrayList<WebElement>();
-    List<?> htmlElements = element.getByXPath(xpathExpr);
+
+    List<?> htmlElements;
+    try {
+      htmlElements = element.getByXPath(xpathExpr);
+    } catch (Exception ex) {
+      // The xpath expression cannot be evaluated, so the expression is invalid
+      throw new InvalidSelectorException(
+          String.format(HtmlUnitDriver.INVALIDXPATHERROR, xpathExpr), ex);
+    }
+
     for (Object e : htmlElements) {
-      webElements.add(getParent().newHtmlUnitWebElement((HtmlElement) e));
+      if (e instanceof HtmlElement) {
+        webElements.add(getParent().newHtmlUnitWebElement((HtmlElement) e));
+      }
+      else {
+        // The xpath selector selected something different than a WebElement. The selector is
+        // therefore invalid
+        throw new InvalidSelectorException(
+            String.format(HtmlUnitDriver.INVALIDSELECTIONERROR,
+                xpathExpr, e.getClass().toString()));
+      }
     }
     return webElements;
   }
@@ -645,21 +747,20 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     assertElementNotStale();
 
     List<WebElement> elements = findElementsByLinkText(linkText);
-    if (elements.size() == 0) {
-      throw new NoSuchElementException(
-          "Unable to find element with linkText " + linkText);
+    if (elements.isEmpty()) {
+      throw new NoSuchElementException("Unable to find element with linkText " + linkText);
     }
-    return elements.size() > 0 ? elements.get(0) : null;
+    return elements.get(0);
   }
 
   public List<WebElement> findElementsByLinkText(String linkText) {
     assertElementNotStale();
 
+    String expectedText = linkText.trim();
     List<? extends HtmlElement> htmlElements = element.getHtmlElementsByTagName("a");
     List<WebElement> webElements = new ArrayList<WebElement>();
     for (HtmlElement e : htmlElements) {
-      if (e.getTextContent().equals(linkText)
-          && e.getAttribute("href") != null) {
+      if (expectedText.equals(e.getTextContent().trim()) && e.getAttribute("href") != null) {
         webElements.add(getParent().newHtmlUnitWebElement(e));
       }
     }
@@ -670,7 +771,7 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     assertElementNotStale();
 
     List<WebElement> elements = findElementsByPartialLinkText(linkText);
-    if (elements.size() == 0) {
+    if (elements.isEmpty()) {
       throw new NoSuchElementException(
           "Unable to find element with linkText " + linkText);
     }
@@ -695,7 +796,7 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     assertElementNotStale();
 
     List<WebElement> elements = findElementsByTagName(name);
-    if (elements.size() == 0) {
+    if (elements.isEmpty()) {
       throw new NoSuchElementException("Cannot find element with tag name: " + name);
     }
     return elements.get(0);
@@ -705,7 +806,7 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     assertElementNotStale();
 
     List<HtmlElement> elements = element.getHtmlElementsByTagName(name);
-    ArrayList<WebElement> toReturn = new ArrayList<WebElement>(elements.size());
+    List<WebElement> toReturn = new ArrayList<WebElement>(elements.size());
     for (HtmlElement element : elements) {
       toReturn.add(parent.newHtmlUnitWebElement(element));
     }
@@ -744,28 +845,10 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   }
 
   protected void assertElementNotStale() {
-    SgmlPage elementPage = element.getPage();
-    Page currentPage = parent.lastPage();
-
-    if (!currentPage.equals(elementPage)) {
-      throw new StaleElementReferenceException(
-          "Element appears to be stale. Did you navigate away from the page that contained it? "
-          + " And is the current window focussed the same as the one holding this element?");
-    }
-
-    // We need to walk the DOM to determine if the element is actually attached
-    DomNode parent = element;
-    while (parent != null && !(parent instanceof HtmlHtml)) {
-      parent = parent.getParentNode();
-    }
-
-    if (parent == null) {
-      throw new StaleElementReferenceException("The element seems to be disconnected from the DOM. "
-                                               + " This means that a user cannot interact with it.");
-    }
+    parent.assertElementNotStale(element);
   }
 
-  public String getValueOfCssProperty(String propertyName) {
+  public String getCssValue(String propertyName) {
     assertElementNotStale();
 
     return getEffectiveStyle(element, propertyName);
@@ -774,21 +857,30 @@ public class HtmlUnitWebElement implements RenderedWebElement,
   private String getEffectiveStyle(HtmlElement htmlElement, String propertyName) {
     HtmlElement current = htmlElement;
     String value = "inherit";
-    while (current instanceof HtmlElement && "inherit".equals(value)) {
+    while ("inherit".equals(value)) {
       // Hat-tip to the Selenium team
-      Object result = parent.executeScript(
-          "if (window.getComputedStyle) { " +
-          "    return window.getComputedStyle(arguments[0], null).getPropertyValue(arguments[1]); " +
-          "} " +
-          "if (arguments[0].currentStyle) { " +
-          "    return arguments[0].currentStyle[arguments[1]]; " +
-          "} " +
-          "if (window.document.defaultView && window.document.defaultView.getComputedStyle) { " +
-          "    return window.document.defaultView.getComputedStyle(arguments[0], null)[arguments[1]]; "
-          +
-          "} ",
-          current, propertyName
-      );
+      Object result =
+          parent
+              .executeScript(
+                  "if (window.getComputedStyle) { "
+                      +
+                      "    return window.getComputedStyle(arguments[0], null).getPropertyValue(arguments[1]); "
+                      +
+                      "} "
+                      +
+                      "if (arguments[0].currentStyle) { "
+                      +
+                      "    return arguments[0].currentStyle[arguments[1]]; "
+                      +
+                      "} "
+                      +
+                      "if (window.document.defaultView && window.document.defaultView.getComputedStyle) { "
+                      +
+                      "    return window.document.defaultView.getComputedStyle(arguments[0], null)[arguments[1]]; "
+                      +
+                      "} ",
+                  current, propertyName
+              );
 
       if (!(result instanceof Undefined)) {
         value = String.valueOf(result);
@@ -797,31 +889,8 @@ public class HtmlUnitWebElement implements RenderedWebElement,
       current = (HtmlElement) current.getParentNode();
     }
 
-    if (value.startsWith("rgb")) {
-      return rgbToHex(value);
-    }
-
     return value;
-  }
 
-  // Convert colours to hex if possible
-  private String rgbToHex(final String value) {
-    final Pattern pattern = Pattern.compile("rgb\\((\\d{1,3}),\\s(\\d{1,3}),\\s(\\d{1,3})\\)");
-    final Matcher matcher = pattern.matcher(value);
-    if (matcher.find()) {
-      String hex = "#";
-      for (int i = 1; i <= 3; i++) {
-        int colour = Integer.parseInt(matcher.group(i));
-        String s = Integer.toHexString(colour);
-        if (s.length() == 1)
-          s = "0" + s;
-        hex += s;
-      }
-      hex = hex.toLowerCase();
-      return hex;
-    }
-
-    return value;
   }
 
   @Override
@@ -835,7 +904,8 @@ public class HtmlUnitWebElement implements RenderedWebElement,
       other = ((WrapsElement) obj).getWrappedElement();
     }
 
-    return other instanceof HtmlUnitWebElement && element.equals(((HtmlUnitWebElement) other).element);
+    return other instanceof HtmlUnitWebElement &&
+        element.equals(((HtmlUnitWebElement) other).element);
   }
 
   @Override
@@ -843,10 +913,33 @@ public class HtmlUnitWebElement implements RenderedWebElement,
     return element.hashCode();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.openqa.selenium.internal.WrapsDriver#getContainingDriver()
    */
   public WebDriver getWrappedDriver() {
     return parent;
+  }
+
+  public Coordinates getCoordinates() {
+    return new Coordinates() {
+
+      public Point onScreen() {
+        throw new UnsupportedOperationException("Not displayed, no screen location.");
+      }
+
+      public Point inViewPort() {
+        return getLocation();
+      }
+
+      public Point onPage() {
+        return getLocation();
+      }
+
+      public Object getAuxiliary() {
+        return getElement();
+      }
+    };
   }
 }
