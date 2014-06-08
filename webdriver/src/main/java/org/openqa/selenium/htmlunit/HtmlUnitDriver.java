@@ -23,7 +23,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
@@ -231,7 +230,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     }
 
     if (BrowserType.FIREFOX.equals(browserName)) {
-      return BrowserVersion.FIREFOX_17;
+      return BrowserVersion.FIREFOX_24;
     }
 
     if (BrowserType.CHROME.equals(browserName)) {
@@ -245,8 +244,6 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
         switch (version) {
           case 8:
             return BrowserVersion.INTERNET_EXPLORER_8;
-          case 9:
-            return BrowserVersion.INTERNET_EXPLORER_9;
           default:
             return BrowserVersion.INTERNET_EXPLORER_11;
         }
@@ -770,6 +767,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     }
 
     if (value instanceof NativeObject) {
+      @SuppressWarnings("unchecked")
       final Map<String, Object> map = Maps.newHashMap((NativeObject) value);
       for (final Entry<String, Object> e : map.entrySet()) {
         e.setValue(parseNativeJavascriptResult(e.getValue()));
@@ -1226,9 +1224,6 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
       throw new UnsupportedOperationException("alert()");
     }
 
-    public WebDriver context(String name) {
-      throw new UnsupportedOperationException("context(String)");
-    }
   }
 
   protected <X> X implicitlyWaitFor(Callable<X> condition) {
@@ -1395,7 +1390,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
       CookieManager cookieManager = getWebClient().getCookieManager();
 
       URL url = getRawUrl();
-      Set<com.gargoylesoftware.htmlunit.util.Cookie> rawCookies = cookieManager.getCookies(url);
+      Set<com.gargoylesoftware.htmlunit.util.Cookie> rawCookies = getWebClient().getCookies(url);
       for (com.gargoylesoftware.htmlunit.util.Cookie cookie : rawCookies) {
         if (name.equals(cookie.getName())) {
           cookieManager.removeCookie(cookie);
@@ -1423,7 +1418,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
       }
 
       return ImmutableSet.copyOf(Collections2.transform(
-          getWebClient().getCookieManager().getCookies(url),
+          getWebClient().getCookies(url),
           htmlUnitCookieToSeleniumCookieTransformer));
     }
 
