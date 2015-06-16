@@ -776,8 +776,8 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
      * <p>
      * Find a property in the prototype hierarchy. Note: this is final and not
      * a good idea to override. If you have to, use
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
+     * {jdk2.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
+     * {jdk2.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
      * overriding way to find array properties
      *
      * @see jdk2.nashorn.internal.objects.NativeArray
@@ -797,8 +797,8 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
      * Find a property in the prototype hierarchy. Note: this is not a good idea
      * to override except as it was done in {@link WithObject}.
      * If you have to, use
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
+     * {jdk2.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
+     * {jdk2.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
      * overriding way to find array properties
      *
      * @see jdk2.nashorn.internal.objects.NativeArray

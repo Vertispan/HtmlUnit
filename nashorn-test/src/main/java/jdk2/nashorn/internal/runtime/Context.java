@@ -852,7 +852,7 @@ public final class Context {
      * @see AccessorProperty
      * @see ScriptObject
      *
-     * @param fullName  full name of class, e.g. jdk.nashorn.internal.objects.JO2P1 contains 2 fields and 1 parameter.
+     * @param fullName  full name of class, e.g. jdk2.nashorn.internal.objects.JO2P1 contains 2 fields and 1 parameter.
      *
      * @return the {@code Class<?>} for this structure
      *
@@ -945,7 +945,7 @@ public final class Context {
 
     /**
      * Lookup a Java class. This is used for JSR-223 stuff linking in from
-     * {@code jdk.nashorn.internal.objects.NativeJava} and {@code jdk.nashorn.internal.runtime.NativeJavaPackage}
+     * {@code jdk2.nashorn.internal.objects.NativeJava} and {@code jdk.nashorn.internal.runtime.NativeJavaPackage}
      *
      * @param fullName full name of class to load
      *

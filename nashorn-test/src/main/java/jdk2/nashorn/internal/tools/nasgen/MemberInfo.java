@@ -76,7 +76,7 @@ public final class MemberInfo implements Cloneable {
         SPECIALIZED_FUNCTION,
     }
 
-    // keep in sync with jdk.nashorn.internal.objects.annotations.Attribute
+    // keep in sync with jdk2.nashorn.internal.objects.annotations.Attribute
     static final int DEFAULT_ATTRIBUTES = 0x0;
 
     static final int DEFAULT_ARITY = -2;

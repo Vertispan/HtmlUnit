@@ -31,13 +31,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import jdk.internal.org.objectweb.asm.Type;
-import jdk.nashorn.internal.objects.PrototypeObject;
-import jdk.nashorn.internal.objects.ScriptFunctionImpl;
-import jdk.nashorn.internal.runtime.AccessorProperty;
-import jdk.nashorn.internal.runtime.PropertyMap;
-import jdk.nashorn.internal.runtime.ScriptFunction;
-import jdk.nashorn.internal.runtime.ScriptObject;
-import jdk.nashorn.internal.runtime.Specialization;
+import jdk2.nashorn.internal.objects.PrototypeObject;
+import jdk2.nashorn.internal.objects.ScriptFunctionImpl;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
+import jdk2.nashorn.internal.runtime.PropertyMap;
+import jdk2.nashorn.internal.runtime.ScriptFunction;
+import jdk2.nashorn.internal.runtime.ScriptObject;
+import jdk2.nashorn.internal.runtime.Specialization;
 
 /**
  * String constants used for code generation/instrumentation.

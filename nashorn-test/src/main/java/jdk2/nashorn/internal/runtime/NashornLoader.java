@@ -42,11 +42,11 @@ import jdk2.nashorn.tools.Shell;
  * Superclass for Nashorn class loader classes.
  */
 abstract class NashornLoader extends SecureClassLoader {
-    private static final String OBJECTS_PKG        = "jdk.nashorn.internal.objects";
-    private static final String RUNTIME_PKG        = "jdk.nashorn.internal.runtime";
-    private static final String RUNTIME_ARRAYS_PKG = "jdk.nashorn.internal.runtime.arrays";
-    private static final String RUNTIME_LINKER_PKG = "jdk.nashorn.internal.runtime.linker";
-    private static final String SCRIPTS_PKG        = "jdk.nashorn.internal.scripts";
+    private static final String OBJECTS_PKG        = "jdk2.nashorn.internal.objects";
+    private static final String RUNTIME_PKG        = "jdk2.nashorn.internal.runtime";
+    private static final String RUNTIME_ARRAYS_PKG = "jdk2.nashorn.internal.runtime.arrays";
+    private static final String RUNTIME_LINKER_PKG = "jdk2.nashorn.internal.runtime.linker";
+    private static final String SCRIPTS_PKG        = "jdk2.nashorn.internal.scripts";
 
     private static final Permission[] SCRIPT_PERMISSIONS;
 

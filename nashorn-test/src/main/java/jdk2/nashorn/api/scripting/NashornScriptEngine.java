@@ -96,7 +96,7 @@ public final class NashornScriptEngine extends AbstractScriptEngine implements C
     private final Global              global;
 
     // Nashorn script engine error message management
-    private static final String MESSAGES_RESOURCE = "jdk.nashorn.api.scripting.resources.Messages";
+    private static final String MESSAGES_RESOURCE = "jdk2.nashorn.api.scripting.resources.Messages";
 
     private static final ResourceBundle MESSAGES_BUNDLE;
     static {

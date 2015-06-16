@@ -567,7 +567,7 @@ public final class Options {
     /**
      * Resource name for properties file
      */
-    private static final String MESSAGES_RESOURCE = "jdk.nashorn.internal.runtime.resources.Options";
+    private static final String MESSAGES_RESOURCE = "jdk2.nashorn.internal.runtime.resources.Options";
 
     /**
      * Resource bundle for properties file

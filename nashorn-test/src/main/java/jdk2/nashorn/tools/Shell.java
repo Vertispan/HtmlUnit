@@ -66,7 +66,7 @@ public class Shell {
     /**
      * Resource name for properties file
      */
-    private static final String MESSAGE_RESOURCE = "jdk.nashorn.tools.resources.Shell";
+    private static final String MESSAGE_RESOURCE = "jdk2.nashorn.tools.resources.Shell";
     /**
      * Shell message bundle.
      */

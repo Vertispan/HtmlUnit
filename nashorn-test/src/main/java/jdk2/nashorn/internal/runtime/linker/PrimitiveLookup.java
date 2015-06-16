@@ -43,7 +43,7 @@ import jdk2.nashorn.internal.runtime.UserAccessorProperty;
 
 /**
  * Implements lookup of methods to link for dynamic operations on JavaScript primitive values (booleans, strings, and
- * numbers). This class is only public so it can be accessed by classes in the {@code jdk.nashorn.internal.objects}
+ * numbers). This class is only public so it can be accessed by classes in the {@code jdk2.nashorn.internal.objects}
  * package.
  */
 public final class PrimitiveLookup {

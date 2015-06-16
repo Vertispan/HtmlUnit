@@ -88,7 +88,7 @@ import java.util.List;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Type;
-import jdk.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
+import jdk2.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 
 /**
  * Base class for all method generating classes.

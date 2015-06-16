@@ -81,10 +81,10 @@ import jdk2.nashorn.internal.runtime.logging.Logger;
 public final class Compiler implements Loggable {
 
     /** Name of the scripts package */
-    public static final String SCRIPTS_PACKAGE = "jdk/nashorn/internal/scripts";
+    public static final String SCRIPTS_PACKAGE = "jdk2/nashorn/internal/scripts";
 
     /** Name of the objects package */
-    public static final String OBJECTS_PACKAGE = "jdk/nashorn/internal/objects";
+    public static final String OBJECTS_PACKAGE = "jdk2/nashorn/internal/objects";
 
     private final ScriptEnvironment env;
 

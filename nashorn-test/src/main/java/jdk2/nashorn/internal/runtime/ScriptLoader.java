@@ -32,7 +32,7 @@ import java.security.CodeSource;
  *
  */
 final class ScriptLoader extends NashornLoader {
-    private static final String NASHORN_PKG_PREFIX = "jdk.nashorn.internal.";
+    private static final String NASHORN_PKG_PREFIX = "jdk2.nashorn.internal.";
 
     private final Context context;
 

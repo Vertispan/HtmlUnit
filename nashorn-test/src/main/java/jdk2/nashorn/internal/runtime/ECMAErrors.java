@@ -37,7 +37,7 @@ import jdk2.nashorn.internal.scripts.JS;
  * Helper class to throw various standard "ECMA error" exceptions such as Error, ReferenceError, TypeError etc.
  */
 public final class ECMAErrors {
-    private static final String MESSAGES_RESOURCE = "jdk.nashorn.internal.runtime.resources.Messages";
+    private static final String MESSAGES_RESOURCE = "jdk2.nashorn.internal.runtime.resources.Messages";
 
     private static final ResourceBundle MESSAGES_BUNDLE;
     static {
