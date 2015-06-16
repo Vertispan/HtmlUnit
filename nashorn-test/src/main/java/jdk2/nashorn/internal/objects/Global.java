@@ -2172,7 +2172,6 @@ public final class Global extends ScriptObject implements Scope {
             sb.append(name);
             sb.append("$Constructor");
 
-            System.out.println(sb);
             final Class<?> funcClass = Class.forName(sb.toString());
             final T res = clazz.cast(funcClass.newInstance());
 
