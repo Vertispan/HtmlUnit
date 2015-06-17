@@ -301,80 +301,104 @@ public final class NativeFunction {
         private static final PropertyMap $nasgenmap$ = PropertyMap.newMap(new ArrayList<>(1));
 
         Constructor() {
-            super("Function", MH_NativeFunction_function(), $nasgenmap$, (Specialization[]) null);
+            super("Function", 
+                    staticHandle("function", ScriptFunction.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, (Specialization[]) null);
             Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
             setPrototype(prototype);
             setArity(1);
         }
+    }
 
-        private static MethodHandle MH_NativeFunction_function() {
-            try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "function",
-                        MethodType.fromMethodDescriptorString("(ZLjava/lang/Object;[Ljava/lang/Object;)"
-                                + "Ljdk2/nashorn/internal/runtime/ScriptFunction;", null));
-            } catch(ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
+    /**
+     * @param name the name of the method
+     * @param rtype  the return type
+     * @param ptypes the parameter types
+     * @throws IllegalAccessException 
+     * @throws NoSuchMethodException 
+     */
+    private static MethodHandle staticHandle(String name, Class<?> rtype, Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeFunction.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
         }
     }
 
     static final class Prototype extends PrototypeObject {
-        private ScriptFunction toString = ScriptFunctionImpl.makeFunction("toString", MH_NativeFunction_toString());
-        private ScriptFunction apply = ScriptFunctionImpl.makeFunction("apply", MH_NativeFunction_apply());
-        private ScriptFunction call = ScriptFunctionImpl.makeFunction("call", MH_NativeFunction_call());
-        private ScriptFunction bind = ScriptFunctionImpl.makeFunction("bind", MH_NativeFunction_bind());
-        private ScriptFunction toSource = ScriptFunctionImpl.makeFunction("toSource", MH_NativeFunction_toSource());
+        private ScriptFunction toString = ScriptFunctionImpl.makeFunction("toString", 
+                staticHandle("toString", String.class, Object.class));
+        private ScriptFunction apply = ScriptFunctionImpl.makeFunction("apply",
+                staticHandle("apply", Object.class, Object.class, Object.class, Object.class));
+        private ScriptFunction call = ScriptFunctionImpl.makeFunction("call",
+                staticHandle("call", Object.class, Object.class, Object[].class));
+        private ScriptFunction bind = ScriptFunctionImpl.makeFunction("bind",
+                staticHandle("bind", Object.class, Object.class, Object[].class));
+        private ScriptFunction toSource = ScriptFunctionImpl.makeFunction("toSource",
+                staticHandle("toSource", String.class, Object.class));
+
         private static final PropertyMap $nasgenmap$;
 
-        public Object G$toString() {
+        public ScriptFunction G$toString() {
             return this.toString;
         }
 
-        public void S$toString(Object var1) {
-            this.toString = (ScriptFunction) var1;
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
         }
 
-        public Object G$apply() {
+        public ScriptFunction G$apply() {
             return this.apply;
         }
 
-        public void S$apply(Object var1) {
-            this.apply = (ScriptFunction) var1;
+        public void S$apply(final ScriptFunction function) {
+            this.apply = function;
         }
 
-        public Object G$call() {
+        public ScriptFunction G$call() {
             return this.call;
         }
 
-        public void S$call(Object var1) {
-            this.call = (ScriptFunction) var1;
+        public void S$call(final ScriptFunction function) {
+            this.call = function;
         }
 
-        public Object G$bind() {
+        public ScriptFunction G$bind() {
             return this.bind;
         }
 
-        public void S$bind(Object var1) {
-            this.bind = (ScriptFunction) var1;
+        public void S$bind(ScriptFunction function) {
+            this.bind = function;
         }
 
-        public Object G$toSource() {
+        public ScriptFunction G$toSource() {
             return this.toSource;
         }
 
-        public void S$toSource(Object var1) {
-            this.toSource = (ScriptFunction) var1;
+        public void S$toSource(final ScriptFunction function) {
+            this.toSource = function;
         }
 
         static {
             ArrayList<Property> list = new ArrayList<>(6);
-            list.add(AccessorProperty.create("toString", 2, MH_Prototype_G$toString(), MH_Prototype_S$toString()));
-            list.add(AccessorProperty.create("apply", 2, MH_Prototype_G$apply(), MH_Prototype_S$apply()));
-            list.add(AccessorProperty.create("call", 2, MH_Prototype_G$call(), MH_Prototype_S$call()));
-            list.add(AccessorProperty.create("bind", 2, MH_Prototype_G$bind(), MH_Prototype_S$bind()));
-            list.add(AccessorProperty.create("toSource", 2, MH_Prototype_G$toSource(), MH_Prototype_S$toSource()));
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE,
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("apply", Property.NOT_ENUMERABLE,
+                    virtualHandle("G$apply", ScriptFunction.class),
+                    virtualHandle("S$apply", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("call", Property.NOT_ENUMERABLE,
+                    virtualHandle("G$call", ScriptFunction.class),
+                    virtualHandle("S$call", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("bind", Property.NOT_ENUMERABLE,
+                    virtualHandle("G$bind", ScriptFunction.class),
+                    virtualHandle("S$bind", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toSource", Property.NOT_ENUMERABLE,
+                    virtualHandle("G$toSource", ScriptFunction.class),
+                    virtualHandle("S$toSource", void.class, ScriptFunction.class)));
             $nasgenmap$ = PropertyMap.newMap(list);
         }
 
@@ -388,183 +412,18 @@ public final class NativeFunction {
             return "Function";
         }
 
-        private static MethodHandle MH_NativeFunction_toString() {
+        /**
+         * @param name the name of the method
+         * @param rtype  the return type
+         * @param ptypes the parameter types
+         */
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
             try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "toString",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "Ljava/lang/String;", null));
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
             }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_NativeFunction_toSource() {
-            try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "toSource",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "Ljava/lang/String;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_NativeFunction_apply() {
-            try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "apply",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_NativeFunction_call() {
-            try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "call",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;[Ljava/lang/Object;)"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_NativeFunction_bind() {
-            try {
-                return MethodHandles.lookup().findStatic(
-                        NativeFunction.class, "bind",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;[Ljava/lang/Object;)"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_G$toString() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "G$toString",
-                        MethodType.fromMethodDescriptorString("()"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_S$toString() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "S$toString",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "V", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_G$apply() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "G$apply",
-                        MethodType.fromMethodDescriptorString("()"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_S$apply() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "S$apply",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "V", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_G$call() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "G$call",
-                        MethodType.fromMethodDescriptorString("()"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_S$call() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "S$call",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "V", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_G$bind() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "G$bind",
-                        MethodType.fromMethodDescriptorString("()"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_S$bind() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "S$bind",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "V", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_G$toSource() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "G$toSource",
-                        MethodType.fromMethodDescriptorString("()"
-                                + "Ljava/lang/Object;", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
-            }
-        }
-
-        private static MethodHandle MH_Prototype_S$toSource() {
-            try {
-                return MethodHandles.lookup().findVirtual(
-                        Prototype.class, "S$toSource",
-                        MethodType.fromMethodDescriptorString("(Ljava/lang/Object;)"
-                                + "V", null));
-            }
-            catch (final ReflectiveOperationException ex) {
-                throw new AssertionError(ex);
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
             }
         }
     }
