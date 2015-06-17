@@ -92,7 +92,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import jdk.internal.dynalink.beans.StaticClass;
+import jdk2.internal.dynalink.beans.StaticClass;
 import jdk2.internal.dynalink.support.Lookup;
 
 /**

@@ -83,7 +83,7 @@
 
 package jdk2.internal.dynalink;
 
-import jdk.internal.dynalink.DynamicLinkerFactory;
+import jdk2.internal.dynalink.DynamicLinkerFactory;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.internal.dynalink.linker.LinkerServices;
