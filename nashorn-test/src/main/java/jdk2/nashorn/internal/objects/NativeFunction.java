@@ -315,10 +315,8 @@ public final class NativeFunction {
      * @param name the name of the method
      * @param rtype  the return type
      * @param ptypes the parameter types
-     * @throws IllegalAccessException 
-     * @throws NoSuchMethodException 
      */
-    private static MethodHandle staticHandle(String name, Class<?> rtype, Class<?>... ptypes) {
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(NativeFunction.class,
                     name, MethodType.methodType(rtype, ptypes));

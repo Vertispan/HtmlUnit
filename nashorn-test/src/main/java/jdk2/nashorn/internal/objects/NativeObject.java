@@ -49,18 +49,15 @@ import jdk2.internal.dynalink.support.CallSiteDescriptorFactory;
 import jdk2.internal.dynalink.support.LinkRequestImpl;
 import jdk2.nashorn.api.scripting.ScriptObjectMirror;
 import jdk2.nashorn.internal.lookup.Lookup;
-import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
-import jdk2.nashorn.internal.objects.annotations.Function;
-import jdk2.nashorn.internal.objects.annotations.ScriptClass;
-import jdk2.nashorn.internal.objects.annotations.Where;
 import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.ECMAException;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
+import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
+import jdk2.nashorn.internal.runtime.Specialization;
 import jdk2.nashorn.internal.runtime.arrays.ArrayData;
 import jdk2.nashorn.internal.runtime.linker.Bootstrap;
 import jdk2.nashorn.internal.runtime.linker.InvokeByName;
@@ -74,7 +71,6 @@ import jdk2.nashorn.internal.runtime.linker.NashornBeansLinker;
  * this class to generate prototype and constructor for "Object".
  *
  */
-@ScriptClass("Object")
 public final class NativeObject {
     /** Methodhandle to proto getter */
     public static final MethodHandle GET__PROTO__ = findOwnMH("get__proto__", ScriptObject.class, Object.class);
@@ -83,6 +79,9 @@ public final class NativeObject {
     public static final MethodHandle SET__PROTO__ = findOwnMH("set__proto__", Object.class, Object.class, Object.class);
 
     private static final Object TO_STRING = new Object();
+
+    private static final MethodType MIRROR_GETTER_TYPE = MethodType.methodType(Object.class, ScriptObjectMirror.class);
+    private static final MethodType MIRROR_SETTER_TYPE = MethodType.methodType(Object.class, ScriptObjectMirror.class, Object.class);
 
     private static InvokeByName getTO_STRING() {
         return Global.instance().getInvokeByName(TO_STRING,
@@ -121,12 +120,6 @@ public final class NativeObject {
         return UNDEFINED;
     }
 
-    private static final MethodType MIRROR_GETTER_TYPE = MethodType.methodType(Object.class, ScriptObjectMirror.class);
-    private static final MethodType MIRROR_SETTER_TYPE = MethodType.methodType(Object.class, ScriptObjectMirror.class, Object.class);
-
-    // initialized by nasgen
-    @SuppressWarnings("unused")
-    private static PropertyMap $nasgenmap$;
 
     private NativeObject() {
         // don't create me!
@@ -145,7 +138,7 @@ public final class NativeObject {
      * @param buf external buffer - should be a nio ByteBuffer
      * @return the 'obj' object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject setIndexedPropertiesToExternalArrayData(final Object self, final Object obj, final Object buf) {
         Global.checkObject(obj);
         final ScriptObject sobj = (ScriptObject)obj;
@@ -165,7 +158,7 @@ public final class NativeObject {
      * @param  obj object to get prototype from
      * @return the prototype of an object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object getPrototypeOf(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).getProto();
@@ -192,7 +185,7 @@ public final class NativeObject {
      * @param  proto prototype object to be used
      * @return object whose prototype is set
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object setPrototypeOf(final Object self, final Object obj, final Object proto) {
         if (obj instanceof ScriptObject) {
             ((ScriptObject)obj).setPrototypeOf(proto);
@@ -213,7 +206,7 @@ public final class NativeObject {
      * @param prop  property descriptor
      * @return property descriptor
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object getOwnPropertyDescriptor(final Object self, final Object obj, final Object prop) {
         if (obj instanceof ScriptObject) {
             final String       key  = JSType.toString(prop);
@@ -237,7 +230,7 @@ public final class NativeObject {
      * @param obj  object to query for property names
      * @return array of property names
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject getOwnPropertyNames(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return new NativeArray(((ScriptObject)obj).getOwnKeys(true));
@@ -256,7 +249,7 @@ public final class NativeObject {
      * @param props properties to define
      * @return object created
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject create(final Object self, final Object proto, final Object props) {
         if (proto != null) {
             Global.checkObject(proto);
@@ -282,7 +275,7 @@ public final class NativeObject {
      * @param attr attributes for property descriptor
      * @return object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject defineProperty(final Object self, final Object obj, final Object prop, final Object attr) {
         final ScriptObject sobj = Global.checkObject(obj);
         sobj.defineOwnProperty(JSType.toString(prop), attr, true);
@@ -297,7 +290,7 @@ public final class NativeObject {
      * @param props properties
      * @return object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject defineProperties(final Object self, final Object obj, final Object props) {
         final ScriptObject sobj     = Global.checkObject(obj);
         final Object       propsObj = Global.toObject(props);
@@ -319,7 +312,7 @@ public final class NativeObject {
      * @param obj  object to seal
      * @return sealed object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object seal(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).seal();
@@ -338,7 +331,7 @@ public final class NativeObject {
      * @param obj object to freeze
      * @return frozen object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object freeze(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).freeze();
@@ -356,7 +349,7 @@ public final class NativeObject {
      * @param obj  object, for which to set the internal extensible property to false
      * @return object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object preventExtensions(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).preventExtensions();
@@ -374,7 +367,7 @@ public final class NativeObject {
      * @param obj check whether an object is sealed
      * @return true if sealed, false otherwise
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static boolean isSealed(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).isSealed();
@@ -392,7 +385,7 @@ public final class NativeObject {
      * @param obj check whether an object
      * @return true if object is frozen, false otherwise
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static boolean isFrozen(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).isFrozen();
@@ -410,7 +403,7 @@ public final class NativeObject {
      * @param obj check whether an object is extensible
      * @return true if object is extensible, false otherwise
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static boolean isExtensible(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             return ((ScriptObject)obj).isExtensible();
@@ -428,7 +421,7 @@ public final class NativeObject {
      * @param obj  object from which to extract keys
      * @return array of keys in object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static ScriptObject keys(final Object self, final Object obj) {
         if (obj instanceof ScriptObject) {
             final ScriptObject sobj = (ScriptObject)obj;
@@ -451,7 +444,7 @@ public final class NativeObject {
      * @param value  value of object to be instantiated
      * @return the new NativeObject
      */
-    @Constructor
+    //@Constructor
     public static Object construct(final boolean newObj, final Object self, final Object value) {
         final JSType type = JSType.ofNoFunction(value);
 
@@ -484,7 +477,7 @@ public final class NativeObject {
      * @param self self reference
      * @return ToString of object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static String toString(final Object self) {
         return ScriptRuntime.builtinObjectToString(self);
     }
@@ -495,7 +488,7 @@ public final class NativeObject {
      * @param self self reference
      * @return localized ToString
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static Object toLocaleString(final Object self) {
         final Object obj = JSType.toScriptObject(self);
         if (obj instanceof ScriptObject) {
@@ -525,7 +518,7 @@ public final class NativeObject {
      * @param self self reference
      * @return value of object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static Object valueOf(final Object self) {
         return Global.toObject(self);
     }
@@ -537,7 +530,7 @@ public final class NativeObject {
      * @param v property to check for
      * @return true if property exists in object
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static boolean hasOwnProperty(final Object self, final Object v) {
         // Convert ScriptObjects to primitive with String.class hint
         // but no need to convert other primitives to string.
@@ -554,7 +547,7 @@ public final class NativeObject {
      * @param v v prototype object to check against
      * @return true if object is prototype of v
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static boolean isPrototypeOf(final Object self, final Object v) {
         if (!(v instanceof ScriptObject)) {
             return false;
@@ -580,7 +573,7 @@ public final class NativeObject {
      * @param v property to check if enumerable
      * @return true if property is enumerable
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE)
     public static boolean propertyIsEnumerable(final Object self, final Object v) {
         final String str = JSType.toString(v);
         final Object obj = Global.toObject(self);
@@ -655,7 +648,7 @@ public final class NativeObject {
      * @param source the source object whose properties are bound to the target
      * @return the target object after property binding
      */
-    @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
+    //@Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR)
     public static Object bindProperties(final Object self, final Object target, final Object source) {
         // target object has to be a ScriptObject
         final ScriptObject targetObj = Global.checkObject(target);
@@ -842,4 +835,356 @@ public final class NativeObject {
     private static MethodHandle findOwnMH(final String name, final Class<?> rtype, final Class<?>... types) {
         return MH.findStatic(MethodHandles.lookup(), NativeObject.class, name, MH.type(rtype, types));
     }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeObject.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString = ScriptFunctionImpl.makeFunction("toString", 
+                staticHandle("toString", String.class, Object.class));
+        private ScriptFunction toLocaleString = ScriptFunctionImpl.makeFunction("toLocaleString", 
+                staticHandle("toLocaleString", Object.class, Object.class));
+        private ScriptFunction valueOf = ScriptFunctionImpl.makeFunction("valueOf", 
+                staticHandle("valueOf", Object.class, Object.class));
+        private ScriptFunction hasOwnProperty = ScriptFunctionImpl.makeFunction("hasOwnProperty", 
+                staticHandle("hasOwnProperty", boolean.class, Object.class, Object.class));
+        private ScriptFunction isPrototypeOf = ScriptFunctionImpl.makeFunction("isPrototypeOf", 
+                staticHandle("isPrototypeOf", boolean.class, Object.class, Object.class));
+        private ScriptFunction propertyIsEnumerable = ScriptFunctionImpl.makeFunction("propertyIsEnumerable", 
+                staticHandle("propertyIsEnumerable", boolean.class, Object.class, Object.class));
+
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+           return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction var1) {
+           this.toString = var1;
+        }
+
+        public ScriptFunction G$toLocaleString() {
+           return this.toLocaleString;
+        }
+
+        public void S$toLocaleString(final ScriptFunction var1) {
+           this.toLocaleString = var1;
+        }
+
+        public ScriptFunction G$valueOf() {
+           return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction var1) {
+           this.valueOf = var1;
+        }
+
+        public ScriptFunction G$hasOwnProperty() {
+           return this.hasOwnProperty;
+        }
+
+        public void S$hasOwnProperty(final ScriptFunction var1) {
+           this.hasOwnProperty = var1;
+        }
+
+        public ScriptFunction G$isPrototypeOf() {
+           return this.isPrototypeOf;
+        }
+
+        public void S$isPrototypeOf(final ScriptFunction var1) {
+           this.isPrototypeOf = var1;
+        }
+
+        public ScriptFunction G$propertyIsEnumerable() {
+           return this.propertyIsEnumerable;
+        }
+
+        public void S$propertyIsEnumerable(final ScriptFunction var1) {
+           this.propertyIsEnumerable = var1;
+        }
+
+        static {
+           ArrayList<Property> list = new ArrayList<>(7);
+           list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$toString", ScriptFunction.class),
+                   virtualHandle("S$toString", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("toLocaleString", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$toLocaleString", ScriptFunction.class),
+                   virtualHandle("S$toLocaleString", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$valueOf", ScriptFunction.class),
+                   virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("hasOwnProperty", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$hasOwnProperty", ScriptFunction.class),
+                   virtualHandle("S$hasOwnProperty", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("isPrototypeOf", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$isPrototypeOf", ScriptFunction.class),
+                   virtualHandle("S$isPrototypeOf", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("propertyIsEnumerable", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$propertyIsEnumerable", ScriptFunction.class),
+                   virtualHandle("S$propertyIsEnumerable", void.class, ScriptFunction.class)));
+           $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+           super($nasgenmap$);
+        }
+
+        public String getClassName() {
+           return "Object";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+     }
+
+    static final class Constructor extends ScriptFunctionImpl {
+        private ScriptFunction setIndexedPropertiesToExternalArrayData = ScriptFunctionImpl.makeFunction("setIndexedPropertiesToExternalArrayData", 
+                staticHandle("setIndexedPropertiesToExternalArrayData", ScriptObject.class, Object.class, Object.class, Object.class));
+        private ScriptFunction getPrototypeOf = ScriptFunctionImpl.makeFunction("getPrototypeOf", 
+                staticHandle("getPrototypeOf", Object.class, Object.class, Object.class));
+        private ScriptFunction setPrototypeOf = ScriptFunctionImpl.makeFunction("setPrototypeOf", 
+                staticHandle("setPrototypeOf", Object.class, Object.class, Object.class, Object.class));
+        private ScriptFunction getOwnPropertyDescriptor = ScriptFunctionImpl.makeFunction("getOwnPropertyDescriptor", 
+                staticHandle("getOwnPropertyDescriptor", Object.class, Object.class, Object.class, Object.class));
+        private ScriptFunction getOwnPropertyNames = ScriptFunctionImpl.makeFunction("getOwnPropertyNames", 
+                staticHandle("getOwnPropertyNames", ScriptObject.class, Object.class, Object.class));
+        private ScriptFunction create = ScriptFunctionImpl.makeFunction("create", 
+                staticHandle("create", ScriptObject.class, Object.class, Object.class, Object.class));
+        private ScriptFunction defineProperty = ScriptFunctionImpl.makeFunction("defineProperty", 
+                staticHandle("defineProperty", ScriptObject.class, Object.class, Object.class, Object.class, Object.class));
+        private ScriptFunction defineProperties = ScriptFunctionImpl.makeFunction("defineProperties", 
+                staticHandle("defineProperties", ScriptObject.class, Object.class, Object.class, Object.class));
+        private ScriptFunction seal = ScriptFunctionImpl.makeFunction("seal", 
+                staticHandle("seal", Object.class, Object.class, Object.class));
+        private ScriptFunction freeze = ScriptFunctionImpl.makeFunction("freeze", 
+                staticHandle("freeze", Object.class, Object.class, Object.class));
+        private ScriptFunction preventExtensions = ScriptFunctionImpl.makeFunction("preventExtensions", 
+                staticHandle("preventExtensions", Object.class, Object.class, Object.class));
+        private ScriptFunction isSealed = ScriptFunctionImpl.makeFunction("isSealed", 
+                staticHandle("isSealed", boolean.class, Object.class, Object.class));
+        private ScriptFunction isFrozen = ScriptFunctionImpl.makeFunction("isFrozen", 
+                staticHandle("isFrozen", boolean.class, Object.class, Object.class));
+        private ScriptFunction isExtensible = ScriptFunctionImpl.makeFunction("isExtensible", 
+                staticHandle("isExtensible", boolean.class, Object.class, Object.class));
+        private ScriptFunction keys = ScriptFunctionImpl.makeFunction("keys", 
+                staticHandle("keys", ScriptObject.class, Object.class, Object.class));
+        private ScriptFunction bindProperties = ScriptFunctionImpl.makeFunction("bindProperties", 
+                staticHandle("bindProperties", Object.class, Object.class, Object.class, Object.class));
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$setIndexedPropertiesToExternalArrayData() {
+           return this.setIndexedPropertiesToExternalArrayData;
+        }
+
+        public void S$setIndexedPropertiesToExternalArrayData(final ScriptFunction var1) {
+           this.setIndexedPropertiesToExternalArrayData = var1;
+        }
+
+        public ScriptFunction G$getPrototypeOf() {
+           return this.getPrototypeOf;
+        }
+
+        public void S$getPrototypeOf(final ScriptFunction var1) {
+           this.getPrototypeOf = var1;
+        }
+
+        public ScriptFunction G$setPrototypeOf() {
+           return this.setPrototypeOf;
+        }
+
+        public void S$setPrototypeOf(final ScriptFunction var1) {
+           this.setPrototypeOf = var1;
+        }
+
+        public ScriptFunction G$getOwnPropertyDescriptor() {
+           return this.getOwnPropertyDescriptor;
+        }
+
+        public void S$getOwnPropertyDescriptor(final ScriptFunction var1) {
+           this.getOwnPropertyDescriptor = var1;
+        }
+
+        public ScriptFunction G$getOwnPropertyNames() {
+           return this.getOwnPropertyNames;
+        }
+
+        public void S$getOwnPropertyNames(final ScriptFunction var1) {
+           this.getOwnPropertyNames = var1;
+        }
+
+        public ScriptFunction G$create() {
+           return this.create;
+        }
+
+        public void S$create(final ScriptFunction var1) {
+           this.create = var1;
+        }
+
+        public ScriptFunction G$defineProperty() {
+           return this.defineProperty;
+        }
+
+        public void S$defineProperty(final ScriptFunction var1) {
+           this.defineProperty = var1;
+        }
+
+        public ScriptFunction G$defineProperties() {
+           return this.defineProperties;
+        }
+
+        public void S$defineProperties(final ScriptFunction var1) {
+           this.defineProperties = var1;
+        }
+
+        public ScriptFunction G$seal() {
+           return this.seal;
+        }
+
+        public void S$seal(final ScriptFunction var1) {
+           this.seal = var1;
+        }
+
+        public ScriptFunction G$freeze() {
+           return this.freeze;
+        }
+
+        public void S$freeze(final ScriptFunction var1) {
+           this.freeze = var1;
+        }
+
+        public ScriptFunction G$preventExtensions() {
+           return this.preventExtensions;
+        }
+
+        public void S$preventExtensions(final ScriptFunction var1) {
+           this.preventExtensions = var1;
+        }
+
+        public ScriptFunction G$isSealed() {
+           return this.isSealed;
+        }
+
+        public void S$isSealed(final ScriptFunction var1) {
+           this.isSealed = var1;
+        }
+
+        public ScriptFunction G$isFrozen() {
+           return this.isFrozen;
+        }
+
+        public void S$isFrozen(final ScriptFunction var1) {
+           this.isFrozen = var1;
+        }
+
+        public ScriptFunction G$isExtensible() {
+           return this.isExtensible;
+        }
+
+        public void S$isExtensible(final ScriptFunction var1) {
+           this.isExtensible = var1;
+        }
+
+        public ScriptFunction G$keys() {
+           return this.keys;
+        }
+
+        public void S$keys(final ScriptFunction var1) {
+           this.keys = var1;
+        }
+
+        public ScriptFunction G$bindProperties() {
+           return this.bindProperties;
+        }
+
+        public void S$bindProperties(final ScriptFunction var1) {
+           this.bindProperties = var1;
+        }
+
+        static {
+           ArrayList<Property> list = new ArrayList<>(17);
+           list.add(AccessorProperty.create("setIndexedPropertiesToExternalArrayData", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$setIndexedPropertiesToExternalArrayData", ScriptFunction.class),
+                   virtualHandle("S$setIndexedPropertiesToExternalArrayData", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("getPrototypeOf", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$getPrototypeOf", ScriptFunction.class),
+                   virtualHandle("S$getPrototypeOf", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("setPrototypeOf", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$setPrototypeOf", ScriptFunction.class),
+                   virtualHandle("S$setPrototypeOf", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("getOwnPropertyDescriptor", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$getOwnPropertyDescriptor", ScriptFunction.class),
+                   virtualHandle("S$getOwnPropertyDescriptor", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("getOwnPropertyNames", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$getOwnPropertyNames", ScriptFunction.class),
+                   virtualHandle("S$getOwnPropertyNames", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("create", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$create", ScriptFunction.class),
+                   virtualHandle("S$create", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("defineProperty", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$defineProperty", ScriptFunction.class),
+                   virtualHandle("S$defineProperty", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("defineProperties", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$defineProperties", ScriptFunction.class),
+                   virtualHandle("S$defineProperties", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("seal", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$seal", ScriptFunction.class),
+                   virtualHandle("S$seal", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("freeze", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$freeze", ScriptFunction.class),
+                   virtualHandle("S$freeze", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("preventExtensions", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$preventExtensions", ScriptFunction.class),
+                   virtualHandle("S$preventExtensions", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("isSealed", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$isSealed", ScriptFunction.class),
+                   virtualHandle("S$isSealed", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("isFrozen", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$isFrozen", ScriptFunction.class),
+                   virtualHandle("S$isFrozen", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("isExtensible", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$isExtensible", ScriptFunction.class),
+                   virtualHandle("S$isExtensible", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("keys", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$keys", ScriptFunction.class),
+                   virtualHandle("S$keys", void.class, ScriptFunction.class)));
+           list.add(AccessorProperty.create("bindProperties", Property.NOT_ENUMERABLE,
+                   virtualHandle("G$bindProperties", ScriptFunction.class),
+                   virtualHandle("S$bindProperties", void.class, ScriptFunction.class)));
+           $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+           super("Object",
+                   staticHandle("construct", Object.class, boolean.class, Object.class, Object.class),
+                   $nasgenmap$, null);
+           Prototype var10001 = new Prototype();
+           PrototypeObject.setConstructor(var10001, this);
+           setPrototype(var10001);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+     }
 }
