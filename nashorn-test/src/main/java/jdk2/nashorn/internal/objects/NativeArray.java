@@ -48,7 +48,6 @@ import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.api.scripting.JSObject;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Getter;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -603,7 +602,7 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
      * @param args   arguments (length)
      * @return the new NativeArray
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeArray construct(final boolean newObj, final Object self, final Object... args) {
         switch (args.length) {
         case 0:

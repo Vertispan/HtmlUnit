@@ -41,7 +41,6 @@ import jdk2.internal.dynalink.CallSiteDescriptor;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.lookup.Lookup;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.runtime.FindProperty;
 import jdk2.nashorn.internal.runtime.JSType;
@@ -537,7 +536,7 @@ public final class NativeJSAdapter extends ScriptObject {
      * @param args  arguments ([adaptee], [overrides, adaptee] or [proto, overrides, adaptee]
      * @return new NativeJSAdapter
      */
-    @Constructor
+    @jdk2.nashorn.internal.objects.annotations.Constructor
     public static NativeJSAdapter construct(final boolean isNew, final Object self, final Object... args) {
         Object proto     = UNDEFINED;
         Object overrides = UNDEFINED;

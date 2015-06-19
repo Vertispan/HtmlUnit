@@ -33,7 +33,6 @@ import java.lang.invoke.MethodHandles;
 
 import jdk2.nashorn.api.scripting.NashornException;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -125,7 +124,7 @@ public final class NativeError extends ScriptObject {
      *
      * @return NativeError instance
      */
-    @Constructor
+    @jdk2.nashorn.internal.objects.annotations.Constructor
     public static NativeError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeError(msg);
     }

@@ -27,7 +27,6 @@ package jdk2.nashorn.internal.objects;
 
 import static jdk2.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.Where;
@@ -92,7 +91,7 @@ public final class NativeSyntaxError extends ScriptObject {
      *
      * @return new SyntaxError
      */
-    @Constructor(name = "SyntaxError")
+    @jdk2.nashorn.internal.objects.annotations.Constructor(name = "SyntaxError")
     public static NativeSyntaxError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeSyntaxError(msg);
     }

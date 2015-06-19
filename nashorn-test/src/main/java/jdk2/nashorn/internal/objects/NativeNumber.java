@@ -39,7 +39,6 @@ import java.util.Locale;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -141,7 +140,7 @@ public final class NativeNumber extends ScriptObject {
      * @param args   value of number
      * @return the Number instance (internally represented as a {@code NativeNumber})
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static Object constructor(final boolean newObj, final Object self, final Object... args) {
         final double num = (args.length > 0) ? JSType.toNumber(args[0]) : 0.0;
 

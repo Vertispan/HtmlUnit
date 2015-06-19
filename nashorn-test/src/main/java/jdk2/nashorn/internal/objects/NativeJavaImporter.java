@@ -32,7 +32,6 @@ import jdk2.internal.dynalink.beans.StaticClass;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.runtime.Context;
@@ -90,7 +89,7 @@ public final class NativeJavaImporter extends ScriptObject {
      * @param args arguments
      * @return NativeJavaImporter instance
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeJavaImporter constructor(final boolean isNew, final Object self, final Object... args) {
         return new NativeJavaImporter(args);
     }

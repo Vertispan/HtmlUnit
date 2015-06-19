@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -130,7 +129,7 @@ public class NativeDataView extends ScriptObject {
      * @param args   arguments to the constructor
      * @return newly constructed DataView object
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeDataView constructor(final boolean newObj, final Object self, final Object... args) {
         if (args.length == 0 || !(args[0] instanceof NativeArrayBuffer)) {
             throw typeError("not.an.arraybuffer.in.dataview");

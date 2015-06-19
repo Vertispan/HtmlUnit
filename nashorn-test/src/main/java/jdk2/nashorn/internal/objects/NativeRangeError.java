@@ -27,7 +27,6 @@ package jdk2.nashorn.internal.objects;
 
 import static jdk2.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.Where;
@@ -96,7 +95,7 @@ public final class NativeRangeError extends ScriptObject {
      *
      * @return new RangeError
      */
-    @Constructor(name = "RangeError")
+    @jdk2.nashorn.internal.objects.annotations.Constructor(name = "RangeError")
     public static NativeRangeError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeRangeError(msg);
     }

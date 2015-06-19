@@ -30,7 +30,6 @@ import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 import java.nio.ByteBuffer;
 
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Getter;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -96,7 +95,7 @@ public final class NativeArrayBuffer extends ScriptObject {
      * @param args   arguments to constructor
      * @return new NativeArrayBuffer
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeArrayBuffer constructor(final boolean newObj, final Object self, final Object... args) {
         if (!newObj) {
             throw typeError("constructor.requires.new", "ArrayBuffer");

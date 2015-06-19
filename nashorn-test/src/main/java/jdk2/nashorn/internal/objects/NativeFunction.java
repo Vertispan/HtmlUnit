@@ -37,7 +37,6 @@ import java.util.List;
 import jdk2.internal.dynalink.support.Lookup;
 import jdk2.nashorn.api.scripting.JSObject;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.parser.Parser;
@@ -244,7 +243,7 @@ public final class NativeFunction {
      * @param args   arguments
      * @return new NativeFunction
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static ScriptFunction function(final boolean newObj, final Object self, final Object... args) {
         final StringBuilder sb = new StringBuilder();
 

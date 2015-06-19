@@ -34,7 +34,6 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -199,7 +198,7 @@ public final class NativeUint32Array extends ArrayBufferView {
      *
      * @return new typed array
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeUint32Array constructor(final boolean newObj, final Object self, final Object... args) {
         return (NativeUint32Array)constructorImpl(newObj, args, FACTORY);
     }

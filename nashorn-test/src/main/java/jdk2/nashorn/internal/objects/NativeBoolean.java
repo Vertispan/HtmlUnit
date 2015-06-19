@@ -35,7 +35,6 @@ import java.lang.invoke.MethodType;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.runtime.JSType;
@@ -134,7 +133,7 @@ public final class NativeBoolean extends ScriptObject {
      * @param value  value of boolean
      * @return the new NativeBoolean
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static Object constructor(final boolean newObj, final Object self, final Object value) {
         final boolean flag = JSType.toBoolean(value);
 

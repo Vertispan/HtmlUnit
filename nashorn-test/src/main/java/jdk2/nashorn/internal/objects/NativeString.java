@@ -46,7 +46,6 @@ import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.lookup.MethodHandleFactory.LookupException;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
-import jdk2.nashorn.internal.objects.annotations.Constructor;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.Getter;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
@@ -1184,7 +1183,7 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
      *
      * @return new NativeString, empty string if no args, extraneous args ignored
      */
-    @Constructor(arity = 1)
+    @jdk2.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static Object constructor(final boolean newObj, final Object self, final Object... args) {
         final CharSequence str = args.length > 0 ? JSType.toCharSequence(args[0]) : "";
         return newObj ? newObj(str) : str.toString();
