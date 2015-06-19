@@ -153,9 +153,12 @@ public final class ScriptClassInfo {
     int getPrototypeMemberCount() {
         int count = 0;
         for (final MemberInfo memInfo : members) {
-            if (memInfo.getKind() == Kind.SETTER) {
-                // ignore. We added it when GETTER was encountered!
-                continue;
+            switch (memInfo.getKind()) {
+                case SETTER:
+                case SPECIALIZED_FUNCTION:
+                    // SETTER was counted when GETTER was encountered.
+                    // SPECIALIZED_FUNCTION was counted as FUNCTION already.
+                    continue;
             }
 
             if (memInfo.getWhere() == Where.PROTOTYPE) {
@@ -168,9 +171,14 @@ public final class ScriptClassInfo {
     int getConstructorMemberCount() {
         int count = 0;
         for (final MemberInfo memInfo : members) {
-            if (memInfo.getKind() == Kind.SETTER) {
-                // ignore. We added it when GETTER was encountered!
-                continue;
+            switch (memInfo.getKind()) {
+                case CONSTRUCTOR:
+                case SETTER:
+                case SPECIALIZED_FUNCTION:
+                    // SETTER was counted when GETTER was encountered.
+                    // Constructor and constructor SpecializedFunctions
+                    // are not added as members and so not counted.
+                    continue;
             }
 
             if (memInfo.getWhere() == Where.CONSTRUCTOR) {
@@ -183,9 +191,12 @@ public final class ScriptClassInfo {
     int getInstancePropertyCount() {
         int count = 0;
         for (final MemberInfo memInfo : members) {
-            if (memInfo.getKind() == Kind.SETTER) {
-                // ignore. We added it when GETTER was encountered!
-                continue;
+            switch (memInfo.getKind()) {
+                case SETTER:
+                case SPECIALIZED_FUNCTION:
+                    // SETTER was counted when GETTER was encountered.
+                    // SPECIALIZED_FUNCTION was counted as FUNCTION already.
+                    continue;
             }
 
             if (memInfo.getWhere() == Where.INSTANCE) {

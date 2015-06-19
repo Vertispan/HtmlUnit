@@ -290,9 +290,7 @@ public class ScriptClassInfoCollector extends ClassVisitor {
                                         where = Where.PROTOTYPE;
                                         break;
                                     case SPECIALIZED_FUNCTION:
-                                        if (isSpecializedConstructor) {
-                                            where = Where.CONSTRUCTOR;
-                                        }
+                                        where = isSpecializedConstructor? Where.CONSTRUCTOR : Where.PROTOTYPE;
                                         //fallthru
                                     default:
                                         break;
