@@ -215,7 +215,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
                     + "                    ");
             loadMap(mi);
             if (specs.isEmpty()) {
-                builder.append("null);" + System.lineSeparator());
+                builder.append(", null);" + System.lineSeparator());
             }
             else {
                 builder.append(", new Specialization[] {" + System.lineSeparator());
