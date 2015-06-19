@@ -279,6 +279,9 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         assert constructor != null;
         mi.loadThis();
         final String protoName = scriptClassInfo.getPrototypeClassName();
+        builder.append("            final Prototype prototype = new Prototype();" + System.lineSeparator());
+        builder.append("            PrototypeObject.setConstructor(prorotype, this);" + System.lineSeparator());
+        builder.append("            setPrototype(prototype);" + System.lineSeparator());
         mi.newObject(protoName);
         mi.dup();
         mi.invokeSpecial(protoName, INIT, DEFAULT_INIT_DESC);
