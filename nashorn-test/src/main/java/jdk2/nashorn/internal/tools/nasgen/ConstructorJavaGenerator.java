@@ -165,6 +165,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         }
 
         if (constructor != null) {
+            initPrototype(mi);
             final int arity = constructor.getArity();
             if (arity != MemberInfo.DEFAULT_ARITY) {
                 mi.loadThis();
@@ -239,6 +240,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
     }
 
     private void initFunctionFields(final MethodGenerator mi) {
+        assert memberCount > 0;
         for (final MemberInfo memInfo : scriptClassInfo.getMembers()) {
             if (!memInfo.isConstructorFunction()) {
                 continue;
@@ -251,6 +253,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
     }
 
     private void initDataFields(final MethodGenerator mi) {
+        assert memberCount > 0;
          for (final MemberInfo memInfo : scriptClassInfo.getMembers()) {
             if (!memInfo.isConstructorProperty() || memInfo.isFinal()) {
                 continue;
@@ -270,22 +273,20 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
                 mi.putField(className, memInfo.getJavaName(), memInfo.getJavaDesc());
             }
         }
+    }
 
-        if (constructor != null) {
-            mi.loadThis();
-            final String protoName = scriptClassInfo.getPrototypeClassName();
-            mi.newObject(protoName);
-            mi.dup();
-            mi.invokeSpecial(protoName, INIT, DEFAULT_INIT_DESC);
-            mi.dup();
-            mi.loadThis();
-            mi.invokeStatic(PROTOTYPEOBJECT_TYPE, PROTOTYPEOBJECT_SETCONSTRUCTOR,
-                    PROTOTYPEOBJECT_SETCONSTRUCTOR_DESC);
-            mi.invokeVirtual(SCRIPTFUNCTION_TYPE, SCRIPTFUNCTION_SETPROTOTYPE, SCRIPTFUNCTION_SETPROTOTYPE_DESC);
-            builder.append("            final Prototype prototype = new Prototype();" + System.lineSeparator());
-            builder.append("            PrototypeObject.setConstructor(prototype, this);" + System.lineSeparator());
-            builder.append("            setPrototype(prototype);" + System.lineSeparator());
-        }
+    private void initPrototype(final MethodGenerator mi) {
+        assert constructor != null;
+        mi.loadThis();
+        final String protoName = scriptClassInfo.getPrototypeClassName();
+        mi.newObject(protoName);
+        mi.dup();
+        mi.invokeSpecial(protoName, INIT, DEFAULT_INIT_DESC);
+        mi.dup();
+        mi.loadThis();
+        mi.invokeStatic(PROTOTYPEOBJECT_TYPE, PROTOTYPEOBJECT_SETCONSTRUCTOR,
+                PROTOTYPEOBJECT_SETCONSTRUCTOR_DESC);
+        mi.invokeVirtual(SCRIPTFUNCTION_TYPE, SCRIPTFUNCTION_SETPROTOTYPE, SCRIPTFUNCTION_SETPROTOTYPE_DESC);
     }
 
     /**

@@ -32,24 +32,23 @@ import static jdk2.nashorn.internal.runtime.Source.sourceFor;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.util.ArrayList;
 import java.util.List;
 
 import jdk2.internal.dynalink.support.Lookup;
 import jdk2.nashorn.api.scripting.JSObject;
+import jdk2.nashorn.internal.objects.annotations.Attribute;
+import jdk2.nashorn.internal.objects.annotations.Constructor;
+import jdk2.nashorn.internal.objects.annotations.Function;
+import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.parser.Parser;
-import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.Context;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.ParserException;
-import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptEnvironment;
 import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
-import jdk2.nashorn.internal.runtime.Specialization;
 import jdk2.nashorn.internal.runtime.linker.Bootstrap;
 
 /**
@@ -59,10 +58,15 @@ import jdk2.nashorn.internal.runtime.linker.Bootstrap;
  * subclass of ScriptObject. But, we use this class to generate prototype and
  * constructor for "Function".
  */
+@ScriptClass("Function")
 public final class NativeFunction {
 
     /** apply arg converter handle */
     public static final MethodHandle TO_APPLY_ARGS = Lookup.findOwnStatic(MethodHandles.lookup(), "toApplyArgs", Object[].class, Object.class);
+
+    // initialized by nasgen
+    @SuppressWarnings("unused")
+    private static PropertyMap $nasgenmap$;
 
     // do *not* create me!
     private NativeFunction() {
@@ -75,6 +79,7 @@ public final class NativeFunction {
      * @param self self reference
      * @return string representation of Function
      */
+    @Function(attributes = Attribute.NOT_ENUMERABLE)
     public static String toString(final Object self) {
         if (!(self instanceof ScriptFunction)) {
             throw typeError("not.a.function", ScriptRuntime.safeToString(self));
@@ -90,6 +95,7 @@ public final class NativeFunction {
      * @param array  array of argument for apply
      * @return result of apply
      */
+    @Function(attributes = Attribute.NOT_ENUMERABLE)
     public static Object apply(final Object self, final Object thiz, final Object array) {
         checkCallable(self);
 
@@ -103,7 +109,7 @@ public final class NativeFunction {
         throw new AssertionError("Should not reach here");
     }
 
-    /**
+     /**
      * Given an array-like object, converts it into a Java object array suitable for invocation of ScriptRuntime.apply
      * or for direct invocation of the applied function.
      * @param array the array-like object. Can be null in which case a zero-length array is created.
@@ -169,6 +175,7 @@ public final class NativeFunction {
      * @param args arguments for call
      * @return result of call
      */
+    @Function(attributes = Attribute.NOT_ENUMERABLE, arity = 1)
     public static Object call(final Object self, final Object... args) {
         checkCallable(self);
 
@@ -198,6 +205,7 @@ public final class NativeFunction {
      * @param args arguments for bind
      * @return function with bound arguments
      */
+    @Function(attributes = Attribute.NOT_ENUMERABLE, arity = 1)
     public static Object bind(final Object self, final Object... args) {
         final Object thiz = (args.length == 0) ? UNDEFINED : args[0];
 
@@ -218,6 +226,7 @@ public final class NativeFunction {
      * @param self self reference
      * @return source for function
      */
+    @Function(attributes = Attribute.NOT_ENUMERABLE)
     public static String toSource(final Object self) {
         if (!(self instanceof ScriptFunction)) {
             throw typeError("not.a.function", ScriptRuntime.safeToString(self));
@@ -235,6 +244,7 @@ public final class NativeFunction {
      * @param args   arguments
      * @return new NativeFunction
      */
+    @Constructor(arity = 1)
     public static ScriptFunction function(final boolean newObj, final Object self, final Object... args) {
         final StringBuilder sb = new StringBuilder();
 
@@ -296,134 +306,4 @@ public final class NativeFunction {
         final ScriptEnvironment env = Global.getEnv();
         return new Parser(env, sourceFor("<function>", sourceText), new Context.ThrowErrorManager(), env._strict, null);
     }
-
-    final static class Constructor extends ScriptFunctionImpl {
-        private static final PropertyMap $nasgenmap$ = PropertyMap.newMap(new ArrayList<>(1));
-
-        Constructor() {
-            super("Function", 
-                    staticHandle("function", ScriptFunction.class, boolean.class, Object.class, Object[].class),
-                    $nasgenmap$, (Specialization[]) null);
-            Prototype prototype = new Prototype();
-            PrototypeObject.setConstructor(prototype, this);
-            setPrototype(prototype);
-            setArity(1);
-        }
-    }
-
-    /**
-     * @param name the name of the method
-     * @param rtype  the return type
-     * @param ptypes the parameter types
-     */
-    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
-        try {
-            return MethodHandles.lookup().findStatic(NativeFunction.class,
-                    name, MethodType.methodType(rtype, ptypes));
-        }
-        catch (final ReflectiveOperationException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    static final class Prototype extends PrototypeObject {
-        private ScriptFunction toString = ScriptFunctionImpl.makeFunction("toString", 
-                staticHandle("toString", String.class, Object.class));
-        private ScriptFunction apply = ScriptFunctionImpl.makeFunction("apply",
-                staticHandle("apply", Object.class, Object.class, Object.class, Object.class));
-        private ScriptFunction call = ScriptFunctionImpl.makeFunction("call",
-                staticHandle("call", Object.class, Object.class, Object[].class));
-        private ScriptFunction bind = ScriptFunctionImpl.makeFunction("bind",
-                staticHandle("bind", Object.class, Object.class, Object[].class));
-        private ScriptFunction toSource = ScriptFunctionImpl.makeFunction("toSource",
-                staticHandle("toSource", String.class, Object.class));
-
-        private static final PropertyMap $nasgenmap$;
-
-        public ScriptFunction G$toString() {
-            return this.toString;
-        }
-
-        public void S$toString(final ScriptFunction function) {
-            this.toString = function;
-        }
-
-        public ScriptFunction G$apply() {
-            return this.apply;
-        }
-
-        public void S$apply(final ScriptFunction function) {
-            this.apply = function;
-        }
-
-        public ScriptFunction G$call() {
-            return this.call;
-        }
-
-        public void S$call(final ScriptFunction function) {
-            this.call = function;
-        }
-
-        public ScriptFunction G$bind() {
-            return this.bind;
-        }
-
-        public void S$bind(ScriptFunction function) {
-            this.bind = function;
-        }
-
-        public ScriptFunction G$toSource() {
-            return this.toSource;
-        }
-
-        public void S$toSource(final ScriptFunction function) {
-            this.toSource = function;
-        }
-
-        static {
-            ArrayList<Property> list = new ArrayList<>(6);
-            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE,
-                    virtualHandle("G$toString", ScriptFunction.class),
-                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
-            list.add(AccessorProperty.create("apply", Property.NOT_ENUMERABLE,
-                    virtualHandle("G$apply", ScriptFunction.class),
-                    virtualHandle("S$apply", void.class, ScriptFunction.class)));
-            list.add(AccessorProperty.create("call", Property.NOT_ENUMERABLE,
-                    virtualHandle("G$call", ScriptFunction.class),
-                    virtualHandle("S$call", void.class, ScriptFunction.class)));
-            list.add(AccessorProperty.create("bind", Property.NOT_ENUMERABLE,
-                    virtualHandle("G$bind", ScriptFunction.class),
-                    virtualHandle("S$bind", void.class, ScriptFunction.class)));
-            list.add(AccessorProperty.create("toSource", Property.NOT_ENUMERABLE,
-                    virtualHandle("G$toSource", ScriptFunction.class),
-                    virtualHandle("S$toSource", void.class, ScriptFunction.class)));
-            $nasgenmap$ = PropertyMap.newMap(list);
-        }
-
-        Prototype() {
-            super($nasgenmap$);
-            call.setArity(1);
-            bind.setArity(1);
-        }
-
-        public String getClassName() {
-            return "Function";
-        }
-
-        /**
-         * @param name the name of the method
-         * @param rtype  the return type
-         * @param ptypes the parameter types
-         */
-        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
-            try {
-                return MethodHandles.lookup().findVirtual(Prototype.class, name,
-                        MethodType.methodType(rtype, ptypes));
-            }
-            catch (final ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-    }
-
 }
