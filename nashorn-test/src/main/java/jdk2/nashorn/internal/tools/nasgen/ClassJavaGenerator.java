@@ -36,6 +36,10 @@ import static jdk2.nashorn.internal.tools.nasgen.StringConstants.*;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Collections;
 import java.util.List;
 
 import jdk.internal.org.objectweb.asm.ClassReader;
@@ -45,6 +49,7 @@ import jdk.internal.org.objectweb.asm.FieldVisitor;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Type;
+import jdk2.nashorn.internal.objects.NativeObject;
 import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.ScriptFunction;
@@ -100,11 +105,33 @@ public class ClassJavaGenerator {
 
     void emitGetClassName(final String name) {
         final MethodGenerator mi = makeMethod(ACC_PUBLIC, GET_CLASS_NAME, GET_CLASS_NAME_DESC);
-        builder.append("emitGetClassName NOT SUPPORTED");
+        builder.append("       public String getClassName() {" + System.lineSeparator());
+        builder.append("           return \"" + name+ "\";" + System.lineSeparator());
+        builder.append("       }" + System.lineSeparator());
+        builder.append(System.lineSeparator());
         mi.loadLiteral(name);
         mi.returnValue();
         mi.computeMaxs();
         mi.visitEnd();
+    }
+
+    public static String getCode(final String name) {
+        builder.insert(0, "    static {" + System.lineSeparator());
+        builder.append("    }" + System.lineSeparator());
+        builder.append(System.lineSeparator());
+        builder.append("    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {" + System.lineSeparator());
+        builder.append("        try {" + System.lineSeparator());
+        builder.append("            return MethodHandles.lookup().findStatic(" + name + ".class," + System.lineSeparator());
+        builder.append("                    name, MethodType.methodType(rtype, ptypes));" + System.lineSeparator());
+        builder.append("        }" + System.lineSeparator());
+        builder.append("        catch (final ReflectiveOperationException e) {" + System.lineSeparator());
+        builder.append("            throw new IllegalStateException(e);" + System.lineSeparator());
+        builder.append("        }" + System.lineSeparator());
+        builder.append("    }" + System.lineSeparator());
+        builder.append(System.lineSeparator());
+        
+        
+        return builder.toString();
     }
 
     static ClassWriter makeClassWriter() {
@@ -152,12 +179,12 @@ public class ClassJavaGenerator {
             mi.dup();
             mi.push(memberCount);
             mi.invokeSpecial(ARRAYLIST_TYPE, INIT, ARRAYLIST_INIT_DESC);
-            builder.append("            List<Property> list = new ArrayList<>("
+            builder.append("            final List<Property> list = new ArrayList<>("
                     + memberCount + ");" + System.lineSeparator());
             // stack: ArrayList
         } else {
             // java.util.Collections.EMPTY_LIST
-            builder.append("emitStaticInitPrefix not supported" + System.lineSeparator());
+            builder.append("            final List<Property> list = Collections.emptyList();" + System.lineSeparator());
             mi.getStatic(COLLECTIONS_TYPE, COLLECTIONS_EMPTY_LIST, LIST_DESC);
             // stack List
         }
@@ -169,7 +196,7 @@ public class ClassJavaGenerator {
         mi.invokeStatic(PROPERTYMAP_TYPE, PROPERTYMAP_NEWMAP, PROPERTYMAP_NEWMAP_DESC);
         // $nasgenmap$ = pmap;
         mi.putStatic(className, PROPERTYMAP_FIELD_NAME, PROPERTYMAP_DESC);
-        builder.append("            " + PROPERTYMAP_FIELD_NAME + " =  PropertyMap.newMap(list);" + System.lineSeparator());
+        builder.append("            " + PROPERTYMAP_FIELD_NAME + " = PropertyMap.newMap(list);" + System.lineSeparator());
         mi.returnVoid();
         mi.computeMaxs();
         mi.visitEnd();
@@ -355,15 +382,14 @@ public class ClassJavaGenerator {
             builder.append(", new Specialization[] {" + System.lineSeparator());
             for (int i = 0; i < specs.size(); i++) {
                 final MemberInfo m = specs.get(i);
-                builder.append("                        staticHandle(\"" + m.getJavaName()
-                        + "\", " + descToJava(m.getJavaDesc()) + ")");
+                builder.append("                        new Specialization(staticHandle(\"" + m.getJavaName()
+                        + "\", " + descToJava(m.getJavaDesc()) + "), " + m.isOptimistic() + ")");
                 if (i < specs.size() - 1) {
                     builder.append(',');
                 }
                 builder.append(System.lineSeparator());
             }
             builder.append("                    });" + System.lineSeparator());
-            builder.append("            );" + System.lineSeparator());
         } else {
             builder.append("ScriptFunctionImpl.makeFunction(\"" + memInfo.getName() + "\"," + System.lineSeparator());
             builder.append("                    staticHandle(\"" + memInfo.getJavaName()
@@ -399,7 +425,6 @@ public class ClassJavaGenerator {
                 descToJava(Type.getMethodDescriptor(memInfoTypeScriptFuntion(memInfo)))
                 + ")," + System.lineSeparator());
         
-
         // setup setter method handle
         if (memInfo.isFinal()) {
             mi.pushNull();
@@ -411,7 +436,7 @@ public class ClassJavaGenerator {
                     descToJava(Type.getMethodDescriptor(Type.VOID_TYPE, memInfoTypeScriptFuntion(memInfo)))
                     + ")");
         }
-        builder.append(")");
+        builder.append("));" + System.lineSeparator());
         mi.invokeStatic(ACCESSORPROPERTY_TYPE, ACCESSORPROPERTY_CREATE, ACCESSORPROPERTY_CREATE_DESC);
         // boolean Collection.add(property)
         mi.invokeInterface(COLLECTION_TYPE, COLLECTION_ADD, COLLECTION_ADD_DESC);
@@ -451,15 +476,24 @@ public class ClassJavaGenerator {
         // setup flags
         mi.push(getter.getAttributes());
         // setup getter method handle
-        mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className,
-                getter.getJavaName(), getter.getJavaDesc()));
+        mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className, getter.getJavaName(), getter.getJavaDesc()));
+        builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
+                + attributesToJava(getter.getAttributes()) + ", " + System.lineSeparator()
+                + "                    staticHandle(\"" + getter.getJavaName() + "\", " +
+                descToJava(getter.getJavaDesc())
+                + ")," + System.lineSeparator());
+
         // setup setter method handle
         if (setter == null) {
             mi.pushNull();
+            builder.append("null");
         } else {
-            mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className,
-                    setter.getJavaName(), setter.getJavaDesc()));
+            mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className, setter.getJavaName(), setter.getJavaDesc()));
+            builder.append("                    staticHandle(\"" + setter.getJavaName() + "\", " +
+                    descToJava(setter.getJavaDesc())
+                    + ")");
         }
+        builder.append("));" + System.lineSeparator());
         mi.invokeStatic(ACCESSORPROPERTY_TYPE, ACCESSORPROPERTY_CREATE, ACCESSORPROPERTY_CREATE_DESC);
         // boolean Collection.add(property)
         mi.invokeInterface(COLLECTION_TYPE, COLLECTION_ADD, COLLECTION_ADD_DESC);

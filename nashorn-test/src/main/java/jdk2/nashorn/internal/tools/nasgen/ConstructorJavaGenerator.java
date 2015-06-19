@@ -138,24 +138,14 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         builder.append("        static {" + System.lineSeparator());
         emitStaticInitPrefix(mi, className, memberCount);
 
-        boolean first = true;
         for (final MemberInfo memInfo : scriptClassInfo.getMembers()) {
             if (memInfo.isConstructorFunction() || memInfo.isConstructorProperty()) {
-                if (!first) {
-                    builder.append("," + System.lineSeparator());
-                }
                 linkerAddGetterSetter(mi, className, memInfo);
-                first = false;
             } else if (memInfo.isConstructorGetter()) {
-                if (!first) {
-                    builder.append("," + System.lineSeparator());
-                }
                 final MemberInfo setter = scriptClassInfo.findSetter(memInfo);
                 linkerAddGetterSetter(mi, scriptClassInfo.getJavaName(), memInfo, setter);
-                first = false;
             }
         }
-        builder.append(");" + System.lineSeparator());
         emitStaticInitSuffix(mi, className);
         builder.append("        }" + System.lineSeparator());
         builder.append(System.lineSeparator());
