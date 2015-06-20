@@ -29,13 +29,27 @@ import static jdk.internal.org.objectweb.asm.Opcodes.ACC_FINAL;
 import static jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static jdk.internal.org.objectweb.asm.Opcodes.H_INVOKESTATIC;
 import static jdk.internal.org.objectweb.asm.Opcodes.V1_7;
-import static jdk2.nashorn.internal.tools.nasgen.StringConstants.*;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.INIT;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_FIELD_NAME;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROTOTYPEOBJECT_SETCONSTRUCTOR;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROTOTYPEOBJECT_SETCONSTRUCTOR_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROTOTYPEOBJECT_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_INIT_DESC3;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_INIT_DESC4;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETARITY;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETARITY_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETPROTOTYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETPROTOTYPE_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_INIT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.TYPE_SCRIPTFUNCTION;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.List;
 
 import jdk.internal.org.objectweb.asm.Handle;
@@ -280,7 +294,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         mi.loadThis();
         final String protoName = scriptClassInfo.getPrototypeClassName();
         builder.append("            final Prototype prototype = new Prototype();" + System.lineSeparator());
-        builder.append("            PrototypeObject.setConstructor(prorotype, this);" + System.lineSeparator());
+        builder.append("            PrototypeObject.setConstructor(prototype, this);" + System.lineSeparator());
         builder.append("            setPrototype(prototype);" + System.lineSeparator());
         mi.newObject(protoName);
         mi.dup();
@@ -305,7 +319,11 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         }
 
         final String className = args[0].replace('.', '/');
-        final ScriptClassInfo sci = getScriptClassInfo(className + ".class");
+        getString(className + ".class");
+    }
+
+    public static String getString(String className) throws IOException {
+        final ScriptClassInfo sci = getScriptClassInfo(className);
         if (sci == null) {
             System.err.println("No @ScriptClass in " + className);
             System.exit(2);
@@ -319,6 +337,6 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
             System.exit(3);
         }
         final ConstructorJavaGenerator gen = new ConstructorJavaGenerator(sci);
-        System.out.println(gen.getClassCode());
+        return gen.getClassCode();
     }
 }

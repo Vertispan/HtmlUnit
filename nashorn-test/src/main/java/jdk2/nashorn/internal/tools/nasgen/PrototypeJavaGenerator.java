@@ -192,8 +192,10 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
             System.exit(1);
         }
 
-        final String className = args[0].replace('.', '/');
-        final ScriptClassInfo sci = getScriptClassInfo(className + ".class");
+        final String className = args[0].replace('.', '/') + ".class";
+    }
+    public static String getString(final String className) throws IOException {
+        final ScriptClassInfo sci = getScriptClassInfo(className);
         if (sci == null) {
             System.err.println("No @ScriptClass in " + className);
             System.exit(2);
@@ -206,6 +208,6 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
             System.exit(3);
         }
         final PrototypeJavaGenerator gen = new PrototypeJavaGenerator(sci);
-        System.out.println(gen.getClassCode());
+        return gen.getClassCode();
     }
 }

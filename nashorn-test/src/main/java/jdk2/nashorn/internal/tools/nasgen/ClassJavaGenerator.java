@@ -128,8 +128,6 @@ public class ClassJavaGenerator {
         builder.append("            throw new IllegalStateException(e);" + System.lineSeparator());
         builder.append("        }" + System.lineSeparator());
         builder.append("    }" + System.lineSeparator());
-        builder.append(System.lineSeparator());
-        
         
         return builder.toString();
     }
@@ -503,6 +501,7 @@ public class ClassJavaGenerator {
     }
 
     static ScriptClassInfo getScriptClassInfo(final String fileName) throws IOException {
+        builder.setLength(0);
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
             return getScriptClassInfo(new ClassReader(bis));
         }

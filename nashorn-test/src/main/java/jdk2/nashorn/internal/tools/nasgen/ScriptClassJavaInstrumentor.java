@@ -272,8 +272,11 @@ public class ScriptClassJavaInstrumentor extends ClassVisitor {
             System.err.println("Usage: " + ScriptClassJavaInstrumentor.class.getName() + " <class>");
             System.exit(1);
         }
+        final String fileName = args[0].replace('.', '/');
+        getString(fileName + ".class");
+    }
 
-        final String fileName = args[0].replace('.', '/') + ".class";
+    public static String getString(final String fileName) throws IOException {
         final ScriptClassInfo sci = ClassJavaGenerator.getScriptClassInfo(fileName);
         if (sci == null) {
             System.err.println("No @ScriptClass in " + fileName);
@@ -298,6 +301,6 @@ public class ScriptClassJavaInstrumentor extends ClassVisitor {
 
         String name = sci.getJavaName();
         name = name.substring(name.lastIndexOf('/') + 1);
-        System.out.println(ClassJavaGenerator.getCode(name));
+        return ClassJavaGenerator.getCode(name);
     }
 }
