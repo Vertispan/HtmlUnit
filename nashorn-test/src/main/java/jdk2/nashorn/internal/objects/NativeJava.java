@@ -28,9 +28,13 @@ package jdk2.nashorn.internal.objects;
 import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 import static jdk2.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
@@ -41,9 +45,11 @@ import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.Where;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.Context;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.ListAdapter;
+import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
@@ -653,5 +659,246 @@ public final class NativeJava {
     @Function(attributes = Attribute.NOT_ENUMERABLE, where = Where.CONSTRUCTOR, name="super")
     public static Object _super(final Object self, final Object adapter) {
         return Bootstrap.createSuperAdapter(adapter);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeJava.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptObject {
+        private ScriptFunction isType;
+        private ScriptFunction synchronizedFunc;
+        private ScriptFunction isJavaMethod;
+        private ScriptFunction isJavaFunction;
+        private ScriptFunction isJavaObject;
+        private ScriptFunction isScriptObject;
+        private ScriptFunction isScriptFunction;
+        private ScriptFunction type;
+        private ScriptFunction typeName;
+        private ScriptFunction to;
+        private ScriptFunction from;
+        private ScriptFunction extend;
+        private ScriptFunction _super;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$isType() {
+            return this.isType;
+        }
+
+        public void S$isType(final ScriptFunction function) {
+            this.isType = function;
+        }
+
+        public ScriptFunction G$synchronizedFunc() {
+            return this.synchronizedFunc;
+        }
+
+        public void S$synchronizedFunc(final ScriptFunction function) {
+            this.synchronizedFunc = function;
+        }
+
+        public ScriptFunction G$isJavaMethod() {
+            return this.isJavaMethod;
+        }
+
+        public void S$isJavaMethod(final ScriptFunction function) {
+            this.isJavaMethod = function;
+        }
+
+        public ScriptFunction G$isJavaFunction() {
+            return this.isJavaFunction;
+        }
+
+        public void S$isJavaFunction(final ScriptFunction function) {
+            this.isJavaFunction = function;
+        }
+
+        public ScriptFunction G$isJavaObject() {
+            return this.isJavaObject;
+        }
+
+        public void S$isJavaObject(final ScriptFunction function) {
+            this.isJavaObject = function;
+        }
+
+        public ScriptFunction G$isScriptObject() {
+            return this.isScriptObject;
+        }
+
+        public void S$isScriptObject(final ScriptFunction function) {
+            this.isScriptObject = function;
+        }
+
+        public ScriptFunction G$isScriptFunction() {
+            return this.isScriptFunction;
+        }
+
+        public void S$isScriptFunction(final ScriptFunction function) {
+            this.isScriptFunction = function;
+        }
+
+        public ScriptFunction G$type() {
+            return this.type;
+        }
+
+        public void S$type(final ScriptFunction function) {
+            this.type = function;
+        }
+
+        public ScriptFunction G$typeName() {
+            return this.typeName;
+        }
+
+        public void S$typeName(final ScriptFunction function) {
+            this.typeName = function;
+        }
+
+        public ScriptFunction G$to() {
+            return this.to;
+        }
+
+        public void S$to(final ScriptFunction function) {
+            this.to = function;
+        }
+
+        public ScriptFunction G$from() {
+            return this.from;
+        }
+
+        public void S$from(final ScriptFunction function) {
+            this.from = function;
+        }
+
+        public ScriptFunction G$extend() {
+            return this.extend;
+        }
+
+        public void S$extend(final ScriptFunction function) {
+            this.extend = function;
+        }
+
+        public ScriptFunction G$_super() {
+            return this._super;
+        }
+
+        public void S$_super(final ScriptFunction function) {
+            this._super = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(13);
+            list.add(AccessorProperty.create("isType", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isType", ScriptFunction.class),
+                    virtualHandle("S$isType", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("synchronized", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$synchronizedFunc", ScriptFunction.class),
+                    virtualHandle("S$synchronizedFunc", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isJavaMethod", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isJavaMethod", ScriptFunction.class),
+                    virtualHandle("S$isJavaMethod", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isJavaFunction", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isJavaFunction", ScriptFunction.class),
+                    virtualHandle("S$isJavaFunction", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isJavaObject", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isJavaObject", ScriptFunction.class),
+                    virtualHandle("S$isJavaObject", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isScriptObject", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isScriptObject", ScriptFunction.class),
+                    virtualHandle("S$isScriptObject", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isScriptFunction", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isScriptFunction", ScriptFunction.class),
+                    virtualHandle("S$isScriptFunction", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("type", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$type", ScriptFunction.class),
+                    virtualHandle("S$type", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("typeName", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$typeName", ScriptFunction.class),
+                    virtualHandle("S$typeName", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("to", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$to", ScriptFunction.class),
+                    virtualHandle("S$to", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("from", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$from", ScriptFunction.class),
+                    virtualHandle("S$from", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("extend", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$extend", ScriptFunction.class),
+                    virtualHandle("S$extend", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("super", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$_super", ScriptFunction.class),
+                    virtualHandle("S$_super", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super($nasgenmap$);
+            isType = ScriptFunctionImpl.makeFunction("isType",
+                    staticHandle("isType", boolean.class, Object.class, Object.class));
+            synchronizedFunc = ScriptFunctionImpl.makeFunction("synchronized",
+                    staticHandle("synchronizedFunc", Object.class, Object.class, Object.class, Object.class));
+            isJavaMethod = ScriptFunctionImpl.makeFunction("isJavaMethod",
+                    staticHandle("isJavaMethod", boolean.class, Object.class, Object.class));
+            isJavaFunction = ScriptFunctionImpl.makeFunction("isJavaFunction",
+                    staticHandle("isJavaFunction", boolean.class, Object.class, Object.class));
+            isJavaObject = ScriptFunctionImpl.makeFunction("isJavaObject",
+                    staticHandle("isJavaObject", boolean.class, Object.class, Object.class));
+            isScriptObject = ScriptFunctionImpl.makeFunction("isScriptObject",
+                    staticHandle("isScriptObject", boolean.class, Object.class, Object.class));
+            isScriptFunction = ScriptFunctionImpl.makeFunction("isScriptFunction",
+                    staticHandle("isScriptFunction", boolean.class, Object.class, Object.class));
+            type = ScriptFunctionImpl.makeFunction("type",
+                    staticHandle("type", Object.class, Object.class, Object.class));
+            typeName = ScriptFunctionImpl.makeFunction("typeName",
+                    staticHandle("typeName", Object.class, Object.class, Object.class));
+            to = ScriptFunctionImpl.makeFunction("to",
+                    staticHandle("to", Object.class, Object.class, Object.class, Object.class));
+            from = ScriptFunctionImpl.makeFunction("from",
+                    staticHandle("from", NativeArray.class, Object.class, Object.class));
+            extend = ScriptFunctionImpl.makeFunction("extend",
+                    staticHandle("extend", Object.class, Object.class, Object[].class));
+            _super = ScriptFunctionImpl.makeFunction("super",
+                    staticHandle("_super", Object.class, Object.class, Object.class));
+        }
+
+       public String getClassName() {
+           return "Java";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        Prototype() {
+        }
+
+       public String getClassName() {
+           return "Java";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

@@ -31,14 +31,20 @@ import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import jdk2.internal.dynalink.linker.GuardedInvocation;
 import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.JSType;
+import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
+import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
 import jdk2.nashorn.internal.runtime.linker.PrimitiveLookup;
@@ -185,5 +191,101 @@ public final class NativeBoolean extends ScriptObject {
 
     private static MethodHandle findOwnMH(final String name, final MethodType type) {
         return MH.findStatic(MethodHandles.lookup(), NativeBoolean.class, name, type);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeBoolean.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptFunctionImpl {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Boolean", 
+                    staticHandle("constructor", Object.class, boolean.class, Object.class, Object.class),
+                    $nasgenmap$, null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction valueOf;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(3);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunctionImpl.makeFunction("toString",
+                    staticHandle("toString", String.class, Object.class));
+            valueOf = ScriptFunctionImpl.makeFunction("valueOf",
+                    staticHandle("valueOf", boolean.class, Object.class));
+        }
+
+       public String getClassName() {
+           return "Boolean";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

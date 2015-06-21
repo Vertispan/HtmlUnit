@@ -29,6 +29,8 @@ import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 import static jdk2.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +43,7 @@ import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.SpecializedFunction;
 import jdk2.nashorn.internal.objects.annotations.Where;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.BitVector;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.ParserException;
@@ -48,6 +51,7 @@ import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
+import jdk2.nashorn.internal.runtime.Specialization;
 import jdk2.nashorn.internal.runtime.linker.Bootstrap;
 import jdk2.nashorn.internal.runtime.regexp.RegExp;
 import jdk2.nashorn.internal.runtime.regexp.RegExpFactory;
@@ -945,4 +949,209 @@ public final class NativeRegExp extends ScriptObject {
         this.regexp = regexp;
     }
 
+
+    public Object G$lastIndex() {
+        return this.lastIndex;
+    }
+
+    public void S$lastIndex(final ScriptFunction function) {
+        this.lastIndex = function;
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(NativeRegExp.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("lastIndex", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$lastIndex", Object.class),
+                    virtualHandle("S$lastIndex", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("source", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("source", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("global", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("global", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("ignoreCase", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("ignoreCase", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("multiline", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("multiline", Object.class, Object.class),
+null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeRegExp.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptFunctionImpl {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(19);
+            list.add(AccessorProperty.create("input", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastInput", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("multiline", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastMultiline", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("lastMatch", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastMatch", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("lastParen", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastParen", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("leftContext", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLeftContext", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("rightContext", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getRightContext", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$1", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup1", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$2", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup2", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$3", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup3", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$4", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup4", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$5", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup5", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$6", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup6", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$7", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup7", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$8", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup8", Object.class, Object.class),
+null));
+            list.add(AccessorProperty.create("$9", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup9", Object.class, Object.class),
+null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("RegExp", 
+                    staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, new Specialization[] {
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object.class, Object.class), false)
+            });
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction compile;
+        private ScriptFunction exec;
+        private ScriptFunction test;
+        private ScriptFunction toString;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$compile() {
+            return this.compile;
+        }
+
+        public void S$compile(final ScriptFunction function) {
+            this.compile = function;
+        }
+
+        public ScriptFunction G$exec() {
+            return this.exec;
+        }
+
+        public void S$exec(final ScriptFunction function) {
+            this.exec = function;
+        }
+
+        public ScriptFunction G$test() {
+            return this.test;
+        }
+
+        public void S$test(final ScriptFunction function) {
+            this.test = function;
+        }
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("compile", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$compile", ScriptFunction.class),
+                    virtualHandle("S$compile", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("exec", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$exec", ScriptFunction.class),
+                    virtualHandle("S$exec", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("test", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$test", ScriptFunction.class),
+                    virtualHandle("S$test", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toString", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            compile = ScriptFunctionImpl.makeFunction("compile",
+                    staticHandle("compile", ScriptObject.class, Object.class, Object.class, Object.class));
+            exec = ScriptFunctionImpl.makeFunction("exec",
+                    staticHandle("exec", ScriptObject.class, Object.class, Object.class));
+            test = ScriptFunctionImpl.makeFunction("test",
+                    staticHandle("test", boolean.class, Object.class, Object.class));
+            toString = ScriptFunctionImpl.makeFunction("toString",
+                    staticHandle("toString", String.class, Object.class));
+        }
+
+       public String getClassName() {
+           return "RegExp";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 }

@@ -32,6 +32,9 @@ import static jdk2.nashorn.internal.runtime.Source.sourceFor;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jdk2.internal.dynalink.support.Lookup;
@@ -40,9 +43,11 @@ import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Function;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.parser.Parser;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.Context;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.ParserException;
+import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptEnvironment;
 import jdk2.nashorn.internal.runtime.ScriptFunction;
@@ -304,5 +309,145 @@ public final class NativeFunction {
     private static Parser getParser(final String sourceText) {
         final ScriptEnvironment env = Global.getEnv();
         return new Parser(env, sourceFor("<function>", sourceText), new Context.ThrowErrorManager(), env._strict, null);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeFunction.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptFunctionImpl {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Function", 
+                    staticHandle("function", ScriptFunction.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction apply;
+        private ScriptFunction call;
+        private ScriptFunction bind;
+        private ScriptFunction toSource;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$apply() {
+            return this.apply;
+        }
+
+        public void S$apply(final ScriptFunction function) {
+            this.apply = function;
+        }
+
+        public ScriptFunction G$call() {
+            return this.call;
+        }
+
+        public void S$call(final ScriptFunction function) {
+            this.call = function;
+        }
+
+        public ScriptFunction G$bind() {
+            return this.bind;
+        }
+
+        public void S$bind(final ScriptFunction function) {
+            this.bind = function;
+        }
+
+        public ScriptFunction G$toSource() {
+            return this.toSource;
+        }
+
+        public void S$toSource(final ScriptFunction function) {
+            this.toSource = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(6);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("apply", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$apply", ScriptFunction.class),
+                    virtualHandle("S$apply", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("call", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$call", ScriptFunction.class),
+                    virtualHandle("S$call", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("bind", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$bind", ScriptFunction.class),
+                    virtualHandle("S$bind", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toSource", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toSource", ScriptFunction.class),
+                    virtualHandle("S$toSource", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunctionImpl.makeFunction("toString",
+                    staticHandle("toString", String.class, Object.class));
+            apply = ScriptFunctionImpl.makeFunction("apply",
+                    staticHandle("apply", Object.class, Object.class, Object.class, Object.class));
+            call = ScriptFunctionImpl.makeFunction("call",
+                    staticHandle("call", Object.class, Object.class, Object[].class));
+            call.setArity(1);
+            bind = ScriptFunctionImpl.makeFunction("bind",
+                    staticHandle("bind", Object.class, Object.class, Object[].class));
+            bind.setArity(1);
+            toSource = ScriptFunctionImpl.makeFunction("toSource",
+                    staticHandle("toSource", String.class, Object.class));
+        }
+
+       public String getClassName() {
+           return "Function";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

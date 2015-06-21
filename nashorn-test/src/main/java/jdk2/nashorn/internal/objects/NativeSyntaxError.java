@@ -26,12 +26,21 @@
 package jdk2.nashorn.internal.objects;
 
 import static jdk2.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.List;
+
 import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.Where;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.JSType;
 import jdk2.nashorn.internal.runtime.PropertyMap;
+import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 
 /**
@@ -95,6 +104,127 @@ public final class NativeSyntaxError extends ScriptObject {
     public static NativeSyntaxError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeSyntaxError(msg);
     }
+
+    static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("message", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$instMessage", Object.class),
+                    virtualHandle("S$instMessage", void.class, Object.class)));
+            list.add(AccessorProperty.create("nashornException", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$nashornException", Object.class),
+                    virtualHandle("S$nashornException", void.class, Object.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+    public Object G$instMessage() {
+        return this.instMessage;
+    }
+
+    public void S$instMessage(final Object function) {
+        this.instMessage = function;
+    }
+
+    public Object G$nashornException() {
+        return this.nashornException;
+    }
+
+    public void S$nashornException(final Object function) {
+        this.nashornException = function;
+    }
+
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeSyntaxError.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(NativeSyntaxError.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptFunctionImpl {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(1);
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("SyntaxError", 
+                    staticHandle("constructor", NativeSyntaxError.class, boolean.class, Object.class, Object.class),
+                    $nasgenmap$, null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        private Object name;
+        private Object message;
+        private static final PropertyMap $nasgenmap$;
+
+        public Object G$name() {
+            return this.name;
+        }
+
+        public void S$name(final Object function) {
+            this.name = function;
+        }
+
+        public Object G$message() {
+            return this.message;
+        }
+
+        public void S$message(final Object function) {
+            this.message = function;
+        }
+
+        static {
+            final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(3);
+            list.add(AccessorProperty.create("name", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$name", Object.class),
+                    virtualHandle("S$name", void.class, Object.class)));
+            list.add(AccessorProperty.create("message", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$message", Object.class),
+                    virtualHandle("S$message", void.class, Object.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+        }
+
+       public String getClassName() {
+           return "Error";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 }
-
-

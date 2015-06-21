@@ -31,6 +31,12 @@ import static java.lang.Double.isNaN;
 import static jdk2.nashorn.internal.runtime.ECMAErrors.rangeError;
 import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
@@ -41,12 +47,16 @@ import jdk2.nashorn.internal.objects.annotations.ScriptClass;
 import jdk2.nashorn.internal.objects.annotations.SpecializedFunction;
 import jdk2.nashorn.internal.objects.annotations.Where;
 import jdk2.nashorn.internal.parser.DateParser;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.ConsString;
 import jdk2.nashorn.internal.runtime.JSType;
+import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptEnvironment;
+import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
+import jdk2.nashorn.internal.runtime.Specialization;
 import jdk2.nashorn.internal.runtime.linker.Bootstrap;
 import jdk2.nashorn.internal.runtime.linker.InvokeByName;
 
@@ -1344,5 +1354,776 @@ public final class NativeDate extends ScriptObject {
 
     private TimeZone getTimeZone() {
         return timezone;
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeDate.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    static final class Constructor extends ScriptFunctionImpl {
+        private ScriptFunction parse;
+        private ScriptFunction UTC;
+        private ScriptFunction now;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$parse() {
+            return this.parse;
+        }
+
+        public void S$parse(final ScriptFunction function) {
+            this.parse = function;
+        }
+
+        public ScriptFunction G$UTC() {
+            return this.UTC;
+        }
+
+        public void S$UTC(final ScriptFunction function) {
+            this.UTC = function;
+        }
+
+        public ScriptFunction G$now() {
+            return this.now;
+        }
+
+        public void S$now(final ScriptFunction function) {
+            this.now = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("parse", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$parse", ScriptFunction.class),
+                    virtualHandle("S$parse", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("UTC", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$UTC", ScriptFunction.class),
+                    virtualHandle("S$UTC", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("now", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$now", ScriptFunction.class),
+                    virtualHandle("S$now", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Date", 
+                    staticHandle("construct", Object.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, new Specialization[] {
+                        new Specialization(staticHandle("construct", Object.class, boolean.class, Object.class), false)
+            });
+            parse = ScriptFunctionImpl.makeFunction("parse",
+                    staticHandle("parse", double.class, Object.class, Object.class));
+            UTC = ScriptFunctionImpl.makeFunction("UTC",
+                    staticHandle("UTC", double.class, Object.class, Object[].class));
+            UTC.setArity(7);
+            now = ScriptFunctionImpl.makeFunction("now",
+                    staticHandle("now", long.class, Object.class));
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction toDateString;
+        private ScriptFunction toTimeString;
+        private ScriptFunction toLocaleString;
+        private ScriptFunction toLocaleDateString;
+        private ScriptFunction toLocaleTimeString;
+        private ScriptFunction valueOf;
+        private ScriptFunction getTime;
+        private ScriptFunction getFullYear;
+        private ScriptFunction getUTCFullYear;
+        private ScriptFunction getYear;
+        private ScriptFunction getMonth;
+        private ScriptFunction getUTCMonth;
+        private ScriptFunction getDate;
+        private ScriptFunction getUTCDate;
+        private ScriptFunction getDay;
+        private ScriptFunction getUTCDay;
+        private ScriptFunction getHours;
+        private ScriptFunction getUTCHours;
+        private ScriptFunction getMinutes;
+        private ScriptFunction getUTCMinutes;
+        private ScriptFunction getSeconds;
+        private ScriptFunction getUTCSeconds;
+        private ScriptFunction getMilliseconds;
+        private ScriptFunction getUTCMilliseconds;
+        private ScriptFunction getTimezoneOffset;
+        private ScriptFunction setTime;
+        private ScriptFunction setMilliseconds;
+        private ScriptFunction setUTCMilliseconds;
+        private ScriptFunction setSeconds;
+        private ScriptFunction setUTCSeconds;
+        private ScriptFunction setMinutes;
+        private ScriptFunction setUTCMinutes;
+        private ScriptFunction setHours;
+        private ScriptFunction setUTCHours;
+        private ScriptFunction setDate;
+        private ScriptFunction setUTCDate;
+        private ScriptFunction setMonth;
+        private ScriptFunction setUTCMonth;
+        private ScriptFunction setFullYear;
+        private ScriptFunction setUTCFullYear;
+        private ScriptFunction setYear;
+        private ScriptFunction toUTCString;
+        private ScriptFunction toGMTString;
+        private ScriptFunction toISOString;
+        private ScriptFunction toJSON;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$toDateString() {
+            return this.toDateString;
+        }
+
+        public void S$toDateString(final ScriptFunction function) {
+            this.toDateString = function;
+        }
+
+        public ScriptFunction G$toTimeString() {
+            return this.toTimeString;
+        }
+
+        public void S$toTimeString(final ScriptFunction function) {
+            this.toTimeString = function;
+        }
+
+        public ScriptFunction G$toLocaleString() {
+            return this.toLocaleString;
+        }
+
+        public void S$toLocaleString(final ScriptFunction function) {
+            this.toLocaleString = function;
+        }
+
+        public ScriptFunction G$toLocaleDateString() {
+            return this.toLocaleDateString;
+        }
+
+        public void S$toLocaleDateString(final ScriptFunction function) {
+            this.toLocaleDateString = function;
+        }
+
+        public ScriptFunction G$toLocaleTimeString() {
+            return this.toLocaleTimeString;
+        }
+
+        public void S$toLocaleTimeString(final ScriptFunction function) {
+            this.toLocaleTimeString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        public ScriptFunction G$getTime() {
+            return this.getTime;
+        }
+
+        public void S$getTime(final ScriptFunction function) {
+            this.getTime = function;
+        }
+
+        public ScriptFunction G$getFullYear() {
+            return this.getFullYear;
+        }
+
+        public void S$getFullYear(final ScriptFunction function) {
+            this.getFullYear = function;
+        }
+
+        public ScriptFunction G$getUTCFullYear() {
+            return this.getUTCFullYear;
+        }
+
+        public void S$getUTCFullYear(final ScriptFunction function) {
+            this.getUTCFullYear = function;
+        }
+
+        public ScriptFunction G$getYear() {
+            return this.getYear;
+        }
+
+        public void S$getYear(final ScriptFunction function) {
+            this.getYear = function;
+        }
+
+        public ScriptFunction G$getMonth() {
+            return this.getMonth;
+        }
+
+        public void S$getMonth(final ScriptFunction function) {
+            this.getMonth = function;
+        }
+
+        public ScriptFunction G$getUTCMonth() {
+            return this.getUTCMonth;
+        }
+
+        public void S$getUTCMonth(final ScriptFunction function) {
+            this.getUTCMonth = function;
+        }
+
+        public ScriptFunction G$getDate() {
+            return this.getDate;
+        }
+
+        public void S$getDate(final ScriptFunction function) {
+            this.getDate = function;
+        }
+
+        public ScriptFunction G$getUTCDate() {
+            return this.getUTCDate;
+        }
+
+        public void S$getUTCDate(final ScriptFunction function) {
+            this.getUTCDate = function;
+        }
+
+        public ScriptFunction G$getDay() {
+            return this.getDay;
+        }
+
+        public void S$getDay(final ScriptFunction function) {
+            this.getDay = function;
+        }
+
+        public ScriptFunction G$getUTCDay() {
+            return this.getUTCDay;
+        }
+
+        public void S$getUTCDay(final ScriptFunction function) {
+            this.getUTCDay = function;
+        }
+
+        public ScriptFunction G$getHours() {
+            return this.getHours;
+        }
+
+        public void S$getHours(final ScriptFunction function) {
+            this.getHours = function;
+        }
+
+        public ScriptFunction G$getUTCHours() {
+            return this.getUTCHours;
+        }
+
+        public void S$getUTCHours(final ScriptFunction function) {
+            this.getUTCHours = function;
+        }
+
+        public ScriptFunction G$getMinutes() {
+            return this.getMinutes;
+        }
+
+        public void S$getMinutes(final ScriptFunction function) {
+            this.getMinutes = function;
+        }
+
+        public ScriptFunction G$getUTCMinutes() {
+            return this.getUTCMinutes;
+        }
+
+        public void S$getUTCMinutes(final ScriptFunction function) {
+            this.getUTCMinutes = function;
+        }
+
+        public ScriptFunction G$getSeconds() {
+            return this.getSeconds;
+        }
+
+        public void S$getSeconds(final ScriptFunction function) {
+            this.getSeconds = function;
+        }
+
+        public ScriptFunction G$getUTCSeconds() {
+            return this.getUTCSeconds;
+        }
+
+        public void S$getUTCSeconds(final ScriptFunction function) {
+            this.getUTCSeconds = function;
+        }
+
+        public ScriptFunction G$getMilliseconds() {
+            return this.getMilliseconds;
+        }
+
+        public void S$getMilliseconds(final ScriptFunction function) {
+            this.getMilliseconds = function;
+        }
+
+        public ScriptFunction G$getUTCMilliseconds() {
+            return this.getUTCMilliseconds;
+        }
+
+        public void S$getUTCMilliseconds(final ScriptFunction function) {
+            this.getUTCMilliseconds = function;
+        }
+
+        public ScriptFunction G$getTimezoneOffset() {
+            return this.getTimezoneOffset;
+        }
+
+        public void S$getTimezoneOffset(final ScriptFunction function) {
+            this.getTimezoneOffset = function;
+        }
+
+        public ScriptFunction G$setTime() {
+            return this.setTime;
+        }
+
+        public void S$setTime(final ScriptFunction function) {
+            this.setTime = function;
+        }
+
+        public ScriptFunction G$setMilliseconds() {
+            return this.setMilliseconds;
+        }
+
+        public void S$setMilliseconds(final ScriptFunction function) {
+            this.setMilliseconds = function;
+        }
+
+        public ScriptFunction G$setUTCMilliseconds() {
+            return this.setUTCMilliseconds;
+        }
+
+        public void S$setUTCMilliseconds(final ScriptFunction function) {
+            this.setUTCMilliseconds = function;
+        }
+
+        public ScriptFunction G$setSeconds() {
+            return this.setSeconds;
+        }
+
+        public void S$setSeconds(final ScriptFunction function) {
+            this.setSeconds = function;
+        }
+
+        public ScriptFunction G$setUTCSeconds() {
+            return this.setUTCSeconds;
+        }
+
+        public void S$setUTCSeconds(final ScriptFunction function) {
+            this.setUTCSeconds = function;
+        }
+
+        public ScriptFunction G$setMinutes() {
+            return this.setMinutes;
+        }
+
+        public void S$setMinutes(final ScriptFunction function) {
+            this.setMinutes = function;
+        }
+
+        public ScriptFunction G$setUTCMinutes() {
+            return this.setUTCMinutes;
+        }
+
+        public void S$setUTCMinutes(final ScriptFunction function) {
+            this.setUTCMinutes = function;
+        }
+
+        public ScriptFunction G$setHours() {
+            return this.setHours;
+        }
+
+        public void S$setHours(final ScriptFunction function) {
+            this.setHours = function;
+        }
+
+        public ScriptFunction G$setUTCHours() {
+            return this.setUTCHours;
+        }
+
+        public void S$setUTCHours(final ScriptFunction function) {
+            this.setUTCHours = function;
+        }
+
+        public ScriptFunction G$setDate() {
+            return this.setDate;
+        }
+
+        public void S$setDate(final ScriptFunction function) {
+            this.setDate = function;
+        }
+
+        public ScriptFunction G$setUTCDate() {
+            return this.setUTCDate;
+        }
+
+        public void S$setUTCDate(final ScriptFunction function) {
+            this.setUTCDate = function;
+        }
+
+        public ScriptFunction G$setMonth() {
+            return this.setMonth;
+        }
+
+        public void S$setMonth(final ScriptFunction function) {
+            this.setMonth = function;
+        }
+
+        public ScriptFunction G$setUTCMonth() {
+            return this.setUTCMonth;
+        }
+
+        public void S$setUTCMonth(final ScriptFunction function) {
+            this.setUTCMonth = function;
+        }
+
+        public ScriptFunction G$setFullYear() {
+            return this.setFullYear;
+        }
+
+        public void S$setFullYear(final ScriptFunction function) {
+            this.setFullYear = function;
+        }
+
+        public ScriptFunction G$setUTCFullYear() {
+            return this.setUTCFullYear;
+        }
+
+        public void S$setUTCFullYear(final ScriptFunction function) {
+            this.setUTCFullYear = function;
+        }
+
+        public ScriptFunction G$setYear() {
+            return this.setYear;
+        }
+
+        public void S$setYear(final ScriptFunction function) {
+            this.setYear = function;
+        }
+
+        public ScriptFunction G$toUTCString() {
+            return this.toUTCString;
+        }
+
+        public void S$toUTCString(final ScriptFunction function) {
+            this.toUTCString = function;
+        }
+
+        public ScriptFunction G$toGMTString() {
+            return this.toGMTString;
+        }
+
+        public void S$toGMTString(final ScriptFunction function) {
+            this.toGMTString = function;
+        }
+
+        public ScriptFunction G$toISOString() {
+            return this.toISOString;
+        }
+
+        public void S$toISOString(final ScriptFunction function) {
+            this.toISOString = function;
+        }
+
+        public ScriptFunction G$toJSON() {
+            return this.toJSON;
+        }
+
+        public void S$toJSON(final ScriptFunction function) {
+            this.toJSON = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(47);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toDateString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toDateString", ScriptFunction.class),
+                    virtualHandle("S$toDateString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toTimeString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toTimeString", ScriptFunction.class),
+                    virtualHandle("S$toTimeString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleDateString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleDateString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleDateString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleTimeString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleTimeString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleTimeString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getTime", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getTime", ScriptFunction.class),
+                    virtualHandle("S$getTime", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getFullYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getFullYear", ScriptFunction.class),
+                    virtualHandle("S$getFullYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCFullYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCFullYear", ScriptFunction.class),
+                    virtualHandle("S$getUTCFullYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getYear", ScriptFunction.class),
+                    virtualHandle("S$getYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getMonth", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getMonth", ScriptFunction.class),
+                    virtualHandle("S$getMonth", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCMonth", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCMonth", ScriptFunction.class),
+                    virtualHandle("S$getUTCMonth", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getDate", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getDate", ScriptFunction.class),
+                    virtualHandle("S$getDate", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCDate", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCDate", ScriptFunction.class),
+                    virtualHandle("S$getUTCDate", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getDay", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getDay", ScriptFunction.class),
+                    virtualHandle("S$getDay", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCDay", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCDay", ScriptFunction.class),
+                    virtualHandle("S$getUTCDay", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getHours", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getHours", ScriptFunction.class),
+                    virtualHandle("S$getHours", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCHours", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCHours", ScriptFunction.class),
+                    virtualHandle("S$getUTCHours", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getMinutes", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getMinutes", ScriptFunction.class),
+                    virtualHandle("S$getMinutes", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCMinutes", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCMinutes", ScriptFunction.class),
+                    virtualHandle("S$getUTCMinutes", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getSeconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getSeconds", ScriptFunction.class),
+                    virtualHandle("S$getSeconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCSeconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCSeconds", ScriptFunction.class),
+                    virtualHandle("S$getUTCSeconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getMilliseconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getMilliseconds", ScriptFunction.class),
+                    virtualHandle("S$getMilliseconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUTCMilliseconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUTCMilliseconds", ScriptFunction.class),
+                    virtualHandle("S$getUTCMilliseconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getTimezoneOffset", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getTimezoneOffset", ScriptFunction.class),
+                    virtualHandle("S$getTimezoneOffset", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setTime", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setTime", ScriptFunction.class),
+                    virtualHandle("S$setTime", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setMilliseconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setMilliseconds", ScriptFunction.class),
+                    virtualHandle("S$setMilliseconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCMilliseconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCMilliseconds", ScriptFunction.class),
+                    virtualHandle("S$setUTCMilliseconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setSeconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setSeconds", ScriptFunction.class),
+                    virtualHandle("S$setSeconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCSeconds", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCSeconds", ScriptFunction.class),
+                    virtualHandle("S$setUTCSeconds", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setMinutes", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setMinutes", ScriptFunction.class),
+                    virtualHandle("S$setMinutes", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCMinutes", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCMinutes", ScriptFunction.class),
+                    virtualHandle("S$setUTCMinutes", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setHours", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setHours", ScriptFunction.class),
+                    virtualHandle("S$setHours", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCHours", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCHours", ScriptFunction.class),
+                    virtualHandle("S$setUTCHours", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setDate", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setDate", ScriptFunction.class),
+                    virtualHandle("S$setDate", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCDate", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCDate", ScriptFunction.class),
+                    virtualHandle("S$setUTCDate", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setMonth", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setMonth", ScriptFunction.class),
+                    virtualHandle("S$setMonth", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCMonth", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCMonth", ScriptFunction.class),
+                    virtualHandle("S$setUTCMonth", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setFullYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setFullYear", ScriptFunction.class),
+                    virtualHandle("S$setFullYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUTCFullYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUTCFullYear", ScriptFunction.class),
+                    virtualHandle("S$setUTCFullYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setYear", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setYear", ScriptFunction.class),
+                    virtualHandle("S$setYear", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toUTCString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toUTCString", ScriptFunction.class),
+                    virtualHandle("S$toUTCString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toGMTString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toGMTString", ScriptFunction.class),
+                    virtualHandle("S$toGMTString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toISOString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toISOString", ScriptFunction.class),
+                    virtualHandle("S$toISOString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toJSON", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toJSON", ScriptFunction.class),
+                    virtualHandle("S$toJSON", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunctionImpl.makeFunction("toString",
+                    staticHandle("toString", String.class, Object.class));
+            toDateString = ScriptFunctionImpl.makeFunction("toDateString",
+                    staticHandle("toDateString", String.class, Object.class));
+            toTimeString = ScriptFunctionImpl.makeFunction("toTimeString",
+                    staticHandle("toTimeString", String.class, Object.class));
+            toLocaleString = ScriptFunctionImpl.makeFunction("toLocaleString",
+                    staticHandle("toLocaleString", String.class, Object.class));
+            toLocaleDateString = ScriptFunctionImpl.makeFunction("toLocaleDateString",
+                    staticHandle("toLocaleDateString", String.class, Object.class));
+            toLocaleTimeString = ScriptFunctionImpl.makeFunction("toLocaleTimeString",
+                    staticHandle("toLocaleTimeString", String.class, Object.class));
+            valueOf = ScriptFunctionImpl.makeFunction("valueOf",
+                    staticHandle("valueOf", double.class, Object.class));
+            getTime = ScriptFunctionImpl.makeFunction("getTime",
+                    staticHandle("getTime", double.class, Object.class));
+            getFullYear = ScriptFunctionImpl.makeFunction("getFullYear",
+                    staticHandle("getFullYear", Object.class, Object.class));
+            getUTCFullYear = ScriptFunctionImpl.makeFunction("getUTCFullYear",
+                    staticHandle("getUTCFullYear", double.class, Object.class));
+            getYear = ScriptFunctionImpl.makeFunction("getYear",
+                    staticHandle("getYear", double.class, Object.class));
+            getMonth = ScriptFunctionImpl.makeFunction("getMonth",
+                    staticHandle("getMonth", double.class, Object.class));
+            getUTCMonth = ScriptFunctionImpl.makeFunction("getUTCMonth",
+                    staticHandle("getUTCMonth", double.class, Object.class));
+            getDate = ScriptFunctionImpl.makeFunction("getDate",
+                    staticHandle("getDate", double.class, Object.class));
+            getUTCDate = ScriptFunctionImpl.makeFunction("getUTCDate",
+                    staticHandle("getUTCDate", double.class, Object.class));
+            getDay = ScriptFunctionImpl.makeFunction("getDay",
+                    staticHandle("getDay", double.class, Object.class));
+            getUTCDay = ScriptFunctionImpl.makeFunction("getUTCDay",
+                    staticHandle("getUTCDay", double.class, Object.class));
+            getHours = ScriptFunctionImpl.makeFunction("getHours",
+                    staticHandle("getHours", double.class, Object.class));
+            getUTCHours = ScriptFunctionImpl.makeFunction("getUTCHours",
+                    staticHandle("getUTCHours", double.class, Object.class));
+            getMinutes = ScriptFunctionImpl.makeFunction("getMinutes",
+                    staticHandle("getMinutes", double.class, Object.class));
+            getUTCMinutes = ScriptFunctionImpl.makeFunction("getUTCMinutes",
+                    staticHandle("getUTCMinutes", double.class, Object.class));
+            getSeconds = ScriptFunctionImpl.makeFunction("getSeconds",
+                    staticHandle("getSeconds", double.class, Object.class));
+            getUTCSeconds = ScriptFunctionImpl.makeFunction("getUTCSeconds",
+                    staticHandle("getUTCSeconds", double.class, Object.class));
+            getMilliseconds = ScriptFunctionImpl.makeFunction("getMilliseconds",
+                    staticHandle("getMilliseconds", double.class, Object.class));
+            getUTCMilliseconds = ScriptFunctionImpl.makeFunction("getUTCMilliseconds",
+                    staticHandle("getUTCMilliseconds", double.class, Object.class));
+            getTimezoneOffset = ScriptFunctionImpl.makeFunction("getTimezoneOffset",
+                    staticHandle("getTimezoneOffset", double.class, Object.class));
+            setTime = ScriptFunctionImpl.makeFunction("setTime",
+                    staticHandle("setTime", double.class, Object.class, Object.class));
+            setMilliseconds = ScriptFunctionImpl.makeFunction("setMilliseconds",
+                    staticHandle("setMilliseconds", double.class, Object.class, Object[].class));
+            setMilliseconds.setArity(1);
+            setUTCMilliseconds = ScriptFunctionImpl.makeFunction("setUTCMilliseconds",
+                    staticHandle("setUTCMilliseconds", double.class, Object.class, Object[].class));
+            setUTCMilliseconds.setArity(1);
+            setSeconds = ScriptFunctionImpl.makeFunction("setSeconds",
+                    staticHandle("setSeconds", double.class, Object.class, Object[].class));
+            setSeconds.setArity(2);
+            setUTCSeconds = ScriptFunctionImpl.makeFunction("setUTCSeconds",
+                    staticHandle("setUTCSeconds", double.class, Object.class, Object[].class));
+            setUTCSeconds.setArity(2);
+            setMinutes = ScriptFunctionImpl.makeFunction("setMinutes",
+                    staticHandle("setMinutes", double.class, Object.class, Object[].class));
+            setMinutes.setArity(3);
+            setUTCMinutes = ScriptFunctionImpl.makeFunction("setUTCMinutes",
+                    staticHandle("setUTCMinutes", double.class, Object.class, Object[].class));
+            setUTCMinutes.setArity(3);
+            setHours = ScriptFunctionImpl.makeFunction("setHours",
+                    staticHandle("setHours", double.class, Object.class, Object[].class));
+            setHours.setArity(4);
+            setUTCHours = ScriptFunctionImpl.makeFunction("setUTCHours",
+                    staticHandle("setUTCHours", double.class, Object.class, Object[].class));
+            setUTCHours.setArity(4);
+            setDate = ScriptFunctionImpl.makeFunction("setDate",
+                    staticHandle("setDate", double.class, Object.class, Object[].class));
+            setDate.setArity(1);
+            setUTCDate = ScriptFunctionImpl.makeFunction("setUTCDate",
+                    staticHandle("setUTCDate", double.class, Object.class, Object[].class));
+            setUTCDate.setArity(1);
+            setMonth = ScriptFunctionImpl.makeFunction("setMonth",
+                    staticHandle("setMonth", double.class, Object.class, Object[].class));
+            setMonth.setArity(2);
+            setUTCMonth = ScriptFunctionImpl.makeFunction("setUTCMonth",
+                    staticHandle("setUTCMonth", double.class, Object.class, Object[].class));
+            setUTCMonth.setArity(2);
+            setFullYear = ScriptFunctionImpl.makeFunction("setFullYear",
+                    staticHandle("setFullYear", double.class, Object.class, Object[].class));
+            setFullYear.setArity(3);
+            setUTCFullYear = ScriptFunctionImpl.makeFunction("setUTCFullYear",
+                    staticHandle("setUTCFullYear", double.class, Object.class, Object[].class));
+            setUTCFullYear.setArity(3);
+            setYear = ScriptFunctionImpl.makeFunction("setYear",
+                    staticHandle("setYear", double.class, Object.class, Object.class));
+            toUTCString = ScriptFunctionImpl.makeFunction("toUTCString",
+                    staticHandle("toUTCString", String.class, Object.class));
+            toGMTString = ScriptFunctionImpl.makeFunction("toGMTString",
+                    staticHandle("toGMTString", String.class, Object.class));
+            toISOString = ScriptFunctionImpl.makeFunction("toISOString",
+                    staticHandle("toISOString", String.class, Object.class));
+            toJSON = ScriptFunctionImpl.makeFunction("toJSON",
+                    staticHandle("toJSON", Object.class, Object.class, Object.class));
+        }
+
+       public String getClassName() {
+           return "Date";
+       }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }
