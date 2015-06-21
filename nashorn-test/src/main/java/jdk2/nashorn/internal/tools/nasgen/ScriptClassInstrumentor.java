@@ -38,12 +38,10 @@ import static jdk2.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DE
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.INIT;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import jdk.internal.org.objectweb.asm.AnnotationVisitor;
 import jdk.internal.org.objectweb.asm.Attribute;
 import jdk.internal.org.objectweb.asm.ClassReader;

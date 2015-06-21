@@ -134,7 +134,7 @@ public class Main {
                 String simpleName = inFile.getName();
                 simpleName = simpleName.substring(0, simpleName.indexOf(".class"));
 
-                if (sci.isPrototypeNeeded()) {
+                if (sci.getPrototypeMemberCount() > 0) {
                     // generate prototype class
                     final PrototypeGenerator protGen = new PrototypeGenerator(sci);
                     buf = protGen.getClassBytes();
@@ -146,7 +146,7 @@ public class Main {
                     }
                 }
 
-                if (sci.isConstructorNeeded()) {
+                if (sci.getConstructorMemberCount() > 0 || sci.getConstructor() != null) {
                     // generate constructor class
                     final ConstructorGenerator consGen = new ConstructorGenerator(sci);
                     buf = consGen.getClassBytes();

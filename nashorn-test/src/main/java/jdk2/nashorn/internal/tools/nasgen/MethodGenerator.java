@@ -82,9 +82,7 @@ import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_INIT3;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_TYPE;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.TYPE_SPECIALIZATION;
-
 import java.util.List;
-
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Type;

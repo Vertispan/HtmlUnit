@@ -27,7 +27,6 @@ package jdk2.nashorn.internal.tools.nasgen;
 
 import static jdk2.nashorn.internal.tools.nasgen.ScriptClassInfo.SCRIPT_CLASS_ANNO_DESC;
 import static jdk2.nashorn.internal.tools.nasgen.ScriptClassInfo.WHERE_ENUM_DESC;
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,7 +34,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import jdk.internal.org.objectweb.asm.AnnotationVisitor;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
@@ -290,7 +288,9 @@ public class ScriptClassInfoCollector extends ClassVisitor {
                                         where = Where.PROTOTYPE;
                                         break;
                                     case SPECIALIZED_FUNCTION:
-                                        where = isSpecializedConstructor? Where.CONSTRUCTOR : Where.PROTOTYPE;
+                                        if (isSpecializedConstructor) {
+                                            where = Where.CONSTRUCTOR;
+                                        }
                                         //fallthru
                                     default:
                                         break;

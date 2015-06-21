@@ -35,7 +35,7 @@ import jdk2.nashorn.internal.runtime.ScriptObject;
 
 /**
  * Details about a Java method or field annotated with any of the field/method
- * annotations from the jdk.nashorn.internal.objects.annotations package.
+ * annotations from the jdk2.nashorn.internal.objects.annotations package.
  */
 public final class MemberInfo implements Cloneable {
     // class loader of this class
