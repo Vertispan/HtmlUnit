@@ -273,7 +273,7 @@ public class ScriptClassJavaInstrumentor extends ClassVisitor {
             System.exit(1);
         }
         final String fileName = args[0].replace('.', '/');
-        getString(fileName + ".class");
+        System.out.println(getString(fileName + ".class"));
     }
 
     public static String getString(final String fileName) throws IOException {

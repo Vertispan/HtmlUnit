@@ -319,7 +319,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
         }
 
         final String className = args[0].replace('.', '/');
-        getString(className + ".class");
+        System.out.println(getString(className + ".class"));
     }
 
     public static String getString(String className) throws IOException {

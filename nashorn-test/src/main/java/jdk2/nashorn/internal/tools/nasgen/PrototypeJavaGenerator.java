@@ -193,7 +193,9 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
         }
 
         final String className = args[0].replace('.', '/') + ".class";
+        System.out.println(getString(className));
     }
+
     public static String getString(final String className) throws IOException {
         final ScriptClassInfo sci = getScriptClassInfo(className);
         if (sci == null) {
