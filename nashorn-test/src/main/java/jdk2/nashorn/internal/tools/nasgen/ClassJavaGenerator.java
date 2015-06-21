@@ -206,8 +206,7 @@ public class ClassJavaGenerator {
             case 'I': return Type.INT_TYPE;
             case 'J': return Type.LONG_TYPE;
             case 'D': return Type.DOUBLE_TYPE;
-            default:
-                assert false : memInfo.getJavaDesc();
+            default:  assert false : memInfo.getJavaDesc();
             case 'L': return TYPE_OBJECT;
         }
     }
