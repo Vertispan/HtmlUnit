@@ -945,7 +945,7 @@ public final class Context {
 
     /**
      * Lookup a Java class. This is used for JSR-223 stuff linking in from
-     * {@code jdk2.nashorn.internal.objects.NativeJava} and {@code jdk.nashorn.internal.runtime.NativeJavaPackage}
+     * {@code jdk2.nashorn.internal.objects.NativeJava} and {@code jdk2.nashorn.internal.runtime.NativeJavaPackage}
      *
      * @param fullName full name of class to load
      *
