@@ -56,6 +56,7 @@ import jdk2.nashorn.internal.lookup.Lookup;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Property;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.ConsString;
 import jdk2.nashorn.internal.runtime.Context;
 import jdk2.nashorn.internal.runtime.ECMAErrors;
@@ -1858,18 +1859,18 @@ public final class Global extends ScriptObject implements Scope {
         this.eval = this.builtinEval = ScriptFunctionImpl.makeFunction("eval", EVAL);
 
         this.parseInt = ScriptFunctionImpl.makeFunction("parseInt",   GlobalFunctions.PARSEINT,
-                    new Specialization[] {
-                    new Specialization(GlobalFunctions.PARSEINT_Z),
-                    new Specialization(GlobalFunctions.PARSEINT_I),
-                    new Specialization(GlobalFunctions.PARSEINT_J),
-                    new Specialization(GlobalFunctions.PARSEINT_OI),
-                    new Specialization(GlobalFunctions.PARSEINT_O) });
+                new Specialization[] {
+                new Specialization(GlobalFunctions.PARSEINT_Z),
+                new Specialization(GlobalFunctions.PARSEINT_I),
+                new Specialization(GlobalFunctions.PARSEINT_J),
+                new Specialization(GlobalFunctions.PARSEINT_OI),
+                new Specialization(GlobalFunctions.PARSEINT_O) });
         this.parseFloat = ScriptFunctionImpl.makeFunction("parseFloat", GlobalFunctions.PARSEFLOAT);
         this.isNaN = ScriptFunctionImpl.makeFunction("isNaN",   GlobalFunctions.IS_NAN,
-                   new Specialization[] {
-                        new Specialization(GlobalFunctions.IS_NAN_I),
-                        new Specialization(GlobalFunctions.IS_NAN_J),
-                        new Specialization(GlobalFunctions.IS_NAN_D) });
+                new Specialization[] {
+                new Specialization(GlobalFunctions.IS_NAN_I),
+                new Specialization(GlobalFunctions.IS_NAN_J),
+                new Specialization(GlobalFunctions.IS_NAN_D) });
         this.parseFloat         = ScriptFunctionImpl.makeFunction("parseFloat", GlobalFunctions.PARSEFLOAT);
         this.isNaN              = ScriptFunctionImpl.makeFunction("isNaN",      GlobalFunctions.IS_NAN);
         this.isFinite           = ScriptFunctionImpl.makeFunction("isFinite",   GlobalFunctions.IS_FINITE);
@@ -2377,6 +2378,664 @@ public final class Global extends ScriptObject implements Scope {
             final MethodType type = invocation.getInvocation().type();
             return invocation.asType(type.changeParameterType(0, Object.class)).filterArguments(0, LEXICAL_SCOPE_FILTER);
         }
+    }
+
+    static {
+        final List<jdk2.nashorn.internal.runtime.Property> list = new ArrayList<>(61);
+        list.add(AccessorProperty.create("arguments", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$arguments", Object.class),
+                virtualHandle("S$arguments", void.class, Object.class)));
+        list.add(AccessorProperty.create("parseInt", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$parseInt", Object.class),
+                virtualHandle("S$parseInt", void.class, Object.class)));
+        list.add(AccessorProperty.create("parseFloat", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$parseFloat", Object.class),
+                virtualHandle("S$parseFloat", void.class, Object.class)));
+        list.add(AccessorProperty.create("isNaN", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$isNaN", Object.class),
+                virtualHandle("S$isNaN", void.class, Object.class)));
+        list.add(AccessorProperty.create("isFinite", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$isFinite", Object.class),
+                virtualHandle("S$isFinite", void.class, Object.class)));
+        list.add(AccessorProperty.create("encodeURI", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$encodeURI", Object.class),
+                virtualHandle("S$encodeURI", void.class, Object.class)));
+        list.add(AccessorProperty.create("encodeURIComponent", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$encodeURIComponent", Object.class),
+                virtualHandle("S$encodeURIComponent", void.class, Object.class)));
+        list.add(AccessorProperty.create("decodeURI", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$decodeURI", Object.class),
+                virtualHandle("S$decodeURI", void.class, Object.class)));
+        list.add(AccessorProperty.create("decodeURIComponent", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$decodeURIComponent", Object.class),
+                virtualHandle("S$decodeURIComponent", void.class, Object.class)));
+        list.add(AccessorProperty.create("escape", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$escape", Object.class),
+                virtualHandle("S$escape", void.class, Object.class)));
+        list.add(AccessorProperty.create("unescape", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$unescape", Object.class),
+                virtualHandle("S$unescape", void.class, Object.class)));
+        list.add(AccessorProperty.create("print", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$print", Object.class),
+                virtualHandle("S$print", void.class, Object.class)));
+        list.add(AccessorProperty.create("load", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$load", Object.class),
+                virtualHandle("S$load", void.class, Object.class)));
+        list.add(AccessorProperty.create("loadWithNewGlobal", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$loadWithNewGlobal", Object.class),
+                virtualHandle("S$loadWithNewGlobal", void.class, Object.class)));
+        list.add(AccessorProperty.create("exit", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$exit", Object.class),
+                virtualHandle("S$exit", void.class, Object.class)));
+        list.add(AccessorProperty.create("quit", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$quit", Object.class),
+                virtualHandle("S$quit", void.class, Object.class)));
+        list.add(AccessorProperty.create("NaN", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$NaN", double.class), null));
+        list.add(AccessorProperty.create("Infinity", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$Infinity", double.class), null));
+        list.add(AccessorProperty.create("undefined", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$undefined", Object.class), null));
+        list.add(AccessorProperty.create("eval", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$eval", Object.class),
+                virtualHandle("S$eval", void.class, Object.class)));
+        list.add(AccessorProperty.create("Object", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$object", Object.class),
+                virtualHandle("S$object", void.class, Object.class)));
+        list.add(AccessorProperty.create("Function", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$function", Object.class),
+                virtualHandle("S$function", void.class, Object.class)));
+        list.add(AccessorProperty.create("Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$array", Object.class),
+                virtualHandle("S$array", void.class, Object.class)));
+        list.add(AccessorProperty.create("String", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$string", Object.class),
+                virtualHandle("S$string", void.class, Object.class)));
+        list.add(AccessorProperty.create("Boolean", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$_boolean", Object.class),
+                virtualHandle("S$_boolean", void.class, Object.class)));
+        list.add(AccessorProperty.create("Number", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$number", Object.class),
+                virtualHandle("S$number", void.class, Object.class)));
+        list.add(AccessorProperty.create("Date", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$date", Object.class),
+                virtualHandle("S$date", void.class, Object.class)));
+        list.add(AccessorProperty.create("RegExp", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$regexp", Object.class),
+                virtualHandle("S$regexp", void.class, Object.class)));
+        list.add(AccessorProperty.create("JSON", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$json", Object.class),
+                virtualHandle("S$json", void.class, Object.class)));
+        list.add(AccessorProperty.create("JSAdapter", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$jsadapter", Object.class),
+                virtualHandle("S$jsadapter", void.class, Object.class)));
+        list.add(AccessorProperty.create("Math", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$math", Object.class),
+                virtualHandle("S$math", void.class, Object.class)));
+        list.add(AccessorProperty.create("Error", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$error", Object.class),
+                virtualHandle("S$error", void.class, Object.class)));
+        list.add(AccessorProperty.create("EvalError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$evalError", Object.class),
+                virtualHandle("S$evalError", void.class, Object.class)));
+        list.add(AccessorProperty.create("RangeError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$rangeError", Object.class),
+                virtualHandle("S$rangeError", void.class, Object.class)));
+        list.add(AccessorProperty.create("ReferenceError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$referenceError", Object.class),
+                virtualHandle("S$referenceError", void.class, Object.class)));
+        list.add(AccessorProperty.create("SyntaxError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$syntaxError", Object.class),
+                virtualHandle("S$syntaxError", void.class, Object.class)));
+        list.add(AccessorProperty.create("TypeError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$typeError", Object.class),
+                virtualHandle("S$typeError", void.class, Object.class)));
+        list.add(AccessorProperty.create("URIError", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$uriError", Object.class),
+                virtualHandle("S$uriError", void.class, Object.class)));
+        list.add(AccessorProperty.create("ArrayBuffer", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$arrayBuffer", Object.class),
+                virtualHandle("S$arrayBuffer", void.class, Object.class)));
+        list.add(AccessorProperty.create("DataView", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$dataView", Object.class),
+                virtualHandle("S$dataView", void.class, Object.class)));
+        list.add(AccessorProperty.create("Int8Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$int8Array", Object.class),
+                virtualHandle("S$int8Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Uint8Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$uint8Array", Object.class),
+                virtualHandle("S$uint8Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Uint8ClampedArray", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$uint8ClampedArray", Object.class),
+                virtualHandle("S$uint8ClampedArray", void.class, Object.class)));
+        list.add(AccessorProperty.create("Int16Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$int16Array", Object.class),
+                virtualHandle("S$int16Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Uint16Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$uint16Array", Object.class),
+                virtualHandle("S$uint16Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Int32Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$int32Array", Object.class),
+                virtualHandle("S$int32Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Uint32Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$uint32Array", Object.class),
+                virtualHandle("S$uint32Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Float32Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$float32Array", Object.class),
+                virtualHandle("S$float32Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Float64Array", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$float64Array", Object.class),
+                virtualHandle("S$float64Array", void.class, Object.class)));
+        list.add(AccessorProperty.create("Packages", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$packages", Object.class),
+                virtualHandle("S$packages", void.class, Object.class)));
+        list.add(AccessorProperty.create("com", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$com", Object.class),
+                virtualHandle("S$com", void.class, Object.class)));
+        list.add(AccessorProperty.create("edu", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$edu", Object.class),
+                virtualHandle("S$edu", void.class, Object.class)));
+        list.add(AccessorProperty.create("java", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$java", Object.class),
+                virtualHandle("S$java", void.class, Object.class)));
+        list.add(AccessorProperty.create("javafx", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$javafx", Object.class),
+                virtualHandle("S$javafx", void.class, Object.class)));
+        list.add(AccessorProperty.create("javax", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$javax", Object.class),
+                virtualHandle("S$javax", void.class, Object.class)));
+        list.add(AccessorProperty.create("org", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$org", Object.class),
+                virtualHandle("S$org", void.class, Object.class)));
+        list.add(AccessorProperty.create("JavaImporter", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$javaImporter", Object.class),
+                virtualHandle("S$javaImporter", void.class, Object.class)));
+        list.add(AccessorProperty.create("Java", jdk2.nashorn.internal.runtime.Property.NOT_ENUMERABLE, 
+                virtualHandle("G$javaApi", Object.class),
+                virtualHandle("S$javaApi", void.class, Object.class)));
+        list.add(AccessorProperty.create("__FILE__", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$__FILE__", Object.class),
+                null));
+        list.add(AccessorProperty.create("__DIR__", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$__DIR__", Object.class),
+                null));
+        list.add(AccessorProperty.create("__LINE__", jdk2.nashorn.internal.runtime.Property.NOT_CONFIGURABLE, 
+                virtualHandle("G$__LINE__", Object.class),
+                null));
+        $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(Global.class, name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Object G$arguments() {
+        return this.arguments;
+    }
+
+    public void S$arguments(final Object function) {
+        this.arguments = function;
+    }
+
+    public Object G$parseInt() {
+        return this.parseInt;
+    }
+
+    public void S$parseInt(final Object function) {
+        this.parseInt = function;
+    }
+
+    public Object G$parseFloat() {
+        return this.parseFloat;
+    }
+
+    public void S$parseFloat(final Object function) {
+        this.parseFloat = function;
+    }
+
+    public Object G$isNaN() {
+        return this.isNaN;
+    }
+
+    public void S$isNaN(final Object function) {
+        this.isNaN = function;
+    }
+
+    public Object G$isFinite() {
+        return this.isFinite;
+    }
+
+    public void S$isFinite(final Object function) {
+        this.isFinite = function;
+    }
+
+    public Object G$encodeURI() {
+        return this.encodeURI;
+    }
+
+    public void S$encodeURI(final Object function) {
+        this.encodeURI = function;
+    }
+
+    public Object G$encodeURIComponent() {
+        return this.encodeURIComponent;
+    }
+
+    public void S$encodeURIComponent(final Object function) {
+        this.encodeURIComponent = function;
+    }
+
+    public Object G$decodeURI() {
+        return this.decodeURI;
+    }
+
+    public void S$decodeURI(final Object function) {
+        this.decodeURI = function;
+    }
+
+    public Object G$decodeURIComponent() {
+        return this.decodeURIComponent;
+    }
+
+    public void S$decodeURIComponent(final Object function) {
+        this.decodeURIComponent = function;
+    }
+
+    public Object G$escape() {
+        return this.escape;
+    }
+
+    public void S$escape(final Object function) {
+        this.escape = function;
+    }
+
+    public Object G$unescape() {
+        return this.unescape;
+    }
+
+    public void S$unescape(final Object function) {
+        this.unescape = function;
+    }
+
+    public Object G$print() {
+        return this.print;
+    }
+
+    public void S$print(final Object function) {
+        this.print = function;
+    }
+
+    public Object G$load() {
+        return this.load;
+    }
+
+    public void S$load(final Object function) {
+        this.load = function;
+    }
+
+    public Object G$loadWithNewGlobal() {
+        return this.loadWithNewGlobal;
+    }
+
+    public void S$loadWithNewGlobal(final Object function) {
+        this.loadWithNewGlobal = function;
+    }
+
+    public Object G$exit() {
+        return this.exit;
+    }
+
+    public void S$exit(final Object function) {
+        this.exit = function;
+    }
+
+    public Object G$quit() {
+        return this.quit;
+    }
+
+    public void S$quit(final Object function) {
+        this.quit = function;
+    }
+
+    public double G$NaN() {
+        return this.NaN;
+    }
+
+    public double G$Infinity() {
+        return this.Infinity;
+    }
+
+    public Object G$undefined() {
+        return this.undefined;
+    }
+
+    public Object G$eval() {
+        return this.eval;
+    }
+
+    public void S$eval(final Object function) {
+        this.eval = function;
+    }
+
+    public Object G$object() {
+        return this.object;
+    }
+
+    public void S$object(final Object function) {
+        this.object = function;
+    }
+
+    public Object G$function() {
+        return this.function;
+    }
+
+    public void S$function(final Object function) {
+        this.function = function;
+    }
+
+    public Object G$array() {
+        return this.array;
+    }
+
+    public void S$array(final Object function) {
+        this.array = function;
+    }
+
+    public Object G$string() {
+        return this.string;
+    }
+
+    public void S$string(final Object function) {
+        this.string = function;
+    }
+
+    public Object G$_boolean() {
+        return this._boolean;
+    }
+
+    public void S$_boolean(final Object function) {
+        this._boolean = function;
+    }
+
+    public Object G$number() {
+        return this.number;
+    }
+
+    public void S$number(final Object function) {
+        this.number = function;
+    }
+
+    public Object G$date() {
+        return this.date;
+    }
+
+    public void S$date(final Object function) {
+        this.date = function;
+    }
+
+    public Object G$regexp() {
+        return this.regexp;
+    }
+
+    public void S$regexp(final Object function) {
+        this.regexp = function;
+    }
+
+    public Object G$json() {
+        return this.json;
+    }
+
+    public void S$json(final Object function) {
+        this.json = function;
+    }
+
+    public Object G$jsadapter() {
+        return this.jsadapter;
+    }
+
+    public void S$jsadapter(final Object function) {
+        this.jsadapter = function;
+    }
+
+    public Object G$math() {
+        return this.math;
+    }
+
+    public void S$math(final Object function) {
+        this.math = function;
+    }
+
+    public Object G$error() {
+        return this.error;
+    }
+
+    public void S$error(final Object function) {
+        this.error = function;
+    }
+
+    public Object G$evalError() {
+        return this.evalError;
+    }
+
+    public void S$evalError(final Object function) {
+        this.evalError = function;
+    }
+
+    public Object G$rangeError() {
+        return this.rangeError;
+    }
+
+    public void S$rangeError(final Object function) {
+        this.rangeError = function;
+    }
+
+    public Object G$referenceError() {
+        return this.referenceError;
+    }
+
+    public void S$referenceError(final Object function) {
+        this.referenceError = function;
+    }
+
+    public Object G$syntaxError() {
+        return this.syntaxError;
+    }
+
+    public void S$syntaxError(final Object function) {
+        this.syntaxError = function;
+    }
+
+    public Object G$typeError() {
+        return this.typeError;
+    }
+
+    public void S$typeError(final Object function) {
+        this.typeError = function;
+    }
+
+    public Object G$uriError() {
+        return this.uriError;
+    }
+
+    public void S$uriError(final Object function) {
+        this.uriError = function;
+    }
+
+    public Object G$arrayBuffer() {
+        return this.arrayBuffer;
+    }
+
+    public void S$arrayBuffer(final Object function) {
+        this.arrayBuffer = function;
+    }
+
+    public Object G$dataView() {
+        return this.dataView;
+    }
+
+    public void S$dataView(final Object function) {
+        this.dataView = function;
+    }
+
+    public Object G$int8Array() {
+        return this.int8Array;
+    }
+
+    public void S$int8Array(final Object function) {
+        this.int8Array = function;
+    }
+
+    public Object G$uint8Array() {
+        return this.uint8Array;
+    }
+
+    public void S$uint8Array(final Object function) {
+        this.uint8Array = function;
+    }
+
+    public Object G$uint8ClampedArray() {
+        return this.uint8ClampedArray;
+    }
+
+    public void S$uint8ClampedArray(final Object function) {
+        this.uint8ClampedArray = function;
+    }
+
+    public Object G$int16Array() {
+        return this.int16Array;
+    }
+
+    public void S$int16Array(final Object function) {
+        this.int16Array = function;
+    }
+
+    public Object G$uint16Array() {
+        return this.uint16Array;
+    }
+
+    public void S$uint16Array(final Object function) {
+        this.uint16Array = function;
+    }
+
+    public Object G$int32Array() {
+        return this.int32Array;
+    }
+
+    public void S$int32Array(final Object function) {
+        this.int32Array = function;
+    }
+
+    public Object G$uint32Array() {
+        return this.uint32Array;
+    }
+
+    public void S$uint32Array(final Object function) {
+        this.uint32Array = function;
+    }
+
+    public Object G$float32Array() {
+        return this.float32Array;
+    }
+
+    public void S$float32Array(final Object function) {
+        this.float32Array = function;
+    }
+
+    public Object G$float64Array() {
+        return this.float64Array;
+    }
+
+    public void S$float64Array(final Object function) {
+        this.float64Array = function;
+    }
+
+    public Object G$packages() {
+        return this.packages;
+    }
+
+    public void S$packages(final Object function) {
+        this.packages = function;
+    }
+
+    public Object G$com() {
+        return this.com;
+    }
+
+    public void S$com(final Object function) {
+        this.com = function;
+    }
+
+    public Object G$edu() {
+        return this.edu;
+    }
+
+    public void S$edu(final Object function) {
+        this.edu = function;
+    }
+
+    public Object G$java() {
+        return this.java;
+    }
+
+    public void S$java(final Object function) {
+        this.java = function;
+    }
+
+    public Object G$javafx() {
+        return this.javafx;
+    }
+
+    public void S$javafx(final Object function) {
+        this.javafx = function;
+    }
+
+    public Object G$javax() {
+        return this.javax;
+    }
+
+    public void S$javax(final Object function) {
+        this.javax = function;
+    }
+
+    public Object G$org() {
+        return this.org;
+    }
+
+    public void S$org(final Object function) {
+        this.org = function;
+    }
+
+    public Object G$javaImporter() {
+        return this.javaImporter;
+    }
+
+    public void S$javaImporter(final Object function) {
+        this.javaImporter = function;
+    }
+
+    public Object G$javaApi() {
+        return this.javaApi;
+    }
+
+    public void S$javaApi(final Object function) {
+        this.javaApi = function;
+    }
+
+    public Object G$__FILE__() {
+        return this.__FILE__;
+    }
+
+    public Object G$__DIR__() {
+        return this.__DIR__;
+    }
+
+    public Object G$__LINE__() {
+        return this.__LINE__;
     }
 
 }
