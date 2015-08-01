@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import jdk2.nashorn.internal.objects.ArrayBufferView;
 import jdk2.nashorn.internal.objects.NativeArray;
 import jdk2.nashorn.internal.objects.NativeArrayBuffer;
 import jdk2.nashorn.internal.objects.NativeBoolean;
@@ -58,7 +59,8 @@ public class JavaMain {
                 NativeInt8Array.class, NativeUint8Array.class, NativeUint8ClampedArray.class,
                 NativeInt16Array.class, NativeUint16Array.class,
                 NativeInt32Array.class, NativeUint32Array.class,
-                NativeFloat32Array.class, NativeFloat64Array.class);
+                NativeFloat32Array.class, NativeFloat64Array.class,
+                ArrayBufferView.class);
         String packageName = NativeArray.class.getName();
         packageName = packageName.substring(0, packageName.lastIndexOf('.'));
         File srcRoot = new File("src/main/java/");

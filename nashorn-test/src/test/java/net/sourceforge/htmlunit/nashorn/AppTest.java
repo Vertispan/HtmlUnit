@@ -16,4 +16,10 @@ public class AppTest {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         engine.eval("print('Hello, World!');");
     }
+
+    @Test
+    public void int8Array() throws Exception {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        engine.eval("print(new Int8Array().length);");
+    }
 }

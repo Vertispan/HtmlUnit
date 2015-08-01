@@ -29,8 +29,13 @@ import static jdk2.nashorn.internal.runtime.ECMAErrors.rangeError;
 import static jdk2.nashorn.internal.runtime.ECMAErrors.typeError;
 import static jdk2.nashorn.internal.runtime.UnwarrantedOptimismException.INVALID_PROGRAM_POINT;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import jdk2.internal.dynalink.CallSiteDescriptor;
 import jdk2.internal.dynalink.linker.GuardedInvocation;
@@ -38,7 +43,9 @@ import jdk2.internal.dynalink.linker.LinkRequest;
 import jdk2.nashorn.internal.objects.annotations.Attribute;
 import jdk2.nashorn.internal.objects.annotations.Getter;
 import jdk2.nashorn.internal.objects.annotations.ScriptClass;
+import jdk2.nashorn.internal.runtime.AccessorProperty;
 import jdk2.nashorn.internal.runtime.JSType;
+import jdk2.nashorn.internal.runtime.Property;
 import jdk2.nashorn.internal.runtime.PropertyMap;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 import jdk2.nashorn.internal.runtime.ScriptRuntime;
@@ -383,5 +390,39 @@ public abstract class ArrayBufferView extends ScriptObject {
             return inv;
         }
         return super.findSetIndexMethod(desc, request);
+    }
+
+    static {
+        final List<Property> list = new ArrayList<>(4);
+        list.add(AccessorProperty.create("buffer", Property.NOT_CONFIGURABLE, 
+                staticHandle("buffer", Object.class, Object.class), null));
+        list.add(AccessorProperty.create("byteOffset", Property.NOT_CONFIGURABLE, 
+                staticHandle("byteOffset", int.class, Object.class), null));
+        list.add(AccessorProperty.create("byteLength", Property.NOT_CONFIGURABLE, 
+                staticHandle("byteLength", int.class, Object.class), null));
+        list.add(AccessorProperty.create("length", Property.NOT_CONFIGURABLE, 
+                staticHandle("length", int.class, Object.class), null));
+        $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(ArrayBufferView.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptObject {
+        public String getClassName() {
+            return "ArrayBufferView";
+        }
+    }
+    static final class Prototype extends PrototypeObject {
+        public String getClassName() {
+            return "ArrayBufferView";
+        }
     }
 }
