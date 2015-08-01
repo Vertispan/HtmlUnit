@@ -457,7 +457,7 @@ public class ClassJavaGenerator {
             if (!java.isEmpty()) {
                 java += " | ";
             }
-            java = "Property.NOT_CONFIGURABLE";
+            java += "Property.NOT_CONFIGURABLE";
         }
         return java;
     }
