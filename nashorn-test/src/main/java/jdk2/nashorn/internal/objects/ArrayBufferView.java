@@ -394,13 +394,13 @@ public abstract class ArrayBufferView extends ScriptObject {
 
     static {
         final List<Property> list = new ArrayList<>(4);
-        list.add(AccessorProperty.create("buffer", Property.NOT_CONFIGURABLE, 
+        list.add(AccessorProperty.create("buffer", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                 staticHandle("buffer", Object.class, Object.class), null));
-        list.add(AccessorProperty.create("byteOffset", Property.NOT_CONFIGURABLE, 
+        list.add(AccessorProperty.create("byteOffset", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                 staticHandle("byteOffset", int.class, Object.class), null));
-        list.add(AccessorProperty.create("byteLength", Property.NOT_CONFIGURABLE, 
+        list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                 staticHandle("byteLength", int.class, Object.class), null));
-        list.add(AccessorProperty.create("length", Property.NOT_CONFIGURABLE, 
+        list.add(AccessorProperty.create("length", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                 staticHandle("length", int.class, Object.class), null));
         $nasgenmap$ = PropertyMap.newMap(list);
     }
@@ -419,6 +419,7 @@ public abstract class ArrayBufferView extends ScriptObject {
         public String getClassName() {
             return "ArrayBufferView";
         }
+
     }
     static final class Prototype extends PrototypeObject {
         public String getClassName() {
