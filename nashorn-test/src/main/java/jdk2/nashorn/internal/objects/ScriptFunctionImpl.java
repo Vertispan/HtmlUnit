@@ -91,7 +91,7 @@ public class ScriptFunctionImpl extends ScriptFunction {
      * @param map initial property map
      * @param specs specialized versions of this method, if available, null otherwise
      */
-    ScriptFunctionImpl(final String name, final MethodHandle invokeHandle, final PropertyMap map, final Specialization[] specs) {
+    public ScriptFunctionImpl(final String name, final MethodHandle invokeHandle, final PropertyMap map, final Specialization[] specs) {
         this(name, invokeHandle, map, specs, Global.instance());
     }
 
@@ -225,7 +225,7 @@ public class ScriptFunctionImpl extends ScriptFunction {
      * @param methodHandle handle for invocation
      * @return new ScriptFunction
      */
-    static ScriptFunction makeFunction(final String name, final MethodHandle methodHandle) {
+    public static ScriptFunction makeFunction(final String name, final MethodHandle methodHandle) {
         return makeFunction(name, methodHandle, null);
     }
 

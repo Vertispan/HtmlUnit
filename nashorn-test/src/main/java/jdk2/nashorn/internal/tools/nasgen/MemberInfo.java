@@ -28,8 +28,13 @@ import static jdk2.nashorn.internal.tools.nasgen.StringConstants.OBJECT_ARRAY_DE
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_DESC;
 import static jdk2.nashorn.internal.tools.nasgen.StringConstants.STRING_DESC;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
 import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.Type;
+import jdk2.nashorn.internal.objects.annotations.WebBrowser;
 import jdk2.nashorn.internal.objects.annotations.Where;
 import jdk2.nashorn.internal.runtime.ScriptObject;
 
@@ -107,6 +112,8 @@ public final class MemberInfo implements Cloneable {
     private boolean isSpecializedConstructor;
 
     private boolean isOptimistic;
+
+    private WebBrowser[] browsers;
 
     /**
      * @return the kind
@@ -543,5 +550,18 @@ public final class MemberInfo implements Cloneable {
      */
     void setArity(final int arity) {
         this.arity = arity;
+    }
+
+    public WebBrowser[] getBrowsers() {
+        return browsers;
+    }
+
+    private static Comparator<WebBrowser> comparator = (o1, o2) -> {
+        return o1.value().compareTo(o2.value());
+    };
+
+    public void setBrowsers(WebBrowser[] browsers) {
+        Arrays.sort(browsers, comparator);
+        this.browsers = browsers;
     }
 }

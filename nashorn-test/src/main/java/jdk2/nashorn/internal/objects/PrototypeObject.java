@@ -71,7 +71,7 @@ public class PrototypeObject extends ScriptObject {
      *
      * @param map property map
      */
-    PrototypeObject(final PropertyMap map) {
+    public PrototypeObject(final PropertyMap map) {
         this(Global.instance(), map);
     }
 
@@ -96,7 +96,7 @@ public class PrototypeObject extends ScriptObject {
      * @param self self reference
      * @param constructor constructor, probably, but not necessarily, a {@link ScriptFunction}
      */
-    static void setConstructor(final Object self, final Object constructor) {
+    public static void setConstructor(final Object self, final Object constructor) {
         if (self instanceof PrototypeObject) {
             ((PrototypeObject)self).setConstructor(constructor);
         }

@@ -25,6 +25,10 @@
 
 package jdk2.nashorn.internal.objects.annotations;
 
+import static jdk2.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+import static jdk2.nashorn.internal.objects.annotations.BrowserFamily.FF;
+import static jdk2.nashorn.internal.objects.annotations.BrowserFamily.IE;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -46,4 +50,11 @@ public @interface Constructor {
      * Note that -1 means varargs. So, -2 is used as invalid arity.
      */
     public int arity() default -2;
+
+    /** The {@link WebBrowser}s supported by this constructor. */
+    WebBrowser[] browsers() default {
+        @WebBrowser(IE),
+        @WebBrowser(FF),
+        @WebBrowser(CHROME)
+    };
 }

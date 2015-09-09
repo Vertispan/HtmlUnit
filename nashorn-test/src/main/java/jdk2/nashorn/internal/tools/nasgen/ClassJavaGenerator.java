@@ -31,15 +31,43 @@ import static jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static jdk.internal.org.objectweb.asm.Opcodes.ACC_STATIC;
 import static jdk.internal.org.objectweb.asm.Opcodes.H_INVOKESTATIC;
 import static jdk.internal.org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
-import static jdk2.nashorn.internal.tools.nasgen.StringConstants.*;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_CREATE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_CREATE_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.ARRAYLIST_INIT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.ARRAYLIST_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.CLINIT;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.COLLECTIONS_EMPTY_LIST;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.COLLECTIONS_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.COLLECTION_ADD;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.COLLECTION_ADD_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.COLLECTION_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.GETTER_PREFIX;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.GET_CLASS_NAME;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.GET_CLASS_NAME_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.INIT;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.LIST_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_FIELD_NAME;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_NEWMAP;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_NEWMAP_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.PROPERTYMAP_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_MAKEFUNCTION;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_MAKEFUNCTION_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_MAKEFUNCTION_SPECS_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTIONIMPL_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETARITY;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_SETARITY_DESC;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_TYPE;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.SETTER_PREFIX;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.TYPE_OBJECT;
+import static jdk2.nashorn.internal.tools.nasgen.StringConstants.TYPE_SCRIPTFUNCTION;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.util.Collections;
 import java.util.List;
 
 import jdk.internal.org.objectweb.asm.ClassReader;
@@ -49,10 +77,8 @@ import jdk.internal.org.objectweb.asm.FieldVisitor;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Type;
-import jdk2.nashorn.internal.objects.NativeObject;
-import jdk2.nashorn.internal.runtime.AccessorProperty;
+import jdk2.nashorn.internal.objects.annotations.WebBrowser;
 import jdk2.nashorn.internal.runtime.Property;
-import jdk2.nashorn.internal.runtime.ScriptFunction;
 import jdk2.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 
 /**
@@ -105,9 +131,9 @@ public class ClassJavaGenerator {
 
     void emitGetClassName(final String name) {
         final MethodGenerator mi = makeMethod(ACC_PUBLIC, GET_CLASS_NAME, GET_CLASS_NAME_DESC);
-        builder.append("       public String getClassName() {" + System.lineSeparator());
-        builder.append("           return \"" + name+ "\";" + System.lineSeparator());
-        builder.append("       }" + System.lineSeparator());
+        builder.append("        public String getClassName() {" + System.lineSeparator());
+        builder.append("            return \"" + name+ "\";" + System.lineSeparator());
+        builder.append("        }" + System.lineSeparator());
         builder.append(System.lineSeparator());
         mi.loadLiteral(name);
         mi.returnValue();
@@ -416,12 +442,18 @@ public class ClassJavaGenerator {
         // setup getter method handle
         String javaName = GETTER_PREFIX + memInfo.getJavaName();
         mi.visitLdcInsn(new Handle(H_INVOKEVIRTUAL, className, javaName, getterDesc(memInfo)));
+        String condition = getBrowserCondition(memInfo);
+        if (condition != null) {
+            builder.append("            if (" + condition + ") {");
+            builder.append(System.lineSeparator());
+            builder.append("    ");
+        }
         builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
                 + attributesToJava(memInfo.getAttributes()) + ", " + System.lineSeparator()
                 + "                    virtualHandle(\"" + javaName + "\", " +
                 descToJava(Type.getMethodDescriptor(memInfoTypeScriptFuntion(memInfo)))
                 + ")," + System.lineSeparator());
-        
+
         // setup setter method handle
         if (memInfo.isFinal()) {
             mi.pushNull();
@@ -434,6 +466,9 @@ public class ClassJavaGenerator {
                     + ")");
         }
         builder.append("));" + System.lineSeparator());
+        if (condition != null) {
+            builder.append("            }").append(System.lineSeparator());
+        }
         mi.invokeStatic(ACCESSORPROPERTY_TYPE, ACCESSORPROPERTY_CREATE, ACCESSORPROPERTY_CREATE_DESC);
         // boolean Collection.add(property)
         mi.invokeInterface(COLLECTION_TYPE, COLLECTION_ADD, COLLECTION_ADD_DESC);
@@ -459,6 +494,9 @@ public class ClassJavaGenerator {
             }
             java += "Property.NOT_CONFIGURABLE";
         }
+        if (java.isEmpty()) {
+            java = "Property.WRITABLE_ENUMERABLE_CONFIGURABLE";
+        }
         return java;
     }
 
@@ -474,29 +512,100 @@ public class ClassJavaGenerator {
         mi.push(getter.getAttributes());
         // setup getter method handle
         mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className, getter.getJavaName(), getter.getJavaDesc()));
-        builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
-                + attributesToJava(getter.getAttributes()) + ", " + System.lineSeparator()
-                + "                    staticHandle(\"" + getter.getJavaName() + "\", " +
-                descToJava(getter.getJavaDesc())
-                + ")," + System.lineSeparator());
+        
+        String getterCode = "staticHandle(\"" + getter.getJavaName() + "\", " +
+                descToJava(getter.getJavaDesc()) + ")";
+
+        String setterCode;
+        if (setter == null) {
+            setterCode = "null";
+        } else {
+            setterCode = "staticHandle(\"" + setter.getJavaName() + "\", " +
+                    descToJava(setter.getJavaDesc())
+                    + ")";
+        }
+
+        String getterCondition = getBrowserCondition(getter);
+        String setterCondition = getBrowserCondition(setter);
+        boolean differentConditions = setter != null &&
+                (setterCondition == null || !setterCondition.equals(getterCondition));
+        if (differentConditions) {
+            builder.append("            String " + propertyName + "Setter = null;").append(System.lineSeparator());
+            if (setterCondition != null) {
+                builder.append("            if (" + setterCondition + ") {");
+                builder.append(System.lineSeparator());
+                builder.append("                " + propertyName + "Setter = " + setterCode + ';');
+                builder.append(System.lineSeparator());
+                builder.append("            }").append(System.lineSeparator());
+            }
+            builder.append("            if (" + getterCondition + ") {");
+            builder.append(System.lineSeparator());
+            builder.append("    ");
+
+            builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
+                    + attributesToJava(getter.getAttributes()) + ", " + System.lineSeparator()
+                    + "                    " + getterCode + "," + System.lineSeparator());
+            builder.append("                    " + propertyName + "Setter");
+            builder.append("));").append(System.lineSeparator());
+            if (getterCondition != null) {
+                builder.append("            }");
+            }
+            builder.append(System.lineSeparator());
+        }
+        else {
+            if (getterCondition != null) {
+                builder.append("            if (" + getterCondition + ") {");
+                builder.append(System.lineSeparator());
+                builder.append("    ");
+            }
+            builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
+                    + attributesToJava(getter.getAttributes()) + ", " + System.lineSeparator()
+                    + "                    " + getterCode + "," + System.lineSeparator());
+            if (getterCondition != null) {
+                builder.append("            }");
+            }
+            builder.append("                    " + setterCode);
+            builder.append("));" + System.lineSeparator());
+        }
 
         // setup setter method handle
         if (setter == null) {
             mi.pushNull();
-            builder.append("null");
         } else {
             mi.visitLdcInsn(new Handle(H_INVOKESTATIC, className, setter.getJavaName(), setter.getJavaDesc()));
-            builder.append("                    staticHandle(\"" + setter.getJavaName() + "\", " +
-                    descToJava(setter.getJavaDesc())
-                    + ")");
         }
-        builder.append("));" + System.lineSeparator());
         mi.invokeStatic(ACCESSORPROPERTY_TYPE, ACCESSORPROPERTY_CREATE, ACCESSORPROPERTY_CREATE_DESC);
         // boolean Collection.add(property)
         mi.invokeInterface(COLLECTION_TYPE, COLLECTION_ADD, COLLECTION_ADD_DESC);
         // pop return value of Collection.add
         mi.pop();
         // stack: Collection
+    }
+
+    private static String getBrowserCondition(MemberInfo info) {
+        if (info != null && info.getBrowsers() != null) {
+            StringBuilder builder = new StringBuilder();
+            for (WebBrowser browser : info.getBrowsers()) {
+                if (builder.length() != 0) {
+                    builder.append(" || ");
+                }
+                if (browser.minVersion() != 0 || browser.maxVersion() != Float.MAX_VALUE) {
+                    builder.append("(");
+                }
+                builder.append("browserFamily == " + browser.value());
+                if (browser.minVersion() != 0) {
+                    builder.append(" && version >= " + browser.minVersion());
+                }
+                if (browser.maxVersion() != Float.MAX_VALUE) {
+                    builder.append(" && version <= " + browser.maxVersion());
+                }
+                if (browser.minVersion() != 0 || browser.maxVersion() != Float.MAX_VALUE) {
+                    builder.append(")");
+                }
+            }
+            return builder.toString();
+        }
+        return null;
     }
 
     static ScriptClassInfo getScriptClassInfo(final String fileName) throws IOException {

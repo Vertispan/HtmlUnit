@@ -30,7 +30,7 @@ public class AppTest {
     @Test
     public void int8Array2() throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        final ScriptObjectMirror mirror = (ScriptObjectMirror) engine.eval("new Int8Array()");
+        final ScriptObjectMirror mirror = (ScriptObjectMirror) engine.eval("Int8Array");
         final ScriptObject sobj = get(mirror, "sobj");
         for (final Object o : sobj.getMap().getProperties()) {
             System.out.println(o);
