@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sourceforge.htmlunit</groupId>
+    <artifactId>js-engine</artifactId>
+    <version>2.19-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>HtmlUnit JavaScript Engine</name>
+    <url>http://htmlunit.sourceforge.net</url>
+    <description>
+		HtmlUnit adaptation of Nashorn Javascript engine. 
+	</description>
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) version 2.0</name>
+            <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:svn:https://svn.code.sf.net/p/htmlunit/code/trunk/js-engine</connection>
+        <developerConnection>scm:svn:https://svn.code.sf.net/p/htmlunit/code/trunk/js-engine</developerConnection>
+        <url>https://sourceforge.net/p/htmlunit/code</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+            </plugin>
+       </plugins>
+    </build>
+
+    <developers>
+        <developer>
+            <name>Nashorn Team</name>
+            <id>NashornTeam</id>
+        </developer>
+        <developer>
+            <name>HtmlUnit Team</name>
+            <id>HtmlUnitTeam</id>
+        </developer>
+    </developers>
+
+</project>
