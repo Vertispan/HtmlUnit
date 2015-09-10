@@ -1,4 +1,16 @@
 /*
+ * Copyright (c) 2015 Gargoyle Software Inc.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (http://www.gnu.org/licenses/).
+ */
+/*
  * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -26,7 +38,6 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.linker;
 
 import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -42,13 +53,11 @@ import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.internal.dynalink.linker.MethodHandleTransformer;
 import com.gargoylesoftware.js.internal.dynalink.support.DefaultInternalObjectFilter;
-import com.gargoylesoftware.js.internal.dynalink.support.Guards;
 import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptUtils;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ConsString;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
-import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 
 /**

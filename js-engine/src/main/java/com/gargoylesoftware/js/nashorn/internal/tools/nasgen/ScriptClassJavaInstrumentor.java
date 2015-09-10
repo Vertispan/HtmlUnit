@@ -1,4 +1,16 @@
 /*
+ * Copyright (c) 2015 Gargoyle Software Inc.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (http://www.gnu.org/licenses/).
+ */
+/*
  * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -36,7 +48,6 @@ import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConsta
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import jdk.internal.org.objectweb.asm.AnnotationVisitor;
@@ -46,7 +57,6 @@ import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.ClassWriter;
 import jdk.internal.org.objectweb.asm.FieldVisitor;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
-import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.util.CheckClassAdapter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;

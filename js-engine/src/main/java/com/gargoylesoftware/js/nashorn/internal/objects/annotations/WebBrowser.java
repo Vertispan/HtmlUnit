@@ -1,4 +1,16 @@
 /*
+ * Copyright (c) 2015 Gargoyle Software Inc.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (http://www.gnu.org/licenses/).
+ */
+/*
  * Copyright (c) 2002-2015 Gargoyle Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
