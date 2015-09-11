@@ -534,7 +534,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
         }
 
         /*
-         * create a new trynode
+         * create a new try node
          *    if we have catches:
          *
          *    try            try
@@ -545,7 +545,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
          *                   catchall
          *                        rethrow
          *
-         *   otheriwse
+         *   otherwise
          *
          *   try              try
          *      x               x

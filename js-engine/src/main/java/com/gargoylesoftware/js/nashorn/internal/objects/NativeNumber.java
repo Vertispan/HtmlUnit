@@ -45,6 +45,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UND
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -200,6 +201,7 @@ public final class NativeNumber extends ScriptObject {
         format.setMinimumFractionDigits(fractionDigits);
         format.setMaximumFractionDigits(fractionDigits);
         format.setGroupingUsed(false);
+        format.setRoundingMode(RoundingMode.HALF_UP);
 
         return format.format(x);
     }

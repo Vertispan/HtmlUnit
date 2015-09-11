@@ -54,11 +54,11 @@ import com.gargoylesoftware.js.nashorn.tools.Shell;
  * Superclass for Nashorn class loader classes.
  */
 abstract class NashornLoader extends SecureClassLoader {
-    private static final String OBJECTS_PKG        = "jdk.nashorn.internal.objects";
-    private static final String RUNTIME_PKG        = "jdk.nashorn.internal.runtime";
-    private static final String RUNTIME_ARRAYS_PKG = "jdk.nashorn.internal.runtime.arrays";
-    private static final String RUNTIME_LINKER_PKG = "jdk.nashorn.internal.runtime.linker";
-    private static final String SCRIPTS_PKG        = "jdk.nashorn.internal.scripts";
+    private static final String OBJECTS_PKG        = "com.gargoylesoftware.js.nashorn.internal.objects";
+    private static final String RUNTIME_PKG        = "com.gargoylesoftware.js.nashorn.internal.runtime";
+    private static final String RUNTIME_ARRAYS_PKG = "com.gargoylesoftware.js.nashorn.internal.runtime.arrays";
+    private static final String RUNTIME_LINKER_PKG = "com.gargoylesoftware.js.nashorn.internal.runtime.linker";
+    private static final String SCRIPTS_PKG        = "com.gargoylesoftware.js.nashorn.internal.scripts";
 
     private static final Permission[] SCRIPT_PERMISSIONS;
 

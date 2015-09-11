@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  */
 final class ScriptLoader extends NashornLoader {
-    private static final String NASHORN_PKG_PREFIX = "jdk.nashorn.internal.";
+    private static final String NASHORN_PKG_PREFIX = "com.gargoylesoftware.js.nashorn.internal.";
 
     private final Context context;
 

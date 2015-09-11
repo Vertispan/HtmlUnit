@@ -122,7 +122,7 @@ public class GuardedTypeConversion {
 
     /**
      * Check if invocation is cacheable
-     * @return true if cachable, false otherwise
+     * @return true if cacheable, false otherwise
      */
     public boolean isCacheable() {
         return cacheable;

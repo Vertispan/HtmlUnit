@@ -221,7 +221,7 @@ public class ClassEmitter {
         this.unitClassName        = unitClassName;
         this.constantMethodNeeded = new HashSet<>();
 
-        cw.visit(V1_7, ACC_PUBLIC | ACC_SUPER, unitClassName, null, pathName(jdk.nashorn.internal.scripts.JS.class.getName()), null);
+        cw.visit(V1_7, ACC_PUBLIC | ACC_SUPER, unitClassName, null, pathName(com.gargoylesoftware.js.nashorn.internal.scripts.JS.class.getName()), null);
         cw.visitSource(sourceName, null);
 
         defineCommonStatics(strictMode);
@@ -434,7 +434,7 @@ public class ClassEmitter {
             final MethodEmitter initMethod = init(EnumSet.of(Flag.PRIVATE));
             initMethod.begin();
             initMethod.load(Type.OBJECT, 0);
-            initMethod.newInstance(jdk.nashorn.internal.scripts.JS.class);
+            initMethod.newInstance(com.gargoylesoftware.js.nashorn.internal.scripts.JS.class);
             initMethod.returnVoid();
             initMethod.end();
 

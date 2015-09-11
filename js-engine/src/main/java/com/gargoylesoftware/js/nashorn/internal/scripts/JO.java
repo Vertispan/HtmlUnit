@@ -75,8 +75,8 @@ public class JO extends ScriptObject {
 
     /**
      * Constructor that takes a pre-initialized spill pool. Used by
-     * {@link jdk.nashorn.internal.codegen.SpillObjectCreator} and
-     * {@link jdk.nashorn.internal.parser.JSONParser} for initializing object literals
+     * {@link com.gargoylesoftware.js.nashorn.internal.codegen.SpillObjectCreator} and
+     * {@link com.gargoylesoftware.js.nashorn.internal.parser.JSONParser} for initializing object literals
      *
      * @param map            property map
      * @param primitiveSpill primitive spill pool

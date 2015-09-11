@@ -268,12 +268,9 @@ public class Shell implements PartialParser {
                     return COMPILATION_ERROR;
                 }
 
-                new Compiler(
+                Compiler.forNoInstallerCompilation(
                        context,
-                       env,
-                       null, //null - pass no code installer - this is compile only
                        functionNode.getSource(),
-                       context.getErrorManager(),
                        env._strict | functionNode.isStrict()).
                        compile(functionNode, CompilationPhases.COMPILE_ALL_NO_INSTALL);
 

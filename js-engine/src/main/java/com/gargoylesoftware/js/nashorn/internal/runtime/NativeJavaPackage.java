@@ -95,7 +95,7 @@ public final class NativeJavaPackage extends ScriptObject {
     private final String name;
 
     /**
-     * Public constructor to be accessible from {@link jdk.nashorn.internal.objects.Global}
+     * Public constructor to be accessible from {@link com.gargoylesoftware.js.nashorn.internal.objects.Global}
      * @param name  package name
      * @param proto proto
      */

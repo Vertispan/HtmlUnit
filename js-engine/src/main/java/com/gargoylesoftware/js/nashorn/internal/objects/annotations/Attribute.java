@@ -44,13 +44,13 @@ package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 
 public interface Attribute {
     /** flag for non writable objects */
-    public static final int NOT_WRITABLE     = jdk.nashorn.internal.runtime.Property.NOT_WRITABLE;
+    public static final int NOT_WRITABLE     = com.gargoylesoftware.js.nashorn.internal.runtime.Property.NOT_WRITABLE;
 
     /** flag for non enumerable objects */
-    public static final int NOT_ENUMERABLE   = jdk.nashorn.internal.runtime.Property.NOT_ENUMERABLE;
+    public static final int NOT_ENUMERABLE   = com.gargoylesoftware.js.nashorn.internal.runtime.Property.NOT_ENUMERABLE;
 
     /** flag for non configurable objects */
-    public static final int NOT_CONFIGURABLE = jdk.nashorn.internal.runtime.Property.NOT_CONFIGURABLE;
+    public static final int NOT_CONFIGURABLE = com.gargoylesoftware.js.nashorn.internal.runtime.Property.NOT_CONFIGURABLE;
 
     /** read-only, non-configurable property */
     public static final int CONSTANT = NOT_WRITABLE | NOT_CONFIGURABLE;

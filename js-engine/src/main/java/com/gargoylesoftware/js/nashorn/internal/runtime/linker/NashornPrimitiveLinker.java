@@ -110,7 +110,7 @@ final class NashornPrimitiveLinker implements TypeBasedGuardingDynamicLinker, Gu
      * @param sourceType the source type to convert from
      * @param targetType1 one candidate target type
      * @param targetType2 another candidate target type
-     * @return one of {@link jdk.internal.dynalink.linker.ConversionComparator.Comparison} values signifying which
+     * @return one of {@link com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison} values signifying which
      * target type should be favored for conversion.
      */
     @Override

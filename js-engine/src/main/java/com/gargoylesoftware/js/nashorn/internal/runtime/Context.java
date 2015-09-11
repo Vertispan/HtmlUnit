@@ -168,7 +168,7 @@ public final class Context {
      * Currently we are conservative and associate the name of a builtin class with all
      * its properties, so it's enough to invalidate a property to break all assumptions
      * about a prototype. This can be changed to a more fine grained approach, but no one
-     * ever needs this, given the very rare occurance of swapping out only parts of
+     * ever needs this, given the very rare occurrence of swapping out only parts of
      * a builtin v.s. the entire builtin object
      */
     private final Map<String, SwitchPoint> builtinSwitchPoints = new HashMap<>();
@@ -182,7 +182,7 @@ public final class Context {
      * ContextCodeInstaller that has the privilege of installing classes in the Context.
      * Can only be instantiated from inside the context and is opaque to other classes
      */
-    public static class ContextCodeInstaller implements CodeInstaller<ScriptEnvironment> {
+    public static class ContextCodeInstaller implements CodeInstaller {
         private final Context      context;
         private final ScriptLoader loader;
         private final CodeSource   codeSource;
@@ -200,13 +200,9 @@ public final class Context {
             this.codeSource = codeSource;
         }
 
-        /**
-         * Return the script environment for this installer
-         * @return ScriptEnvironment
-         */
         @Override
-        public ScriptEnvironment getOwner() {
-            return context.env;
+        public Context getContext() {
+            return context;
         }
 
         @Override
@@ -269,7 +265,7 @@ public final class Context {
         }
 
         @Override
-        public CodeInstaller<ScriptEnvironment> withNewLoader() {
+        public CodeInstaller withNewLoader() {
             // Reuse this installer if we're within our limits.
             if (usageCount < MAX_USAGES && bytesDefined < MAX_BYTES_DEFINED) {
                 return this;
@@ -278,7 +274,7 @@ public final class Context {
         }
 
         @Override
-        public boolean isCompatibleWith(final CodeInstaller<ScriptEnvironment> other) {
+        public boolean isCompatibleWith(final CodeInstaller other) {
             if (other instanceof ContextCodeInstaller) {
                 final ContextCodeInstaller cci = (ContextCodeInstaller)other;
                 return cci.context == context && cci.codeSource == codeSource;
@@ -935,7 +931,7 @@ public final class Context {
      * @see AccessorProperty
      * @see ScriptObject
      *
-     * @param fullName  full name of class, e.g. jdk.nashorn.internal.objects.JO2P1 contains 2 fields and 1 parameter.
+     * @param fullName  full name of class, e.g. com.gargoylesoftware.js.nashorn.internal.objects.JO2P1 contains 2 fields and 1 parameter.
      *
      * @return the {@code Class<?>} for this structure
      *
@@ -1028,7 +1024,7 @@ public final class Context {
 
     /**
      * Lookup a Java class. This is used for JSR-223 stuff linking in from
-     * {@code jdk.nashorn.internal.objects.NativeJava} and {@code jdk.nashorn.internal.runtime.NativeJavaPackage}
+     * {@code com.gargoylesoftware.js.nashorn.internal.objects.NativeJava} and {@code com.gargoylesoftware.js.nashorn.internal.runtime.NativeJavaPackage}
      *
      * @param fullName full name of class to load
      *
@@ -1315,14 +1311,12 @@ public final class Context {
         final URL          url    = source.getURL();
         final ScriptLoader loader = env._loader_per_compile ? createNewLoader() : scriptLoader;
         final CodeSource   cs     = new CodeSource(url, (CodeSigner[])null);
-        final CodeInstaller<ScriptEnvironment> installer = new ContextCodeInstaller(this, loader, cs);
+        final CodeInstaller installer = new ContextCodeInstaller(this, loader, cs);
 
         if (storedScript == null) {
             final CompilationPhases phases = Compiler.CompilationPhases.COMPILE_ALL;
 
-            final Compiler compiler = new Compiler(
-                    this,
-                    env,
+            final Compiler compiler = Compiler.forInitialCompilation(
                     installer,
                     source,
                     errMan,
@@ -1496,7 +1490,7 @@ public final class Context {
      * @param level            log level
      * @param mh               method handle
      * @param paramStart       first parameter to print
-     * @param printReturnValue should we print the return vaulue?
+     * @param printReturnValue should we print the return value?
      * @param text             debug printout to add
      *
      * @return instrumented method handle, or null if logger not enabled

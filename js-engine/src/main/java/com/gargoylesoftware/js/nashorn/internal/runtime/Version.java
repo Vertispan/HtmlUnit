@@ -64,7 +64,7 @@ public final class Version {
         return version("full"); // mm.mm.oo[-milestone]-build
     }
 
-    private static final String   VERSION_RB_NAME = "jdk.nashorn.internal.runtime.resources.version";
+    private static final String   VERSION_RB_NAME = "com.gargoylesoftware.js.nashorn.internal.runtime.resources.version";
     private static ResourceBundle versionRB;
 
     private static String version(final String key) {

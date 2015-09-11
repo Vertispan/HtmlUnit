@@ -940,7 +940,7 @@ public abstract class Type implements Comparable<Type>, BytecodeOps, Serializabl
 
     /**
      * This is the CharSequence singleton used to represent JS strings internally
-     * (either a {@code java.lang.String} or {@code jdk.nashorn.internal.runtime.ConsString}.
+     * (either a {@code java.lang.String} or {@code com.gargoylesoftware.js.nashorn.internal.runtime.ConsString}.
      */
     public static final Type CHARSEQUENCE = putInCache(new ObjectType(CharSequence.class));
 

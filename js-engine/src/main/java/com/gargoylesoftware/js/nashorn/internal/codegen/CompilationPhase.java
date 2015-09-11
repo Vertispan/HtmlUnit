@@ -604,8 +604,8 @@ enum CompilationPhase {
             Class<?> rootClass = null;
             long length = 0L;
 
-            final CodeInstaller<ScriptEnvironment> codeInstaller = compiler.getCodeInstaller();
-            final Map<String, byte[]>              bytecode      = compiler.getBytecode();
+            final CodeInstaller       codeInstaller = compiler.getCodeInstaller();
+            final Map<String, byte[]> bytecode      = compiler.getBytecode();
 
             for (final Entry<String, byte[]> entry : bytecode.entrySet()) {
                 final String className = entry.getKey();
@@ -674,10 +674,10 @@ enum CompilationPhase {
     /** pre conditions required for function node to which this transform is to be applied */
     private final EnumSet<CompilationState> pre;
 
-    /** start time of transform - used for timing, see {@link jdk.nashorn.internal.runtime.Timing} */
+    /** start time of transform - used for timing, see {@link com.gargoylesoftware.js.nashorn.internal.runtime.Timing} */
     private long startTime;
 
-    /** start time of transform - used for timing, see {@link jdk.nashorn.internal.runtime.Timing} */
+    /** start time of transform - used for timing, see {@link com.gargoylesoftware.js.nashorn.internal.runtime.Timing} */
     private long endTime;
 
     /** boolean that is true upon transform completion */
@@ -758,7 +758,7 @@ enum CompilationPhase {
     abstract FunctionNode transform(final Compiler compiler, final CompilationPhases phases, final FunctionNode functionNode) throws CompilationException;
 
     /**
-     * Apply a transform to a function node, returning the transfored function node. If the transform is not
+     * Apply a transform to a function node, returning the transformed function node. If the transform is not
      * applicable, an exception is thrown. Every transform requires the function to have a certain number of
      * states to operate. It can have more states set, but not fewer. The state list, i.e. the constructor
      * arguments to any of the CompilationPhase enum entries, is a set of REQUIRED states.

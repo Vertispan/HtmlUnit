@@ -106,7 +106,7 @@ public final class TypeMap {
 
     /**
      * Does the function using this TypeMap need a callee argument. This is used
-     * to compute correct param index offsets in {@link jdk.nashorn.internal.codegen.ApplySpecialization}
+     * to compute correct param index offsets in {@link com.gargoylesoftware.js.nashorn.internal.codegen.ApplySpecialization}
      * @return true if a callee is needed, false otherwise
      */
     public boolean needsCallee() {

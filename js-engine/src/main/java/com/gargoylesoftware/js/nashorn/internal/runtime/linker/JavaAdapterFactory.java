@@ -98,7 +98,7 @@ public final class JavaAdapterFactory {
     // context with permissions needs for AdapterInfo creation
     private static final AccessControlContext CREATE_ADAPTER_INFO_ACC_CTXT =
         ClassAndLoader.createPermAccCtxt("createClassLoader", "getClassLoader",
-            "accessDeclaredMembers", "accessClassInPackage.jdk.nashorn.internal.runtime");
+            "accessDeclaredMembers", "accessClassInPackage.com.gargoylesoftware.js.nashorn.internal.runtime");
 
     /**
      * A mapping from an original Class object to AdapterInfo representing the adapter for the class it represents.
@@ -383,9 +383,9 @@ public final class JavaAdapterFactory {
     private static ProtectionDomain createMinimalPermissionDomain() {
         // Generated classes need to have at least the permission to access Nashorn runtime and runtime.linker packages.
         final Permissions permissions = new Permissions();
-        permissions.add(new RuntimePermission("accessClassInPackage.jdk.nashorn.internal.objects"));
-        permissions.add(new RuntimePermission("accessClassInPackage.jdk.nashorn.internal.runtime"));
-        permissions.add(new RuntimePermission("accessClassInPackage.jdk.nashorn.internal.runtime.linker"));
+        permissions.add(new RuntimePermission("accessClassInPackage.com.gargoylesoftware.js.nashorn.internal.objects"));
+        permissions.add(new RuntimePermission("accessClassInPackage.com.gargoylesoftware.js.nashorn.internal.runtime"));
+        permissions.add(new RuntimePermission("accessClassInPackage.com.gargoylesoftware.js.nashorn.internal.runtime.linker"));
         return new ProtectionDomain(new CodeSource(null, (CodeSigner[])null), permissions);
     }
 }

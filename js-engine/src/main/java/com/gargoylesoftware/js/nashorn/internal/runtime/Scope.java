@@ -39,6 +39,8 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.virtualCallNoLookup;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 
 /**
@@ -50,7 +52,7 @@ public class Scope extends ScriptObject {
     private int splitState = -1;
 
     /** This is updated only in debug mode - counts number of {@code ScriptObject} instances created that are scope */
-    private static int count;
+    private static final LongAdder count = Context.DEBUG ? new LongAdder() : null;
 
     /** Method handle that points to {@link Scope#getSplitState}. */
     public static final CompilerConstants.Call GET_SPLIT_STATE = virtualCallNoLookup(Scope.class, "getSplitState", int.class);
@@ -64,9 +66,7 @@ public class Scope extends ScriptObject {
      */
     public Scope(final PropertyMap map) {
         super(map);
-        if (Context.DEBUG) {
-            count++;
-        }
+        incrementCount();
     }
 
     /**
@@ -77,9 +77,7 @@ public class Scope extends ScriptObject {
      */
     public Scope(final ScriptObject proto, final PropertyMap map) {
         super(proto, map);
-        if (Context.DEBUG) {
-            count++;
-        }
+        incrementCount();
     }
 
     /**
@@ -91,9 +89,7 @@ public class Scope extends ScriptObject {
      */
     public Scope(final PropertyMap map, final long[] primitiveSpill, final Object[] objectSpill) {
         super(map, primitiveSpill, objectSpill);
-        if (Context.DEBUG) {
-            count++;
-        }
+        incrementCount();
     }
 
     @Override
@@ -135,7 +131,13 @@ public class Scope extends ScriptObject {
      *
      * @return number of scope ScriptObjects created
      */
-    public static int getScopeCount() {
-        return count;
+    public static long getScopeCount() {
+        return count != null ? count.sum() : 0;
+    }
+
+    private static void incrementCount() {
+        if (Context.DEBUG) {
+            count.increment();
+        }
     }
 }

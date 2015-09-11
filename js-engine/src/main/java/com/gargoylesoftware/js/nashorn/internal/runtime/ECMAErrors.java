@@ -49,7 +49,7 @@ import com.gargoylesoftware.js.nashorn.internal.scripts.JS;
  * Helper class to throw various standard "ECMA error" exceptions such as Error, ReferenceError, TypeError etc.
  */
 public final class ECMAErrors {
-    private static final String MESSAGES_RESOURCE = "jdk.nashorn.internal.runtime.resources.Messages";
+    private static final String MESSAGES_RESOURCE = "com.gargoylesoftware.js.nashorn.internal.runtime.resources.Messages";
 
     private static final ResourceBundle MESSAGES_BUNDLE;
     static {
@@ -387,7 +387,7 @@ public final class ECMAErrors {
 
     /**
      * Get the exception message by placing the args in the resource defined
-     * by the resource tag. This is visible to, e.g. the {@link jdk.nashorn.internal.parser.Parser}
+     * by the resource tag. This is visible to, e.g. the {@link com.gargoylesoftware.js.nashorn.internal.parser.Parser}
      * can use it to generate compile time messages with the correct locale
      *
      * @param msgId the resource tag (message id)

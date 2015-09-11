@@ -754,7 +754,7 @@ public final class Source implements Loggable {
      * Get the content of this source as a char array. Note that the underlying array is returned instead of a
      * clone; modifying the char array will cause modification to the source; this should not be done. While
      * there is an apparent danger that we allow unfettered access to an underlying mutable array, the
-     * {@code Source} class is in a restricted {@code jdk.nashorn.internal.*} package and as such it is
+     * {@code Source} class is in a restricted {@code com.gargoylesoftware.js.nashorn.internal.*} package and as such it is
      * inaccessible by external actors in an environment with a security manager. Returning a clone would be
      * detrimental to performance.
      * @return content the content of this source as a char array

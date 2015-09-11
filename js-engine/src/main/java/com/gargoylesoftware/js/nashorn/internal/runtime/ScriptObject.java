@@ -778,11 +778,11 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
      * <p>
      * Find a property in the prototype hierarchy. Note: this is final and not
      * a good idea to override. If you have to, use
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
+     * {com.gargoylesoftware.js.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
+     * {com.gargoylesoftware.js.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
      * overriding way to find array properties
      *
-     * @see jdk.nashorn.internal.objects.NativeArray
+     * @see com.gargoylesoftware.js.nashorn.internal.objects.NativeArray
      *
      * @param key  Property key.
      * @param deep Whether the search should look up proto chain.
@@ -799,11 +799,11 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
      * Find a property in the prototype hierarchy. Note: this is not a good idea
      * to override except as it was done in {@link WithObject}.
      * If you have to, use
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
-     * {jdk.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
+     * {com.gargoylesoftware.js.nashorn.internal.objects.NativeArray{@link #getProperty(String)} or
+     * {com.gargoylesoftware.js.nashorn.internal.objects.NativeArray{@link #getPropertyDescriptor(String)} as the
      * overriding way to find array properties
      *
-     * @see jdk.nashorn.internal.objects.NativeArray
+     * @see com.gargoylesoftware.js.nashorn.internal.objects.NativeArray
      *
      * @param key  Property key.
      * @param deep Whether the search should look up proto chain.
@@ -1177,7 +1177,7 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
     }
 
     /**
-     * Overridden by {@link jdk.nashorn.internal.objects.NativeArguments} class (internal use.)
+     * Overridden by {@link com.gargoylesoftware.js.nashorn.internal.objects.NativeArguments} class (internal use.)
      * Used for argument access in a vararg function using parameter name.
      * Returns the argument at a given key (index)
      *
@@ -1190,7 +1190,7 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
     }
 
     /**
-     * Overridden by {@link jdk.nashorn.internal.objects.NativeArguments} class (internal use.)
+     * Overridden by {@link com.gargoylesoftware.js.nashorn.internal.objects.NativeArguments} class (internal use.)
      * Used for argument access in a vararg function using parameter name.
      * Returns the argument at a given key (index)
      *
