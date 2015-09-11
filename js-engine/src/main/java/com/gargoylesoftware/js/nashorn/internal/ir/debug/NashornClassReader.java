@@ -41,10 +41,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.NashornTextifier.NashornLabel;
 
 /**

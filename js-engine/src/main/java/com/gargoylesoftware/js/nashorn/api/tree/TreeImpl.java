@@ -38,7 +38,6 @@
 package com.gargoylesoftware.js.nashorn.api.tree;
 
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
-
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 
 abstract class TreeImpl implements Tree {

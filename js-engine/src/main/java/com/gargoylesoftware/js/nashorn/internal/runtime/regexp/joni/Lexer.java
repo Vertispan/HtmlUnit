@@ -33,6 +33,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isSingleline;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.QuantifierNode.isRepeatInfinite;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.QuantifierNode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.AnchorType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.MetaChar;

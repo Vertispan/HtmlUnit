@@ -42,8 +42,10 @@ import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.DIRECTIV
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.EOF;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.EOL;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.IDENT;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer.LexerToken;

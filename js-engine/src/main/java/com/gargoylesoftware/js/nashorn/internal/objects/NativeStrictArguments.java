@@ -44,6 +44,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;

@@ -37,10 +37,6 @@
 
 package com.gargoylesoftware.js.nashorn.internal.tools.nasgen;
 
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.V1_7;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.CONSTRUCTOR_SUFFIX;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
@@ -59,10 +55,15 @@ import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConsta
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_TYPE;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_INIT_DESC;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.V1_7;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
 import org.objectweb.asm.Handle;
 
 /**

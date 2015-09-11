@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.linker;
 
 import java.lang.reflect.Modifier;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;

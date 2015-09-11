@@ -41,6 +41,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCal
 
 import java.util.HashSet;
 import java.util.Set;
+
 import com.gargoylesoftware.js.nashorn.internal.IntDeque;
 import com.gargoylesoftware.js.nashorn.internal.ir.AccessNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.BinaryNode;

@@ -98,6 +98,7 @@ package com.gargoylesoftware.js.internal.dynalink.beans;
 import java.lang.invoke.MethodType;
 import java.util.LinkedList;
 import java.util.List;
+
 import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
 
 /**

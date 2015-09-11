@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import java.lang.invoke.MethodHandle;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 

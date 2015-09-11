@@ -66,6 +66,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ClassEmitter.Flag;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;

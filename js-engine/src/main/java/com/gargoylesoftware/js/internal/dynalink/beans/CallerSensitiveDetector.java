@@ -97,6 +97,7 @@ package com.gargoylesoftware.js.internal.dynalink.beans;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
+
 import sun.reflect.CallerSensitive;
 
 /**

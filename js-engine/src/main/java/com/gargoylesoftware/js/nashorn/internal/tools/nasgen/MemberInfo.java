@@ -44,12 +44,12 @@ import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConsta
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
-
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 /**
  * Details about a Java method or field annotated with any of the field/method

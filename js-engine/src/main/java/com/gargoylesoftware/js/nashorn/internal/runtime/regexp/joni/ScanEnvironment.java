@@ -32,6 +32,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.BitStatus.bsClear;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.Node;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.exception.ErrorMessages;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.exception.InternalException;

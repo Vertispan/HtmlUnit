@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.ir;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.Label;
 import com.gargoylesoftware.js.nashorn.internal.ir.annotations.Immutable;
 import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;

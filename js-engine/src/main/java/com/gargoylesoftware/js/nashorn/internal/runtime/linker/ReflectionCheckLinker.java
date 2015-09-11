@@ -41,6 +41,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeEr
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
@@ -48,8 +49,8 @@ import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
 import com.gargoylesoftware.js.internal.dynalink.support.CallSiteDescriptorFactory;
 import com.gargoylesoftware.js.nashorn.api.scripting.ClassFilter;
-import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 
 /**
  * Check java reflection permission for java reflective and java.lang.invoke access from scripts

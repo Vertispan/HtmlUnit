@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.Callable;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.parser.JSONParser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;

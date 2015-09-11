@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.regexp;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.ParserException;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Matcher;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option;

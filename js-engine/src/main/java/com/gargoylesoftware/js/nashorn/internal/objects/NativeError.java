@@ -39,8 +39,10 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornException;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;

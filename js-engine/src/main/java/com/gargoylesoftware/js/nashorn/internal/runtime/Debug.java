@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.EOF;
+
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer;
 import com.gargoylesoftware.js.nashorn.internal.parser.Token;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenStream;

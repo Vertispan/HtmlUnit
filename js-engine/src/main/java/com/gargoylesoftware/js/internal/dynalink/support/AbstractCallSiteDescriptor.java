@@ -98,6 +98,7 @@ package com.gargoylesoftware.js.internal.dynalink.support;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.util.Objects;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 
 /**

@@ -49,6 +49,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;

@@ -43,6 +43,7 @@ import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.JS_OBJECT_SINGLE_FIELD_PREFIX;
 
 import java.security.ProtectionDomain;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 
 /**

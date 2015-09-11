@@ -37,15 +37,16 @@
 
 package com.gargoylesoftware.js.nashorn.internal.objects;
 
+import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.rangeError;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isInfinite;
 import static java.lang.Double.isNaN;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.rangeError;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;

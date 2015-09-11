@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.api.tree;
 
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.CaseNode;
 
 final class CaseTreeImpl extends TreeImpl implements CaseTree {

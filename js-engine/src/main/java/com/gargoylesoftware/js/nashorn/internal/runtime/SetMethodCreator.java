@@ -40,8 +40,10 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.referenceError;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.getAccessorTypeIndex;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.SwitchPoint;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;

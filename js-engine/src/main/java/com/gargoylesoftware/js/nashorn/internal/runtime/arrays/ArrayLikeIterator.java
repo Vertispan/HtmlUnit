@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.arrays;
 
 import java.util.Iterator;
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;

@@ -38,7 +38,9 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.arrays;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
+
 import java.lang.reflect.Array;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.BitVector;
 import com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException;
 

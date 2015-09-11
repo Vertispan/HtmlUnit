@@ -42,7 +42,9 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.isString;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
+
 import javax.script.Bindings;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;

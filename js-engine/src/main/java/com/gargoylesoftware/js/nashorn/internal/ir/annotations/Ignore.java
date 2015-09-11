@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.ir.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.ASTWriter;
 
 /**

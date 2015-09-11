@@ -38,6 +38,7 @@ package com.gargoylesoftware.js.nashorn.internal.parser;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.Statement;
 
 /**

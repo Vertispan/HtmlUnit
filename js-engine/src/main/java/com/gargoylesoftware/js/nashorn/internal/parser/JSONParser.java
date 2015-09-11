@@ -37,8 +37,11 @@
 
 package com.gargoylesoftware.js.nashorn.internal.parser;
 
+import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.STRING;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors;
@@ -55,8 +58,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayData;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;
 import com.gargoylesoftware.js.nashorn.internal.scripts.JD;
 import com.gargoylesoftware.js.nashorn.internal.scripts.JO;
-
-import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.STRING;
 
 /**
  * Parses JSON text and returns the corresponding IR node. This is derived from

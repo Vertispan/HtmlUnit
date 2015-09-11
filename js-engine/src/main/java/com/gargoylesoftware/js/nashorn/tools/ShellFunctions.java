@@ -45,8 +45,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
+import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 
 /**
  * Global functions supported only in shell interactive mode.

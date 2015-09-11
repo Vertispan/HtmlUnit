@@ -39,6 +39,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Optio
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isNotBol;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isNotEol;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isPosixRegion;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.CClassNode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.encoding.IntHolder;

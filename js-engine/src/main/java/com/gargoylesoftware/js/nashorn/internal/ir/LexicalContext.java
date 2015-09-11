@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.ir;
 import java.io.File;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.Debug;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Source;
 

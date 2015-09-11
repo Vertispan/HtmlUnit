@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.ir;
 
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
 
 /**

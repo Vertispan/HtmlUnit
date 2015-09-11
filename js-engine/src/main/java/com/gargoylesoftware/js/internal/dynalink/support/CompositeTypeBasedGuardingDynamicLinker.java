@@ -99,6 +99,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardingDynamicLinker;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;

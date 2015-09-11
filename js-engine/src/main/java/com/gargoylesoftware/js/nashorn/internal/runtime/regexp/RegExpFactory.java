@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.regexp;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.ParserException;
 import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 

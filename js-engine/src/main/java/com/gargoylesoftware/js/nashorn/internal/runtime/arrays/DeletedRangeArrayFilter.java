@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.arrays;
 
 import java.lang.reflect.Array;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 
 /**

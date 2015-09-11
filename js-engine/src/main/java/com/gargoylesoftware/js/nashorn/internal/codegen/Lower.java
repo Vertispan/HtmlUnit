@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.regex.Pattern;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.AccessNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.BaseNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.BinaryNode;

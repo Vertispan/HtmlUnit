@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.nashorn.internal.codegen.DumpBytecode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;

@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 
 /**

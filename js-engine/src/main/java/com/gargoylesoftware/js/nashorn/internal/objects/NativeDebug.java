@@ -38,9 +38,11 @@
 package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
+
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Objects;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;

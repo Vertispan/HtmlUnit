@@ -40,10 +40,12 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor.CONFIGURABLE;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor.ENUMERABLE;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor.WRITABLE;
+
 import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.SwitchPoint;
 import java.util.Objects;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 
 /**

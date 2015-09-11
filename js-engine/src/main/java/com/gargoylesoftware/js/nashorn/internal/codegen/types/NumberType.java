@@ -37,6 +37,8 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen.types;
 
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.UNDEFINED_DOUBLE;
 import static org.objectweb.asm.Opcodes.DADD;
 import static org.objectweb.asm.Opcodes.DCMPG;
 import static org.objectweb.asm.Opcodes.DCMPL;
@@ -50,10 +52,9 @@ import static org.objectweb.asm.Opcodes.DREM;
 import static org.objectweb.asm.Opcodes.DRETURN;
 import static org.objectweb.asm.Opcodes.DSTORE;
 import static org.objectweb.asm.Opcodes.DSUB;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.UNDEFINED_DOUBLE;
 
 import org.objectweb.asm.MethodVisitor;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 

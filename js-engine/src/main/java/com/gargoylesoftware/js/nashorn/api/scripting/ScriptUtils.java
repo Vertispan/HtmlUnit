@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.api.scripting;
 
 import java.lang.invoke.MethodHandle;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;

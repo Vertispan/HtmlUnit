@@ -37,6 +37,20 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen;
 
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.ARGUMENTS;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.CONSTANTS;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.SCOPE;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.THIS;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.THIS_DEBUGGER;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.VARARGS;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.className;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.constructorNoLookup;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.methodDescriptor;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticField;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.virtualCallNoLookup;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator.PRIMITIVE_FIELD_TYPE;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor.CALLSITE_OPTIMISTIC;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor.CALLSITE_PROGRAM_POINT_SHIFT;
 import static org.objectweb.asm.Opcodes.ATHROW;
 import static org.objectweb.asm.Opcodes.CHECKCAST;
 import static org.objectweb.asm.Opcodes.DUP2;
@@ -69,20 +83,6 @@ import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.ARGUMENTS;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.CONSTANTS;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.SCOPE;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.THIS;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.THIS_DEBUGGER;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.VARARGS;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.className;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.constructorNoLookup;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.methodDescriptor;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticField;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.virtualCallNoLookup;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator.PRIMITIVE_FIELD_TYPE;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor.CALLSITE_OPTIMISTIC;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor.CALLSITE_PROGRAM_POINT_SHIFT;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -91,9 +91,11 @@ import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import com.gargoylesoftware.js.internal.dynalink.support.NameCodec;
+
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
+
+import com.gargoylesoftware.js.internal.dynalink.support.NameCodec;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ClassEmitter.Flag;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.FieldAccess;

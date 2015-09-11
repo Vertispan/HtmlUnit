@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.arrays;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;

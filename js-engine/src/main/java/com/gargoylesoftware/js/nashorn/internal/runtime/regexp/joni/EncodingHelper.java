@@ -32,6 +32,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 
 import java.util.Arrays;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.encoding.CharacterType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.encoding.IntHolder;
 

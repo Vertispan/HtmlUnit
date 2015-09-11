@@ -43,6 +43,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UND
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 
 /**

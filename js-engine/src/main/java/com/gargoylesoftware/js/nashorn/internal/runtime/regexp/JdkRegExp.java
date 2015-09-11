@@ -44,6 +44,7 @@ import static java.util.regex.Pattern.UNICODE_CASE;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.ParserException;
 
 /**

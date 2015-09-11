@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import java.util.Collection;
 import java.util.Map;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ClassEmitter;
 
 /**

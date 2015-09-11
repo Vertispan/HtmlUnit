@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.codegen;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.SCOPE;
 
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;

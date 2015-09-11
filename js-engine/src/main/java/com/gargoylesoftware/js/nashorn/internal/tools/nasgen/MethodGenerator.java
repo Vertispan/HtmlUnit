@@ -37,6 +37,11 @@
 
 package com.gargoylesoftware.js.nashorn.internal.tools.nasgen;
 
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_INIT2;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_INIT3;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_TYPE;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.TYPE_SPECIALIZATION;
 import static org.objectweb.asm.Opcodes.AALOAD;
 import static org.objectweb.asm.Opcodes.AASTORE;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
@@ -88,15 +93,13 @@ import static org.objectweb.asm.Opcodes.SALOAD;
 import static org.objectweb.asm.Opcodes.SASTORE;
 import static org.objectweb.asm.Opcodes.SIPUSH;
 import static org.objectweb.asm.Opcodes.SWAP;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_INIT2;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_INIT3;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SPECIALIZATION_TYPE;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.TYPE_SPECIALIZATION;
+
 import java.util.List;
+
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 
 /**

@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.arrays;
 
 import java.util.NoSuchElementException;
+
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 

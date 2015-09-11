@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.scripts.JS;

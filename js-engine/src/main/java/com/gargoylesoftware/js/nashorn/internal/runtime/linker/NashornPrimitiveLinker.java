@@ -41,6 +41,7 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+
 import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedTypeConversion;

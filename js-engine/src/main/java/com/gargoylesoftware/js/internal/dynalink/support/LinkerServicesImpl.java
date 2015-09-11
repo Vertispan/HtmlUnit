@@ -97,6 +97,7 @@ package com.gargoylesoftware.js.internal.dynalink.support;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+
 import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardingDynamicLinker;

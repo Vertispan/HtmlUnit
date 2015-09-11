@@ -41,6 +41,7 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.isValid;
 
 import java.lang.invoke.MethodHandle;
+
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;

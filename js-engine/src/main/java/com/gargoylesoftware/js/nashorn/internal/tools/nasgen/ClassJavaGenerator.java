@@ -81,10 +81,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
-import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
-import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -92,6 +88,10 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
+import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 
 /**
  * Base class for class generator classes.

@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.rangeError;
 
 import java.io.PrintWriter;
+
 import com.gargoylesoftware.js.nashorn.internal.parser.Token;
 
 /**

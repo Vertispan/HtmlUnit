@@ -32,6 +32,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 
 import java.lang.ref.WeakReference;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.StackPopLevel;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.StackType;
 

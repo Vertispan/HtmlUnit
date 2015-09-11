@@ -57,6 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;

@@ -37,18 +37,6 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen;
 
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_STATIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ACC_VARARGS;
-import static org.objectweb.asm.Opcodes.H_INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.H_INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.H_NEWINVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.V1_7;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.CLINIT;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.CONSTANTS;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.GET_ARRAY_PREFIX;
@@ -63,6 +51,18 @@ import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.methodDescriptor;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.typeDescriptor;
 import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.virtualCallNoLookup;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_VARARGS;
+import static org.objectweb.asm.Opcodes.H_INVOKEINTERFACE;
+import static org.objectweb.asm.Opcodes.H_INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.H_NEWINVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.V1_7;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -72,9 +72,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.TraceClassVisitor;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.NashornClassReader;

@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import java.util.Objects;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;

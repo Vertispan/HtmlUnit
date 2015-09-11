@@ -42,6 +42,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.Property.NOT_ENUM
 import static com.gargoylesoftware.js.nashorn.internal.runtime.Property.NOT_WRITABLE;
 
 import java.lang.invoke.MethodType;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.ir.AccessNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CallNode;

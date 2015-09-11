@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.api.tree;
 
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.CallNode;
 
 class FunctionCallTreeImpl extends ExpressionTreeImpl implements FunctionCallTree {

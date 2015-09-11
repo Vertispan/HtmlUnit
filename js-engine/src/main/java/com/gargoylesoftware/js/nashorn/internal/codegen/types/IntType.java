@@ -37,6 +37,9 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen.types;
 
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.UNDEFINED_INT;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.INVALID_PROGRAM_POINT;
 import static org.objectweb.asm.Opcodes.BIPUSH;
 import static org.objectweb.asm.Opcodes.I2D;
 import static org.objectweb.asm.Opcodes.I2L;
@@ -61,11 +64,9 @@ import static org.objectweb.asm.Opcodes.ISUB;
 import static org.objectweb.asm.Opcodes.IUSHR;
 import static org.objectweb.asm.Opcodes.IXOR;
 import static org.objectweb.asm.Opcodes.SIPUSH;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.UNDEFINED_INT;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.INVALID_PROGRAM_POINT;
 
 import org.objectweb.asm.MethodVisitor;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 

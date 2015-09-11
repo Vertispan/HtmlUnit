@@ -42,6 +42,7 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.ref.WeakReference;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;

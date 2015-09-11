@@ -46,6 +46,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;

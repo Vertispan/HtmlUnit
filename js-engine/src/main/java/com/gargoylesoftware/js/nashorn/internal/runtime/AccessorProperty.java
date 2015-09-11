@@ -47,6 +47,7 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.MethodHandleFactor
 import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.getAccessorTypeIndex;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.getNumberOfAccessorTypes;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.INVALID_PROGRAM_POINT;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.invoke.MethodHandle;
@@ -54,6 +55,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SwitchPoint;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;

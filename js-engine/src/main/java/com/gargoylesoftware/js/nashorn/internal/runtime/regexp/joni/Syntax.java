@@ -32,6 +32,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.MetaChar.INEFFECTIVE_META_CHAR;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.constants.SyntaxProperties;
 
 @SuppressWarnings("javadoc")

@@ -98,6 +98,7 @@ package com.gargoylesoftware.js.internal.dynalink.beans;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.GuardedInvocationComponent.ValidationType;
 import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
 

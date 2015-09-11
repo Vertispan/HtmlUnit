@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.ir.debug;
 
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.BinaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Block;
 import com.gargoylesoftware.js.nashorn.internal.ir.BlockStatement;

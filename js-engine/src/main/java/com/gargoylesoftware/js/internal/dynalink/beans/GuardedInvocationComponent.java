@@ -96,6 +96,7 @@
 package com.gargoylesoftware.js.internal.dynalink.beans;
 
 import java.lang.invoke.MethodHandle;
+
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 
 /**

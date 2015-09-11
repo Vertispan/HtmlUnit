@@ -37,6 +37,12 @@
 
 package com.gargoylesoftware.js.nashorn.internal.tools.nasgen;
 
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.$CLINIT$;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.CLINIT;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
+import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.DUP;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
@@ -44,16 +50,12 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.$CLINIT$;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.CLINIT;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;
-import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
@@ -62,6 +64,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 

@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.regexp;
 
 import java.util.regex.MatchResult;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.BitVector;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ParserException;

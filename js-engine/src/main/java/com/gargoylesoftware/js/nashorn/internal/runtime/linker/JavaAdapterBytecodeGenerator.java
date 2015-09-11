@@ -37,6 +37,8 @@
 
 package com.gargoylesoftware.js.nashorn.internal.runtime.linker;
 
+import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
+import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.AdaptationResult.Outcome.ERROR_NO_ACCESSIBLE_CONSTRUCTOR;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
@@ -52,8 +54,6 @@ import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.ISTORE;
 import static org.objectweb.asm.Opcodes.POP;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
-import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.AdaptationResult.Outcome.ERROR_NO_ACCESSIBLE_CONSTRUCTOR;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -72,18 +72,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptUtils;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.AdaptationResult.Outcome;
+
 import sun.reflect.CallerSensitive;
 
 /**

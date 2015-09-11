@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.codegen;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;

@@ -41,10 +41,11 @@ import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants
 import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
-import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
+
+import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
 
 /**
  * Implementation of {@link ArrayData} as soon as a double has been

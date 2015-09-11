@@ -37,6 +37,7 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen.types;
 
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
 import static org.objectweb.asm.Opcodes.DALOAD;
 import static org.objectweb.asm.Opcodes.DASTORE;
 import static org.objectweb.asm.Opcodes.DUP;
@@ -58,7 +59,6 @@ import static org.objectweb.asm.Opcodes.SWAP;
 import static org.objectweb.asm.Opcodes.T_DOUBLE;
 import static org.objectweb.asm.Opcodes.T_INT;
 import static org.objectweb.asm.Opcodes.T_LONG;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.staticCallNoLookup;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -74,8 +74,10 @@ import java.util.TreeMap;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Undefined;

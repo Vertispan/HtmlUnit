@@ -41,6 +41,7 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;

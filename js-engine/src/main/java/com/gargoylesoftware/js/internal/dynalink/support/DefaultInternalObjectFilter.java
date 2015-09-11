@@ -98,6 +98,7 @@ package com.gargoylesoftware.js.internal.dynalink.support;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+
 import com.gargoylesoftware.js.internal.dynalink.DynamicLinkerFactory;
 import com.gargoylesoftware.js.internal.dynalink.linker.MethodHandleTransformer;
 

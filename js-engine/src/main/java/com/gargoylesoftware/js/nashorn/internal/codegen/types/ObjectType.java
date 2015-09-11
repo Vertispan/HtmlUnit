@@ -37,18 +37,20 @@
 
 package com.gargoylesoftware.js.nashorn.internal.codegen.types;
 
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.className;
+import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.typeDescriptor;
 import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.CHECKCAST;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.className;
-import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.typeDescriptor;
 
 import java.lang.invoke.MethodHandle;
+
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;

@@ -44,8 +44,10 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;

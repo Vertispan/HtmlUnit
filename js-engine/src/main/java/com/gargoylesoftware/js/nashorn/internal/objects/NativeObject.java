@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
 import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;

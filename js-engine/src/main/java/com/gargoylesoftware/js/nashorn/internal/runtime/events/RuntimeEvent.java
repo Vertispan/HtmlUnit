@@ -38,6 +38,7 @@
 package com.gargoylesoftware.js.nashorn.internal.runtime.events;
 
 import java.util.logging.Level;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeDebug;
 import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 

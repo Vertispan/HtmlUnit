@@ -45,6 +45,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.ir.BinaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Block;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;

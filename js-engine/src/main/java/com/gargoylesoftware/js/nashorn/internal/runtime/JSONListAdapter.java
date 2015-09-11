@@ -40,6 +40,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;

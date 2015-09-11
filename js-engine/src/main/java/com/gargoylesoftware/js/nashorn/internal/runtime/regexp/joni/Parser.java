@@ -34,6 +34,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.BitStatus.bsOnOff;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isDontCaptureGroup;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.Option.isIgnoreCase;
+
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.AnchorNode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.AnyCharNode;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.joni.ast.BackRefNode;

@@ -37,12 +37,6 @@
 
 package com.gargoylesoftware.js.nashorn.internal.tools.nasgen;
 
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_STATIC;
-import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_CREATE;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_CREATE_DESC;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.ACCESSORPROPERTY_TYPE;
@@ -74,11 +68,18 @@ import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConsta
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTFUNCTION_TYPE;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SETTER_PREFIX;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.TYPE_OBJECT;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -86,6 +87,7 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+
 import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 
 /**
