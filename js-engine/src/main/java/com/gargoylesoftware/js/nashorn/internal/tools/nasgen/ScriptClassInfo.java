@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import jdk.internal.org.objectweb.asm.Type;
+import org.objectweb.asm.Type;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;

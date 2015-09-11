@@ -132,7 +132,7 @@ public interface LinkerServices {
      * Similar to {@link #asType(MethodHandle, MethodType)} except it only converts the return type of the method handle
      * when it can be done using a conversion that loses neither precision nor magnitude, otherwise it leaves it
      * unchanged. The idea is that other conversions should not be performed by individual linkers, but instead the
-     * {@link DynamicLinkerFactory#setPrelinkFilter(jdk.internal.dynalink.GuardedInvocationFilter) pre-link filter of
+     * {@link DynamicLinkerFactory#setPrelinkFilter(com.gargoylesoftware.js.internal.dynalink.GuardedInvocationFilter) pre-link filter of
      * the dynamic linker} should implement the strategy of dealing with potentially lossy return type conversions in a
      * manner specific to the language runtime.
      *

@@ -37,10 +37,10 @@
 
 package com.gargoylesoftware.js.nashorn.internal.tools.nasgen;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_FINAL;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_SUPER;
-import static jdk.internal.org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.V1_7;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.DEFAULT_INIT_DESC;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.INIT;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.OBJECT_DESC;

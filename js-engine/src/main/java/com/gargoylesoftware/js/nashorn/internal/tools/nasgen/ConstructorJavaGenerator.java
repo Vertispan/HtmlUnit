@@ -55,15 +55,15 @@ import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConsta
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_INIT_DESC;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.SCRIPTOBJECT_TYPE;
 import static com.gargoylesoftware.js.nashorn.internal.tools.nasgen.StringConstants.TYPE_SCRIPTFUNCTION;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_FINAL;
-import static jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static jdk.internal.org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static jdk.internal.org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.V1_7;
 
 import java.io.IOException;
 import java.util.List;
 
-import jdk.internal.org.objectweb.asm.Handle;
+import org.objectweb.asm.Handle;
 
 /**
  * This class generates constructor class for a @ScriptClass annotated class.
