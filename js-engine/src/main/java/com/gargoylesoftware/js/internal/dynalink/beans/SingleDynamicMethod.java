@@ -111,7 +111,7 @@ import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
  * target method to a call site type (including mapping variable arity methods to a call site signature with different
  * arity).
  * @author Attila Szegedi
- * @version $Id$
+ * @version $Id: SingleDynamicMethod.java 11184 2015-09-11 15:44:04Z asashour $
  */
 abstract class SingleDynamicMethod extends DynamicMethod {
 

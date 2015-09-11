@@ -105,7 +105,7 @@ import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
  * guard. All guards produced in the AbstractJavaLinker are either "Class.isInstance()" or "getClass() == clazz"
  * expressions. This allows choosing the most restrictive guard as the guard for the composition of two components.
  * @author Attila Szegedi
- * @version $Id$
+ * @version $Id: GuardedInvocationComponent.java 11184 2015-09-11 15:44:04Z asashour $
  */
 class GuardedInvocationComponent {
     enum ValidationType {
