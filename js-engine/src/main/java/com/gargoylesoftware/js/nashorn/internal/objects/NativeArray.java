@@ -60,7 +60,6 @@ import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -607,7 +606,7 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
      * @param args   arguments (length)
      * @return the new NativeArray
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeArray construct(final boolean newObj, final Object self, final Object... args) {
         switch (args.length) {
         case 0:

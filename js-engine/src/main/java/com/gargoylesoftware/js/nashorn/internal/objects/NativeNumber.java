@@ -52,7 +52,6 @@ import java.util.Locale;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -154,7 +153,7 @@ public final class NativeNumber extends ScriptObject {
      * @param args   value of number
      * @return the Number instance (internally represented as a {@code NativeNumber})
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static Object constructor(final boolean newObj, final Object self, final Object... args) {
         final double num = (args.length > 0) ? JSType.toNumber(args[0]) : 0.0;
 

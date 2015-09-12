@@ -45,7 +45,6 @@ import java.lang.invoke.MethodHandles;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornException;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -137,7 +136,7 @@ public final class NativeError extends ScriptObject {
      *
      * @return NativeError instance
      */
-    @Constructor
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static NativeError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeError(msg);
     }

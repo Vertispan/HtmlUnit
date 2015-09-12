@@ -46,7 +46,6 @@ import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -255,7 +254,7 @@ public final class NativeUint8ClampedArray extends ArrayBufferView {
      *
      * @return new typed array
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeUint8ClampedArray constructor(final boolean newObj, final Object self, final Object... args) {
         return (NativeUint8ClampedArray)constructorImpl(newObj, args, FACTORY);
     }

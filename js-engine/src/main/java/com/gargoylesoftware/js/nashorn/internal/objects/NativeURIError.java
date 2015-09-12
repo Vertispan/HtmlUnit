@@ -40,7 +40,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -104,7 +103,7 @@ public final class NativeURIError extends ScriptObject {
      *
      * @return new URIError
      */
-    @Constructor(name = "URIError")
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(name = "URIError")
     public static NativeURIError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeURIError(msg);
     }

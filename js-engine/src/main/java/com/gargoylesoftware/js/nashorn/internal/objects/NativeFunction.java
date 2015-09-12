@@ -49,7 +49,6 @@ import java.util.List;
 import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.parser.Parser;
@@ -256,7 +255,7 @@ public final class NativeFunction {
      * @param args   arguments
      * @return new NativeFunction
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static ScriptFunction function(final boolean newObj, final Object self, final Object... args) {
         final StringBuilder sb = new StringBuilder();
 

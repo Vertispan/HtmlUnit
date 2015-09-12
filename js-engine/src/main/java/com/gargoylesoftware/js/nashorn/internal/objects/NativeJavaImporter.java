@@ -45,7 +45,6 @@ import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
@@ -103,7 +102,7 @@ public final class NativeJavaImporter extends ScriptObject {
      * @param args arguments
      * @return NativeJavaImporter instance
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeJavaImporter constructor(final boolean isNew, final Object self, final Object... args) {
         return new NativeJavaImporter(args);
     }

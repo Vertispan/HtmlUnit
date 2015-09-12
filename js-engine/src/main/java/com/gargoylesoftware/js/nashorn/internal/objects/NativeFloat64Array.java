@@ -45,7 +45,6 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -199,7 +198,7 @@ public final class NativeFloat64Array extends ArrayBufferView {
      *
      * @return new typed array
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeFloat64Array constructor(final boolean newObj, final Object self, final Object... args) {
         return (NativeFloat64Array)constructorImpl(newObj, args, FACTORY);
     }

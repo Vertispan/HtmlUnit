@@ -40,7 +40,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -105,7 +104,7 @@ public final class NativeTypeError extends ScriptObject {
      *
      * @return new TypeError
      */
-    @Constructor(name = "TypeError")
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(name = "TypeError")
     public static NativeTypeError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeTypeError(msg);
     }

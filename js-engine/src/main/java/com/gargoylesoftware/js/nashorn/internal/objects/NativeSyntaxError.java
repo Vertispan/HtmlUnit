@@ -40,7 +40,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -105,7 +104,7 @@ public final class NativeSyntaxError extends ScriptObject {
      *
      * @return new SyntaxError
      */
-    @Constructor(name = "SyntaxError")
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(name = "SyntaxError")
     public static NativeSyntaxError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeSyntaxError(msg);
     }

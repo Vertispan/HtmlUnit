@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
@@ -140,7 +139,7 @@ public final class NativeRegExp extends ScriptObject {
      * @param args  arguments (optional: pattern and flags)
      * @return new NativeRegExp
      */
-    @Constructor(arity = 2)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 2)
     public static NativeRegExp constructor(final boolean isNew, final Object self, final Object... args) {
         if (args.length > 1) {
             return newRegExp(args[0], args[1]);

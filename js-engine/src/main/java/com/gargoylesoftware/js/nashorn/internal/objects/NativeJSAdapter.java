@@ -53,7 +53,6 @@ import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.FindProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
@@ -549,7 +548,7 @@ public final class NativeJSAdapter extends ScriptObject {
      * @param args  arguments ([adaptee], [overrides, adaptee] or [proto, overrides, adaptee]
      * @return new NativeJSAdapter
      */
-    @Constructor
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static NativeJSAdapter construct(final boolean isNew, final Object self, final Object... args) {
         Object proto     = UNDEFINED;
         Object overrides = UNDEFINED;

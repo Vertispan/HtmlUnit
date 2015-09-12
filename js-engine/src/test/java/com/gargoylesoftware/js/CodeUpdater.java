@@ -68,6 +68,8 @@ public class CodeUpdater {
             line = line.replace("jdk.internal.org.objectweb.asm", "org.objectweb.asm");
             line = line.replace("jdk.nashorn.internal", "com.gargoylesoftware.js.nashorn.internal");
             line = line.replace("jdk.internal.dynalink", "com.gargoylesoftware.js.internal.dynalink");
+            line = line.replace("  @Constructor",
+                    "  @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor");
             originalLines.set(i, line);
         }
         localLines.addAll(originalLines);

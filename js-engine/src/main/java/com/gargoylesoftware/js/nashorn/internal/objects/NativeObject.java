@@ -62,7 +62,6 @@ import com.gargoylesoftware.js.internal.dynalink.support.LinkRequestImpl;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -463,7 +462,7 @@ public final class NativeObject {
      * @param value  value of object to be instantiated
      * @return the new NativeObject
      */
-    @Constructor
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static Object construct(final boolean newObj, final Object self, final Object value) {
         final JSType type = JSType.ofNoFunction(value);
 

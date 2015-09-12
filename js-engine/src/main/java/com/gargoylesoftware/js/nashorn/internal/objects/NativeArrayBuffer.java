@@ -42,7 +42,6 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeEr
 import java.nio.ByteBuffer;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -108,7 +107,7 @@ public final class NativeArrayBuffer extends ScriptObject {
      * @param args   arguments to constructor
      * @return new NativeArrayBuffer
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static NativeArrayBuffer constructor(final boolean newObj, final Object self, final Object... args) {
         if (!newObj) {
             throw typeError("constructor.requires.new", "ArrayBuffer");

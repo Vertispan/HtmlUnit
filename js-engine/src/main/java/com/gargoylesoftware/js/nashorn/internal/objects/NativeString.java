@@ -58,7 +58,6 @@ import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.lookup.MethodHandleFactory.LookupException;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -1196,7 +1195,7 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
      *
      * @return new NativeString, empty string if no args, extraneous args ignored
      */
-    @Constructor(arity = 1)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 1)
     public static Object constructor(final boolean newObj, final Object self, final Object... args) {
         final CharSequence str = args.length > 0 ? JSType.toCharSequence(args[0]) : "";
         return newObj ? newObj(str) : str.toString();

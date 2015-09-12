@@ -48,7 +48,6 @@ import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
@@ -185,7 +184,7 @@ public final class NativeDate extends ScriptObject {
      * @param args  arguments
      * @return new Date
      */
-    @Constructor(arity = 7)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(arity = 7)
     public static Object construct(final boolean isNew, final Object self, final Object... args) {
         if (! isNew) {
             return toStringImpl(new NativeDate(), FORMAT_DATE_TIME);
