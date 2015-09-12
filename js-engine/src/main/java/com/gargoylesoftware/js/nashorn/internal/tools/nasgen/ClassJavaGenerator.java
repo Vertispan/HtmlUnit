@@ -411,7 +411,7 @@ public class ClassJavaGenerator {
         if (!specs.isEmpty()) {
             mi.memberInfoArray(className, specs);
             mi.invokeStatic(SCRIPTFUNCTION_TYPE, SCRIPTFUNCTION_CREATEBUILTIN, SCRIPTFUNCTION_CREATEBUILTIN_SPECS_DESC);
-            builder.append("ScriptFunctionImpl.makeFunction(\"" + memInfo.getName() + "\"," + System.lineSeparator());
+            builder.append("ScriptFunction.createBuiltin(\"" + memInfo.getName() + "\"," + System.lineSeparator());
             builder.append("                    staticHandle(\"" + memInfo.getJavaName()
                     + "\", " + descToJava(memInfo.getJavaDesc()) + ")");
             builder.append(", new Specialization[] {" + System.lineSeparator());
@@ -426,7 +426,7 @@ public class ClassJavaGenerator {
             }
             builder.append("                    });" + System.lineSeparator());
         } else {
-            builder.append("ScriptFunctionImpl.makeFunction(\"" + memInfo.getName() + "\"," + System.lineSeparator());
+            builder.append("ScriptFunction.createBuiltin(\"" + memInfo.getName() + "\"," + System.lineSeparator());
             builder.append("                    staticHandle(\"" + memInfo.getJavaName()
                     + "\", " + descToJava(memInfo.getJavaDesc()) + "));" + System.lineSeparator());
             mi.invokeStatic(SCRIPTFUNCTION_TYPE, SCRIPTFUNCTION_CREATEBUILTIN, SCRIPTFUNCTION_CREATEBUILTIN_DESC);
