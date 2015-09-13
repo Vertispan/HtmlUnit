@@ -39,7 +39,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Setter;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
@@ -55,11 +54,11 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExpResult;
 @ScriptClass("RegExpExecResult")
 public final class NativeRegExpExecResult extends ScriptObject {
     /** index property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object index;
 
     /** input property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object input;
 
     // initialized by nasgen

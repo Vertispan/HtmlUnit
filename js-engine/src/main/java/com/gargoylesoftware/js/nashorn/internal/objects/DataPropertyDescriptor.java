@@ -41,7 +41,6 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.sam
 
 import java.util.Objects;
 
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor;
@@ -59,19 +58,19 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 @ScriptClass("DataPropertyDescriptor")
 public final class DataPropertyDescriptor extends ScriptObject implements PropertyDescriptor {
     /** is this property configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object configurable;
 
     /** is this property enumerable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object enumerable;
 
     /** is this property writable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object writable;
 
     /** value of this property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object value;
 
     // initialized by nasgen

@@ -39,7 +39,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -64,35 +63,35 @@ public final class NativeMath extends ScriptObject {
     }
 
     /** ECMA 15.8.1.1 - E, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double E = Math.E;
 
     /** ECMA 15.8.1.2 - LN10, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double LN10 = 2.302585092994046;
 
     /** ECMA 15.8.1.3 - LN2, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double LN2 = 0.6931471805599453;
 
     /** ECMA 15.8.1.4 - LOG2E, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double LOG2E = 1.4426950408889634;
 
     /** ECMA 15.8.1.5 - LOG10E, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double LOG10E = 0.4342944819032518;
 
     /** ECMA 15.8.1.6 - PI, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double PI = Math.PI;
 
     /** ECMA 15.8.1.7 - SQRT1_2, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double SQRT1_2 = 0.7071067811865476;
 
     /** ECMA 15.8.1.8 - SQRT2, always a double constant. Not writable or configurable */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double SQRT2 = 1.4142135623730951;
 
     /**

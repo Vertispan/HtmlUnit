@@ -40,7 +40,6 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
@@ -54,19 +53,19 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 public final class NativeURIError extends ScriptObject {
 
     /** message property in instance */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
     public Object instMessage;
 
     /** error name property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object name;
 
     /** ECMA 15.1.1.1 message property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object message;
 
     /** Nashorn extension: underlying exception */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object nashornException;
 
     // initialized by nasgen

@@ -53,7 +53,6 @@ import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -76,23 +75,23 @@ public final class NativeNumber extends ScriptObject {
     private static final MethodHandle PROTOFILTER = findOwnMH("protoFilter", MH.type(Object.class, Object.class));
 
     /** ECMA 15.7.3.2 largest positive finite value */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double MAX_VALUE = Double.MAX_VALUE;
 
     /** ECMA 15.7.3.3 smallest positive finite value */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double MIN_VALUE = Double.MIN_VALUE;
 
     /** ECMA 15.7.3.4 NaN */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double NaN = Double.NaN;
 
     /** ECMA 15.7.3.5 negative infinity */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double NEGATIVE_INFINITY = Double.NEGATIVE_INFINITY;
 
     /** ECMA 15.7.3.5 positive infinity */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT, where = Where.CONSTRUCTOR)
     public static final double POSITIVE_INFINITY = Double.POSITIVE_INFINITY;
 
     private final double  value;

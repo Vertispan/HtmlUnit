@@ -49,7 +49,6 @@ import java.util.concurrent.Callable;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -72,7 +71,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExpResult;
 @ScriptClass("RegExp")
 public final class NativeRegExp extends ScriptObject {
     /** ECMA 15.10.7.5 lastIndex property */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
     public Object lastIndex;
 
     /** Compiled regexp */

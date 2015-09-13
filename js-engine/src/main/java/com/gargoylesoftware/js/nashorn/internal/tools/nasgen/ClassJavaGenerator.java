@@ -537,9 +537,10 @@ public class ClassJavaGenerator {
                     + ")";
         }
 
-        String getterCondition = getBrowserCondition(getter);
-        String setterCondition = getBrowserCondition(setter);
-        boolean differentConditions = setter != null &&
+        final String getterCondition = getBrowserCondition(getter);
+        final String setterCondition = getBrowserCondition(setter);
+        
+        boolean differentConditions = setterCondition != null &&
                 (setterCondition == null || !setterCondition.equals(getterCondition));
         if (differentConditions) {
             builder.append("            String " + propertyName + "Setter = null;").append(System.lineSeparator());

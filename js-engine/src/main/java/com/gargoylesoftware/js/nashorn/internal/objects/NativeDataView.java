@@ -46,7 +46,6 @@ import java.nio.ByteOrder;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
@@ -82,19 +81,19 @@ public class NativeDataView extends ScriptObject {
     /**
      * Underlying ArrayBuffer storage object
      */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final Object buffer;
 
     /**
      * The offset in bytes from the start of the ArrayBuffer
      */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final int byteOffset;
 
     /**
      * The number of bytes from the offset that this DataView will reference
      */
-     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+    @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final int byteLength;
 
     // underlying ByteBuffer
