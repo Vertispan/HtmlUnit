@@ -55,19 +55,19 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 public final class NativeSyntaxError extends ScriptObject {
 
     /** message property in instance */
-    @Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
     public Object instMessage;
 
     /** error name property */
-    @Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object name;
 
     /** ECMA 15.1.1.1 message property */
-    @Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object message;
 
     /** Nashorn extension: underlying exception */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object nashornException;
 
     // initialized by nasgen

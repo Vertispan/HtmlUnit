@@ -59,19 +59,19 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 @ScriptClass("DataPropertyDescriptor")
 public final class DataPropertyDescriptor extends ScriptObject implements PropertyDescriptor {
     /** is this property configurable */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object configurable;
 
     /** is this property enumerable */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object enumerable;
 
     /** is this property writable */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object writable;
 
     /** value of this property */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object value;
 
     // initialized by nasgen

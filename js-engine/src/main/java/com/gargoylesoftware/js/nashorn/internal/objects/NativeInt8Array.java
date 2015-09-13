@@ -62,7 +62,7 @@ public final class NativeInt8Array extends ArrayBufferView {
     /**
      * The size in bytes of each element in the array.
      */
-    @Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_WRITABLE | Attribute.NOT_CONFIGURABLE, where = Where.CONSTRUCTOR)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_WRITABLE | Attribute.NOT_CONFIGURABLE, where = Where.CONSTRUCTOR)
     public static final int BYTES_PER_ELEMENT = 1;
 
     // initialized by nasgen

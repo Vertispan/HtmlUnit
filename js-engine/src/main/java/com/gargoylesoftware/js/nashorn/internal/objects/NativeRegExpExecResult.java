@@ -55,11 +55,11 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExpResult;
 @ScriptClass("RegExpExecResult")
 public final class NativeRegExpExecResult extends ScriptObject {
     /** index property */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object index;
 
     /** input property */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object input;
 
     // initialized by nasgen

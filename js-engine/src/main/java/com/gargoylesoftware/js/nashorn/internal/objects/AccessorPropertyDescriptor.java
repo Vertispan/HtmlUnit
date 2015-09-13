@@ -62,19 +62,19 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 @ScriptClass("AccessorPropertyDescriptor")
 public final class AccessorPropertyDescriptor extends ScriptObject implements PropertyDescriptor {
     /** is this property configurable? */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object configurable;
 
     /** is this property enumerable? */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object enumerable;
 
     /** getter for property */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object get;
 
     /** setter for property */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object set;
 
     // initialized by nasgen

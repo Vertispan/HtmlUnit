@@ -131,107 +131,107 @@ public final class Global extends Scope {
      */
 
     /** Nashorn extension: arguments array */
-    @Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
     public Object arguments;
 
     /** ECMA 15.1.2.2 parseInt (string , radix) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object parseInt;
 
     /** ECMA 15.1.2.3 parseFloat (string) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object parseFloat;
 
     /** ECMA 15.1.2.4 isNaN (number) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object isNaN;
 
     /** ECMA 15.1.2.5 isFinite (number) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object isFinite;
 
     /** ECMA 15.1.3.3 encodeURI */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object encodeURI;
 
     /** ECMA 15.1.3.4 encodeURIComponent */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object encodeURIComponent;
 
     /** ECMA 15.1.3.1 decodeURI */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object decodeURI;
 
     /** ECMA 15.1.3.2 decodeURIComponent */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object decodeURIComponent;
 
     /** ECMA B.2.1 escape (string) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object escape;
 
     /** ECMA B.2.2 unescape (string) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object unescape;
 
     /** Nashorn extension: global.print */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object print;
 
     /** Nashorn extension: global.load */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object load;
 
     /** Nashorn extension: global.loadWithNewGlobal */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object loadWithNewGlobal;
 
     /** Nashorn extension: global.exit */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object exit;
 
     /** Nashorn extension: global.quit */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object quit;
 
     /** Value property NaN of the Global Object - ECMA 15.1.1.1 NaN */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final double NaN = Double.NaN;
 
     /** Value property Infinity of the Global Object - ECMA 15.1.1.2 Infinity */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final double Infinity = Double.POSITIVE_INFINITY;
 
     /** Value property Undefined of the Global Object - ECMA 15.1.1.3 Undefined */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final Object undefined = UNDEFINED;
 
     /** ECMA 15.1.2.1 eval(x) */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object eval;
 
     /** ECMA 15.1.4.1 Object constructor. */
-    @Property(name = "Object", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Object", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object object;
 
     /** ECMA 15.1.4.2 Function constructor. */
-    @Property(name = "Function", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Function", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object function;
 
     /** ECMA 15.1.4.3 Array constructor. */
-    @Property(name = "Array", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Array", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object array;
 
     /** ECMA 15.1.4.4 String constructor */
-    @Property(name = "String", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "String", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object string;
 
     /** ECMA 15.1.4.5 Boolean constructor */
-    @Property(name = "Boolean", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Boolean", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object _boolean;
 
     /** ECMA 15.1.4.6 - Number constructor */
-    @Property(name = "Number", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Number", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object number;
 
     /**
@@ -347,11 +347,11 @@ public final class Global extends Scope {
     private volatile Object jsadapter = LAZY_SENTINEL;
 
     /** ECMA 15.8 - The Math object */
-    @Property(name = "Math", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Math", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object math;
 
     /** Error object */
-    @Property(name = "Error", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Error", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object error;
 
     /**
@@ -410,15 +410,15 @@ public final class Global extends Scope {
     private volatile Object rangeError = LAZY_SENTINEL;
 
     /** ReferenceError object */
-    @Property(name = "ReferenceError", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "ReferenceError", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object referenceError;
 
     /** SyntaxError object */
-    @Property(name = "SyntaxError", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "SyntaxError", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object syntaxError;
 
     /** TypeError object */
-    @Property(name = "TypeError", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "TypeError", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object typeError;
 
     /**
@@ -757,31 +757,31 @@ public final class Global extends Scope {
     private volatile Object float64Array;
 
     /** Nashorn extension: Java access - global.Packages */
-    @Property(name = "Packages", attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "Packages", attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object packages;
 
     /** Nashorn extension: Java access - global.com */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object com;
 
     /** Nashorn extension: Java access - global.edu */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object edu;
 
     /** Nashorn extension: Java access - global.java */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object java;
 
     /** Nashorn extension: Java access - global.javafx */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object javafx;
 
     /** Nashorn extension: Java access - global.javax */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object javax;
 
     /** Nashorn extension: Java access - global.org */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public volatile Object org;
 
     /**
@@ -843,15 +843,15 @@ public final class Global extends Scope {
     private volatile Object javaApi;
 
     /** Nashorn extension: current script's file name */
-    @Property(name = "__FILE__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "__FILE__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final Object __FILE__ = LAZY_SENTINEL;
 
     /** Nashorn extension: current script's directory */
-    @Property(name = "__DIR__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "__DIR__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final Object __DIR__ = LAZY_SENTINEL;
 
     /** Nashorn extension: current source line number being executed */
-    @Property(name = "__LINE__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = "__LINE__", attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public static final Object __LINE__ = LAZY_SENTINEL;
 
     private volatile NativeDate DEFAULT_DATE;

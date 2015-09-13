@@ -70,6 +70,8 @@ public class CodeUpdater {
             line = line.replace("jdk.internal.dynalink", "com.gargoylesoftware.js.internal.dynalink");
             line = line.replace("  @Constructor",
                     "  @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor");
+            line = line.replace(" @Property",
+                    "  @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property");
             originalLines.set(i, line);
         }
         localLines.addAll(originalLines);

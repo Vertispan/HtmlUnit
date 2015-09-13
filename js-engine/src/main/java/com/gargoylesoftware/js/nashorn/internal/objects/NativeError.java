@@ -85,19 +85,19 @@ public final class NativeError extends ScriptObject {
     static final String FILENAME = "__fileName__";
 
     /** Message property name */
-    @Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(name = NativeError.MESSAGE, attributes = Attribute.NOT_ENUMERABLE)
     public Object instMessage;
 
     /** ECMA 15.11.4.2 Error.prototype.name */
-    @Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object name;
 
     /** ECMA 15.11.4.3 Error.prototype.message */
-    @Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE, where = Where.PROTOTYPE)
     public Object message;
 
     /** Nashorn extension: underlying exception */
-    @Property(attributes = Attribute.NOT_ENUMERABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE)
     public Object nashornException;
 
     // initialized by nasgen

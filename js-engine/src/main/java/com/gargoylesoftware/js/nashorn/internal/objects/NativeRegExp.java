@@ -72,7 +72,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExpResult;
 @ScriptClass("RegExp")
 public final class NativeRegExp extends ScriptObject {
     /** ECMA 15.10.7.5 lastIndex property */
-    @Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NOT_ENUMERABLE | Attribute.NOT_CONFIGURABLE)
     public Object lastIndex;
 
     /** Compiled regexp */

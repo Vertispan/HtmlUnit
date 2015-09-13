@@ -82,19 +82,19 @@ public class NativeDataView extends ScriptObject {
     /**
      * Underlying ArrayBuffer storage object
      */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final Object buffer;
 
     /**
      * The offset in bytes from the start of the ArrayBuffer
      */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final int byteOffset;
 
     /**
      * The number of bytes from the offset that this DataView will reference
      */
-    @Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property(attributes = Attribute.NON_ENUMERABLE_CONSTANT)
     public final int byteLength;
 
     // underlying ByteBuffer

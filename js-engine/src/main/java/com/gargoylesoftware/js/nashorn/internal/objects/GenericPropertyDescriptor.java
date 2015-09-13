@@ -58,11 +58,11 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 @ScriptClass("GenericPropertyDescriptor")
 public final class GenericPropertyDescriptor extends ScriptObject implements PropertyDescriptor {
     /** Is the property configurable? */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object configurable;
 
     /** Is the property writable? */
-    @Property
+     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property
     public Object enumerable;
 
     // initialized by nasgen
