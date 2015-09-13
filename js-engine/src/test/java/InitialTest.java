@@ -10,6 +10,8 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * version 2 for more details (http://www.gnu.org/licenses/).
  */
+import static org.junit.Assert.assertEquals;
+
 import javax.script.ScriptEngine;
 
 import org.junit.Test;
@@ -24,4 +26,9 @@ public class InitialTest {
         engine.eval("print('Hello, World!');");
     }
 
+    @Test
+    public void int8Array() throws Exception {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        assertEquals(0, (int) engine.eval("new Int8Array().length"));
+    }
 }

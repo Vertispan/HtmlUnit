@@ -489,7 +489,7 @@ final class IRTranslator extends NodeVisitor<LexicalContext> {
     }
 
     private List<? extends Statement> getOrderedStatements(final List<? extends Statement> stats) {
-        final List<? extends Statement> statList = new ArrayList<>(stats);
+        final List<Statement> statList = new ArrayList<>(stats);
         statList.sort(Comparator.comparingInt(Node::getSourceOrder));
         return statList;
     }
