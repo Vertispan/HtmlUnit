@@ -85,9 +85,9 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
  * itself; see its documentation for details about the generated class.
  * <p>
  * You normally don't use this class directly, but rather either create adapters
- * from script using {@link jdk.nashorn.internal.objects.NativeJava#extend(Object, Object...)},
+ * from script using {@link com.gargoylesoftware.js.nashorn.internal.objects.NativeJava#extend(Object, Object...)},
  * using the {@code new} operator on abstract classes and interfaces (see
- * {@link jdk.nashorn.internal.objects.NativeJava#type(Object, Object)}), or
+ * {@link com.gargoylesoftware.js.nashorn.internal.objects.NativeJava#type(Object, Object)}), or
  * implicitly when passing script functions to Java methods expecting SAM types.
  */
 

@@ -42,7 +42,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.Bootstrap;
 
 /**
- * Helper class for the various map/apply functions in {@link jdk.nashorn.internal.objects.NativeArray}.
+ * Helper class for the various map/apply functions in {@link com.gargoylesoftware.js.nashorn.internal.objects.NativeArray}.
  * @param <T> element type of results from application callback
  */
 public abstract class IteratorAction<T> {

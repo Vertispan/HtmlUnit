@@ -47,6 +47,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
@@ -56,10 +59,15 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.PrimitiveLookup;
 
 /**
@@ -396,5 +404,198 @@ public final class NativeNumber extends ScriptObject {
 
     private static MethodHandle findOwnMH(final String name, final MethodType type) {
         return MH.findStatic(MethodHandles.lookup(), NativeNumber.class, name, type);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeNumber.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("MAX_VALUE", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$MAX_VALUE", double.class),
+null));
+            list.add(AccessorProperty.create("MIN_VALUE", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$MIN_VALUE", double.class),
+null));
+            list.add(AccessorProperty.create("NaN", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$NaN", double.class),
+null));
+            list.add(AccessorProperty.create("NEGATIVE_INFINITY", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$NEGATIVE_INFINITY", double.class),
+null));
+            list.add(AccessorProperty.create("POSITIVE_INFINITY", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$POSITIVE_INFINITY", double.class),
+null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Number", 
+                    staticHandle("constructor", Object.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        public double G$MAX_VALUE() {
+            return NativeNumber.MAX_VALUE;
+         }
+
+         public double G$MIN_VALUE() {
+            return NativeNumber.MIN_VALUE;
+         }
+
+         public double G$NaN() {
+            return NativeNumber.NaN;
+         }
+
+         public double G$NEGATIVE_INFINITY() {
+            return NativeNumber.NEGATIVE_INFINITY;
+         }
+
+         public double G$POSITIVE_INFINITY() {
+            return NativeNumber.POSITIVE_INFINITY;
+         }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toFixed;
+        private ScriptFunction toExponential;
+        private ScriptFunction toPrecision;
+        private ScriptFunction toString;
+        private ScriptFunction toLocaleString;
+        private ScriptFunction valueOf;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toFixed() {
+            return this.toFixed;
+        }
+
+        public void S$toFixed(final ScriptFunction function) {
+            this.toFixed = function;
+        }
+
+        public ScriptFunction G$toExponential() {
+            return this.toExponential;
+        }
+
+        public void S$toExponential(final ScriptFunction function) {
+            this.toExponential = function;
+        }
+
+        public ScriptFunction G$toPrecision() {
+            return this.toPrecision;
+        }
+
+        public void S$toPrecision(final ScriptFunction function) {
+            this.toPrecision = function;
+        }
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$toLocaleString() {
+            return this.toLocaleString;
+        }
+
+        public void S$toLocaleString(final ScriptFunction function) {
+            this.toLocaleString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(6);
+            list.add(AccessorProperty.create("toFixed", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toFixed", ScriptFunction.class),
+                    virtualHandle("S$toFixed", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toExponential", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toExponential", ScriptFunction.class),
+                    virtualHandle("S$toExponential", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toPrecision", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toPrecision", ScriptFunction.class),
+                    virtualHandle("S$toPrecision", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toFixed = ScriptFunction.createBuiltin("toFixed",
+                    staticHandle("toFixed", String.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("toFixed", String.class, Object.class, int.class), false)
+                    });
+            toExponential = ScriptFunction.createBuiltin("toExponential",
+                    staticHandle("toExponential", String.class, Object.class, Object.class));
+            toPrecision = ScriptFunction.createBuiltin("toPrecision",
+                    staticHandle("toPrecision", String.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("toPrecision", String.class, Object.class, int.class), false)
+                    });
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", String.class, Object.class, Object.class));
+            toLocaleString = ScriptFunction.createBuiltin("toLocaleString",
+                    staticHandle("toLocaleString", String.class, Object.class));
+            valueOf = ScriptFunction.createBuiltin("valueOf",
+                    staticHandle("valueOf", double.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "Number";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

@@ -52,7 +52,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornGuards;
 
 /**
  * Instances of this class are quite ephemeral; they only exist for the duration of an invocation of
- * {@link ScriptObject#findSetMethod(CallSiteDescriptor, jdk.internal.dynalink.linker.LinkRequest)} and
+ * {@link ScriptObject#findSetMethod(CallSiteDescriptor, com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest)} and
  * serve as the actual encapsulation of the algorithm for creating an appropriate property setter method.
  */
 final class SetMethodCreator {

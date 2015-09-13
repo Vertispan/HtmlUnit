@@ -43,14 +43,21 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeEr
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.PrimitiveLookup;
@@ -197,5 +204,86 @@ public final class NativeBoolean extends ScriptObject {
 
     private static MethodHandle findOwnMH(final String name, final MethodType type) {
         return MH.findStatic(MethodHandles.lookup(), NativeBoolean.class, name, type);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeBoolean.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        Constructor() {
+            super("Boolean", 
+                    staticHandle("constructor", Object.class, boolean.class, Object.class, Object.class),
+                    null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction valueOf;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", String.class, Object.class));
+            valueOf = ScriptFunction.createBuiltin("valueOf",
+                    staticHandle("valueOf", boolean.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "Boolean";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

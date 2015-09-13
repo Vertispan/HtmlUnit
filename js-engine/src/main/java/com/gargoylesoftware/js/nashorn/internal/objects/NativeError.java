@@ -42,15 +42,21 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UND
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornException;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAException;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
@@ -102,7 +108,6 @@ public final class NativeError extends ScriptObject {
     // initialized by nasgen
     private static PropertyMap $nasgenmap$;
 
-    @SuppressWarnings("LeakingThisInConstructor")
     private NativeError(final Object msg, final ScriptObject proto, final PropertyMap map) {
         super(proto, map);
         if (msg != UNDEFINED) {
@@ -406,5 +411,202 @@ public final class NativeError extends ScriptObject {
 
     private static String getScriptStackString(final ScriptObject sobj, final Throwable exp) {
         return JSType.toString(sobj) + "\n" + NashornException.getScriptStackString(exp);
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("message", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$instMessage", Object.class),
+                    virtualHandle("S$instMessage", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("nashornException", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$nashornException", Object.class),
+                    virtualHandle("S$nashornException", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+
+    }
+
+    public Object G$instMessage() {
+        return this.instMessage;
+    }
+
+    public void S$instMessage(final ScriptFunction function) {
+        this.instMessage = function;
+    }
+
+    public Object G$nashornException() {
+        return this.nashornException;
+    }
+
+    public void S$nashornException(final ScriptFunction function) {
+        this.nashornException = function;
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeError.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(NativeError.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private ScriptFunction captureStackTrace;
+        private ScriptFunction dumpStack;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$captureStackTrace() {
+            return this.captureStackTrace;
+        }
+
+        public void S$captureStackTrace(final ScriptFunction function) {
+            this.captureStackTrace = function;
+        }
+
+        public ScriptFunction G$dumpStack() {
+            return this.dumpStack;
+        }
+
+        public void S$dumpStack(final ScriptFunction function) {
+            this.dumpStack = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("captureStackTrace", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$captureStackTrace", ScriptFunction.class),
+                    virtualHandle("S$captureStackTrace", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("dumpStack", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$dumpStack", ScriptFunction.class),
+                    virtualHandle("S$dumpStack", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Error", 
+                    staticHandle("constructor", NativeError.class, boolean.class, Object.class, Object.class),
+                    $nasgenmap$, null);
+            captureStackTrace = ScriptFunction.createBuiltin("captureStackTrace",
+                    staticHandle("captureStackTrace", Object.class, Object.class, Object.class));
+            dumpStack = ScriptFunction.createBuiltin("dumpStack",
+                    staticHandle("dumpStack", Object.class, Object.class));
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private Object name;
+        private Object message;
+        private ScriptFunction printStackTrace;
+        private ScriptFunction getStackTrace;
+        private ScriptFunction toString;
+        private static final PropertyMap $nasgenmap$;
+
+        public Object G$name() {
+            return this.name;
+        }
+
+        public void S$name(final Object function) {
+            this.name = function;
+        }
+
+        public Object G$message() {
+            return this.message;
+        }
+
+        public void S$message(final Object function) {
+            this.message = function;
+        }
+
+        public ScriptFunction G$printStackTrace() {
+            return this.printStackTrace;
+        }
+
+        public void S$printStackTrace(final ScriptFunction function) {
+            this.printStackTrace = function;
+        }
+
+        public ScriptFunction G$getStackTrace() {
+            return this.getStackTrace;
+        }
+
+        public void S$getStackTrace(final ScriptFunction function) {
+            this.getStackTrace = function;
+        }
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("name", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$name", Object.class),
+                    virtualHandle("S$name", void.class, Object.class)));
+            list.add(AccessorProperty.create("message", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$message", Object.class),
+                    virtualHandle("S$message", void.class, Object.class)));
+            list.add(AccessorProperty.create("printStackTrace", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$printStackTrace", ScriptFunction.class),
+                    virtualHandle("S$printStackTrace", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getStackTrace", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getStackTrace", ScriptFunction.class),
+                    virtualHandle("S$getStackTrace", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            printStackTrace = ScriptFunction.createBuiltin("printStackTrace",
+                    staticHandle("printStackTrace", Object.class, Object.class));
+            getStackTrace = ScriptFunction.createBuiltin("getStackTrace",
+                    staticHandle("getStackTrace", Object.class, Object.class));
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", Object.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "Error";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

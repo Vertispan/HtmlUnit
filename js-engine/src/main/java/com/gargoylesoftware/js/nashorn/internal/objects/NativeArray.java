@@ -47,6 +47,8 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayLikeI
 import static com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor.CALLSITE_STRICT;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,15 +69,19 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Setter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Debug;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.OptimisticBuiltins;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyDescriptor;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Undefined;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayData;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;
@@ -1912,6 +1918,439 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
            return (ContinuousArrayData)((NativeArray)self).getArray(elementType); //ensure element type can fit "elementType"
         } catch (final NullPointerException e) {
             throw new ClassCastException();
+        }
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("length", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("length", Object.class, Object.class),
+                    staticHandle("length", void.class, Object.class, Object.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeArray.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private ScriptFunction isArray;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$isArray() {
+            return this.isArray;
+        }
+
+        public void S$isArray(final ScriptFunction function) {
+            this.isArray = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("isArray", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isArray", ScriptFunction.class),
+                    virtualHandle("S$isArray", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Array", 
+                    staticHandle("construct", NativeArray.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, new Specialization[] {
+                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class), false),
+                        new Specialization(staticHandle("construct", Object.class, boolean.class, Object.class, boolean.class), false),
+                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, double.class), false)
+            });
+            isArray = ScriptFunction.createBuiltin("isArray",
+                    staticHandle("isArray", boolean.class, Object.class, Object.class));
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction assertNumeric;
+        private ScriptFunction toLocaleString;
+        private ScriptFunction concat;
+        private ScriptFunction join;
+        private ScriptFunction pop;
+        private ScriptFunction push;
+        private ScriptFunction reverse;
+        private ScriptFunction shift;
+        private ScriptFunction slice;
+        private ScriptFunction sort;
+        private ScriptFunction splice;
+        private ScriptFunction unshift;
+        private ScriptFunction indexOf;
+        private ScriptFunction lastIndexOf;
+        private ScriptFunction every;
+        private ScriptFunction some;
+        private ScriptFunction forEach;
+        private ScriptFunction map;
+        private ScriptFunction filter;
+        private ScriptFunction reduce;
+        private ScriptFunction reduceRight;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$assertNumeric() {
+            return this.assertNumeric;
+        }
+
+        public void S$assertNumeric(final ScriptFunction function) {
+            this.assertNumeric = function;
+        }
+
+        public ScriptFunction G$toLocaleString() {
+            return this.toLocaleString;
+        }
+
+        public void S$toLocaleString(final ScriptFunction function) {
+            this.toLocaleString = function;
+        }
+
+        public ScriptFunction G$concat() {
+            return this.concat;
+        }
+
+        public void S$concat(final ScriptFunction function) {
+            this.concat = function;
+        }
+
+        public ScriptFunction G$join() {
+            return this.join;
+        }
+
+        public void S$join(final ScriptFunction function) {
+            this.join = function;
+        }
+
+        public ScriptFunction G$pop() {
+            return this.pop;
+        }
+
+        public void S$pop(final ScriptFunction function) {
+            this.pop = function;
+        }
+
+        public ScriptFunction G$push() {
+            return this.push;
+        }
+
+        public void S$push(final ScriptFunction function) {
+            this.push = function;
+        }
+
+        public ScriptFunction G$reverse() {
+            return this.reverse;
+        }
+
+        public void S$reverse(final ScriptFunction function) {
+            this.reverse = function;
+        }
+
+        public ScriptFunction G$shift() {
+            return this.shift;
+        }
+
+        public void S$shift(final ScriptFunction function) {
+            this.shift = function;
+        }
+
+        public ScriptFunction G$slice() {
+            return this.slice;
+        }
+
+        public void S$slice(final ScriptFunction function) {
+            this.slice = function;
+        }
+
+        public ScriptFunction G$sort() {
+            return this.sort;
+        }
+
+        public void S$sort(final ScriptFunction function) {
+            this.sort = function;
+        }
+
+        public ScriptFunction G$splice() {
+            return this.splice;
+        }
+
+        public void S$splice(final ScriptFunction function) {
+            this.splice = function;
+        }
+
+        public ScriptFunction G$unshift() {
+            return this.unshift;
+        }
+
+        public void S$unshift(final ScriptFunction function) {
+            this.unshift = function;
+        }
+
+        public ScriptFunction G$indexOf() {
+            return this.indexOf;
+        }
+
+        public void S$indexOf(final ScriptFunction function) {
+            this.indexOf = function;
+        }
+
+        public ScriptFunction G$lastIndexOf() {
+            return this.lastIndexOf;
+        }
+
+        public void S$lastIndexOf(final ScriptFunction function) {
+            this.lastIndexOf = function;
+        }
+
+        public ScriptFunction G$every() {
+            return this.every;
+        }
+
+        public void S$every(final ScriptFunction function) {
+            this.every = function;
+        }
+
+        public ScriptFunction G$some() {
+            return this.some;
+        }
+
+        public void S$some(final ScriptFunction function) {
+            this.some = function;
+        }
+
+        public ScriptFunction G$forEach() {
+            return this.forEach;
+        }
+
+        public void S$forEach(final ScriptFunction function) {
+            this.forEach = function;
+        }
+
+        public ScriptFunction G$map() {
+            return this.map;
+        }
+
+        public void S$map(final ScriptFunction function) {
+            this.map = function;
+        }
+
+        public ScriptFunction G$filter() {
+            return this.filter;
+        }
+
+        public void S$filter(final ScriptFunction function) {
+            this.filter = function;
+        }
+
+        public ScriptFunction G$reduce() {
+            return this.reduce;
+        }
+
+        public void S$reduce(final ScriptFunction function) {
+            this.reduce = function;
+        }
+
+        public ScriptFunction G$reduceRight() {
+            return this.reduceRight;
+        }
+
+        public void S$reduceRight(final ScriptFunction function) {
+            this.reduceRight = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(23);
+            list.add(AccessorProperty.create("length", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getProtoLength", Object.class, Object.class),
+                    staticHandle("setProtoLength", void.class, Object.class, Object.class)));
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("assertNumeric", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$assertNumeric", ScriptFunction.class),
+                    virtualHandle("S$assertNumeric", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("concat", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$concat", ScriptFunction.class),
+                    virtualHandle("S$concat", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("join", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$join", ScriptFunction.class),
+                    virtualHandle("S$join", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("pop", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$pop", ScriptFunction.class),
+                    virtualHandle("S$pop", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("push", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$push", ScriptFunction.class),
+                    virtualHandle("S$push", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("reverse", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$reverse", ScriptFunction.class),
+                    virtualHandle("S$reverse", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("shift", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$shift", ScriptFunction.class),
+                    virtualHandle("S$shift", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("slice", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$slice", ScriptFunction.class),
+                    virtualHandle("S$slice", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("sort", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$sort", ScriptFunction.class),
+                    virtualHandle("S$sort", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("splice", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$splice", ScriptFunction.class),
+                    virtualHandle("S$splice", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("unshift", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$unshift", ScriptFunction.class),
+                    virtualHandle("S$unshift", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("indexOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$indexOf", ScriptFunction.class),
+                    virtualHandle("S$indexOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("lastIndexOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$lastIndexOf", ScriptFunction.class),
+                    virtualHandle("S$lastIndexOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("every", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$every", ScriptFunction.class),
+                    virtualHandle("S$every", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("some", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$some", ScriptFunction.class),
+                    virtualHandle("S$some", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("forEach", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$forEach", ScriptFunction.class),
+                    virtualHandle("S$forEach", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("map", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$map", ScriptFunction.class),
+                    virtualHandle("S$map", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("filter", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$filter", ScriptFunction.class),
+                    virtualHandle("S$filter", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("reduce", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$reduce", ScriptFunction.class),
+                    virtualHandle("S$reduce", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("reduceRight", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$reduceRight", ScriptFunction.class),
+                    virtualHandle("S$reduceRight", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", Object.class, Object.class));
+            assertNumeric = ScriptFunction.createBuiltin("assertNumeric",
+                    staticHandle("assertNumeric", Object.class, Object.class));
+            toLocaleString = ScriptFunction.createBuiltin("toLocaleString",
+                    staticHandle("toLocaleString", String.class, Object.class));
+            concat = ScriptFunction.createBuiltin("concat",
+                    staticHandle("concat", NativeArray.class, Object.class, Object[].class), new Specialization[] {
+                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, Object.class), false)
+                    });
+            concat.setArity(1);
+            join = ScriptFunction.createBuiltin("join",
+                    staticHandle("join", String.class, Object.class, Object.class));
+            pop = ScriptFunction.createBuiltin("pop",
+                    staticHandle("pop", Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("popInt", int.class, Object.class), false),
+                        new Specialization(staticHandle("popLong", long.class, Object.class), false),
+                        new Specialization(staticHandle("popDouble", double.class, Object.class), false),
+                        new Specialization(staticHandle("popObject", Object.class, Object.class), false)
+                    });
+            push = ScriptFunction.createBuiltin("push",
+                    staticHandle("push", Object.class, Object.class, Object[].class), new Specialization[] {
+                        new Specialization(staticHandle("push", long.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("push", long.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("push", long.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("pushObject", long.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("push", long.class, Object.class, Object.class), false)
+                    });
+            push.setArity(1);
+            reverse = ScriptFunction.createBuiltin("reverse",
+                    staticHandle("reverse", Object.class, Object.class));
+            shift = ScriptFunction.createBuiltin("shift",
+                    staticHandle("shift", Object.class, Object.class));
+            slice = ScriptFunction.createBuiltin("slice",
+                    staticHandle("slice", Object.class, Object.class, Object.class, Object.class));
+            sort = ScriptFunction.createBuiltin("sort",
+                    staticHandle("sort", ScriptObject.class, Object.class, Object.class));
+            splice = ScriptFunction.createBuiltin("splice",
+                    staticHandle("splice", Object.class, Object.class, Object[].class));
+            splice.setArity(2);
+            unshift = ScriptFunction.createBuiltin("unshift",
+                    staticHandle("unshift", Object.class, Object.class, Object[].class));
+            unshift.setArity(1);
+            indexOf = ScriptFunction.createBuiltin("indexOf",
+                    staticHandle("indexOf", long.class, Object.class, Object.class, Object.class));
+            indexOf.setArity(1);
+            lastIndexOf = ScriptFunction.createBuiltin("lastIndexOf",
+                    staticHandle("lastIndexOf", long.class, Object.class, Object[].class));
+            lastIndexOf.setArity(1);
+            every = ScriptFunction.createBuiltin("every",
+                    staticHandle("every", boolean.class, Object.class, Object.class, Object.class));
+            every.setArity(1);
+            some = ScriptFunction.createBuiltin("some",
+                    staticHandle("some", boolean.class, Object.class, Object.class, Object.class));
+            some.setArity(1);
+            forEach = ScriptFunction.createBuiltin("forEach",
+                    staticHandle("forEach", Object.class, Object.class, Object.class, Object.class));
+            forEach.setArity(1);
+            map = ScriptFunction.createBuiltin("map",
+                    staticHandle("map", NativeArray.class, Object.class, Object.class, Object.class));
+            map.setArity(1);
+            filter = ScriptFunction.createBuiltin("filter",
+                    staticHandle("filter", NativeArray.class, Object.class, Object.class, Object.class));
+            filter.setArity(1);
+            reduce = ScriptFunction.createBuiltin("reduce",
+                    staticHandle("reduce", Object.class, Object.class, Object[].class));
+            reduce.setArity(1);
+            reduceRight = ScriptFunction.createBuiltin("reduceRight",
+                    staticHandle("reduceRight", Object.class, Object.class, Object[].class));
+            reduceRight.setArity(1);
+        }
+
+        public String getClassName() {
+            return "Array";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 }

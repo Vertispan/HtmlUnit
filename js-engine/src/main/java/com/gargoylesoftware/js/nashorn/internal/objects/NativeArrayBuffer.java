@@ -39,7 +39,12 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
@@ -47,10 +52,15 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 
 /**
  * NativeArrayBuffer - ArrayBuffer as described in the JS typed
@@ -248,5 +258,109 @@ public final class NativeArrayBuffer extends ScriptObject {
 
     ByteBuffer getBuffer(final int offset, final int length) {
         return (ByteBuffer)getBuffer(offset).limit(length);
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("byteLength", int.class, Object.class),
+                    null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeArrayBuffer.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private ScriptFunction isView;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$isView() {
+            return this.isView;
+        }
+
+        public void S$isView(final ScriptFunction function) {
+            this.isView = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("isView", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isView", ScriptFunction.class),
+                    virtualHandle("S$isView", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("ArrayBuffer", 
+                    staticHandle("constructor", NativeArrayBuffer.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, null);
+            isView = ScriptFunction.createBuiltin("isView",
+                    staticHandle("isView", boolean.class, Object.class, Object.class));
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction slice;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$slice() {
+            return this.slice;
+        }
+
+        public void S$slice(final ScriptFunction function) {
+            this.slice = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("slice", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$slice", ScriptFunction.class),
+                    virtualHandle("S$slice", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            slice = ScriptFunction.createBuiltin("slice",
+                    staticHandle("slice", NativeArrayBuffer.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("slice", Object.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("slice", Object.class, Object.class, int.class), false)
+                    });
+        }
+
+        public String getClassName() {
+            return "ArrayBuffer";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

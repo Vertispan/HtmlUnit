@@ -53,7 +53,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 /**
  * Details about a Java method or field annotated with any of the field/method
- * annotations from the jdk.nashorn.internal.objects.annotations package.
+ * annotations from the com.gargoylesoftware.js.nashorn.internal.objects.annotations package.
  */
 public final class MemberInfo implements Cloneable {
     // class loader of this class

@@ -41,15 +41,23 @@ import static com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayData;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.TypedArrayData;
@@ -258,5 +266,106 @@ public final class NativeUint16Array extends ArrayBufferView {
     @Override
     protected ScriptObject getPrototype(final Global global) {
         return global.getUint16ArrayPrototype();
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeUint16Array.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("BYTES_PER_ELEMENT", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$BYTES_PER_ELEMENT", int.class),
+null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Uint16Array", 
+                    staticHandle("constructor", NativeUint16Array.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction set;
+        private ScriptFunction subarray;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$set() {
+            return this.set;
+        }
+
+        public void S$set(final ScriptFunction function) {
+            this.set = function;
+        }
+
+        public ScriptFunction G$subarray() {
+            return this.subarray;
+        }
+
+        public void S$subarray(final ScriptFunction function) {
+            this.subarray = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("set", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$set", ScriptFunction.class),
+                    virtualHandle("S$set", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("subarray", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$subarray", ScriptFunction.class),
+                    virtualHandle("S$subarray", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            set = ScriptFunction.createBuiltin("set",
+                    staticHandle("set", Object.class, Object.class, Object.class, Object.class));
+            subarray = ScriptFunction.createBuiltin("subarray",
+                    staticHandle("subarray", NativeUint16Array.class, Object.class, Object.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "Uint16Array";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

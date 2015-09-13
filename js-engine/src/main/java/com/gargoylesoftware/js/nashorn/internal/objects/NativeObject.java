@@ -47,6 +47,7 @@ import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +71,8 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAException;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayData;
@@ -852,5 +855,383 @@ public final class NativeObject {
 
     private static MethodHandle findOwnMH(final String name, final Class<?> rtype, final Class<?>... types) {
         return MH.findStatic(MethodHandles.lookup(), NativeObject.class, name, MH.type(rtype, types));
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeObject.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private ScriptFunction setIndexedPropertiesToExternalArrayData;
+        private ScriptFunction getPrototypeOf;
+        private ScriptFunction setPrototypeOf;
+        private ScriptFunction getOwnPropertyDescriptor;
+        private ScriptFunction getOwnPropertyNames;
+        private ScriptFunction create;
+        private ScriptFunction defineProperty;
+        private ScriptFunction defineProperties;
+        private ScriptFunction seal;
+        private ScriptFunction freeze;
+        private ScriptFunction preventExtensions;
+        private ScriptFunction isSealed;
+        private ScriptFunction isFrozen;
+        private ScriptFunction isExtensible;
+        private ScriptFunction keys;
+        private ScriptFunction bindProperties;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$setIndexedPropertiesToExternalArrayData() {
+            return this.setIndexedPropertiesToExternalArrayData;
+        }
+
+        public void S$setIndexedPropertiesToExternalArrayData(final ScriptFunction function) {
+            this.setIndexedPropertiesToExternalArrayData = function;
+        }
+
+        public ScriptFunction G$getPrototypeOf() {
+            return this.getPrototypeOf;
+        }
+
+        public void S$getPrototypeOf(final ScriptFunction function) {
+            this.getPrototypeOf = function;
+        }
+
+        public ScriptFunction G$setPrototypeOf() {
+            return this.setPrototypeOf;
+        }
+
+        public void S$setPrototypeOf(final ScriptFunction function) {
+            this.setPrototypeOf = function;
+        }
+
+        public ScriptFunction G$getOwnPropertyDescriptor() {
+            return this.getOwnPropertyDescriptor;
+        }
+
+        public void S$getOwnPropertyDescriptor(final ScriptFunction function) {
+            this.getOwnPropertyDescriptor = function;
+        }
+
+        public ScriptFunction G$getOwnPropertyNames() {
+            return this.getOwnPropertyNames;
+        }
+
+        public void S$getOwnPropertyNames(final ScriptFunction function) {
+            this.getOwnPropertyNames = function;
+        }
+
+        public ScriptFunction G$create() {
+            return this.create;
+        }
+
+        public void S$create(final ScriptFunction function) {
+            this.create = function;
+        }
+
+        public ScriptFunction G$defineProperty() {
+            return this.defineProperty;
+        }
+
+        public void S$defineProperty(final ScriptFunction function) {
+            this.defineProperty = function;
+        }
+
+        public ScriptFunction G$defineProperties() {
+            return this.defineProperties;
+        }
+
+        public void S$defineProperties(final ScriptFunction function) {
+            this.defineProperties = function;
+        }
+
+        public ScriptFunction G$seal() {
+            return this.seal;
+        }
+
+        public void S$seal(final ScriptFunction function) {
+            this.seal = function;
+        }
+
+        public ScriptFunction G$freeze() {
+            return this.freeze;
+        }
+
+        public void S$freeze(final ScriptFunction function) {
+            this.freeze = function;
+        }
+
+        public ScriptFunction G$preventExtensions() {
+            return this.preventExtensions;
+        }
+
+        public void S$preventExtensions(final ScriptFunction function) {
+            this.preventExtensions = function;
+        }
+
+        public ScriptFunction G$isSealed() {
+            return this.isSealed;
+        }
+
+        public void S$isSealed(final ScriptFunction function) {
+            this.isSealed = function;
+        }
+
+        public ScriptFunction G$isFrozen() {
+            return this.isFrozen;
+        }
+
+        public void S$isFrozen(final ScriptFunction function) {
+            this.isFrozen = function;
+        }
+
+        public ScriptFunction G$isExtensible() {
+            return this.isExtensible;
+        }
+
+        public void S$isExtensible(final ScriptFunction function) {
+            this.isExtensible = function;
+        }
+
+        public ScriptFunction G$keys() {
+            return this.keys;
+        }
+
+        public void S$keys(final ScriptFunction function) {
+            this.keys = function;
+        }
+
+        public ScriptFunction G$bindProperties() {
+            return this.bindProperties;
+        }
+
+        public void S$bindProperties(final ScriptFunction function) {
+            this.bindProperties = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(16);
+            list.add(AccessorProperty.create("setIndexedPropertiesToExternalArrayData", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setIndexedPropertiesToExternalArrayData", ScriptFunction.class),
+                    virtualHandle("S$setIndexedPropertiesToExternalArrayData", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getPrototypeOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getPrototypeOf", ScriptFunction.class),
+                    virtualHandle("S$getPrototypeOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setPrototypeOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setPrototypeOf", ScriptFunction.class),
+                    virtualHandle("S$setPrototypeOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getOwnPropertyDescriptor", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getOwnPropertyDescriptor", ScriptFunction.class),
+                    virtualHandle("S$getOwnPropertyDescriptor", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getOwnPropertyNames", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getOwnPropertyNames", ScriptFunction.class),
+                    virtualHandle("S$getOwnPropertyNames", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("create", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$create", ScriptFunction.class),
+                    virtualHandle("S$create", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("defineProperty", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$defineProperty", ScriptFunction.class),
+                    virtualHandle("S$defineProperty", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("defineProperties", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$defineProperties", ScriptFunction.class),
+                    virtualHandle("S$defineProperties", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("seal", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$seal", ScriptFunction.class),
+                    virtualHandle("S$seal", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("freeze", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$freeze", ScriptFunction.class),
+                    virtualHandle("S$freeze", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("preventExtensions", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$preventExtensions", ScriptFunction.class),
+                    virtualHandle("S$preventExtensions", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isSealed", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isSealed", ScriptFunction.class),
+                    virtualHandle("S$isSealed", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isFrozen", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isFrozen", ScriptFunction.class),
+                    virtualHandle("S$isFrozen", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isExtensible", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isExtensible", ScriptFunction.class),
+                    virtualHandle("S$isExtensible", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("keys", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$keys", ScriptFunction.class),
+                    virtualHandle("S$keys", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("bindProperties", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$bindProperties", ScriptFunction.class),
+                    virtualHandle("S$bindProperties", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("Object", 
+                    staticHandle("construct", Object.class, boolean.class, Object.class, Object.class),
+                    $nasgenmap$, null);
+            setIndexedPropertiesToExternalArrayData = ScriptFunction.createBuiltin("setIndexedPropertiesToExternalArrayData",
+                    staticHandle("setIndexedPropertiesToExternalArrayData", ScriptObject.class, Object.class, Object.class, Object.class));
+            getPrototypeOf = ScriptFunction.createBuiltin("getPrototypeOf",
+                    staticHandle("getPrototypeOf", Object.class, Object.class, Object.class));
+            setPrototypeOf = ScriptFunction.createBuiltin("setPrototypeOf",
+                    staticHandle("setPrototypeOf", Object.class, Object.class, Object.class, Object.class));
+            getOwnPropertyDescriptor = ScriptFunction.createBuiltin("getOwnPropertyDescriptor",
+                    staticHandle("getOwnPropertyDescriptor", Object.class, Object.class, Object.class, Object.class));
+            getOwnPropertyNames = ScriptFunction.createBuiltin("getOwnPropertyNames",
+                    staticHandle("getOwnPropertyNames", ScriptObject.class, Object.class, Object.class));
+            create = ScriptFunction.createBuiltin("create",
+                    staticHandle("create", ScriptObject.class, Object.class, Object.class, Object.class));
+            defineProperty = ScriptFunction.createBuiltin("defineProperty",
+                    staticHandle("defineProperty", ScriptObject.class, Object.class, Object.class, Object.class, Object.class));
+            defineProperties = ScriptFunction.createBuiltin("defineProperties",
+                    staticHandle("defineProperties", ScriptObject.class, Object.class, Object.class, Object.class));
+            seal = ScriptFunction.createBuiltin("seal",
+                    staticHandle("seal", Object.class, Object.class, Object.class));
+            freeze = ScriptFunction.createBuiltin("freeze",
+                    staticHandle("freeze", Object.class, Object.class, Object.class));
+            preventExtensions = ScriptFunction.createBuiltin("preventExtensions",
+                    staticHandle("preventExtensions", Object.class, Object.class, Object.class));
+            isSealed = ScriptFunction.createBuiltin("isSealed",
+                    staticHandle("isSealed", boolean.class, Object.class, Object.class));
+            isFrozen = ScriptFunction.createBuiltin("isFrozen",
+                    staticHandle("isFrozen", boolean.class, Object.class, Object.class));
+            isExtensible = ScriptFunction.createBuiltin("isExtensible",
+                    staticHandle("isExtensible", boolean.class, Object.class, Object.class));
+            keys = ScriptFunction.createBuiltin("keys",
+                    staticHandle("keys", ScriptObject.class, Object.class, Object.class));
+            bindProperties = ScriptFunction.createBuiltin("bindProperties",
+                    staticHandle("bindProperties", Object.class, Object.class, Object.class, Object.class));
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction toLocaleString;
+        private ScriptFunction valueOf;
+        private ScriptFunction hasOwnProperty;
+        private ScriptFunction isPrototypeOf;
+        private ScriptFunction propertyIsEnumerable;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$toLocaleString() {
+            return this.toLocaleString;
+        }
+
+        public void S$toLocaleString(final ScriptFunction function) {
+            this.toLocaleString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        public ScriptFunction G$hasOwnProperty() {
+            return this.hasOwnProperty;
+        }
+
+        public void S$hasOwnProperty(final ScriptFunction function) {
+            this.hasOwnProperty = function;
+        }
+
+        public ScriptFunction G$isPrototypeOf() {
+            return this.isPrototypeOf;
+        }
+
+        public void S$isPrototypeOf(final ScriptFunction function) {
+            this.isPrototypeOf = function;
+        }
+
+        public ScriptFunction G$propertyIsEnumerable() {
+            return this.propertyIsEnumerable;
+        }
+
+        public void S$propertyIsEnumerable(final ScriptFunction function) {
+            this.propertyIsEnumerable = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(6);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleString", ScriptFunction.class),
+                    virtualHandle("S$toLocaleString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("hasOwnProperty", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$hasOwnProperty", ScriptFunction.class),
+                    virtualHandle("S$hasOwnProperty", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("isPrototypeOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$isPrototypeOf", ScriptFunction.class),
+                    virtualHandle("S$isPrototypeOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("propertyIsEnumerable", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$propertyIsEnumerable", ScriptFunction.class),
+                    virtualHandle("S$propertyIsEnumerable", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", String.class, Object.class));
+            toLocaleString = ScriptFunction.createBuiltin("toLocaleString",
+                    staticHandle("toLocaleString", Object.class, Object.class));
+            valueOf = ScriptFunction.createBuiltin("valueOf",
+                    staticHandle("valueOf", Object.class, Object.class));
+            hasOwnProperty = ScriptFunction.createBuiltin("hasOwnProperty",
+                    staticHandle("hasOwnProperty", boolean.class, Object.class, Object.class));
+            isPrototypeOf = ScriptFunction.createBuiltin("isPrototypeOf",
+                    staticHandle("isPrototypeOf", boolean.class, Object.class, Object.class));
+            propertyIsEnumerable = ScriptFunction.createBuiltin("propertyIsEnumerable",
+                    staticHandle("propertyIsEnumerable", boolean.class, Object.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "Object";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

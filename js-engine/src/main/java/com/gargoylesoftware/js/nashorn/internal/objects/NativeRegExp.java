@@ -41,6 +41,8 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeEr
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,13 +54,17 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.BitVector;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ParserException;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.Bootstrap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExp;
 import com.gargoylesoftware.js.nashorn.internal.runtime.regexp.RegExpFactory;
@@ -960,4 +966,202 @@ public final class NativeRegExp extends ScriptObject {
         this.regexp = regexp;
     }
 
+
+    static {
+            final List<Property> list = new ArrayList<>(5);
+            list.add(AccessorProperty.create("lastIndex", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$lastIndex", ScriptFunction.class),
+                    virtualHandle("S$lastIndex", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("source", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("source", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("global", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("global", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("ignoreCase", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("ignoreCase", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("multiline", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("multiline", Object.class, Object.class),
+                    null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    public Object G$lastIndex() {
+        return this.lastIndex;
+    }
+
+    public void S$lastIndex(final ScriptFunction function) {
+        this.lastIndex = function;
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeRegExp.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(NativeRegExp.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private static final PropertyMap $nasgenmap$;
+
+        static {
+            final List<Property> list = new ArrayList<>(15);
+            list.add(AccessorProperty.create("input", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastInput", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("multiline", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastMultiline", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("lastMatch", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastMatch", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("lastParen", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLastParen", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("leftContext", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getLeftContext", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("rightContext", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getRightContext", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$1", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup1", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$2", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup2", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$3", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup3", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$4", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup4", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$5", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup5", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$6", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup6", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$7", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup7", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$8", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup8", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("$9", Property.NOT_WRITABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("getGroup9", Object.class, Object.class),
+                    null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("RegExp", 
+                    staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, new Specialization[] {
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", NativeRegExp.class, boolean.class, Object.class, Object.class, Object.class), false)
+            });
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction compile;
+        private ScriptFunction exec;
+        private ScriptFunction test;
+        private ScriptFunction toString;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$compile() {
+            return this.compile;
+        }
+
+        public void S$compile(final ScriptFunction function) {
+            this.compile = function;
+        }
+
+        public ScriptFunction G$exec() {
+            return this.exec;
+        }
+
+        public void S$exec(final ScriptFunction function) {
+            this.exec = function;
+        }
+
+        public ScriptFunction G$test() {
+            return this.test;
+        }
+
+        public void S$test(final ScriptFunction function) {
+            this.test = function;
+        }
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(4);
+            list.add(AccessorProperty.create("compile", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$compile", ScriptFunction.class),
+                    virtualHandle("S$compile", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("exec", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$exec", ScriptFunction.class),
+                    virtualHandle("S$exec", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("test", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$test", ScriptFunction.class),
+                    virtualHandle("S$test", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            compile = ScriptFunction.createBuiltin("compile",
+                    staticHandle("compile", ScriptObject.class, Object.class, Object.class, Object.class));
+            exec = ScriptFunction.createBuiltin("exec",
+                    staticHandle("exec", ScriptObject.class, Object.class, Object.class));
+            test = ScriptFunction.createBuiltin("test",
+                    staticHandle("test", boolean.class, Object.class, Object.class));
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", String.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "RegExp";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 }

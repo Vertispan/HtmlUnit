@@ -41,8 +41,11 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeEr
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,10 +56,13 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ConsString;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSONFunctions;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayLikeIterator;
@@ -425,5 +431,84 @@ public final class NativeJSON extends ScriptObject {
         state.indent = stepback;
 
         return finalStr.toString();
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeJSON.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptObject {
+        private ScriptFunction parse;
+        private ScriptFunction stringify;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$parse() {
+            return this.parse;
+        }
+
+        public void S$parse(final ScriptFunction function) {
+            this.parse = function;
+        }
+
+        public ScriptFunction G$stringify() {
+            return this.stringify;
+        }
+
+        public void S$stringify(final ScriptFunction function) {
+            this.stringify = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("parse", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$parse", ScriptFunction.class),
+                    virtualHandle("S$parse", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("stringify", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$stringify", ScriptFunction.class),
+                    virtualHandle("S$stringify", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super($nasgenmap$);
+            parse = ScriptFunction.createBuiltin("parse",
+                    staticHandle("parse", Object.class, Object.class, Object.class, Object.class));
+            stringify = ScriptFunction.createBuiltin("stringify",
+                    staticHandle("stringify", Object.class, Object.class, Object.class, Object.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "JSON";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        Prototype() {
+        }
+
+        public String getClassName() {
+            return "JSON";
+        }
     }
 }

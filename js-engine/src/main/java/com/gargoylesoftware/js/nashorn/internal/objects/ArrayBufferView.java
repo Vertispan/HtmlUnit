@@ -41,8 +41,13 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.rangeE
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.INVALID_PROGRAM_POINT;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
@@ -50,8 +55,11 @@ import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayData;
@@ -395,5 +403,50 @@ public abstract class ArrayBufferView extends ScriptObject {
             return inv;
         }
         return super.findSetIndexMethod(desc, request);
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(4);
+            list.add(AccessorProperty.create("buffer", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("buffer", Object.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("byteOffset", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("byteOffset", int.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("byteLength", int.class, Object.class),
+                    null));
+            list.add(AccessorProperty.create("length", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("length", int.class, Object.class),
+                    null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(ArrayBufferView.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptObject {
+        Constructor() {
+        }
+
+        public String getClassName() {
+            return "ArrayBufferView";
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        Prototype() {
+        }
+
+        public String getClassName() {
+            return "ArrayBufferView";
+        }
     }
 }

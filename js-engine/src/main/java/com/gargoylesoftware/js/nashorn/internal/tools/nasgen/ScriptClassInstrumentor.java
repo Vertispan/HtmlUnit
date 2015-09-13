@@ -73,7 +73,7 @@ import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
  *
  * Changes done are:
  *
- * 1) remove all jdk.nashorn.internal.objects.annotations.* annotations.
+ * 1) remove all com.gargoylesoftware.js.nashorn.internal.objects.annotations.* annotations.
  * 2) static final @Property fields stay here. Other @Property fields moved to
  *    respective classes depending on 'where' value of annotation.
  * 2) add "Map" type static field named "$map".

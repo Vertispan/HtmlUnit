@@ -39,11 +39,21 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 /**
@@ -71,7 +81,6 @@ public final class NativeURIError extends ScriptObject {
     // initialized by nasgen
     private static PropertyMap $nasgenmap$;
 
-    @SuppressWarnings("LeakingThisInConstructor")
     NativeURIError(final Object msg, final Global global) {
         super(global.getURIErrorPrototype(), $nasgenmap$);
         if (msg != UNDEFINED) {
@@ -105,5 +114,114 @@ public final class NativeURIError extends ScriptObject {
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor(name = "URIError")
     public static NativeURIError constructor(final boolean newObj, final Object self, final Object msg) {
         return new NativeURIError(msg);
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("message", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$instMessage", ScriptFunction.class),
+                    virtualHandle("S$instMessage", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("nashornException", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$nashornException", ScriptFunction.class),
+                    virtualHandle("S$nashornException", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    public Object G$instMessage() {
+        return this.instMessage;
+    }
+
+    public void S$instMessage(final ScriptFunction function) {
+        this.instMessage = function;
+    }
+
+    public Object G$nashornException() {
+        return this.nashornException;
+    }
+
+    public void S$nashornException(final ScriptFunction function) {
+        this.nashornException = function;
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeURIError.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        Constructor() {
+            super("URIError", 
+                    staticHandle("constructor", NativeURIError.class, boolean.class, Object.class, Object.class),
+                    null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private Object name;
+        private Object message;
+        private static final PropertyMap $nasgenmap$;
+
+        public Object G$name() {
+            return this.name;
+        }
+
+        public void S$name(final Object function) {
+            this.name = function;
+        }
+
+        public Object G$message() {
+            return this.message;
+        }
+
+        public void S$message(final Object function) {
+            this.message = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("name", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$name", Object.class),
+                    virtualHandle("S$name", void.class, Object.class)));
+            list.add(AccessorProperty.create("message", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$message", Object.class),
+                    virtualHandle("S$message", void.class, Object.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+        }
+
+        public String getClassName() {
+            return "Error";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

@@ -64,13 +64,17 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ConsString;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.OptimisticBuiltins;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornGuards;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.PrimitiveLookup;
@@ -1417,6 +1421,440 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
         @Override
         public Class<? extends Throwable> getRelinkException() {
             return ClassCastException.class;
+        }
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("length", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    staticHandle("length", Object.class, Object.class),
+                    null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeString.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        private ScriptFunction fromCharCode;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$fromCharCode() {
+            return this.fromCharCode;
+        }
+
+        public void S$fromCharCode(final ScriptFunction function) {
+            this.fromCharCode = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("fromCharCode", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$fromCharCode", ScriptFunction.class),
+                    virtualHandle("S$fromCharCode", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super("String", 
+                    staticHandle("constructor", Object.class, boolean.class, Object.class, Object[].class),
+                    $nasgenmap$, new Specialization[] {
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, boolean.class), false)
+            });
+            fromCharCode = ScriptFunction.createBuiltin("fromCharCode",
+                    staticHandle("fromCharCode", String.class, Object.class, Object[].class), new Specialization[] {
+                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class, int.class), false),
+                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class, int.class, int.class, int.class), false),
+                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, double.class), false)
+                    });
+            fromCharCode.setArity(1);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction toString;
+        private ScriptFunction valueOf;
+        private ScriptFunction charAt;
+        private ScriptFunction charCodeAt;
+        private ScriptFunction concat;
+        private ScriptFunction indexOf;
+        private ScriptFunction lastIndexOf;
+        private ScriptFunction localeCompare;
+        private ScriptFunction match;
+        private ScriptFunction replace;
+        private ScriptFunction search;
+        private ScriptFunction slice;
+        private ScriptFunction split;
+        private ScriptFunction substr;
+        private ScriptFunction substring;
+        private ScriptFunction toLowerCase;
+        private ScriptFunction toLocaleLowerCase;
+        private ScriptFunction toUpperCase;
+        private ScriptFunction toLocaleUpperCase;
+        private ScriptFunction trim;
+        private ScriptFunction trimLeft;
+        private ScriptFunction trimRight;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$toString() {
+            return this.toString;
+        }
+
+        public void S$toString(final ScriptFunction function) {
+            this.toString = function;
+        }
+
+        public ScriptFunction G$valueOf() {
+            return this.valueOf;
+        }
+
+        public void S$valueOf(final ScriptFunction function) {
+            this.valueOf = function;
+        }
+
+        public ScriptFunction G$charAt() {
+            return this.charAt;
+        }
+
+        public void S$charAt(final ScriptFunction function) {
+            this.charAt = function;
+        }
+
+        public ScriptFunction G$charCodeAt() {
+            return this.charCodeAt;
+        }
+
+        public void S$charCodeAt(final ScriptFunction function) {
+            this.charCodeAt = function;
+        }
+
+        public ScriptFunction G$concat() {
+            return this.concat;
+        }
+
+        public void S$concat(final ScriptFunction function) {
+            this.concat = function;
+        }
+
+        public ScriptFunction G$indexOf() {
+            return this.indexOf;
+        }
+
+        public void S$indexOf(final ScriptFunction function) {
+            this.indexOf = function;
+        }
+
+        public ScriptFunction G$lastIndexOf() {
+            return this.lastIndexOf;
+        }
+
+        public void S$lastIndexOf(final ScriptFunction function) {
+            this.lastIndexOf = function;
+        }
+
+        public ScriptFunction G$localeCompare() {
+            return this.localeCompare;
+        }
+
+        public void S$localeCompare(final ScriptFunction function) {
+            this.localeCompare = function;
+        }
+
+        public ScriptFunction G$match() {
+            return this.match;
+        }
+
+        public void S$match(final ScriptFunction function) {
+            this.match = function;
+        }
+
+        public ScriptFunction G$replace() {
+            return this.replace;
+        }
+
+        public void S$replace(final ScriptFunction function) {
+            this.replace = function;
+        }
+
+        public ScriptFunction G$search() {
+            return this.search;
+        }
+
+        public void S$search(final ScriptFunction function) {
+            this.search = function;
+        }
+
+        public ScriptFunction G$slice() {
+            return this.slice;
+        }
+
+        public void S$slice(final ScriptFunction function) {
+            this.slice = function;
+        }
+
+        public ScriptFunction G$split() {
+            return this.split;
+        }
+
+        public void S$split(final ScriptFunction function) {
+            this.split = function;
+        }
+
+        public ScriptFunction G$substr() {
+            return this.substr;
+        }
+
+        public void S$substr(final ScriptFunction function) {
+            this.substr = function;
+        }
+
+        public ScriptFunction G$substring() {
+            return this.substring;
+        }
+
+        public void S$substring(final ScriptFunction function) {
+            this.substring = function;
+        }
+
+        public ScriptFunction G$toLowerCase() {
+            return this.toLowerCase;
+        }
+
+        public void S$toLowerCase(final ScriptFunction function) {
+            this.toLowerCase = function;
+        }
+
+        public ScriptFunction G$toLocaleLowerCase() {
+            return this.toLocaleLowerCase;
+        }
+
+        public void S$toLocaleLowerCase(final ScriptFunction function) {
+            this.toLocaleLowerCase = function;
+        }
+
+        public ScriptFunction G$toUpperCase() {
+            return this.toUpperCase;
+        }
+
+        public void S$toUpperCase(final ScriptFunction function) {
+            this.toUpperCase = function;
+        }
+
+        public ScriptFunction G$toLocaleUpperCase() {
+            return this.toLocaleUpperCase;
+        }
+
+        public void S$toLocaleUpperCase(final ScriptFunction function) {
+            this.toLocaleUpperCase = function;
+        }
+
+        public ScriptFunction G$trim() {
+            return this.trim;
+        }
+
+        public void S$trim(final ScriptFunction function) {
+            this.trim = function;
+        }
+
+        public ScriptFunction G$trimLeft() {
+            return this.trimLeft;
+        }
+
+        public void S$trimLeft(final ScriptFunction function) {
+            this.trimLeft = function;
+        }
+
+        public ScriptFunction G$trimRight() {
+            return this.trimRight;
+        }
+
+        public void S$trimRight(final ScriptFunction function) {
+            this.trimRight = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(22);
+            list.add(AccessorProperty.create("toString", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toString", ScriptFunction.class),
+                    virtualHandle("S$toString", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("valueOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$valueOf", ScriptFunction.class),
+                    virtualHandle("S$valueOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("charAt", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$charAt", ScriptFunction.class),
+                    virtualHandle("S$charAt", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("charCodeAt", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$charCodeAt", ScriptFunction.class),
+                    virtualHandle("S$charCodeAt", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("concat", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$concat", ScriptFunction.class),
+                    virtualHandle("S$concat", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("indexOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$indexOf", ScriptFunction.class),
+                    virtualHandle("S$indexOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("lastIndexOf", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$lastIndexOf", ScriptFunction.class),
+                    virtualHandle("S$lastIndexOf", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("localeCompare", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$localeCompare", ScriptFunction.class),
+                    virtualHandle("S$localeCompare", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("match", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$match", ScriptFunction.class),
+                    virtualHandle("S$match", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("replace", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$replace", ScriptFunction.class),
+                    virtualHandle("S$replace", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("search", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$search", ScriptFunction.class),
+                    virtualHandle("S$search", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("slice", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$slice", ScriptFunction.class),
+                    virtualHandle("S$slice", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("split", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$split", ScriptFunction.class),
+                    virtualHandle("S$split", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("substr", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$substr", ScriptFunction.class),
+                    virtualHandle("S$substr", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("substring", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$substring", ScriptFunction.class),
+                    virtualHandle("S$substring", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLowerCase", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLowerCase", ScriptFunction.class),
+                    virtualHandle("S$toLowerCase", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleLowerCase", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleLowerCase", ScriptFunction.class),
+                    virtualHandle("S$toLocaleLowerCase", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toUpperCase", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toUpperCase", ScriptFunction.class),
+                    virtualHandle("S$toUpperCase", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("toLocaleUpperCase", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$toLocaleUpperCase", ScriptFunction.class),
+                    virtualHandle("S$toLocaleUpperCase", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("trim", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$trim", ScriptFunction.class),
+                    virtualHandle("S$trim", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("trimLeft", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$trimLeft", ScriptFunction.class),
+                    virtualHandle("S$trimLeft", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("trimRight", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$trimRight", ScriptFunction.class),
+                    virtualHandle("S$trimRight", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            toString = ScriptFunction.createBuiltin("toString",
+                    staticHandle("toString", String.class, Object.class));
+            valueOf = ScriptFunction.createBuiltin("valueOf",
+                    staticHandle("valueOf", String.class, Object.class));
+            charAt = ScriptFunction.createBuiltin("charAt",
+                    staticHandle("charAt", String.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("charAt", String.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("charAt", String.class, Object.class, int.class), false)
+                    });
+            charCodeAt = ScriptFunction.createBuiltin("charCodeAt",
+                    staticHandle("charCodeAt", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, int.class), false)
+                    });
+            concat = ScriptFunction.createBuiltin("concat",
+                    staticHandle("concat", Object.class, Object.class, Object[].class));
+            concat.setArity(1);
+            indexOf = ScriptFunction.createBuiltin("indexOf",
+                    staticHandle("indexOf", int.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class), false),
+                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, int.class), false)
+                    });
+            indexOf.setArity(1);
+            lastIndexOf = ScriptFunction.createBuiltin("lastIndexOf",
+                    staticHandle("lastIndexOf", int.class, Object.class, Object.class, Object.class));
+            lastIndexOf.setArity(1);
+            localeCompare = ScriptFunction.createBuiltin("localeCompare",
+                    staticHandle("localeCompare", double.class, Object.class, Object.class));
+            match = ScriptFunction.createBuiltin("match",
+                    staticHandle("match", ScriptObject.class, Object.class, Object.class));
+            replace = ScriptFunction.createBuiltin("replace",
+                    staticHandle("replace", String.class, Object.class, Object.class, Object.class));
+            search = ScriptFunction.createBuiltin("search",
+                    staticHandle("search", int.class, Object.class, Object.class));
+            slice = ScriptFunction.createBuiltin("slice",
+                    staticHandle("slice", String.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("slice", String.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("slice", String.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("slice", String.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("slice", String.class, Object.class, double.class, double.class), false)
+                    });
+            split = ScriptFunction.createBuiltin("split",
+                    staticHandle("split", ScriptObject.class, Object.class, Object.class, Object.class));
+            substr = ScriptFunction.createBuiltin("substr",
+                    staticHandle("substr", String.class, Object.class, Object.class, Object.class));
+            substring = ScriptFunction.createBuiltin("substring",
+                    staticHandle("substring", String.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("substring", String.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("substring", String.class, Object.class, double.class), false),
+                        new Specialization(staticHandle("substring", String.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("substring", String.class, Object.class, double.class, double.class), false)
+                    });
+            toLowerCase = ScriptFunction.createBuiltin("toLowerCase",
+                    staticHandle("toLowerCase", String.class, Object.class));
+            toLocaleLowerCase = ScriptFunction.createBuiltin("toLocaleLowerCase",
+                    staticHandle("toLocaleLowerCase", String.class, Object.class));
+            toUpperCase = ScriptFunction.createBuiltin("toUpperCase",
+                    staticHandle("toUpperCase", String.class, Object.class));
+            toLocaleUpperCase = ScriptFunction.createBuiltin("toLocaleUpperCase",
+                    staticHandle("toLocaleUpperCase", String.class, Object.class));
+            trim = ScriptFunction.createBuiltin("trim",
+                    staticHandle("trim", String.class, Object.class));
+            trimLeft = ScriptFunction.createBuiltin("trimLeft",
+                    staticHandle("trimLeft", String.class, Object.class));
+            trimRight = ScriptFunction.createBuiltin("trimRight",
+                    staticHandle("trimRight", String.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "String";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 }

@@ -41,17 +41,27 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.rangeE
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 
 /**
  * <p>
@@ -1022,5 +1032,374 @@ public class NativeDataView extends ScriptObject {
 
     private static ByteBuffer getBuffer(final Object self, final boolean littleEndian) {
         return getBuffer(self).order(littleEndian? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+    }
+
+    static {
+            final List<Property> list = new ArrayList<>(3);
+            list.add(AccessorProperty.create("buffer", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$buffer", Object.class), null));
+            list.add(AccessorProperty.create("byteOffset", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$byteOffset", int.class),
+null));
+            list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$byteLength", int.class),
+null));
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    public Object G$buffer() {
+        return this.buffer;
+    }
+
+    public int G$byteOffset() {
+        return this.byteOffset;
+    }
+
+    public int G$byteLength() {
+        return this.byteLength;
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeDataView.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findVirtual(NativeDataView.class, name,
+                    MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        Constructor() {
+            super("DataView", 
+                    staticHandle("constructor", NativeDataView.class, boolean.class, Object.class, Object[].class),
+                    new Specialization[] {
+                        new Specialization(staticHandle("constructor", NativeDataView.class, boolean.class, Object.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("constructor", NativeDataView.class, boolean.class, Object.class, Object.class, int.class, int.class), false)
+            });
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+
+   }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction getInt8;
+        private ScriptFunction getUint8;
+        private ScriptFunction getInt16;
+        private ScriptFunction getUint16;
+        private ScriptFunction getInt32;
+        private ScriptFunction getUint32;
+        private ScriptFunction getFloat32;
+        private ScriptFunction getFloat64;
+        private ScriptFunction setInt8;
+        private ScriptFunction setUint8;
+        private ScriptFunction setInt16;
+        private ScriptFunction setUint16;
+        private ScriptFunction setInt32;
+        private ScriptFunction setUint32;
+        private ScriptFunction setFloat32;
+        private ScriptFunction setFloat64;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$getInt8() {
+            return this.getInt8;
+        }
+
+        public void S$getInt8(final ScriptFunction function) {
+            this.getInt8 = function;
+        }
+
+        public ScriptFunction G$getUint8() {
+            return this.getUint8;
+        }
+
+        public void S$getUint8(final ScriptFunction function) {
+            this.getUint8 = function;
+        }
+
+        public ScriptFunction G$getInt16() {
+            return this.getInt16;
+        }
+
+        public void S$getInt16(final ScriptFunction function) {
+            this.getInt16 = function;
+        }
+
+        public ScriptFunction G$getUint16() {
+            return this.getUint16;
+        }
+
+        public void S$getUint16(final ScriptFunction function) {
+            this.getUint16 = function;
+        }
+
+        public ScriptFunction G$getInt32() {
+            return this.getInt32;
+        }
+
+        public void S$getInt32(final ScriptFunction function) {
+            this.getInt32 = function;
+        }
+
+        public ScriptFunction G$getUint32() {
+            return this.getUint32;
+        }
+
+        public void S$getUint32(final ScriptFunction function) {
+            this.getUint32 = function;
+        }
+
+        public ScriptFunction G$getFloat32() {
+            return this.getFloat32;
+        }
+
+        public void S$getFloat32(final ScriptFunction function) {
+            this.getFloat32 = function;
+        }
+
+        public ScriptFunction G$getFloat64() {
+            return this.getFloat64;
+        }
+
+        public void S$getFloat64(final ScriptFunction function) {
+            this.getFloat64 = function;
+        }
+
+        public ScriptFunction G$setInt8() {
+            return this.setInt8;
+        }
+
+        public void S$setInt8(final ScriptFunction function) {
+            this.setInt8 = function;
+        }
+
+        public ScriptFunction G$setUint8() {
+            return this.setUint8;
+        }
+
+        public void S$setUint8(final ScriptFunction function) {
+            this.setUint8 = function;
+        }
+
+        public ScriptFunction G$setInt16() {
+            return this.setInt16;
+        }
+
+        public void S$setInt16(final ScriptFunction function) {
+            this.setInt16 = function;
+        }
+
+        public ScriptFunction G$setUint16() {
+            return this.setUint16;
+        }
+
+        public void S$setUint16(final ScriptFunction function) {
+            this.setUint16 = function;
+        }
+
+        public ScriptFunction G$setInt32() {
+            return this.setInt32;
+        }
+
+        public void S$setInt32(final ScriptFunction function) {
+            this.setInt32 = function;
+        }
+
+        public ScriptFunction G$setUint32() {
+            return this.setUint32;
+        }
+
+        public void S$setUint32(final ScriptFunction function) {
+            this.setUint32 = function;
+        }
+
+        public ScriptFunction G$setFloat32() {
+            return this.setFloat32;
+        }
+
+        public void S$setFloat32(final ScriptFunction function) {
+            this.setFloat32 = function;
+        }
+
+        public ScriptFunction G$setFloat64() {
+            return this.setFloat64;
+        }
+
+        public void S$setFloat64(final ScriptFunction function) {
+            this.setFloat64 = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(16);
+            list.add(AccessorProperty.create("getInt8", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getInt8", ScriptFunction.class),
+                    virtualHandle("S$getInt8", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUint8", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUint8", ScriptFunction.class),
+                    virtualHandle("S$getUint8", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getInt16", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getInt16", ScriptFunction.class),
+                    virtualHandle("S$getInt16", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUint16", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUint16", ScriptFunction.class),
+                    virtualHandle("S$getUint16", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getInt32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getInt32", ScriptFunction.class),
+                    virtualHandle("S$getInt32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getUint32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getUint32", ScriptFunction.class),
+                    virtualHandle("S$getUint32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getFloat32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getFloat32", ScriptFunction.class),
+                    virtualHandle("S$getFloat32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("getFloat64", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$getFloat64", ScriptFunction.class),
+                    virtualHandle("S$getFloat64", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setInt8", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setInt8", ScriptFunction.class),
+                    virtualHandle("S$setInt8", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUint8", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUint8", ScriptFunction.class),
+                    virtualHandle("S$setUint8", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setInt16", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setInt16", ScriptFunction.class),
+                    virtualHandle("S$setInt16", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUint16", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUint16", ScriptFunction.class),
+                    virtualHandle("S$setUint16", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setInt32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setInt32", ScriptFunction.class),
+                    virtualHandle("S$setInt32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setUint32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setUint32", ScriptFunction.class),
+                    virtualHandle("S$setUint32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setFloat32", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setFloat32", ScriptFunction.class),
+                    virtualHandle("S$setFloat32", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("setFloat64", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$setFloat64", ScriptFunction.class),
+                    virtualHandle("S$setFloat64", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            getInt8 = ScriptFunction.createBuiltin("getInt8",
+                    staticHandle("getInt8", int.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getInt8", int.class, Object.class, int.class), false)
+                    });
+            getUint8 = ScriptFunction.createBuiltin("getUint8",
+                    staticHandle("getUint8", int.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getUint8", int.class, Object.class, int.class), false)
+                    });
+            getInt16 = ScriptFunction.createBuiltin("getInt16",
+                    staticHandle("getInt16", int.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getInt16", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getInt16", int.class, Object.class, int.class, boolean.class), false)
+                    });
+            getInt16.setArity(1);
+            getUint16 = ScriptFunction.createBuiltin("getUint16",
+                    staticHandle("getUint16", int.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getUint16", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getUint16", int.class, Object.class, int.class, boolean.class), false)
+                    });
+            getUint16.setArity(1);
+            getInt32 = ScriptFunction.createBuiltin("getInt32",
+                    staticHandle("getInt32", int.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getInt32", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getInt32", int.class, Object.class, int.class, boolean.class), false)
+                    });
+            getInt32.setArity(1);
+            getUint32 = ScriptFunction.createBuiltin("getUint32",
+                    staticHandle("getUint32", long.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getUint32", long.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getUint32", long.class, Object.class, int.class, boolean.class), false)
+                    });
+            getUint32.setArity(1);
+            getFloat32 = ScriptFunction.createBuiltin("getFloat32",
+                    staticHandle("getFloat32", double.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getFloat32", double.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getFloat32", double.class, Object.class, int.class, boolean.class), false)
+                    });
+            getFloat32.setArity(1);
+            getFloat64 = ScriptFunction.createBuiltin("getFloat64",
+                    staticHandle("getFloat64", double.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("getFloat64", double.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("getFloat64", double.class, Object.class, int.class, boolean.class), false)
+                    });
+            getFloat64.setArity(1);
+            setInt8 = ScriptFunction.createBuiltin("setInt8",
+                    staticHandle("setInt8", Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setInt8", Object.class, Object.class, int.class, int.class), false)
+                    });
+            setInt8.setArity(2);
+            setUint8 = ScriptFunction.createBuiltin("setUint8",
+                    staticHandle("setUint8", Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setUint8", Object.class, Object.class, int.class, int.class), false)
+                    });
+            setUint8.setArity(2);
+            setInt16 = ScriptFunction.createBuiltin("setInt16",
+                    staticHandle("setInt16", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setInt16", Object.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("setInt16", Object.class, Object.class, int.class, int.class, boolean.class), false)
+                    });
+            setInt16.setArity(2);
+            setUint16 = ScriptFunction.createBuiltin("setUint16",
+                    staticHandle("setUint16", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setUint16", Object.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("setUint16", Object.class, Object.class, int.class, int.class, boolean.class), false)
+                    });
+            setUint16.setArity(2);
+            setInt32 = ScriptFunction.createBuiltin("setInt32",
+                    staticHandle("setInt32", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setInt32", Object.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("setInt32", Object.class, Object.class, int.class, int.class, boolean.class), false)
+                    });
+            setInt32.setArity(2);
+            setUint32 = ScriptFunction.createBuiltin("setUint32",
+                    staticHandle("setUint32", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setUint32", Object.class, Object.class, int.class, long.class), false),
+                        new Specialization(staticHandle("setUint32", Object.class, Object.class, int.class, long.class, boolean.class), false)
+                    });
+            setUint32.setArity(2);
+            setFloat32 = ScriptFunction.createBuiltin("setFloat32",
+                    staticHandle("setFloat32", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setFloat32", Object.class, Object.class, int.class, double.class), false),
+                        new Specialization(staticHandle("setFloat32", Object.class, Object.class, int.class, double.class, boolean.class), false)
+                    });
+            setFloat32.setArity(2);
+            setFloat64 = ScriptFunction.createBuiltin("setFloat64",
+                    staticHandle("setFloat64", Object.class, Object.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("setFloat64", Object.class, Object.class, int.class, double.class), false),
+                        new Specialization(staticHandle("setFloat64", Object.class, Object.class, int.class, double.class, boolean.class), false)
+                    });
+            setFloat64.setArity(2);
+        }
+
+        public String getClassName() {
+            return "DataView";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

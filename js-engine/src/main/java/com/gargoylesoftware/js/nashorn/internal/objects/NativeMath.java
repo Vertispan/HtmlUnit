@@ -37,14 +37,26 @@
 
 package com.gargoylesoftware.js.nashorn.internal.objects;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 
 /**
  * ECMA 15.8 The Math Object
@@ -738,5 +750,410 @@ public final class NativeMath extends ScriptObject {
     @SpecializedFunction
     public static double tan(final Object self, final double x) {
         return Math.tan(x);
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeMath.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptObject {
+        private ScriptFunction abs;
+        private ScriptFunction acos;
+        private ScriptFunction asin;
+        private ScriptFunction atan;
+        private ScriptFunction atan2;
+        private ScriptFunction ceil;
+        private ScriptFunction cos;
+        private ScriptFunction exp;
+        private ScriptFunction floor;
+        private ScriptFunction log;
+        private ScriptFunction max;
+        private ScriptFunction min;
+        private ScriptFunction pow;
+        private ScriptFunction random;
+        private ScriptFunction round;
+        private ScriptFunction sin;
+        private ScriptFunction sqrt;
+        private ScriptFunction tan;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$abs() {
+            return this.abs;
+        }
+
+        public void S$abs(final ScriptFunction function) {
+            this.abs = function;
+        }
+
+        public ScriptFunction G$acos() {
+            return this.acos;
+        }
+
+        public void S$acos(final ScriptFunction function) {
+            this.acos = function;
+        }
+
+        public ScriptFunction G$asin() {
+            return this.asin;
+        }
+
+        public void S$asin(final ScriptFunction function) {
+            this.asin = function;
+        }
+
+        public ScriptFunction G$atan() {
+            return this.atan;
+        }
+
+        public void S$atan(final ScriptFunction function) {
+            this.atan = function;
+        }
+
+        public ScriptFunction G$atan2() {
+            return this.atan2;
+        }
+
+        public void S$atan2(final ScriptFunction function) {
+            this.atan2 = function;
+        }
+
+        public ScriptFunction G$ceil() {
+            return this.ceil;
+        }
+
+        public void S$ceil(final ScriptFunction function) {
+            this.ceil = function;
+        }
+
+        public ScriptFunction G$cos() {
+            return this.cos;
+        }
+
+        public void S$cos(final ScriptFunction function) {
+            this.cos = function;
+        }
+
+        public ScriptFunction G$exp() {
+            return this.exp;
+        }
+
+        public void S$exp(final ScriptFunction function) {
+            this.exp = function;
+        }
+
+        public ScriptFunction G$floor() {
+            return this.floor;
+        }
+
+        public void S$floor(final ScriptFunction function) {
+            this.floor = function;
+        }
+
+        public ScriptFunction G$log() {
+            return this.log;
+        }
+
+        public void S$log(final ScriptFunction function) {
+            this.log = function;
+        }
+
+        public ScriptFunction G$max() {
+            return this.max;
+        }
+
+        public void S$max(final ScriptFunction function) {
+            this.max = function;
+        }
+
+        public ScriptFunction G$min() {
+            return this.min;
+        }
+
+        public void S$min(final ScriptFunction function) {
+            this.min = function;
+        }
+
+        public ScriptFunction G$pow() {
+            return this.pow;
+        }
+
+        public void S$pow(final ScriptFunction function) {
+            this.pow = function;
+        }
+
+        public ScriptFunction G$random() {
+            return this.random;
+        }
+
+        public void S$random(final ScriptFunction function) {
+            this.random = function;
+        }
+
+        public ScriptFunction G$round() {
+            return this.round;
+        }
+
+        public void S$round(final ScriptFunction function) {
+            this.round = function;
+        }
+
+        public ScriptFunction G$sin() {
+            return this.sin;
+        }
+
+        public void S$sin(final ScriptFunction function) {
+            this.sin = function;
+        }
+
+        public ScriptFunction G$sqrt() {
+            return this.sqrt;
+        }
+
+        public void S$sqrt(final ScriptFunction function) {
+            this.sqrt = function;
+        }
+
+        public ScriptFunction G$tan() {
+            return this.tan;
+        }
+
+        public void S$tan(final ScriptFunction function) {
+            this.tan = function;
+        }
+
+        public double G$E() {
+            return NativeMath.E;
+        }
+
+        public double G$LN10() {
+            return NativeMath.LN10;
+        }
+
+        public double G$LN2() {
+            return NativeMath.LN2;
+        }
+
+        public double G$LOG2E() {
+            return NativeMath.LOG2E;
+        }
+
+        public double G$LOG10E() {
+            return NativeMath.LOG10E;
+        }
+
+        public double G$PI() {
+            return NativeMath.PI;
+        }
+
+        public double G$SQRT1_2() {
+            return NativeMath.SQRT1_2;
+        }
+
+        public double G$SQRT2() {
+            return NativeMath.SQRT2;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(26);
+            list.add(AccessorProperty.create("E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$E", double.class),
+null));
+            list.add(AccessorProperty.create("LN10", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$LN10", double.class),
+null));
+            list.add(AccessorProperty.create("LN2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$LN2", double.class),
+null));
+            list.add(AccessorProperty.create("LOG2E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$LOG2E", double.class),
+null));
+            list.add(AccessorProperty.create("LOG10E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$LOG10E", double.class),
+null));
+            list.add(AccessorProperty.create("PI", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$PI", double.class),
+null));
+            list.add(AccessorProperty.create("SQRT1_2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$SQRT1_2", double.class),
+null));
+            list.add(AccessorProperty.create("SQRT2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                    virtualHandle("G$SQRT2", double.class),
+null));
+            list.add(AccessorProperty.create("abs", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$abs", ScriptFunction.class),
+                    virtualHandle("S$abs", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("acos", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$acos", ScriptFunction.class),
+                    virtualHandle("S$acos", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("asin", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$asin", ScriptFunction.class),
+                    virtualHandle("S$asin", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("atan", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$atan", ScriptFunction.class),
+                    virtualHandle("S$atan", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("atan2", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$atan2", ScriptFunction.class),
+                    virtualHandle("S$atan2", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("ceil", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$ceil", ScriptFunction.class),
+                    virtualHandle("S$ceil", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("cos", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$cos", ScriptFunction.class),
+                    virtualHandle("S$cos", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("exp", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$exp", ScriptFunction.class),
+                    virtualHandle("S$exp", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("floor", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$floor", ScriptFunction.class),
+                    virtualHandle("S$floor", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("log", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$log", ScriptFunction.class),
+                    virtualHandle("S$log", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("max", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$max", ScriptFunction.class),
+                    virtualHandle("S$max", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("min", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$min", ScriptFunction.class),
+                    virtualHandle("S$min", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("pow", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$pow", ScriptFunction.class),
+                    virtualHandle("S$pow", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("random", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$random", ScriptFunction.class),
+                    virtualHandle("S$random", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("round", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$round", ScriptFunction.class),
+                    virtualHandle("S$round", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("sin", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$sin", ScriptFunction.class),
+                    virtualHandle("S$sin", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("sqrt", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$sqrt", ScriptFunction.class),
+                    virtualHandle("S$sqrt", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("tan", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$tan", ScriptFunction.class),
+                    virtualHandle("S$tan", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Constructor() {
+            super($nasgenmap$);
+            abs = ScriptFunction.createBuiltin("abs",
+                    staticHandle("abs", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("abs", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("abs", long.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("abs", double.class, Object.class, double.class), false)
+                    });
+            acos = ScriptFunction.createBuiltin("acos",
+                    staticHandle("acos", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("acos", double.class, Object.class, double.class), false)
+                    });
+            asin = ScriptFunction.createBuiltin("asin",
+                    staticHandle("asin", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("asin", double.class, Object.class, double.class), false)
+                    });
+            atan = ScriptFunction.createBuiltin("atan",
+                    staticHandle("atan", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("atan", double.class, Object.class, double.class), false)
+                    });
+            atan2 = ScriptFunction.createBuiltin("atan2",
+                    staticHandle("atan2", double.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("atan2", double.class, Object.class, double.class, double.class), false)
+                    });
+            ceil = ScriptFunction.createBuiltin("ceil",
+                    staticHandle("ceil", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("ceil", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("ceil", long.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("ceil", double.class, Object.class, double.class), false)
+                    });
+            cos = ScriptFunction.createBuiltin("cos",
+                    staticHandle("cos", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("cos", double.class, Object.class, double.class), false)
+                    });
+            exp = ScriptFunction.createBuiltin("exp",
+                    staticHandle("exp", double.class, Object.class, Object.class));
+            floor = ScriptFunction.createBuiltin("floor",
+                    staticHandle("floor", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("floor", int.class, Object.class, int.class), false),
+                        new Specialization(staticHandle("floor", long.class, Object.class, long.class), false),
+                        new Specialization(staticHandle("floor", double.class, Object.class, double.class), false)
+                    });
+            log = ScriptFunction.createBuiltin("log",
+                    staticHandle("log", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("log", double.class, Object.class, double.class), false)
+                    });
+            max = ScriptFunction.createBuiltin("max",
+                    staticHandle("max", double.class, Object.class, Object[].class), new Specialization[] {
+                        new Specialization(staticHandle("max", double.class, Object.class), false),
+                        new Specialization(staticHandle("max", int.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("max", long.class, Object.class, long.class, long.class), false),
+                        new Specialization(staticHandle("max", double.class, Object.class, double.class, double.class), false),
+                        new Specialization(staticHandle("max", double.class, Object.class, Object.class, Object.class), false)
+                    });
+            max.setArity(2);
+            min = ScriptFunction.createBuiltin("min",
+                    staticHandle("min", double.class, Object.class, Object[].class), new Specialization[] {
+                        new Specialization(staticHandle("min", double.class, Object.class), false),
+                        new Specialization(staticHandle("min", int.class, Object.class, int.class, int.class), false),
+                        new Specialization(staticHandle("min", long.class, Object.class, long.class, long.class), false),
+                        new Specialization(staticHandle("min", double.class, Object.class, double.class, double.class), false),
+                        new Specialization(staticHandle("min", double.class, Object.class, Object.class, Object.class), false)
+                    });
+            min.setArity(2);
+            pow = ScriptFunction.createBuiltin("pow",
+                    staticHandle("pow", double.class, Object.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("pow", double.class, Object.class, double.class, double.class), false)
+                    });
+            random = ScriptFunction.createBuiltin("random",
+                    staticHandle("random", double.class, Object.class));
+            round = ScriptFunction.createBuiltin("round",
+                    staticHandle("round", double.class, Object.class, Object.class));
+            sin = ScriptFunction.createBuiltin("sin",
+                    staticHandle("sin", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("sin", double.class, Object.class, double.class), false)
+                    });
+            sqrt = ScriptFunction.createBuiltin("sqrt",
+                    staticHandle("sqrt", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("sqrt", double.class, Object.class, double.class), false)
+                    });
+            tan = ScriptFunction.createBuiltin("tan",
+                    staticHandle("tan", double.class, Object.class, Object.class), new Specialization[] {
+                        new Specialization(staticHandle("tan", double.class, Object.class, double.class), false)
+                    });
+        }
+
+        public String getClassName() {
+            return "Math";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Constructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        Prototype() {
+        }
+
+        public String getClassName() {
+            return "Math";
+        }
     }
 }

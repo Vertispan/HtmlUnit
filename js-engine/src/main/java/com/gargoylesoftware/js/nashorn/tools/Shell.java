@@ -78,7 +78,7 @@ public class Shell implements PartialParser {
     /**
      * Resource name for properties file
      */
-    private static final String MESSAGE_RESOURCE = "jdk.nashorn.tools.resources.Shell";
+    private static final String MESSAGE_RESOURCE = "com.gargoylesoftware.js.nashorn.tools.resources.Shell";
     /**
      * Shell message bundle.
      */

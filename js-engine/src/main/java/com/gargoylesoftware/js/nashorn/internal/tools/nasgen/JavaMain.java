@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.ArrayBufferView;
+import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeArray;
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeArrayBuffer;
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeBoolean;
@@ -72,7 +73,7 @@ public class JavaMain {
                 NativeInt16Array.class, NativeUint16Array.class,
                 NativeInt32Array.class, NativeUint32Array.class,
                 NativeFloat32Array.class, NativeFloat64Array.class,
-                ArrayBufferView.class);
+                ArrayBufferView.class, Global.class);
 
         for(final Class<?> c : list) {
             process(c, false);

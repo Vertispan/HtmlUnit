@@ -40,6 +40,13 @@ package com.gargoylesoftware.js.nashorn.internal.objects;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException.isValid;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
@@ -47,10 +54,14 @@ import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
+import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.NativeJavaPackage;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException;
@@ -185,5 +196,86 @@ public final class NativeJavaImporter extends ScriptObject {
             }
         }
         return null;
+    }
+
+    static {
+            final List<Property> list = Collections.emptyList();
+            $nasgenmap$ = PropertyMap.newMap(list);
+    }
+
+    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(NativeJavaImporter.class,
+                    name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static final class Constructor extends ScriptFunction {
+        Constructor() {
+            super("JavaImporter", 
+                    staticHandle("constructor", NativeJavaImporter.class, boolean.class, Object.class, Object[].class),
+                    null);
+            final Prototype prototype = new Prototype();
+            PrototypeObject.setConstructor(prototype, this);
+            setPrototype(prototype);
+        }
+    }
+
+    static final class Prototype extends PrototypeObject {
+        private ScriptFunction __noSuchProperty__;
+        private ScriptFunction __noSuchMethod__;
+        private static final PropertyMap $nasgenmap$;
+
+        public ScriptFunction G$__noSuchProperty__() {
+            return this.__noSuchProperty__;
+        }
+
+        public void S$__noSuchProperty__(final ScriptFunction function) {
+            this.__noSuchProperty__ = function;
+        }
+
+        public ScriptFunction G$__noSuchMethod__() {
+            return this.__noSuchMethod__;
+        }
+
+        public void S$__noSuchMethod__(final ScriptFunction function) {
+            this.__noSuchMethod__ = function;
+        }
+
+        static {
+            final List<Property> list = new ArrayList<>(2);
+            list.add(AccessorProperty.create("__noSuchProperty__", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$__noSuchProperty__", ScriptFunction.class),
+                    virtualHandle("S$__noSuchProperty__", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("__noSuchMethod__", Property.NOT_ENUMERABLE, 
+                    virtualHandle("G$__noSuchMethod__", ScriptFunction.class),
+                    virtualHandle("S$__noSuchMethod__", void.class, ScriptFunction.class)));
+            $nasgenmap$ = PropertyMap.newMap(list);
+        }
+
+        Prototype() {
+            super($nasgenmap$);
+            __noSuchProperty__ = ScriptFunction.createBuiltin("__noSuchProperty__",
+                    staticHandle("__noSuchProperty__", Object.class, Object.class, Object.class));
+            __noSuchMethod__ = ScriptFunction.createBuiltin("__noSuchMethod__",
+                    staticHandle("__noSuchMethod__", Object.class, Object.class, Object[].class));
+        }
+
+        public String getClassName() {
+            return "JavaImporter";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }
