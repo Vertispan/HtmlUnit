@@ -31,6 +31,8 @@ package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
  */
 public class Browser {
 
+    private static final ThreadLocal<Browser> current_ = new ThreadLocal<>();
+
     private final BrowserFamily family_;
     private final int version_;
 
@@ -45,5 +47,21 @@ public class Browser {
 
     public int getVersion() {
         return version_;
+    }
+
+    /**
+     * Returns the currently used {@code Browser}.
+     * @return the currently used {@code Browser}
+     */
+    public static Browser getCurrent() {
+        return current_.get();
+    }
+
+    /**
+     * Sets the currently used {@code Browser}.
+     * @param browser the browser
+     */
+    public static void setCurent(final Browser browser) {
+        current_.set(browser);
     }
 }

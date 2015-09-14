@@ -38,6 +38,9 @@
 package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 
 import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute.DEFAULT_ATTRIBUTES;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.FF;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -64,4 +67,11 @@ public @interface Setter {
      * @return where this setter lives.
      */
     public Where where() default Where.INSTANCE;
+
+    /** The {@link WebBrowser}s supported by this setter. */
+    WebBrowser[] browsers() default {
+        @WebBrowser(IE),
+        @WebBrowser(FF),
+        @WebBrowser(CHROME)
+    };
 }
