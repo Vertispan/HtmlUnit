@@ -59,21 +59,28 @@ import com.gargoylesoftware.js.nashorn.internal.objects.NativeUint8ClampedArray;
 
 public class JavaMain {
 
-    public static void main(String[] args) throws Exception {
-        final List<Class<?>> list = Arrays.asList(NativeFunction.class, NativeObject.class, NativeArray.class,
-                NativeBoolean.class, NativeDate.class,
-                NativeJSON.class, NativeJSAdapter.class,
-                NativeMath.class, NativeNumber.class, NativeRegExp.class, 
-                NativeString.class, NativeError.class, NativeEvalError.class,
-                NativeRangeError.class, NativeReferenceError.class,
-                NativeSyntaxError.class, NativeTypeError.class, NativeURIError.class,
-                NativeJavaImporter.class, NativeJava.class,
-                NativeArrayBuffer.class, NativeDataView.class,
-                NativeInt8Array.class, NativeUint8Array.class, NativeUint8ClampedArray.class,
-                NativeInt16Array.class, NativeUint16Array.class,
-                NativeInt32Array.class, NativeUint32Array.class,
-                NativeFloat32Array.class, NativeFloat64Array.class,
-                ArrayBufferView.class, Global.class);
+    public static void main(final String[] args) throws Exception {
+        final List<Class<?>> list;
+        if (args.length == 0) {
+            list = Arrays.asList(NativeFunction.class, NativeObject.class, NativeArray.class,
+                    NativeBoolean.class, NativeDate.class,
+                    NativeJSON.class, NativeJSAdapter.class,
+                    NativeMath.class, NativeNumber.class, NativeRegExp.class, 
+                    NativeString.class, NativeError.class, NativeEvalError.class,
+                    NativeRangeError.class, NativeReferenceError.class,
+                    NativeSyntaxError.class, NativeTypeError.class, NativeURIError.class,
+                    NativeJavaImporter.class, NativeJava.class,
+                    NativeArrayBuffer.class, NativeDataView.class,
+                    NativeInt8Array.class, NativeUint8Array.class, NativeUint8ClampedArray.class,
+                    NativeInt16Array.class, NativeUint16Array.class,
+                    NativeInt32Array.class, NativeUint32Array.class,
+                    NativeFloat32Array.class, NativeFloat64Array.class,
+                    ArrayBufferView.class, Global.class);
+        }
+        else {
+            list = new ArrayList<>();
+            list.add(Class.forName(args[0]));
+        }
 
         for(final Class<?> c : list) {
             process(c, false);
