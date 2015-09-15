@@ -13,6 +13,7 @@
 package com.gargoylesoftware.js.host;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -31,19 +32,16 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 public class PrototypeTest {
 
     @Test
-    public void browserInMethods() throws ScriptException {
+    public void methods() throws ScriptException {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine);
-        Browser.setCurent(new Browser(BrowserFamily.CHROME, 45));
-        assertEquals("CHROME", engine.eval("Host1.prototype.someMethod()"));
-
-        Browser.setCurent(new Browser(BrowserFamily.IE, 11));
-        assertEquals("IE", engine.eval("Host1.prototype.someMethod()"));
+        final ScriptContext context = initGlobal(engine);
+        assertNotNull(engine.eval("new Int8Array().set", context));
+        assertNotNull(engine.eval("new Host1().someMethod", context));
     }
 
-    private void initGlobal(final ScriptEngine engine) {
-        final SimpleScriptContext c = (SimpleScriptContext) engine.getContext();
-        final Global global = (Global) ((ScriptObjectMirror) c.getBindings(ScriptContext.ENGINE_SCOPE)).getScriptObject();
+    private ScriptContext initGlobal(final ScriptEngine engine) {
+        final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
+        final Global global = (Global) ((ScriptObjectMirror) context.getBindings(ScriptContext.ENGINE_SCOPE)).getScriptObject();
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
@@ -52,6 +50,18 @@ public class PrototypeTest {
         finally {
             Context.setGlobal(oldGlobal);
         }
+        return context;
+    }
+
+    @Test
+    public void browserInMethods() throws ScriptException {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        initGlobal(engine);
+        Browser.setCurent(new Browser(BrowserFamily.CHROME, 45));
+        assertEquals("CHROME", engine.eval("Host1.prototype.someMethod()"));
+
+        Browser.setCurent(new Browser(BrowserFamily.IE, 11));
+        assertEquals("IE", engine.eval("Host1.prototype.someMethod()"));
     }
 
 }

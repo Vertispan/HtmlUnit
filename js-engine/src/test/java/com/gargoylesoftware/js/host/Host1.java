@@ -38,29 +38,24 @@ public class Host1 extends ScriptObject {
         super($nasgenmap$);
     }
 
-    public Host1(final PropertyMap map) {
-        super(map.addAll($nasgenmap$));
-    }
-
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
-    public static Host1 constructor(final boolean something, final Object object2) {
+    public static Host1 constructor(final boolean newObj, final Object self) {
         return new Host1();
     }
 
     @Function
-    public static String someMethod(final Object o) {
+    public static String someMethod(final Object self) {
         return Browser.getCurrent().getFamily().name();
     }
 
     static {
-            final List<Property> list = Collections.emptyList();
-            $nasgenmap$ = PropertyMap.newMap(list);
+        final List<Property> list = Collections.emptyList();
+        $nasgenmap$ = PropertyMap.newMap(list);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
-            return MethodHandles.lookup().findStatic(Host1.class,
-                    name, MethodType.methodType(rtype, ptypes));
+            return MethodHandles.lookup().findStatic(Host1.class, name, MethodType.methodType(rtype, ptypes));
         }
         catch (final ReflectiveOperationException e) {
             throw new IllegalStateException(e);
@@ -74,7 +69,6 @@ public class Host1 extends ScriptObject {
             PrototypeObject.setConstructor(prototype, this);
             setPrototype(prototype);
         }
-
     }
 
     static final class Prototype extends PrototypeObject {
@@ -109,8 +103,7 @@ public class Host1 extends ScriptObject {
 
         private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
             try {
-                return MethodHandles.lookup().findVirtual(Prototype.class, name,
-                        MethodType.methodType(rtype, ptypes));
+                return MethodHandles.lookup().findVirtual(Prototype.class, name, MethodType.methodType(rtype, ptypes));
             }
             catch (final ReflectiveOperationException e) {
                 throw new IllegalStateException(e);
