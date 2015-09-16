@@ -17,7 +17,7 @@ public class SomeHost extends ScriptObject {
 
     @Override
     protected GuardedInvocation findGetMethod(CallSiteDescriptor desc, LinkRequest request, String operator) {
-        return new GuardedInvocation(virtualHandle("aMethod", String.class));
+        return new GuardedInvocation(virtualHandle("aMethod", String.class), (MethodHandle) null);
     }
 
     private static MethodHandle virtualHandle(String name, Class<?> rtype, Class<?>... ptypes) {
