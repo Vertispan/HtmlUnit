@@ -20,6 +20,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -31,6 +32,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 
 public class PrototypeTest {
 
+    @Ignore
     @Test
     public void methods() throws ScriptException {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
