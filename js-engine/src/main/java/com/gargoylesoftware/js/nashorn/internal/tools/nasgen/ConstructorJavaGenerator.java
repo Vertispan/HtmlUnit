@@ -88,7 +88,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
     String getClassCode() {
         // new class extending from ScriptObject
         final String superClass = (constructor != null)? SCRIPTFUNCTION_TYPE : SCRIPTOBJECT_TYPE;
-        builder.append("    static final class Constructor extends "
+        builder.append("    public static final class Constructor extends "
                 + superClass.substring(superClass.lastIndexOf('/') + 1) + " {" + System.lineSeparator());
         cw.visit(V1_7, ACC_FINAL, className, null, superClass, null);
         
@@ -178,7 +178,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
 
     private void emitConstructor() {
         final MethodGenerator mi = makeConstructor();
-        builder.append("        Constructor() {" + System.lineSeparator());
+        builder.append("        public Constructor() {" + System.lineSeparator());
         mi.visitCode();
         callSuper(mi);
 
@@ -239,7 +239,7 @@ public class ConstructorJavaGenerator extends ClassJavaGenerator {
                     + "                    ");
             loadMap(mi);
             if (specs.isEmpty()) {
-                builder.append(", null);" + System.lineSeparator());
+                builder.append("null);" + System.lineSeparator());
             }
             else {
                 builder.append(", new Specialization[] {" + System.lineSeparator());

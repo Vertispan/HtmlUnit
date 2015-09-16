@@ -61,7 +61,7 @@ public class Browser {
      * Sets the currently used {@code Browser}.
      * @param browser the browser
      */
-    public static void setCurent(final Browser browser) {
+    public static void setCurrent(final Browser browser) {
         current_.set(browser);
     }
 }

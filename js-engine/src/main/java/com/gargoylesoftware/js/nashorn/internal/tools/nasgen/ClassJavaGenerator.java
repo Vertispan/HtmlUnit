@@ -217,6 +217,8 @@ public class ClassJavaGenerator {
             mi.invokeSpecial(ARRAYLIST_TYPE, INIT, ARRAYLIST_INIT_DESC);
             builder.append("            final List<Property> list = new ArrayList<>("
                     + memberCount + ");" + System.lineSeparator());
+            builder.append("            final BrowserFamily browserFamily = Browser.getCurrent().getFamily();" + System.lineSeparator());
+            builder.append("            final int browserVersion = Browser.getCurrent().getVersion();" + System.lineSeparator());
             // stack: ArrayList
         } else {
             // java.util.Collections.EMPTY_LIST
@@ -607,10 +609,10 @@ public class ClassJavaGenerator {
                 }
                 builder.append("browserFamily == " + browser.value());
                 if (browser.minVersion() != 0) {
-                    builder.append(" && version >= " + browser.minVersion());
+                    builder.append(" && browserVersion >= " + browser.minVersion());
                 }
                 if (browser.maxVersion() != Float.MAX_VALUE) {
-                    builder.append(" && version <= " + browser.maxVersion());
+                    builder.append(" && browserVersion <= " + browser.maxVersion());
                 }
                 if (browser.minVersion() != 0 || browser.maxVersion() != Float.MAX_VALUE) {
                     builder.append(")");

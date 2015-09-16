@@ -10,6 +10,8 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * version 2 for more details (http://www.gnu.org/licenses/).
  */
+package com.gargoylesoftware.js;
+
 import static org.junit.Assert.assertEquals;
 
 import javax.script.ScriptEngine;

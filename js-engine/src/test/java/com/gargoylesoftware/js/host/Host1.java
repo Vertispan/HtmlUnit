@@ -12,6 +12,8 @@
  */
 package com.gargoylesoftware.js.host;
 
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -20,8 +22,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
@@ -51,6 +55,11 @@ public class Host1 extends ScriptObject {
         return Browser.getCurrent().getFamily().name();
     }
 
+    @Function(browsers = @WebBrowser(CHROME))
+    public static String inChromeOnly(final Object self) {
+        return Browser.getCurrent().getFamily().name();
+    }
+
     static {
         final List<Property> list = Collections.emptyList();
         $nasgenmap$ = PropertyMap.newMap(list);
@@ -76,7 +85,8 @@ public class Host1 extends ScriptObject {
 
     static final class Prototype extends PrototypeObject {
         private ScriptFunction someMethod;
-        private static final PropertyMap $nasgenmap$;
+        private ScriptFunction inChromeOnly;
+        private final PropertyMap $nasgenmap$;
 
         public ScriptFunction G$someMethod() {
             return this.someMethod;
@@ -86,18 +96,34 @@ public class Host1 extends ScriptObject {
             this.someMethod = function;
         }
 
-        static {
-            final List<Property> list = new ArrayList<>(1);
+        public ScriptFunction G$inChromeOnly() {
+            return this.inChromeOnly;
+        }
+
+        public void S$inChromeOnly(final ScriptFunction function) {
+            this.inChromeOnly = function;
+        }
+
+        {
+            final List<Property> list = new ArrayList<>(2);
+            final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
             list.add(AccessorProperty.create("someMethod", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
                     virtualHandle("G$someMethod", ScriptFunction.class),
                     virtualHandle("S$someMethod", void.class, ScriptFunction.class)));
+            if (browserFamily == CHROME) {
+                list.add(AccessorProperty.create("inChromeOnly", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    virtualHandle("G$inChromeOnly", ScriptFunction.class),
+                    virtualHandle("S$inChromeOnly", void.class, ScriptFunction.class)));
+            }
             $nasgenmap$ = PropertyMap.newMap(list);
         }
 
         Prototype() {
-            super($nasgenmap$);
+            setMap($nasgenmap$);
             someMethod = ScriptFunction.createBuiltin("someMethod",
                     staticHandle("someMethod", String.class, Object.class));
+            inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
+                    staticHandle("inChromeOnly", String.class, Object.class));
         }
 
         public String getClassName() {
