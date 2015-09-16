@@ -13,14 +13,12 @@
 package com.gargoylesoftware.js.host;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -32,16 +30,15 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 
 public class PrototypeTest {
 
-    @Ignore
     @Test
-    public void methods() throws ScriptException {
+    public void method() throws ScriptException {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        final ScriptContext context = initGlobal(engine);
-        assertNotNull(engine.eval("new Int8Array().set", context));
-        assertNotNull(engine.eval("new Host1().someMethod", context));
+        initGlobal(engine);
+        assertEquals("function set() { [native code] }", engine.eval("new Int8Array().set").toString());
+        assertEquals("function someMethod() { [native code] }", engine.eval("new Host1().someMethod").toString());
     }
 
-    private ScriptContext initGlobal(final ScriptEngine engine) {
+    private void initGlobal(final ScriptEngine engine) {
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = (Global) ((ScriptObjectMirror) context.getBindings(ScriptContext.ENGINE_SCOPE)).getScriptObject();
         final Global oldGlobal = Context.getGlobal();
@@ -52,7 +49,6 @@ public class PrototypeTest {
         finally {
             Context.setGlobal(oldGlobal);
         }
-        return context;
     }
 
     @Test

@@ -23,6 +23,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
@@ -40,7 +41,9 @@ public class Host1 extends ScriptObject {
 
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static Host1 constructor(final boolean newObj, final Object self) {
-        return new Host1();
+        final Host1 host1 = new Host1();
+        host1.setProto(Context.getGlobal().getPrototype(host1.getClass()));
+        return host1;
     }
 
     @Function

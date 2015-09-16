@@ -52,6 +52,7 @@ import java.lang.invoke.SwitchPoint;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -2766,6 +2767,31 @@ public final class Global extends Scope {
         }
     }
 
+    private Map<Class<ScriptObject>, ScriptObject> prototypes = new HashMap<>();
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object put(final Object key, final Object value, final boolean strict) {
+        if (value instanceof ScriptObject) {
+            final Class<?> enclosing = value.getClass().getEnclosingClass();
+            if (ScriptObject.class.isAssignableFrom(enclosing)) {
+                prototypes.put((Class<ScriptObject>) enclosing, (ScriptObject) value);
+            }
+        }
+        return super.put(key, value, strict);
+    }
+
+    public ScriptObject getPrototype(final Class<? extends ScriptObject> klass) {
+        ScriptObject scriptObject = prototypes.get(klass);
+        if (scriptObject instanceof ScriptFunction) {
+            final Object proto = ((ScriptFunction) scriptObject).getPrototype();
+            if (proto instanceof ScriptObject) {
+                return (ScriptObject) proto;
+            }
+            return scriptObject.getProto();
+        }
+        return scriptObject;
+    }
 
     static {
         final List<Property> list = new ArrayList<>(61);
