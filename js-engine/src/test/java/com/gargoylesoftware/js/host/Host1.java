@@ -67,7 +67,8 @@ public class Host1 extends ScriptObject {
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
-            return MethodHandles.lookup().findStatic(Host1.class, name, MethodType.methodType(rtype, ptypes));
+            return MethodHandles.lookup().findStatic(Host1.class,
+                    name, MethodType.methodType(rtype, ptypes));
         }
         catch (final ReflectiveOperationException e) {
             throw new IllegalStateException(e);
@@ -76,7 +77,9 @@ public class Host1 extends ScriptObject {
 
     public static final class Constructor extends ScriptFunction {
         public Constructor() {
-            super("Host1", staticHandle("constructor", Host1.class, boolean.class, Object.class), null);
+            super("Host1", 
+                    staticHandle("constructor", Host1.class, boolean.class, Object.class),
+                    null);
             final Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
             setPrototype(prototype);
@@ -86,7 +89,7 @@ public class Host1 extends ScriptObject {
     static final class Prototype extends PrototypeObject {
         private ScriptFunction someMethod;
         private ScriptFunction inChromeOnly;
-        private final PropertyMap $nasgenmap$;
+        private /*static*/ final PropertyMap $nasgenmap$;
 
         public ScriptFunction G$someMethod() {
             return this.someMethod;
@@ -104,7 +107,7 @@ public class Host1 extends ScriptObject {
             this.inChromeOnly = function;
         }
 
-        {
+        /*static*/ {
             final List<Property> list = new ArrayList<>(2);
             final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
             list.add(AccessorProperty.create("someMethod", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
@@ -119,7 +122,7 @@ public class Host1 extends ScriptObject {
         }
 
         Prototype() {
-            setMap($nasgenmap$);
+            /*super*/setMap($nasgenmap$);
             someMethod = ScriptFunction.createBuiltin("someMethod",
                     staticHandle("someMethod", String.class, Object.class));
             inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
@@ -132,7 +135,8 @@ public class Host1 extends ScriptObject {
 
         private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
             try {
-                return MethodHandles.lookup().findVirtual(Prototype.class, name, MethodType.methodType(rtype, ptypes));
+                return MethodHandles.lookup().findVirtual(Prototype.class, name,
+                        MethodType.methodType(rtype, ptypes));
             }
             catch (final ReflectiveOperationException e) {
                 throw new IllegalStateException(e);

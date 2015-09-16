@@ -60,9 +60,8 @@ import com.gargoylesoftware.js.nashorn.internal.objects.NativeUint8ClampedArray;
 public class JavaMain {
 
     public static void main(final String[] args) throws Exception {
-        final List<Class<?>> list;
         if (args.length == 0) {
-            list = Arrays.asList(NativeFunction.class, NativeObject.class, NativeArray.class,
+            final List<Class<?>> list = Arrays.asList(NativeFunction.class, NativeObject.class, NativeArray.class,
                     NativeBoolean.class, NativeDate.class,
                     NativeJSON.class, NativeJSAdapter.class,
                     NativeMath.class, NativeNumber.class, NativeRegExp.class, 
@@ -76,28 +75,39 @@ public class JavaMain {
                     NativeInt32Array.class, NativeUint32Array.class,
                     NativeFloat32Array.class, NativeFloat64Array.class,
                     ArrayBufferView.class, Global.class);
+            for(final Class<?> c : list) {
+                process(c, false);
+            }
         }
         else {
-            list = new ArrayList<>();
-            list.add(Class.forName(args[0]));
+            process(args[0], false);
         }
 
-        for(final Class<?> c : list) {
-            process(c, false);
-        }
         System.out.println("Finished");
     }
 
     public static void process(final Class<?> klass, final boolean force) throws Exception {
+        process(klass.getName(), force);
+    }
+
+    private static File getFile(final File root, final String qualifiedName) {
+        return new File(root, qualifiedName.replace('.', '/') + ".class");
+    }
+
+    public static void process(final String fullyQualifiedName, final boolean force) throws Exception {
         File srcRoot = new File("src/main/java/");
-        File binRoot = new File("target/classes");
-        if (force || !new File(binRoot.getAbsolutePath() + '/'
-                + klass.getName().replace('.', '/') + "$Constructor.class").exists()) {
-            String fileName = binRoot.getAbsolutePath() + '/'
-                    + klass.getName().replace('.', '/') + ".class";
+        final File classesRoot = new File("target/classes");
+        final File testClassesRoot = new File("target/test-classes");
+        if (force || (!getFile(classesRoot, fullyQualifiedName + "$Constructor").exists()
+                && !getFile(testClassesRoot, fullyQualifiedName + "$Constructor").exists())) {
+            String fileName = classesRoot.getAbsolutePath() + '/' + fullyQualifiedName.replace('.', '/') + ".class";
+            if (!new File(fileName).exists()) {
+                fileName = testClassesRoot.getAbsolutePath() + '/' + fullyQualifiedName.replace('.', '/') + ".class";
+                srcRoot = new File("src/test/java/");
+            }
             final ScriptClassInfo sci = ClassJavaGenerator.getScriptClassInfo(fileName);
             if (sci != null) {
-                File javaFile = new File(srcRoot, klass.getName().replace('.', '/') + ".java");
+                File javaFile = new File(srcRoot, fullyQualifiedName.replace('.', '/') + ".java");
                 List<String> lines = readLines(javaFile);
                 for (int i = lines.size() - 1; i >= 0; i--) {
                     String line = lines.get(i);
