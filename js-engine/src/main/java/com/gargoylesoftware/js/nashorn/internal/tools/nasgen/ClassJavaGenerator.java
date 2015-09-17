@@ -79,6 +79,7 @@ import static org.objectweb.asm.Opcodes.H_INVOKEVIRTUAL;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
@@ -609,10 +610,10 @@ public class ClassJavaGenerator {
                 }
                 builder.append("browserFamily == " + browser.value());
                 if (browser.minVersion() != 0) {
-                    builder.append(" && browserVersion >= " + browser.minVersion());
+                    builder.append(" && browserVersion >= " + new DecimalFormat("#.##").format(browser.minVersion()));
                 }
                 if (browser.maxVersion() != Float.MAX_VALUE) {
-                    builder.append(" && browserVersion <= " + browser.maxVersion());
+                    builder.append(" && browserVersion <= " + new DecimalFormat("#.##").format(browser.maxVersion()));
                 }
                 if (browser.minVersion() != 0 || browser.maxVersion() != Float.MAX_VALUE) {
                     builder.append(")");

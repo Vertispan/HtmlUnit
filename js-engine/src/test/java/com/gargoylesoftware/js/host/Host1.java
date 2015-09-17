@@ -13,17 +13,18 @@
 package com.gargoylesoftware.js.host;
 
 import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
@@ -37,10 +38,10 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 @ScriptClass("Host1")
 public class Host1 extends ScriptObject {
 
-    private static PropertyMap $nasgenmap$;
+    private PropertyMap $nasgenmap$;
 
     public Host1() {
-        super($nasgenmap$);
+        setMap($nasgenmap$);
     }
 
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
@@ -60,8 +61,19 @@ public class Host1 extends ScriptObject {
         return Browser.getCurrent().getFamily().name();
     }
 
-    static {
-        final List<Property> list = Collections.emptyList();
+    @Getter(browsers = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
+    public static int length(final Object self) {
+        return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
+    }
+
+    {
+        final List<Property> list = new ArrayList<>(1);
+        final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
+        final int browserVersion = Browser.getCurrent().getVersion();
+        if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
+            list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    staticHandle("length", int.class, Object.class), null));
+        }
         $nasgenmap$ = PropertyMap.newMap(list);
     }
 

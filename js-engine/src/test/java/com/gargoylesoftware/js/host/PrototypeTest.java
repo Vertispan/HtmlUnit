@@ -32,18 +32,23 @@ public class PrototypeTest {
 
     @Test
     public void function() throws ScriptException {
+        final Browser browser = new Browser(BrowserFamily.IE, 8);
+        test("function set() { [native code] }", "new Int8Array().set", browser);
+        test("function someMethod() { [native code] }", "new Host1().someMethod", browser);
+    }
+
+    private void test(final String expected, final String script, final Browser browser) throws ScriptException {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, new Browser(BrowserFamily.IE, 8));
-        assertEquals("function set() { [native code] }", engine.eval("new Int8Array().set").toString());
-        assertEquals("function someMethod() { [native code] }", engine.eval("new Host1().someMethod").toString());
+        initGlobal(engine, browser);
+        final Object object = engine.eval(script);
+        assertEquals(expected, object == null ? "null" : object.toString());
     }
 
     @Test
     public void typeofFunction() throws ScriptException {
-        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, new Browser(BrowserFamily.IE, 8));
-        assertEquals("function", engine.eval("typeof new Int8Array().set").toString());
-        assertEquals("function", engine.eval("typeof new Host1().someMethod").toString());
+        final Browser browser = new Browser(BrowserFamily.IE, 8);
+        test("function", "typeof new Int8Array().set", browser);
+        test("function", "typeof new Host1().someMethod", browser);
     }
 
     private void initGlobal(final ScriptEngine engine, final Browser browser) {
@@ -62,23 +67,32 @@ public class PrototypeTest {
 
     @Test
     public void browserInMethods() throws ScriptException {
-        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, new Browser(BrowserFamily.CHROME, 45));
-        assertEquals("CHROME", engine.eval("Host1.prototype.someMethod()"));
-
-        Browser.setCurrent(new Browser(BrowserFamily.IE, 11));
-        assertEquals("IE", engine.eval("Host1.prototype.someMethod()"));
+        final String script = "Host1.prototype.someMethod()";
+        test("CHROME", script, new Browser(BrowserFamily.CHROME, 45));
+        test("IE", script, new Browser(BrowserFamily.IE, 11));
     }
 
     @Test
     public void browserSpecificFunction() throws ScriptException {
-        ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, new Browser(BrowserFamily.CHROME, 45));
-        assertEquals("function", engine.eval("typeof new Host1().inChromeOnly"));
-
-        engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, new Browser(BrowserFamily.IE, 11));
-        assertEquals("undefined", engine.eval("typeof new Host1().inChromeOnly"));
+        final String script = "typeof new Host1().inChromeOnly";
+        test("function", script, new Browser(BrowserFamily.CHROME, 45));
+        test("undefined", script, new Browser(BrowserFamily.IE, 11));
     }
 
+    @Test
+    public void browserSpecificGetter() throws ScriptException {
+        test("1", "new Host1().length", new Browser(BrowserFamily.CHROME, 45));
+        test("2", "new Host1().length", new Browser(BrowserFamily.IE, 11));
+        test("true", "new Host1().length === undefined", new Browser(BrowserFamily.IE, 8));
+        test("true", "new Host1().length === undefined", new Browser(BrowserFamily.FF, 38));
+    }
+
+    @Test
+    public void browserSpecificGetterType() throws ScriptException {
+        final String script = "typeof new Host1().length";
+        test("number", script, new Browser(BrowserFamily.CHROME, 45));
+        test("number", script, new Browser(BrowserFamily.IE, 11));
+        test("undefined", script, new Browser(BrowserFamily.IE, 8));
+        test("undefined", script, new Browser(BrowserFamily.FF, 38));
+    }
 }
