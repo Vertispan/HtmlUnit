@@ -38,12 +38,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 @ScriptClass("Host1")
 public class Host1 extends ScriptObject {
 
-    private PropertyMap $nasgenmap$;
-
-    public Host1() {
-        setMap($nasgenmap$);
-    }
-
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static Host1 constructor(final boolean newObj, final Object self) {
         final Host1 host1 = new Host1();
@@ -72,9 +66,10 @@ public class Host1 extends ScriptObject {
         final int browserVersion = Browser.getCurrent().getVersion();
         if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
             list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    staticHandle("length", int.class, Object.class), null));
+                    staticHandle("length", int.class, Object.class),
+                    null));
         }
-        $nasgenmap$ = PropertyMap.newMap(list);
+        setMap(PropertyMap.newMap(list));
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
@@ -101,7 +96,6 @@ public class Host1 extends ScriptObject {
     static final class Prototype extends PrototypeObject {
         private ScriptFunction someMethod;
         private ScriptFunction inChromeOnly;
-        private /*static*/ final PropertyMap $nasgenmap$;
 
         public ScriptFunction G$someMethod() {
             return this.someMethod;
@@ -119,7 +113,7 @@ public class Host1 extends ScriptObject {
             this.inChromeOnly = function;
         }
 
-        /*static*/ {
+        {
             final List<Property> list = new ArrayList<>(2);
             final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
             list.add(AccessorProperty.create("someMethod", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
@@ -130,11 +124,10 @@ public class Host1 extends ScriptObject {
                     virtualHandle("G$inChromeOnly", ScriptFunction.class),
                     virtualHandle("S$inChromeOnly", void.class, ScriptFunction.class)));
             }
-            $nasgenmap$ = PropertyMap.newMap(list);
+            setMap(PropertyMap.newMap(list));
         }
 
         Prototype() {
-            /*super*/setMap($nasgenmap$);
             someMethod = ScriptFunction.createBuiltin("someMethod",
                     staticHandle("someMethod", String.class, Object.class));
             inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",

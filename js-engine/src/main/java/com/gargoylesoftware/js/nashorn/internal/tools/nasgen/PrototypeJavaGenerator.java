@@ -113,8 +113,7 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
             }
         }
 
-        //addMapField();
-        builder.append("        private /*static*/ final PropertyMap $nasgenmap$;").append(System.lineSeparator());
+        addMapField();
         builder.append(System.lineSeparator());
 
         for (MemberInfo memInfo : scriptClassInfo.getMembers()) {
@@ -138,7 +137,7 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
 
     private void emitStaticInitializer() {
         final MethodGenerator mi = makeStaticInitializer();
-        builder.append("        /*static*/ {" + System.lineSeparator());
+        builder.append("        {" + System.lineSeparator());
         emitStaticInitPrefix(mi, className, memberCount);
 
         for (final MemberInfo memInfo : scriptClassInfo.getMembers()) {
@@ -162,7 +161,6 @@ public class PrototypeJavaGenerator extends ClassJavaGenerator {
         if (memberCount > 0) {
             // call "super(map$)"
             mi.getStatic(className, PROPERTYMAP_FIELD_NAME, PROPERTYMAP_DESC);
-            builder.append("            /*super*/setMap(" + PROPERTYMAP_FIELD_NAME + ");" + System.lineSeparator());
             // make sure we use duplicated PropertyMap so that original map
             // stays intact and so can be used for many global.
             mi.invokeSpecial(PROTOTYPEOBJECT_TYPE, INIT, SCRIPTOBJECT_INIT_DESC);

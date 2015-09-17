@@ -155,7 +155,7 @@ public class ClassJavaGenerator {
     }
 
     public static String getCode(final String name) {
-        builder.insert(0, "    static {" + System.lineSeparator());
+        builder.insert(0, "    {" + System.lineSeparator());
         builder.append("    }" + System.lineSeparator());
         builder.append(System.lineSeparator());
         builder.append("    private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {" + System.lineSeparator());
@@ -235,7 +235,7 @@ public class ClassJavaGenerator {
         mi.invokeStatic(PROPERTYMAP_TYPE, PROPERTYMAP_NEWMAP, PROPERTYMAP_NEWMAP_DESC);
         // $nasgenmap$ = pmap;
         mi.putStatic(className, PROPERTYMAP_FIELD_NAME, PROPERTYMAP_DESC);
-        builder.append("            " + PROPERTYMAP_FIELD_NAME + " = PropertyMap.newMap(list);" + System.lineSeparator());
+        builder.append("            setMap(PropertyMap.newMap(list));" + System.lineSeparator());
         mi.returnVoid();
         mi.computeMaxs();
         mi.visitEnd();
@@ -323,9 +323,6 @@ public class ClassJavaGenerator {
         // add a PropertyMap static field
         final FieldVisitor fv = cv.visitField(ACC_PRIVATE | ACC_STATIC | ACC_FINAL,
             PROPERTYMAP_FIELD_NAME, PROPERTYMAP_DESC, null, null);
-        String descJava = descToJava(PROPERTYMAP_DESC);
-        builder.append("        private static final " + descJava.substring(0, descJava.length() - ".class".length())
-                + " " + PROPERTYMAP_FIELD_NAME + ';' + System.lineSeparator());
         if (fv != null) {
             fv.visitEnd();
         }
@@ -577,11 +574,11 @@ public class ClassJavaGenerator {
             builder.append("            list.add(AccessorProperty.create(\"" + propertyName + "\", "
                     + attributesToJava(getter.getAttributes()) + ", " + System.lineSeparator()
                     + "                    " + getterCode + "," + System.lineSeparator());
-            if (getterCondition != null) {
-                builder.append("            }");
-            }
             builder.append("                    " + setterCode);
-            builder.append("));" + System.lineSeparator());
+            builder.append("));").append(System.lineSeparator());
+            if (getterCondition != null) {
+                builder.append("            }").append(System.lineSeparator());
+            }
         }
 
         // setup setter method handle
