@@ -32,9 +32,12 @@ public class PrototypeTest {
 
     @Test
     public void function() throws ScriptException {
-        final Browser browser = new Browser(BrowserFamily.IE, 8);
-        test("function set() { [native code] }", "new Int8Array().set", browser);
-        test("function someMethod() { [native code] }", "new Host1().someMethod", browser);
+        test("function set() { [native code] }", "new Int8Array().set");
+        test("function someMethod() { [native code] }", "new Host1().someMethod");
+    }
+
+    private void test(final String expected, final String script) throws ScriptException {
+        test(expected, script, new Browser(BrowserFamily.IE, 8));
     }
 
     private void test(final String expected, final String script, final Browser browser) throws ScriptException {
@@ -46,9 +49,8 @@ public class PrototypeTest {
 
     @Test
     public void typeofFunction() throws ScriptException {
-        final Browser browser = new Browser(BrowserFamily.IE, 8);
-        test("function", "typeof new Int8Array().set", browser);
-        test("function", "typeof new Host1().someMethod", browser);
+        test("function", "typeof new Int8Array().set");
+        test("function", "typeof new Host1().someMethod");
     }
 
     private void initGlobal(final ScriptEngine engine, final Browser browser) {
@@ -94,5 +96,15 @@ public class PrototypeTest {
         test("number", script, new Browser(BrowserFamily.IE, 11));
         test("undefined", script, new Browser(BrowserFamily.IE, 8));
         test("undefined", script, new Browser(BrowserFamily.FF, 38));
+    }
+
+    @Test
+    public void prototype() throws ScriptException {
+        test("[object Object]", "Object.prototype");
+        test("[object Host1]", "Host1.prototype");
+        test("true", "Object.prototype.prototype === undefined");
+        test("true", "Host1.prototype.prototype === undefined");
+        test("true", "new Object().prototype === undefined");
+        test("true", "new Host1().prototype === undefined");
     }
 }
