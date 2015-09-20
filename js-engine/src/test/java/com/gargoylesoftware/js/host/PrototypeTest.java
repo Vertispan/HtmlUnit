@@ -27,6 +27,8 @@ import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
+import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 
 public class PrototypeTest {
 
@@ -62,10 +64,20 @@ public class PrototypeTest {
             Context.setGlobal(global);
             global.put("Host1", new Host1.Constructor(), true);
             global.put("Host2", new Host2.Constructor(), true);
+            setProto(global, "Host2", "Host1");
         }
         finally {
             Context.setGlobal(oldGlobal);
         }
+    }
+
+    private void setProto(final Global global, final String childName, final String parentName) {
+        ScriptFunction childFunction = (ScriptFunction) global.get(childName);
+        PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
+        ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
+        PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
+        childPrototype.setProto(parentPrototype);
+        childFunction.setProto(parentFunction);
     }
 
     @Test
@@ -114,7 +126,21 @@ public class PrototypeTest {
         test("function () { [native code] }", "Object.__proto__");
         test("function () { [native code] }", "Int8Array.__proto__");
         test("function () { [native code] }", "Host1.__proto__");
-        test("function () { [native code] }", "Host2.__proto__");
+        test("function Host1() { [native code] }", "Host2.__proto__");
         test("[object Object]", "new Object().__proto__");
+    }
+
+    @Test
+    public void inheritance() throws ScriptException {
+        test("IE", "new Host2().someMethod()");
+    }
+
+    @Test
+    public void hierarchy() throws ScriptException {
+        test("function Host2() { [native code] }", "Host2");
+        test("function Host1() { [native code] }", "Host2.__proto__");
+        test("function () { [native code] }",      "Host2.__proto__.__proto__");
+        test("[object Object]",                    "Host2.__proto__.__proto__.__proto__");
+        test("null",                               "Host2.__proto__.__proto__.__proto__.__proto__");
     }
 }
