@@ -61,6 +61,7 @@ public class PrototypeTest {
         try {
             Context.setGlobal(global);
             global.put("Host1", new Host1.Constructor(), true);
+            global.put("Host2", new Host2.Constructor(), true);
         }
         finally {
             Context.setGlobal(oldGlobal);
@@ -106,5 +107,14 @@ public class PrototypeTest {
         test("true", "Host1.prototype.prototype === undefined");
         test("true", "new Object().prototype === undefined");
         test("true", "new Host1().prototype === undefined");
+    }
+
+    @Test
+    public void __proto__() throws ScriptException {
+        test("function () { [native code] }", "Object.__proto__");
+        test("function () { [native code] }", "Int8Array.__proto__");
+        test("function () { [native code] }", "Host1.__proto__");
+        test("function () { [native code] }", "Host2.__proto__");
+        test("[object Object]", "new Object().__proto__");
     }
 }
