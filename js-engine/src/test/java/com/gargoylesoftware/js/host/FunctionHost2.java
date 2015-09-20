@@ -35,28 +35,28 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
-@ScriptClass("Host1")
-public class Host1 extends ScriptObject {
+@ScriptClass("FunctionHost2")
+public class FunctionHost2 extends ScriptObject {
 
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
-    public static Host1 constructor(final boolean newObj, final Object self) {
-        final Host1 host = new Host1();
+    public static FunctionHost2 constructor(final boolean newObj, final Object self) {
+        final FunctionHost2 host = new FunctionHost2();
         host.setProto(Context.getGlobal().getPrototype(host.getClass()));
         return host;
     }
 
     @Function
-    public static String someMethod(final Object self) {
+    public static String someMethod2(final Object self) {
         return Browser.getCurrent().getFamily().name();
     }
 
     @Function(browsers = @WebBrowser(CHROME))
-    public static String inChromeOnly(final Object self) {
+    public static String inChromeOnly2(final Object self) {
         return Browser.getCurrent().getFamily().name();
     }
 
     @Getter(browsers = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
-    public static int length(final Object self) {
+    public static int length2(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }
 
@@ -65,8 +65,8 @@ public class Host1 extends ScriptObject {
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
         if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
-            list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    staticHandle("length", int.class, Object.class),
+            list.add(AccessorProperty.create("length2", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    staticHandle("length2", int.class, Object.class),
                     null));
         }
         setMap(PropertyMap.newMap(list));
@@ -74,7 +74,7 @@ public class Host1 extends ScriptObject {
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
-            return MethodHandles.lookup().findStatic(Host1.class,
+            return MethodHandles.lookup().findStatic(FunctionHost2.class,
                     name, MethodType.methodType(rtype, ptypes));
         }
         catch (final ReflectiveOperationException e) {
@@ -84,8 +84,8 @@ public class Host1 extends ScriptObject {
 
     public static final class Constructor extends ScriptFunction {
         public Constructor() {
-            super("Host1", 
-                    staticHandle("constructor", Host1.class, boolean.class, Object.class),
+            super("FunctionHost2", 
+                    staticHandle("constructor", FunctionHost2.class, boolean.class, Object.class),
                     null);
             final Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
@@ -94,48 +94,48 @@ public class Host1 extends ScriptObject {
     }
 
     static final class Prototype extends PrototypeObject {
-        private ScriptFunction someMethod;
-        private ScriptFunction inChromeOnly;
+        private ScriptFunction someMethod2;
+        private ScriptFunction inChromeOnly2;
 
-        public ScriptFunction G$someMethod() {
-            return this.someMethod;
+        public ScriptFunction G$someMethod2() {
+            return this.someMethod2;
         }
 
-        public void S$someMethod(final ScriptFunction function) {
-            this.someMethod = function;
+        public void S$someMethod2(final ScriptFunction function) {
+            this.someMethod2 = function;
         }
 
-        public ScriptFunction G$inChromeOnly() {
-            return this.inChromeOnly;
+        public ScriptFunction G$inChromeOnly2() {
+            return this.inChromeOnly2;
         }
 
-        public void S$inChromeOnly(final ScriptFunction function) {
-            this.inChromeOnly = function;
+        public void S$inChromeOnly2(final ScriptFunction function) {
+            this.inChromeOnly2 = function;
         }
 
         {
             final List<Property> list = new ArrayList<>(2);
             final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
-            list.add(AccessorProperty.create("someMethod", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    virtualHandle("G$someMethod", ScriptFunction.class),
-                    virtualHandle("S$someMethod", void.class, ScriptFunction.class)));
+            list.add(AccessorProperty.create("someMethod2", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    virtualHandle("G$someMethod2", ScriptFunction.class),
+                    virtualHandle("S$someMethod2", void.class, ScriptFunction.class)));
             if (browserFamily == CHROME) {
-                list.add(AccessorProperty.create("inChromeOnly", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    virtualHandle("G$inChromeOnly", ScriptFunction.class),
-                    virtualHandle("S$inChromeOnly", void.class, ScriptFunction.class)));
+                list.add(AccessorProperty.create("inChromeOnly2", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    virtualHandle("G$inChromeOnly2", ScriptFunction.class),
+                    virtualHandle("S$inChromeOnly2", void.class, ScriptFunction.class)));
             }
             setMap(PropertyMap.newMap(list));
         }
 
         Prototype() {
-            someMethod = ScriptFunction.createBuiltin("someMethod",
-                    staticHandle("someMethod", String.class, Object.class));
-            inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
-                    staticHandle("inChromeOnly", String.class, Object.class));
+            someMethod2 = ScriptFunction.createBuiltin("someMethod2",
+                    staticHandle("someMethod2", String.class, Object.class));
+            inChromeOnly2 = ScriptFunction.createBuiltin("inChromeOnly2",
+                    staticHandle("inChromeOnly2", String.class, Object.class));
         }
 
         public String getClassName() {
-            return "Host1";
+            return "FunctionHost2";
         }
 
         private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
