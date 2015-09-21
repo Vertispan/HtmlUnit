@@ -30,7 +30,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 
-public class PrototypeTest {
+public class FunctionHostTest {
 
     @Test
     public void function() throws ScriptException {
