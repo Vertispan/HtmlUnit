@@ -2782,7 +2782,7 @@ public final class Global extends Scope {
     }
 
     public ScriptObject getPrototype(final Class<? extends ScriptObject> klass) {
-        ScriptObject scriptObject = prototypes.get(klass);
+        final ScriptObject scriptObject = prototypes.get(klass);
         if (scriptObject instanceof ScriptFunction) {
             final Object proto = ((ScriptFunction) scriptObject).getPrototype();
             if (proto instanceof ScriptObject) {

@@ -27,6 +27,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 public class ObjectHostTest {
 
@@ -34,6 +35,7 @@ public class ObjectHostTest {
     public void object() throws ScriptException {
         test("[object ObjectHost1]", "ObjectHost1");
         test("IE", "ObjectHost1.parentMethod()");
+        test("IE", "ObjectHost2.childMethod()");
     }
 
     private void test(final String expected, final String script) throws ScriptException {
@@ -55,10 +57,23 @@ public class ObjectHostTest {
         try {
             Context.setGlobal(global);
             global.put("ObjectHost1", new ObjectHost1.Constructor(), true);
+            global.put("ObjectHost2", new ObjectHost2.Constructor(), true);
+            setProto(global, "ObjectHost2", "ObjectHost1");
         }
         finally {
             Context.setGlobal(oldGlobal);
         }
+    }
+
+    private void setProto(final Global global, final String childName, final String parentName) {
+        final ScriptObject childObject = (ScriptObject) global.get(childName);
+        final ScriptObject parentObject = (ScriptObject) global.get(parentName);
+        childObject.setProto(parentObject);
+    }
+
+    @Test
+    public void inheritance() throws ScriptException {
+        test("IE", "ObjectHost2.parentMethod()");
     }
 
 }

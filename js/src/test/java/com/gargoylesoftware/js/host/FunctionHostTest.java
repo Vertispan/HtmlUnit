@@ -72,10 +72,10 @@ public class FunctionHostTest {
     }
 
     private void setProto(final Global global, final String childName, final String parentName) {
-        ScriptFunction childFunction = (ScriptFunction) global.get(childName);
-        PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
-        ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
-        PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
+        final ScriptFunction childFunction = (ScriptFunction) global.get(childName);
+        final PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
+        final ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
+        final PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
         childPrototype.setProto(parentPrototype);
         childFunction.setProto(parentFunction);
     }
