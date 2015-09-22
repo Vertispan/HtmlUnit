@@ -124,9 +124,13 @@ public class JavaMain {
                     writer.write(System.lineSeparator());
                     writer.write(ScriptClassJavaInstrumentor.getString(fileName));
                     writer.write(System.lineSeparator());
-                    writer.write(ConstructorJavaGenerator.getString(fileName));
-                    writer.write(System.lineSeparator());
-                    writer.write(PrototypeJavaGenerator.getString(fileName));
+                    if (sci.isConstructorNeeded()) {
+                        writer.write(ConstructorJavaGenerator.getString(fileName));
+                        writer.write(System.lineSeparator());
+                    }
+                    if (sci.isPrototypeNeeded()) {
+                        writer.write(PrototypeJavaGenerator.getString(fileName));
+                    }
                     writer.write("}" + System.lineSeparator());
                 }
             }
