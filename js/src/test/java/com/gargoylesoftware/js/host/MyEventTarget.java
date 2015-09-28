@@ -16,7 +16,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
@@ -45,11 +44,6 @@ public class MyEventTarget extends ScriptObject {
         return Browser.getCurrent().getFamily().name();
     }
 
-    {
-        final List<Property> list = Collections.emptyList();
-        setMap(PropertyMap.newMap(list));
-    }
-
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(MyEventTarget.class,
@@ -60,8 +54,8 @@ public class MyEventTarget extends ScriptObject {
         }
     }
 
-    public static final class Constructor extends ScriptFunction {
-        public Constructor() {
+    public static final class FunctionConstructor extends ScriptFunction {
+        public FunctionConstructor() {
             super("EventTarget", 
                     staticHandle("constructor", MyEventTarget.class, boolean.class, Object.class),
                     null);
@@ -109,4 +103,44 @@ public class MyEventTarget extends ScriptObject {
             }
         }
     }
+
+    public static final class ObjectConstructor extends ScriptObject {
+        private ScriptFunction addEventListener;
+
+        public ScriptFunction G$addEventListener() {
+            return this.addEventListener;
+        }
+
+        public void S$addEventListener(final ScriptFunction function) {
+            this.addEventListener = function;
+        }
+
+        {
+            final List<Property> list = new ArrayList<>(1);
+            list.add(AccessorProperty.create("addEventListener", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                    virtualHandle("G$addEventListener", ScriptFunction.class),
+                    virtualHandle("S$addEventListener", void.class, ScriptFunction.class)));
+            setMap(PropertyMap.newMap(list));
+        }
+
+        public ObjectConstructor() {
+            addEventListener = ScriptFunction.createBuiltin("addEventListener",
+                    staticHandle("addEventListener", String.class, Object.class));
+        }
+
+        public String getClassName() {
+            return "EventTarget";
+        }
+
+        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
+            try {
+                return MethodHandles.lookup().findVirtual(ObjectConstructor.class, name,
+                        MethodType.methodType(rtype, ptypes));
+            }
+            catch (final ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
 }

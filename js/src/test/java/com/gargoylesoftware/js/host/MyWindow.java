@@ -15,13 +15,9 @@ package com.gargoylesoftware.js.host;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.Collections;
-import java.util.List;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
-import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
-import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
@@ -36,11 +32,6 @@ public class MyWindow extends ScriptObject {
         return host;
     }
 
-    {
-        final List<Property> list = Collections.emptyList();
-        setMap(PropertyMap.newMap(list));
-    }
-
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(MyWindow.class,
@@ -51,8 +42,8 @@ public class MyWindow extends ScriptObject {
         }
     }
 
-    public static final class Constructor extends ScriptFunction {
-        public Constructor() {
+    public static final class FunctionConstructor extends ScriptFunction {
+        public FunctionConstructor() {
             super("Window", 
                     staticHandle("constructor", MyWindow.class, boolean.class, Object.class),
                     null);

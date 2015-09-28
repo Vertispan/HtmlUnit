@@ -12,6 +12,7 @@
  */
 package com.gargoylesoftware.js.host;
 
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
 import static org.junit.Assert.assertEquals;
 
 import javax.script.ScriptContext;
@@ -29,6 +30,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamil
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 public class MyWindowTest {
 
@@ -38,10 +40,10 @@ public class MyWindowTest {
         test("[object Object]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
-//        final Browser ie11 = new Browser(BrowserFamily.IE, 11);
-//        test("[object Object]", "window", ie11);
-//        test("[object Object]", "Window", ie11);
-//        test("function addEventListener() { [native code] }", "window.addEventListener", ie11);
+        final Browser ie11 = new Browser(BrowserFamily.IE, 11);
+        test("[object Object]", "window", ie11);
+        test("[object Object]", "Window", ie11);
+        test("function addEventListener() { [native code] }", "window.addEventListener", ie11);
     }
 
     private void test(final String expected, final String script, final Browser browser) throws ScriptException {
@@ -58,12 +60,25 @@ public class MyWindowTest {
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
-            global.put("EventTarget", new MyEventTarget.Constructor(), true);
-            global.put("Window", new MyWindow.Constructor(), true);
-            setProto(global, "Window", "EventTarget");
+
+            final BrowserFamily browserFamily = browser.getFamily();
+            if (browserFamily == CHROME) {
+                global.put("EventTarget", new MyEventTarget.FunctionConstructor(), true);
+                global.put("Window", new MyWindow.FunctionConstructor(), true);
+                setProto(global, "Window", "EventTarget");
+            }
+            else {
+                global.put("Window", new MyWindow(), true);
+                setProto(global, "Window", new MyEventTarget.ObjectConstructor());
+            }
 
             final MyWindow window = new MyWindow();
-            window.setProto(Context.getGlobal().getPrototype(window.getClass()));
+            ScriptObject windowProto = Context.getGlobal().getPrototype(window.getClass());
+            if (windowProto == null) {
+                windowProto = (ScriptObject) global.get("Window");
+            }
+            window.setProto(windowProto);
+
             global.put("window", window, true);
         }
         finally {
@@ -72,12 +87,24 @@ public class MyWindowTest {
     }
 
     private void setProto(final Global global, final String childName, final String parentName) {
-        final ScriptFunction childFunction = (ScriptFunction) global.get(childName);
-        final PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
-        final ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
-        final PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
-        childPrototype.setProto(parentPrototype);
-        childFunction.setProto(parentFunction);
+        final Object child = global.get(childName);
+        if (child instanceof ScriptFunction) {
+            final ScriptFunction childFunction = (ScriptFunction) global.get(childName);
+            final PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
+            final ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
+            final PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
+            childPrototype.setProto(parentPrototype);
+            childFunction.setProto(parentFunction);
+        }
+        else {
+            final ScriptObject childObject = (ScriptObject) global.get(childName);
+            final ScriptObject parentObject = (ScriptObject) global.get(parentName);
+            childObject.setProto(parentObject);
+        }
     }
 
+    private void setProto(final Global global, final String childName, final ScriptObject parentObject) {
+        final ScriptObject childObject = (ScriptObject) global.get(childName);
+        childObject.setProto(parentObject);
+    }
 }
