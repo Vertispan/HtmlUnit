@@ -80,7 +80,7 @@ public class JavaMain {
             }
         }
         else {
-            process(args[0], false);
+            process(args[0], true);
         }
 
         System.out.println("Finished");

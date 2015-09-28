@@ -2774,7 +2774,7 @@ public final class Global extends Scope {
     public Object put(final Object key, final Object value, final boolean strict) {
         if (value instanceof ScriptObject) {
             final Class<?> enclosing = value.getClass().getEnclosingClass();
-            if (ScriptObject.class.isAssignableFrom(enclosing)) {
+            if (enclosing != null && ScriptObject.class.isAssignableFrom(enclosing)) {
                 prototypes.put((Class<ScriptObject>) enclosing, (ScriptObject) value);
             }
         }
