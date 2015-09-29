@@ -53,11 +53,9 @@ import com.gargoylesoftware.js.nashorn.internal.ir.AccessNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CallNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.logging.DebugLogger;
@@ -95,7 +93,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
  */
 
 @Logger(name="apply2call")
-public final class ApplySpecialization extends NodeVisitor<LexicalContext> implements Loggable {
+public final class ApplySpecialization extends SimpleNodeVisitor implements Loggable {
 
     private static final boolean USE_APPLY2CALL = Options.getBooleanProperty("nashorn.apply2call", true);
 
@@ -119,7 +117,6 @@ public final class ApplySpecialization extends NodeVisitor<LexicalContext> imple
      * @param compiler compiler
      */
     public ApplySpecialization(final Compiler compiler) {
-        super(new LexicalContext());
         this.compiler = compiler;
         this.log = initLogger(compiler.getContext());
     }
@@ -152,7 +149,7 @@ public final class ApplySpecialization extends NodeVisitor<LexicalContext> imple
 
     private boolean hasApplies(final FunctionNode functionNode) {
         try {
-            functionNode.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+            functionNode.accept(new SimpleNodeVisitor() {
                 @Override
                 public boolean enterFunctionNode(final FunctionNode fn) {
                     return fn == functionNode;
@@ -186,7 +183,7 @@ public final class ApplySpecialization extends NodeVisitor<LexicalContext> imple
         final Deque<Set<Expression>> stack = new ArrayDeque<>();
 
         //ensure that arguments is only passed as arg to apply
-        functionNode.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        functionNode.accept(new SimpleNodeVisitor() {
 
             private boolean isCurrentArg(final Expression expr) {
                 return !stack.isEmpty() && stack.peek().contains(expr); //args to current apply call
@@ -397,7 +394,7 @@ public final class ApplySpecialization extends NodeVisitor<LexicalContext> imple
         callSiteTypes.pop();
         explodedArguments.pop();
 
-        return newFunctionNode.setState(lc, CompilationState.BUILTINS_TRANSFORMED);
+        return newFunctionNode;
     }
 
     private static boolean isApply(final CallNode callNode) {

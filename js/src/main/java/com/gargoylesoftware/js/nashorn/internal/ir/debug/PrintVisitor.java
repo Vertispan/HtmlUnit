@@ -54,7 +54,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.JoinPredecessor;
 import com.gargoylesoftware.js.nashorn.internal.ir.JoinPredecessorExpression;
 import com.gargoylesoftware.js.nashorn.internal.ir.LabelNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LocalVariableConversion;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.SplitNode;
@@ -66,7 +65,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 
 /**
  * Print out the AST as human readable source code.
@@ -74,7 +73,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
  *
  * see the flags --print-parse and --print-lower-parse
  */
-public final class PrintVisitor extends NodeVisitor<LexicalContext> {
+public final class PrintVisitor extends SimpleNodeVisitor {
     /** Tab width */
     private static final int TABWIDTH = 4;
 
@@ -109,7 +108,6 @@ public final class PrintVisitor extends NodeVisitor<LexicalContext> {
      * @param printTypes        should we print optimistic and inferred types?
      */
     public PrintVisitor(final boolean printLineNumbers, final boolean printTypes) {
-        super(new LexicalContext());
         this.EOLN             = System.lineSeparator();
         this.sb               = new StringBuilder();
         this.printLineNumbers = printLineNumbers;

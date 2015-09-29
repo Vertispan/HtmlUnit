@@ -14,15 +14,15 @@ package com.gargoylesoftware.js.host;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Field;
+
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
-import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
@@ -32,27 +32,27 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 public class ObjectHostTest {
 
     @Test
-    public void object() throws ScriptException {
+    public void object() throws Exception {
         test("[object ObjectHost1]", "ObjectHost1");
         test("IE", "ObjectHost1.parentMethod()");
         test("IE", "ObjectHost2.childMethod()");
     }
 
-    private void test(final String expected, final String script) throws ScriptException {
+    private void test(final String expected, final String script) throws Exception {
         test(expected, script, new Browser(BrowserFamily.IE, 8));
     }
 
-    private void test(final String expected, final String script, final Browser browser) throws ScriptException {
+    private void test(final String expected, final String script, final Browser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
         assertEquals(expected, object == null ? "null" : object.toString());
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) {
+    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
-        final Global global = (Global) ((ScriptObjectMirror) context.getBindings(ScriptContext.ENGINE_SCOPE)).getScriptObject();
+        final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
@@ -65,6 +65,13 @@ public class ObjectHostTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> T get(final Object o, final String fieldName) throws Exception {
+        final Field field = o.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (T) field.get(o);
+    }
+
     private void setProto(final Global global, final String childName, final String parentName) {
         final ScriptObject childObject = (ScriptObject) global.get(childName);
         final ScriptObject parentObject = (ScriptObject) global.get(parentName);
@@ -72,7 +79,7 @@ public class ObjectHostTest {
     }
 
     @Test
-    public void inheritance() throws ScriptException {
+    public void inheritance() throws Exception {
         test("IE", "ObjectHost2.parentMethod()");
     }
 

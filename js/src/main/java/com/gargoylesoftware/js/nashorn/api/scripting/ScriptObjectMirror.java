@@ -846,7 +846,7 @@ public final class ScriptObjectMirror extends AbstractJSObject implements Bindin
     }
 
     // accessors for script engine
-    public ScriptObject getScriptObject() {
+    ScriptObject getScriptObject() {
         return sobj;
     }
 

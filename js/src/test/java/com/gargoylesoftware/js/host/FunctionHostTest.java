@@ -14,15 +14,15 @@ package com.gargoylesoftware.js.host;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Field;
+
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
-import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
@@ -33,16 +33,16 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 public class FunctionHostTest {
 
     @Test
-    public void function() throws ScriptException {
+    public void function() throws Exception {
         test("function set() { [native code] }", "new Int8Array().set");
         test("function someMethod() { [native code] }", "new FunctionHost1().someMethod");
     }
 
-    private void test(final String expected, final String script) throws ScriptException {
+    private void test(final String expected, final String script) throws Exception {
         test(expected, script, new Browser(BrowserFamily.IE, 8));
     }
 
-    private void test(final String expected, final String script, final Browser browser) throws ScriptException {
+    private void test(final String expected, final String script, final Browser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
@@ -50,15 +50,15 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void typeofFunction() throws ScriptException {
+    public void typeofFunction() throws Exception {
         test("function", "typeof new Int8Array().set");
         test("function", "typeof new FunctionHost1().someMethod");
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) {
+    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
-        final Global global = (Global) ((ScriptObjectMirror) context.getBindings(ScriptContext.ENGINE_SCOPE)).getScriptObject();
+        final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
@@ -71,6 +71,13 @@ public class FunctionHostTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> T get(final Object o, final String fieldName) throws Exception {
+        final Field field = o.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (T) field.get(o);
+    }
+
     private void setProto(final Global global, final String childName, final String parentName) {
         final ScriptFunction childFunction = (ScriptFunction) global.get(childName);
         final PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
@@ -81,21 +88,21 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void browserInMethods() throws ScriptException {
+    public void browserInMethods() throws Exception {
         final String script = "FunctionHost1.prototype.someMethod()";
         test("CHROME", script, new Browser(BrowserFamily.CHROME, 45));
         test("IE", script, new Browser(BrowserFamily.IE, 11));
     }
 
     @Test
-    public void browserSpecificFunction() throws ScriptException {
+    public void browserSpecificFunction() throws Exception {
         final String script = "typeof new FunctionHost1().inChromeOnly";
         test("function", script, new Browser(BrowserFamily.CHROME, 45));
         test("undefined", script, new Browser(BrowserFamily.IE, 11));
     }
 
     @Test
-    public void browserSpecificGetter() throws ScriptException {
+    public void browserSpecificGetter() throws Exception {
         test("1", "new FunctionHost1().length", new Browser(BrowserFamily.CHROME, 45));
         test("2", "new FunctionHost1().length", new Browser(BrowserFamily.IE, 11));
         test("true", "new FunctionHost1().length === undefined", new Browser(BrowserFamily.IE, 8));
@@ -103,7 +110,7 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void browserSpecificGetterType() throws ScriptException {
+    public void browserSpecificGetterType() throws Exception {
         final String script = "typeof new FunctionHost1().length";
         test("number", script, new Browser(BrowserFamily.CHROME, 45));
         test("number", script, new Browser(BrowserFamily.IE, 11));
@@ -112,7 +119,7 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void prototype() throws ScriptException {
+    public void prototype() throws Exception {
         test("[object Object]", "Object.prototype");
         test("[object FunctionHost1]", "FunctionHost1.prototype");
         test("true", "Object.prototype.prototype === undefined");
@@ -122,7 +129,7 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void __proto__() throws ScriptException {
+    public void __proto__() throws Exception {
         test("function () { [native code] }", "Object.__proto__");
         test("function () { [native code] }", "Int8Array.__proto__");
         test("function () { [native code] }", "FunctionHost1.__proto__");
@@ -131,12 +138,12 @@ public class FunctionHostTest {
     }
 
     @Test
-    public void inheritance() throws ScriptException {
+    public void inheritance() throws Exception {
         test("IE", "new FunctionHost2().someMethod()");
     }
 
     @Test
-    public void hierarchy() throws ScriptException {
+    public void hierarchy() throws Exception {
         test("function FunctionHost2() { [native code] }", "FunctionHost2");
         test("function FunctionHost1() { [native code] }", "FunctionHost2.__proto__");
         test("function () { [native code] }",              "FunctionHost2.__proto__.__proto__");

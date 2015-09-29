@@ -67,7 +67,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
 import com.gargoylesoftware.js.nashorn.internal.ir.ForNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.GetSplitState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
@@ -101,6 +100,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 
 /**
@@ -119,7 +119,7 @@ import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
  * instances of the calculator to be run on nested functions (when not lazy compiling).
  *
  */
-final class LocalVariableTypesCalculator extends NodeVisitor<LexicalContext>{
+final class LocalVariableTypesCalculator extends SimpleNodeVisitor {
 
     private static class JumpOrigin {
         final JoinPredecessor node;
@@ -439,7 +439,6 @@ final class LocalVariableTypesCalculator extends NodeVisitor<LexicalContext>{
     private final Deque<Label> catchLabels = new ArrayDeque<>();
 
     LocalVariableTypesCalculator(final Compiler compiler) {
-        super(new LexicalContext());
         this.compiler = compiler;
     }
 
@@ -1344,7 +1343,7 @@ final class LocalVariableTypesCalculator extends NodeVisitor<LexicalContext>{
         // Sets the return type of the function and also performs the bottom-up pass of applying type and conversion
         // information to nodes as well as doing the calculation on nested functions as required.
         FunctionNode newFunction = functionNode;
-        final NodeVisitor<LexicalContext> applyChangesVisitor = new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        final SimpleNodeVisitor applyChangesVisitor = new SimpleNodeVisitor() {
             private boolean inOuterFunction = true;
             private final Deque<JoinPredecessor> joinPredecessors = new ArrayDeque<>();
 
@@ -1491,7 +1490,6 @@ final class LocalVariableTypesCalculator extends NodeVisitor<LexicalContext>{
         newFunction = newFunction.setReturnType(lc, returnType);
 
 
-        newFunction = newFunction.setState(lc, CompilationState.LOCAL_VARIABLE_TYPES_CALCULATED);
         newFunction = newFunction.setParameters(lc, newFunction.visitParameters(applyChangesVisitor));
         return newFunction;
     }

@@ -62,7 +62,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.JoinPredecessorExpression;
 import com.gargoylesoftware.js.nashorn.internal.ir.LabelNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.ObjectNode;
@@ -79,7 +78,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.JSONParser;
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer.RegexToken;
 import com.gargoylesoftware.js.nashorn.internal.parser.Parser;
@@ -91,7 +90,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Source;
 /**
  * This IR writer produces a JSON string that represents AST as a JSON string.
  */
-public final class JSONWriter extends NodeVisitor<LexicalContext> {
+public final class JSONWriter extends SimpleNodeVisitor {
 
     /**
      * Returns AST as JSON compatible string.
@@ -958,7 +957,6 @@ public final class JSONWriter extends NodeVisitor<LexicalContext> {
     // Internals below
 
     private JSONWriter(final boolean includeLocation) {
-        super(new LexicalContext());
         this.buf             = new StringBuilder();
         this.includeLocation = includeLocation;
     }

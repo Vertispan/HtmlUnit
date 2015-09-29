@@ -44,7 +44,6 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,8 +56,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 
@@ -230,7 +227,6 @@ public class ScriptClassInfoCollector extends ClassVisitor {
                         private boolean isSpecializedConstructor;
                         private boolean isOptimistic;
                         private Type    linkLogicClass = MethodGenerator.EMPTY_LINK_LOGIC_TYPE;
-                        private List<WebBrowser> browsers = new ArrayList<>();
 
                         @Override
                         public void visit(final String annotationName, final Object annotationValue) {
@@ -279,59 +275,6 @@ public class ScriptClassInfoCollector extends ClassVisitor {
                             super.visitEnum(enumName, desc, enumValue);
                         }
 
-                        public AnnotationVisitor visitArray(String arg0) {
-                            AnnotationVisitor visitor = super.visitArray(arg0);
-                            return new AnnotationVisitor(Opcodes.ASM4, visitor) {
-                                public AnnotationVisitor visitAnnotation(String arg0, String arg1) {
-                                    AnnotationVisitor vvv = super.visitAnnotation(arg0, arg1);
-
-                                    return new AnnotationVisitor(Opcodes.ASM4, vvv) {
-                                        BrowserFamily family;
-                                        float minVersion = 0;
-                                        float maxVersion = Float.MAX_VALUE;
-                                        public void visit(String arg0, Object arg1) {
-                                            switch( arg0) {
-                                                case "minVersion":
-                                                    minVersion = (float) arg1;
-                                                    break;
-                                                case "maxVersion":
-                                                    maxVersion = (float) arg1;
-                                                    break;
-                                            }
-                                        }
-                                        public void visitEnum(String arg0, String arg1, String arg2) {
-                                            family = BrowserFamily.valueOf(arg2);
-                                        }
-
-                                        public void visitEnd() {
-                                            browsers.add(new WebBrowser() {
-                                                
-                                                @Override
-                                                public Class<? extends Annotation> annotationType() {
-                                                    return WebBrowser.class;
-                                                }
-                                                
-                                                @Override
-                                                public BrowserFamily value() {
-                                                    return family;
-                                                }
-                                                
-                                                @Override
-                                                public float minVersion() {
-                                                    return minVersion;
-                                                }
-                                                
-                                                @Override
-                                                public float maxVersion() {
-                                                    return maxVersion;
-                                                }
-                                            });
-                                        }
-                                    };
-                                }
-                            };
-                        }
-
                         @SuppressWarnings("fallthrough")
                         @Override
                         public void visitEnd() {
@@ -345,11 +288,6 @@ public class ScriptClassInfoCollector extends ClassVisitor {
                             memInfo.setAttributes(attributes == null ? MemberInfo.DEFAULT_ATTRIBUTES : attributes);
 
                             memInfo.setArity((arity == null)? MemberInfo.DEFAULT_ARITY : arity);
-
-                            if (!browsers.isEmpty()) {
-                                memInfo.setBrowsers(browsers.toArray(new WebBrowser[browsers.size()]));
-                            }
-
                             if (where == null) {
                                 // by default @Getter/@Setter belongs to INSTANCE
                                 // @Function belong to PROTOTYPE.

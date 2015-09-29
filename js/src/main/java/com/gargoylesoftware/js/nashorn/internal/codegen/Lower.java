@@ -65,7 +65,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
 import com.gargoylesoftware.js.nashorn.internal.ir.ForNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
@@ -88,7 +87,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeOperatorVisitor;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.Token;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
@@ -135,13 +134,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
                             terminated = true;
                         }
                     } else {
-                        statement.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
-                            @Override
-                            public boolean enterVarNode(final VarNode varNode) {
-                                newStatements.add(varNode.setInit(null));
-                                return false;
-                            }
-                        });
+                        FoldConstants.extractVarNodesFromDeadCode(statement, newStatements);
                     }
                 }
                 return newStatements;
@@ -289,7 +282,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
     @Override
     public Node leaveFunctionNode(final FunctionNode functionNode) {
         log.info("END FunctionNode: ", functionNode.getName());
-        return functionNode.setState(lc, CompilationState.LOWERED);
+        return functionNode;
     }
 
     @Override
@@ -351,7 +344,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
 
     @SuppressWarnings("unchecked")
     private static <T extends Node> T ensureUniqueNamesIn(final T node) {
-        return (T)node.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        return (T)node.accept(new SimpleNodeVisitor() {
             @Override
             public Node leaveFunctionNode(final FunctionNode functionNode) {
                 final String name = functionNode.getName();
@@ -416,7 +409,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
         final Block finallyBlock = createFinallyBlock(finallyBody);
         final ArrayList<Block> inlinedFinallies = new ArrayList<>();
         final FunctionNode fn = lc.getCurrentFunction();
-        final TryNode newTryNode = (TryNode)tryNode.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        final TryNode newTryNode = (TryNode)tryNode.accept(new SimpleNodeVisitor() {
 
             @Override
             public boolean enterFunctionNode(final FunctionNode functionNode) {
@@ -559,7 +552,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
         final Block catchAll = catchAllBlock(tryNode);
 
         final List<ThrowNode> rethrows = new ArrayList<>(1);
-        catchAll.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        catchAll.accept(new SimpleNodeVisitor() {
             @Override
             public boolean enterThrowNode(final ThrowNode throwNode) {
                 rethrows.add(throwNode);
@@ -706,7 +699,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
     private static boolean controlFlowEscapes(final LexicalContext lex, final Block loopBody) {
         final List<Node> escapes = new ArrayList<>();
 
-        loopBody.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        loopBody.accept(new SimpleNodeVisitor() {
             @Override
             public Node leaveBreakNode(final BreakNode node) {
                 escapes.add(node);

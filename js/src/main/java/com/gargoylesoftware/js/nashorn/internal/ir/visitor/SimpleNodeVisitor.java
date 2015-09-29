@@ -11,7 +11,7 @@
  * version 2 for more details (http://www.gnu.org/licenses/).
  */
 /*
- * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -35,43 +35,19 @@
  * questions.
  */
 
-package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
+package com.gargoylesoftware.js.nashorn.internal.ir.visitor;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute.DEFAULT_ATTRIBUTES;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.FF;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 
 /**
- * Annotation to specify the getter method for a JavaScript "data" property.
+ * Convenience base class for a {@link NodeVisitor} with a plain {@link LexicalContext}.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Getter {
-    /**
-     * @return the name of the property. If empty, the name is inferred.
-     */
-    public String name() default "";
+public abstract class SimpleNodeVisitor extends NodeVisitor<LexicalContext> {
 
     /**
-     * @return the attribute flags for this setter.
+     * Creates a new simple node visitor.
      */
-    public int attributes() default DEFAULT_ATTRIBUTES;
-
-    /**
-     * @return where this getter lives.
-     */
-    public Where where() default Where.INSTANCE;
-
-    /** The {@link WebBrowser}s supported by this getter. */
-    WebBrowser[] browsers() default {
-        @WebBrowser(IE),
-        @WebBrowser(FF),
-        @WebBrowser(CHROME)
-    };
+    public SimpleNodeVisitor() {
+        super(new LexicalContext());
+    }
 }

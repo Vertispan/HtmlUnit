@@ -60,7 +60,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LabelNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.ObjectNode;
@@ -77,7 +76,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 
@@ -85,10 +84,9 @@ import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
  * This class translates from nashorn IR Node objects
  * to nashorn parser API Tree objects.
  */
-final class IRTranslator extends NodeVisitor<LexicalContext> {
+final class IRTranslator extends SimpleNodeVisitor {
 
     public IRTranslator() {
-        super(new LexicalContext());
     }
 
     // currently translated Statement
@@ -489,7 +487,7 @@ final class IRTranslator extends NodeVisitor<LexicalContext> {
     }
 
     private List<? extends Statement> getOrderedStatements(final List<? extends Statement> stats) {
-        final List<Statement> statList = new ArrayList<>(stats);
+        final List<? extends Statement> statList = new ArrayList<>(stats);
         statList.sort(Comparator.comparingInt(Node::getSourceOrder));
         return statList;
     }

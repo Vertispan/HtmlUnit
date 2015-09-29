@@ -78,17 +78,14 @@ import com.gargoylesoftware.js.nashorn.internal.ir.CatchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ForNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContextNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode.ArrayLiteralNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode.ArrayLiteralNode.ArrayUnit;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.RuntimeNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.RuntimeNode.Request;
+import com.gargoylesoftware.js.nashorn.internal.ir.Splittable;
 import com.gargoylesoftware.js.nashorn.internal.ir.Statement;
 import com.gargoylesoftware.js.nashorn.internal.ir.SwitchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Symbol;
@@ -96,7 +93,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.TryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WithNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors;
@@ -117,7 +114,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.logging.Logger;
  * visitor.
  */
 @Logger(name="symbols")
-final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggable {
+final class AssignSymbols extends SimpleNodeVisitor implements Loggable {
     private final DebugLogger log;
     private final boolean     debug;
 
@@ -165,7 +162,6 @@ final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggabl
     private final boolean isOnDemand;
 
     public AssignSymbols(final Compiler compiler) {
-        super(new LexicalContext());
         this.compiler = compiler;
         this.log   = initLogger(compiler.getContext());
         this.debug = log.isEnabled();
@@ -202,7 +198,7 @@ final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggabl
      */
     private void acceptDeclarations(final FunctionNode functionNode, final Block body) {
         // This visitor will assign symbol to all declared variables.
-        body.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        body.accept(new SimpleNodeVisitor() {
             @Override
             protected boolean enterDefault(final Node node) {
                 // Don't bother visiting expressions; var is a statement, it can't be inside an expression.
@@ -841,7 +837,7 @@ final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggabl
                        lc.applyTopFlags(functionNode))))
                        .setThisProperties(lc, thisProperties.pop().size()));
         }
-        return finalizedFunction.setState(lc, CompilationState.SYMBOLS_ASSIGNED);
+        return finalizedFunction;
     }
 
     @Override
@@ -998,7 +994,7 @@ final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggabl
         boolean previousWasBlock = false;
         for (final Iterator<LexicalContextNode> it = lc.getAllNodes(); it.hasNext();) {
             final LexicalContextNode node = it.next();
-            if (node instanceof FunctionNode || isSplitArray(node)) {
+            if (node instanceof FunctionNode || isSplitLiteral(node)) {
                 // We reached the function boundary or a splitting boundary without seeing a definition for the symbol.
                 // It needs to be in scope.
                 return true;
@@ -1024,12 +1020,8 @@ final class AssignSymbols extends NodeVisitor<LexicalContext> implements Loggabl
         throw new AssertionError();
     }
 
-    private static boolean isSplitArray(final LexicalContextNode expr) {
-        if(!(expr instanceof ArrayLiteralNode)) {
-            return false;
-        }
-        final List<ArrayUnit> units = ((ArrayLiteralNode)expr).getUnits();
-        return !(units == null || units.isEmpty());
+    private static boolean isSplitLiteral(final LexicalContextNode expr) {
+        return expr instanceof Splittable && ((Splittable) expr).getSplitRanges() != null;
     }
 
     private void throwUnprotectedSwitchError(final VarNode varNode) {

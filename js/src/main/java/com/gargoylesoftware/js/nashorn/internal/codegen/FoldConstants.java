@@ -50,9 +50,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.CaseNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.EmptyNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode.ArrayLiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
@@ -61,7 +59,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.SwitchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.TernaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
@@ -73,12 +71,11 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.logging.Logger;
  * Simple constant folding pass, executed before IR is starting to be lowered.
  */
 @Logger(name="fold")
-final class FoldConstants extends NodeVisitor<LexicalContext> implements Loggable {
+final class FoldConstants extends SimpleNodeVisitor implements Loggable {
 
     private final DebugLogger log;
 
     FoldConstants(final Compiler compiler) {
-        super(new LexicalContext());
         this.log = initLogger(compiler.getContext());
     }
 
@@ -114,7 +111,7 @@ final class FoldConstants extends NodeVisitor<LexicalContext> implements Loggabl
 
     @Override
     public Node leaveFunctionNode(final FunctionNode functionNode) {
-        return functionNode.setState(lc, CompilationState.CONSTANT_FOLDED);
+        return functionNode;
     }
 
     @Override
@@ -130,7 +127,7 @@ final class FoldConstants extends NodeVisitor<LexicalContext> implements Loggabl
                 statements.addAll(executed.getStatements()); // Get statements form executed branch
             }
             if (dropped != null) {
-                extractVarNodes(dropped, statements); // Get var-nodes from non-executed branch
+                extractVarNodesFromDeadCode(dropped, statements); // Get var-nodes from non-executed branch
             }
             if (statements.isEmpty()) {
                 return new EmptyNode(ifNode);
@@ -199,12 +196,25 @@ final class FoldConstants extends NodeVisitor<LexicalContext> implements Loggabl
         protected abstract LiteralNode<?> eval();
     }
 
-    private static void extractVarNodes(final Block block, final List<Statement> statements) {
-        final LexicalContext lc = new LexicalContext();
-        block.accept(lc, new NodeVisitor<LexicalContext>(lc) {
+    /**
+     * When we eliminate dead code, we must preserve var declarations as they are scoped to the whole
+     * function. This method gathers var nodes from code passed to it, removing their initializers.
+     *
+     * @param deadCodeRoot the root node of eliminated dead code
+     * @param statements a list that will be receiving the var nodes from the dead code, with their
+     * initializers removed.
+     */
+    static void extractVarNodesFromDeadCode(final Node deadCodeRoot, final List<Statement> statements) {
+        deadCodeRoot.accept(new SimpleNodeVisitor() {
             @Override
             public boolean enterVarNode(final VarNode varNode) {
                 statements.add(varNode.setInit(null));
+                return false;
+            }
+
+            @Override
+            public boolean enterFunctionNode(final FunctionNode functionNode) {
+                // Don't descend into nested functions
                 return false;
             }
         });

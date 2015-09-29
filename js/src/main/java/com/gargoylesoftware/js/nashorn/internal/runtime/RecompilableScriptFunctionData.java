@@ -75,7 +75,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.SwitchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Symbol;
 import com.gargoylesoftware.js.nashorn.internal.ir.TryNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.parser.Parser;
 import com.gargoylesoftware.js.nashorn.internal.parser.Token;
@@ -381,8 +381,8 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
     }
 
     @Override
-    PropertyMap getAllocatorMap() {
-        return allocationStrategy.getAllocatorMap();
+    PropertyMap getAllocatorMap(final ScriptObject prototype) {
+        return allocationStrategy.getAllocatorMap(prototype);
     }
 
     @Override
@@ -531,8 +531,7 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
         // don't cache non-split functions from the eager pass); those already cached, or those not split
         // don't need this step.
         final Set<Symbol> blockDefinedSymbols = fn.isSplit() && !cached ? Collections.newSetFromMap(new IdentityHashMap<>()) : null;
-        FunctionNode newFn = (FunctionNode)fn.accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
-
+        FunctionNode newFn = (FunctionNode)fn.accept(new SimpleNodeVisitor() {
             private Symbol getReplacement(final Symbol original) {
                 if (original == null) {
                     return null;
@@ -662,7 +661,7 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
      */
     private CodeInstaller getInstallerForNewCode() {
         final ScriptEnvironment env = installer.getContext().getEnv();
-        return env._optimistic_types || env._loader_per_compile ? installer.withNewLoader() : installer;
+        return env._optimistic_types || env._loader_per_compile ? installer.getOnDemandCompilationInstaller() : installer;
     }
 
     Compiler getCompiler(final FunctionNode functionNode, final MethodType actualCallSiteType,
@@ -770,7 +769,7 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
 
     private FunctionNode extractFunctionFromScript(final FunctionNode script) {
         final Set<FunctionNode> fns = new HashSet<>();
-        script.getBody().accept(new NodeVisitor<LexicalContext>(new LexicalContext()) {
+        script.getBody().accept(new SimpleNodeVisitor() {
             @Override
             public boolean enterFunctionNode(final FunctionNode fn) {
                 fns.add(fn);

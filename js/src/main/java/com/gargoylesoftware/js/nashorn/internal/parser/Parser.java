@@ -97,7 +97,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
 import com.gargoylesoftware.js.nashorn.internal.ir.ForNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
@@ -500,7 +499,6 @@ loop:
     }
 
     private FunctionNode createFunctionNode(final ParserContextFunctionNode function, final long startToken, final IdentNode ident, final List<IdentNode> parameters, final FunctionNode.Kind kind, final int functionLine, final Block body){
-        final CompilationState state = errors.hasErrors() ? CompilationState.PARSE_ERROR : CompilationState.PARSED;
         // Start new block.
         final FunctionNode functionNode =
             new FunctionNode(
@@ -517,7 +515,6 @@ loop:
                 kind,
                 function.getFlags(),
                 body,
-                state,
                 function.getEndParserState());
 
         printAST(functionNode);

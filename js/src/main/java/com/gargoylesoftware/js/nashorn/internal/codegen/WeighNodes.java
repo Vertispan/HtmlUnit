@@ -57,12 +57,13 @@ import com.gargoylesoftware.js.nashorn.internal.ir.JumpToInlinedFinally;
 import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode.ArrayLiteralNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode.ArrayLiteralNode.ArrayUnit;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
+import com.gargoylesoftware.js.nashorn.internal.ir.ObjectNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.PropertyNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.ReturnNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.RuntimeNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.SplitNode;
+import com.gargoylesoftware.js.nashorn.internal.ir.Splittable;
 import com.gargoylesoftware.js.nashorn.internal.ir.SwitchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.ThrowNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.TryNode;
@@ -101,6 +102,8 @@ final class WeighNodes extends NodeOperatorVisitor<LexicalContext> {
     static final long THROW_WEIGHT     =  2;
     static final long VAR_WEIGHT       = 40;
     static final long WITH_WEIGHT      =  8;
+    static final long OBJECT_WEIGHT    = 16;
+    static final long SETPROP_WEIGHT   =  5;
 
     /** Accumulated weight. */
     private long weight;
@@ -226,7 +229,7 @@ final class WeighNodes extends NodeOperatorVisitor<LexicalContext> {
             final ArrayLiteralNode arrayLiteralNode = (ArrayLiteralNode)literalNode;
             final Node[]           value            = arrayLiteralNode.getValue();
             final int[]            postsets         = arrayLiteralNode.getPostsets();
-            final List<ArrayUnit>  units            = arrayLiteralNode.getUnits();
+            final List<Splittable.SplitRange>  units            = arrayLiteralNode.getSplitRanges();
 
             if (units == null) {
                 for (final int postset : postsets) {
@@ -243,6 +246,27 @@ final class WeighNodes extends NodeOperatorVisitor<LexicalContext> {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean enterObjectNode(final ObjectNode objectNode) {
+        weight += OBJECT_WEIGHT;
+        final List<PropertyNode> properties = objectNode.getElements();
+        final boolean isSpillObject = properties.size() > CodeGenerator.OBJECT_SPILL_THRESHOLD;
+
+        for (final PropertyNode property : properties) {
+            if (!LiteralNode.isConstant(property.getValue())) {
+                weight += SETPROP_WEIGHT;
+                property.getValue().accept(this);
+            } else if (!isSpillObject) {
+                // constants in spill object are set via preset spill array,
+                // but fields objects need to set constants.
+                weight += SETPROP_WEIGHT;
+            }
+
+        }
+
+        return false;
     }
 
     @Override

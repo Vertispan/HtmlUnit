@@ -60,7 +60,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.ContinueNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.GetSplitState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
@@ -189,11 +188,9 @@ final class SplitIntoFunctions extends NodeVisitor<BlockLexicalContext> {
                 // we still use IS_SPLIT as the criteria in CompilationPhase.SERIALIZE_SPLIT_PHASE.
                 FunctionNode.IS_ANONYMOUS | FunctionNode.USES_ANCESTOR_SCOPE | FunctionNode.IS_SPLIT,
                 body,
-                CompilationState.INITIALIZED,
                 null
         )
-        .setCompileUnit(lc, splitNode.getCompileUnit())
-        .copyCompilationState(lc, originalFn);
+        .setCompileUnit(lc, splitNode.getCompileUnit());
 
         // Call the function:
         //     either "(function () { ... }).call(this)"

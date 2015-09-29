@@ -50,24 +50,19 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.Optimistic;
 import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 
 /**
  * Find program points in the code that are needed for optimistic assumptions
  */
-class ProgramPoints extends NodeVisitor<LexicalContext> {
+class ProgramPoints extends SimpleNodeVisitor {
 
     private final IntDeque nextProgramPoint = new IntDeque();
     private final Set<Node> noProgramPoint = new HashSet<>();
-
-    ProgramPoints() {
-        super(new LexicalContext());
-    }
 
     private int next() {
         final int next = nextProgramPoint.getAndIncrement();

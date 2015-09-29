@@ -46,7 +46,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
  * Like NodeVisitor but navigating further into operators.
  * @param <T> Lexical context class for this NodeOperatorVisitor
  */
-public class NodeOperatorVisitor<T extends LexicalContext> extends NodeVisitor<T> {
+public abstract class NodeOperatorVisitor<T extends LexicalContext> extends NodeVisitor<T> {
     /**
      * Constructor
      *

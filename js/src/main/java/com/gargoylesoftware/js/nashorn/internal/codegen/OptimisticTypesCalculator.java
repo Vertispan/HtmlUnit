@@ -51,12 +51,10 @@ import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
 import com.gargoylesoftware.js.nashorn.internal.ir.ForNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode.CompilationState;
 import com.gargoylesoftware.js.nashorn.internal.ir.IdentNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IfNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.JoinPredecessorExpression;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
 import com.gargoylesoftware.js.nashorn.internal.ir.LoopNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
 import com.gargoylesoftware.js.nashorn.internal.ir.Optimistic;
@@ -66,7 +64,7 @@ import com.gargoylesoftware.js.nashorn.internal.ir.TernaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.UnaryNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.VarNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.WhileNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.visitor.NodeVisitor;
+import com.gargoylesoftware.js.nashorn.internal.ir.visitor.SimpleNodeVisitor;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
@@ -75,7 +73,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
  * must not ever be marked as optimistic, assigning narrowest non-invalidated types to program points from the
  * compilation environment, as well as initializing optimistic types of global properties for scripts.
  */
-final class OptimisticTypesCalculator extends NodeVisitor<LexicalContext> {
+final class OptimisticTypesCalculator extends SimpleNodeVisitor {
 
     final Compiler compiler;
 
@@ -83,7 +81,6 @@ final class OptimisticTypesCalculator extends NodeVisitor<LexicalContext> {
     final Deque<BitSet> neverOptimistic = new ArrayDeque<>();
 
     OptimisticTypesCalculator(final Compiler compiler) {
-        super(new LexicalContext());
         this.compiler = compiler;
     }
 
@@ -221,7 +218,7 @@ final class OptimisticTypesCalculator extends NodeVisitor<LexicalContext> {
     @Override
     public Node leaveFunctionNode(final FunctionNode functionNode) {
         neverOptimistic.pop();
-        return functionNode.setState(lc, CompilationState.OPTIMISTIC_TYPES_ASSIGNED);
+        return functionNode;
     }
 
     @Override

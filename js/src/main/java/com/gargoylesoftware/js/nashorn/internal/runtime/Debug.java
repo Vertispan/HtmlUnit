@@ -39,6 +39,7 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.EOF;
 
+import com.gargoylesoftware.js.nashorn.api.scripting.NashornException;
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer;
 import com.gargoylesoftware.js.nashorn.internal.parser.Token;
 import com.gargoylesoftware.js.nashorn.internal.parser.TokenStream;
@@ -73,6 +74,15 @@ public final class Debug {
      */
     public static String firstJSFrame() {
         return firstJSFrame(new Throwable());
+    }
+
+    /**
+     * Return a formatted script stack trace string with frames information separated by '\n'.
+     * This is a shortcut for {@code NashornException.getScriptStackString(new Throwable())}.
+     * @return formatted stack trace string
+     */
+    public static String scriptStack() {
+        return NashornException.getScriptStackString(new Throwable());
     }
 
     /**
