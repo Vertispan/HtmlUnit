@@ -38,6 +38,9 @@ public enum BrowserFamily {
     IE,
 
     /** Chrome. */
-    CHROME
+    CHROME,
+
+    /** Edge. */
+    EDGE
 }
 
