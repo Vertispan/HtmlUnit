@@ -60,18 +60,6 @@ public class FunctionHost1 extends ScriptObject {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }
 
-    {
-        final List<Property> list = new ArrayList<>(1);
-        final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
-        final int browserVersion = Browser.getCurrent().getVersion();
-        if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
-            list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    staticHandle("length", int.class, Object.class),
-                    null));
-        }
-        setMap(PropertyMap.newMap(list));
-    }
-
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(FunctionHost1.class,
@@ -94,8 +82,10 @@ public class FunctionHost1 extends ScriptObject {
     }
 
     static final class Prototype extends PrototypeObject {
-        private ScriptFunction someMethod;
-        private ScriptFunction inChromeOnly;
+        private ScriptFunction someMethod = ScriptFunction.createBuiltin("someMethod",
+                staticHandle("someMethod", String.class, Object.class));
+        private ScriptFunction inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
+                staticHandle("inChromeOnly", String.class, Object.class));
 
         public ScriptFunction G$someMethod() {
             return this.someMethod;
@@ -124,14 +114,13 @@ public class FunctionHost1 extends ScriptObject {
                     virtualHandle("G$inChromeOnly", ScriptFunction.class),
                     virtualHandle("S$inChromeOnly", void.class, ScriptFunction.class)));
             }
+            final int browserVersion = Browser.getCurrent().getVersion();
+            if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
+                list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
+                        staticHandle("length", int.class, Object.class),
+                        null));
+            }
             setMap(PropertyMap.newMap(list));
-        }
-
-        Prototype() {
-            someMethod = ScriptFunction.createBuiltin("someMethod",
-                    staticHandle("someMethod", String.class, Object.class));
-            inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
-                    staticHandle("inChromeOnly", String.class, Object.class));
         }
 
         public String getClassName() {
