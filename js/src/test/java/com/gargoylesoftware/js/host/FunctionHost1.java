@@ -18,19 +18,14 @@ import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.Brows
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.gargoylesoftware.js.nashorn.ScriptUtils;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
-import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
-import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
-import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
@@ -56,7 +51,7 @@ public class FunctionHost1 extends ScriptObject {
     }
 
     @Getter(browsers = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
-    public static int length(final Object self) {
+    public static int getLength(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }
 
@@ -81,11 +76,9 @@ public class FunctionHost1 extends ScriptObject {
         }
     }
 
-    static final class Prototype extends PrototypeObject {
-        private ScriptFunction someMethod = ScriptFunction.createBuiltin("someMethod",
-                staticHandle("someMethod", String.class, Object.class));
-        private ScriptFunction inChromeOnly = ScriptFunction.createBuiltin("inChromeOnly",
-                staticHandle("inChromeOnly", String.class, Object.class));
+    public static final class Prototype extends PrototypeObject {
+        public ScriptFunction someMethod;
+        public ScriptFunction inChromeOnly;
 
         public ScriptFunction G$someMethod() {
             return this.someMethod;
@@ -103,38 +96,12 @@ public class FunctionHost1 extends ScriptObject {
             this.inChromeOnly = function;
         }
 
-        {
-            final List<Property> list = new ArrayList<>(2);
-            final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
-            list.add(AccessorProperty.create("someMethod", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    virtualHandle("G$someMethod", ScriptFunction.class),
-                    virtualHandle("S$someMethod", void.class, ScriptFunction.class)));
-            if (browserFamily == CHROME) {
-                list.add(AccessorProperty.create("inChromeOnly", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                    virtualHandle("G$inChromeOnly", ScriptFunction.class),
-                    virtualHandle("S$inChromeOnly", void.class, ScriptFunction.class)));
-            }
-            final int browserVersion = Browser.getCurrent().getVersion();
-            if ((browserFamily == IE && browserVersion >= 11) || browserFamily == CHROME) {
-                list.add(AccessorProperty.create("length", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, 
-                        staticHandle("length", int.class, Object.class),
-                        null));
-            }
-            setMap(PropertyMap.newMap(list));
+        Prototype() {
+            ScriptUtils.initialize(this);
         }
 
         public String getClassName() {
             return "FunctionHost1";
-        }
-
-        private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
-            try {
-                return MethodHandles.lookup().findVirtual(Prototype.class, name,
-                        MethodType.methodType(rtype, ptypes));
-            }
-            catch (final ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
-            }
         }
     }
 }
