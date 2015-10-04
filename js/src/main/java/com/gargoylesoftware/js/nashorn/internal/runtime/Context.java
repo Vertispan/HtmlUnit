@@ -83,7 +83,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 import org.objectweb.asm.ClassReader;
