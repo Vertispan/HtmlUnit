@@ -25,26 +25,27 @@ import org.apache.commons.io.FileUtils;
 public class CodeUpdater {
 
     public static void main(final String[] args) throws Exception {
-        process(new File("../nashorn/src/jdk.scripting.nashorn/share/classes"));
-        process(new File("../nashorn/buildtools/nasgen/src"));
+        process(new File("../nashorn/src/jdk.scripting.nashorn/share/classes"), true);
+        process(new File("../nashorn/buildtools/nasgen/src"), false);
     }
 
-    private static void process(final File dir) throws IOException {
+    private static void process(final File dir, final boolean isMain) throws IOException {
         for (final File file : dir.listFiles()) {
             if (file.isDirectory()) {
-                process(file);
+                process(file, isMain);
             }
             else if (file.getName().endsWith(".java") && !file.getName().equals("package-info.java")) {
-                processFile(file);
+                processFile(file, isMain);
             }
         }
     }
 
-    private static void processFile(final File originalFile) throws IOException {
+    private static void processFile(final File originalFile, final boolean isMain) throws IOException {
         String relativePath = originalFile.getPath().replace('\\', '/');
         relativePath = "com/gargoylesoftware/js/"
                 + relativePath.substring(relativePath.indexOf("/jdk/") + "/jdk/".length());
-        final File localFile = new File("src/main/java/" + relativePath);
+        final String root = isMain ? "src/main/java/" : "src/test/java/";
+        final File localFile = new File(root + relativePath);
         if (!localFile.exists()) {
             System.out.println("File doesn't locally exist: " + relativePath);
             return;
@@ -67,6 +68,10 @@ public class CodeUpdater {
             String line = originalLines.get(i);
             line = line.replace("jdk.internal.org.objectweb.asm", "org.objectweb.asm");
             line = line.replace("jdk.nashorn.internal", "com.gargoylesoftware.js.nashorn.internal");
+            line = line.replace("jdk/nashorn/internal", "com/gargoylesoftware/js/nashorn/internal");
+            line = line.replace("jdk/nashorn/javaadapters", "com/gargoylesoftware/js/nashorn/javaadapters");
+            line = line.replace("jdk.nashorn.api", "com.gargoylesoftware.js.nashorn.api");
+            line = line.replace("jdk.nashorn.tools", "com.gargoylesoftware.js.nashorn.tools");
             line = line.replace("jdk.internal.dynalink", "com.gargoylesoftware.js.internal.dynalink");
             line = line.replace("  @Constructor",
                     "  @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor");

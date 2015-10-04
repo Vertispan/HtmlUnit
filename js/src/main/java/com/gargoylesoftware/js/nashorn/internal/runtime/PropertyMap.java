@@ -46,7 +46,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.invoke.SwitchPoint;
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
@@ -56,6 +58,7 @@ import java.util.NoSuchElementException;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
+import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 import com.gargoylesoftware.js.nashorn.internal.scripts.JO;
 
 /**
@@ -68,6 +71,9 @@ import com.gargoylesoftware.js.nashorn.internal.scripts.JO;
  * will return a new map.
  */
 public class PropertyMap implements Iterable<Object>, Serializable {
+    private static final int INITIAL_SOFT_REFERENCE_DERIVATION_LIMIT =
+            Math.max(0, Options.getIntProperty("nashorn.propertyMap.softReferenceDerivationLimit", 32));
+
     /** Used for non extensible PropertyMaps, negative logic as the normal case is extensible. See {@link ScriptObject#preventExtensions()} */
     private static final int NOT_EXTENSIBLE         = 0b0000_0001;
     /** Does this map contain valid array keys? */
@@ -91,6 +97,13 @@ public class PropertyMap implements Iterable<Object>, Serializable {
     /** Structure class name */
     private final String className;
 
+    /**
+     * Countdown of number of times this property map has been derived from another property map. When it
+     * reaches zero, the property map will start using weak references instead of soft references to hold on
+     * to its history elements.
+     */
+    private final int softReferenceDerivationLimit;
+
     /** A reference to the expected shared prototype property map. If this is set this
      * property map should only be used if it the same as the actual prototype map. */
     private transient SharedPropertyMap sharedProtoMap;
@@ -99,7 +112,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
     private transient HashMap<String, SwitchPoint> protoSwitches;
 
     /** History of maps, used to limit map duplication. */
-    private transient WeakHashMap<Property, SoftReference<PropertyMap>> history;
+    private transient WeakHashMap<Property, Reference<PropertyMap>> history;
 
     /** History of prototypes, used to limit map duplication. */
     private transient WeakHashMap<ScriptObject, SoftReference<PropertyMap>> protoHistory;
@@ -127,6 +140,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
         this.fieldMaximum = fieldMaximum;
         this.spillLength  = spillLength;
         this.flags        = flags;
+        this.softReferenceDerivationLimit = INITIAL_SOFT_REFERENCE_DERIVATION_LIMIT;
 
         if (Context.DEBUG) {
             count.increment();
@@ -139,7 +153,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
      * @param propertyMap Existing property map.
      * @param properties  A {@link PropertyHashMap} with a new set of properties.
      */
-    private PropertyMap(final PropertyMap propertyMap, final PropertyHashMap properties, final int flags, final int fieldCount, final int spillLength) {
+    private PropertyMap(final PropertyMap propertyMap, final PropertyHashMap properties, final int flags, final int fieldCount, final int spillLength, final int softReferenceDerivationLimit) {
         this.properties   = properties;
         this.flags        = flags;
         this.spillLength  = spillLength;
@@ -150,6 +164,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
         this.listeners    = propertyMap.listeners;
         this.freeSlots    = propertyMap.freeSlots;
         this.sharedProtoMap = propertyMap.sharedProtoMap;
+        this.softReferenceDerivationLimit = softReferenceDerivationLimit;
 
         if (Context.DEBUG) {
             count.increment();
@@ -163,7 +178,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
      * @param propertyMap Existing property map.
       */
     protected PropertyMap(final PropertyMap propertyMap) {
-        this(propertyMap, propertyMap.properties, propertyMap.flags, propertyMap.fieldCount, propertyMap.spillLength);
+        this(propertyMap, propertyMap.properties, propertyMap.flags, propertyMap.fieldCount, propertyMap.spillLength, propertyMap.softReferenceDerivationLimit);
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -451,11 +466,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
      */
     public final PropertyMap addPropertyNoHistory(final Property property) {
         propertyAdded(property, true);
-        final PropertyHashMap newProperties = properties.immutableAdd(property);
-        final PropertyMap newMap = new PropertyMap(this, newProperties, newFlags(property), newFieldCount(property), newSpillLength(property));
-        newMap.updateFreeSlots(null, property);
-
-        return newMap;
+        return addPropertyInternal(property);
     }
 
     /**
@@ -470,12 +481,21 @@ public class PropertyMap implements Iterable<Object>, Serializable {
         PropertyMap newMap = checkHistory(property);
 
         if (newMap == null) {
-            final PropertyHashMap newProperties = properties.immutableAdd(property);
-            newMap = new PropertyMap(this, newProperties, newFlags(property), newFieldCount(property), newSpillLength(property));
-            newMap.updateFreeSlots(null, property);
+            newMap = addPropertyInternal(property);
             addToHistory(property, newMap);
         }
 
+        return newMap;
+    }
+
+    private PropertyMap deriveMap(final PropertyHashMap newProperties, final int newFlags, final int newFieldCount, final int newSpillLength) {
+        return new PropertyMap(this, newProperties, newFlags, newFieldCount, newSpillLength, softReferenceDerivationLimit == 0 ? 0 : softReferenceDerivationLimit - 1);
+    }
+
+    private PropertyMap addPropertyInternal(final Property property) {
+        final PropertyHashMap newProperties = properties.immutableAdd(property);
+        final PropertyMap newMap = deriveMap(newProperties, newFlags(property), newFieldCount(property), newSpillLength(property));
+        newMap.updateFreeSlots(null, property);
         return newMap;
     }
 
@@ -498,13 +518,13 @@ public class PropertyMap implements Iterable<Object>, Serializable {
             // If deleted property was last field or spill slot we can make it reusable by reducing field/slot count.
             // Otherwise mark it as free in free slots bitset.
             if (isSpill && slot >= 0 && slot == spillLength - 1) {
-                newMap = new PropertyMap(this, newProperties, flags, fieldCount, spillLength - 1);
+                newMap = deriveMap(newProperties, flags, fieldCount, spillLength - 1);
                 newMap.freeSlots = freeSlots;
             } else if (!isSpill && slot >= 0 && slot == fieldCount - 1) {
-                newMap = new PropertyMap(this, newProperties, flags, fieldCount - 1, spillLength);
+                newMap = deriveMap(newProperties, flags, fieldCount - 1, spillLength);
                 newMap.freeSlots = freeSlots;
             } else {
-                newMap = new PropertyMap(this, newProperties, flags, fieldCount, spillLength);
+                newMap = deriveMap(newProperties, flags, fieldCount, spillLength);
                 newMap.updateFreeSlots(property, null);
             }
             addToHistory(property, newMap);
@@ -552,7 +572,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
 
         // Add replaces existing property.
         final PropertyHashMap newProperties = properties.immutableReplace(oldProperty, newProperty);
-        final PropertyMap newMap = new PropertyMap(this, newProperties, flags, fieldCount, newSpillLength);
+        final PropertyMap newMap = deriveMap(newProperties, flags, fieldCount, newSpillLength);
 
         if (!sameType) {
             newMap.updateFreeSlots(oldProperty, newProperty);
@@ -597,7 +617,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
         final Property[] otherProperties = other.properties.getProperties();
         final PropertyHashMap newProperties = properties.immutableAdd(otherProperties);
 
-        final PropertyMap newMap = new PropertyMap(this, newProperties, flags, fieldCount, spillLength);
+        final PropertyMap newMap = deriveMap(newProperties, flags, fieldCount, spillLength);
         for (final Property property : otherProperties) {
             // This method is only safe to use with non-slotted, native getter/setter properties
             assert property.getSlot() == -1;
@@ -631,7 +651,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
      * @return New map with {@link #NOT_EXTENSIBLE} flag set.
      */
     PropertyMap preventExtensions() {
-        return new PropertyMap(this, properties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
+        return deriveMap(properties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
     }
 
     /**
@@ -647,7 +667,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
             newProperties = newProperties.immutableAdd(oldProperty.addFlags(Property.NOT_CONFIGURABLE));
         }
 
-        return new PropertyMap(this, newProperties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
+        return deriveMap(newProperties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
     }
 
     /**
@@ -669,7 +689,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
             newProperties = newProperties.immutableAdd(oldProperty.addFlags(propertyFlags));
         }
 
-        return new PropertyMap(this, newProperties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
+        return deriveMap(newProperties, flags | NOT_EXTENSIBLE, fieldCount, spillLength);
     }
 
     /**
@@ -756,7 +776,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
             history = new WeakHashMap<>();
         }
 
-        history.put(property, new SoftReference<>(newMap));
+        history.put(property, softReferenceDerivationLimit == 0 ? new WeakReference<>(newMap) : new SoftReference<>(newMap));
     }
 
     /**
@@ -769,7 +789,7 @@ public class PropertyMap implements Iterable<Object>, Serializable {
     private PropertyMap checkHistory(final Property property) {
 
         if (history != null) {
-            final SoftReference<PropertyMap> ref = history.get(property);
+            final Reference<PropertyMap> ref = history.get(property);
             final PropertyMap historicMap = ref == null ? null : ref.get();
 
             if (historicMap != null) {
