@@ -1,39 +1,43 @@
-/*
-Copyright 2007-2010 Selenium committers
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
+// Licensed to the Software Freedom Conservancy (SFC) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The SFC licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 
 package org.openqa.selenium.htmlunit;
+
+import java.io.IOException;
 
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Keyboard;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.javascript.host.Event;
-import com.gargoylesoftware.htmlunit.javascript.host.KeyboardEvent;
-
-import java.io.IOException;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.javascript.host.event.Event;
+import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
 
 /**
  * Implements keyboard operations using the HtmlUnit WebDriver.
- * 
+ *
  */
-public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboard {
+public class HtmlUnitKeyboard implements Keyboard {
   private KeyboardModifiersState modifiersState = new KeyboardModifiersState();
   private final HtmlUnitDriver parent;
 
@@ -50,6 +54,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     return (HtmlUnitWebElement) sendToElement;
   }
 
+  @Override
   public void sendKeys(CharSequence... keysToSend) {
     WebElement toElement = parent.switchTo().activeElement();
 
@@ -62,9 +67,22 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
 
     if (parent.isJavascriptEnabled() && !(element instanceof HtmlFileInput)) {
       if (element instanceof HtmlTextArea) {
-        String text = ((HtmlTextArea) element).getText();
-        ((HtmlTextArea) element).setSelectionStart(text.length());
-        ((HtmlTextArea) element).setSelectionEnd(text.length());
+        HtmlTextArea area = (HtmlTextArea) element;
+        String text = area.getText();
+        area.setSelectionStart(text.length());
+        area.setSelectionEnd(text.length());
+      }
+      else if (element instanceof HtmlTextInput) {
+        HtmlTextInput input = (HtmlTextInput) element;
+        String text = input.getText();
+        input.setSelectionStart(text.length());
+        input.setSelectionEnd(text.length());
+      }
+      else if (element instanceof HtmlPasswordInput) {
+        HtmlPasswordInput input = (HtmlPasswordInput) element;
+        String text = input.getText();
+        input.setSelectionStart(text.length());
+        input.setSelectionEnd(text.length());
       }
       try {
         element.type(keysToSend.toString());
@@ -84,6 +102,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     }
   }
 
+  @Override
   public void pressKey(CharSequence keyToPress) {
     WebElement toElement = parent.switchTo().activeElement();
 
@@ -92,6 +111,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     htmlElement.sendKeyDownEvent(keyToPress);
   }
 
+  @Override
   public void releaseKey(CharSequence keyToRelease) {
     WebElement toElement = parent.switchTo().activeElement();
 
@@ -100,10 +120,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     htmlElement.sendKeyUpEvent(keyToRelease);
   }
 
-  /**
-   * @deprecated Visibility will soon be reduced.
-   */
-  public void performSingleKeyAction(HtmlElement element, CharSequence modifierKey, String eventDescription) {
+  void performSingleKeyAction(HtmlElement element, CharSequence modifierKey, String eventDescription) {
     boolean shiftKey = modifierKey.equals(Keys.SHIFT);
     boolean ctrlKey = modifierKey.equals(Keys.CONTROL);
     boolean altKey = modifierKey.equals(Keys.ALT);
