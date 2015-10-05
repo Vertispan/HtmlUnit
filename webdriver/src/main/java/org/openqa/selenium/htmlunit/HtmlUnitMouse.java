@@ -35,12 +35,10 @@ import com.google.common.base.Preconditions;
  *
  */
 public class HtmlUnitMouse implements Mouse {
-  private final HtmlUnitDriver parent;
   private final HtmlUnitKeyboard keyboard;
   private HtmlElement currentActiveElement = null;
 
   public HtmlUnitMouse(HtmlUnitDriver parent, HtmlUnitKeyboard keyboard) {
-    this.parent = parent;
     this.keyboard = keyboard;
   }
 

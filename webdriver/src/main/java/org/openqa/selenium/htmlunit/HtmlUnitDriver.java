@@ -676,7 +676,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     try {
       result = page.executeJavaScriptFunctionIfPossible(
           func,
-          (ScriptableObject) getCurrentWindow().getScriptObject(),
+          getCurrentWindow().getScriptableObject(),
           parameters,
           page.getDocumentElement());
     } catch (Throwable ex) {
@@ -698,7 +698,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
   }
 
   private Object[] convertScriptArgs(HtmlPage page, final Object[] args) {
-    final Scriptable scope = (Scriptable) page.getEnclosingWindow().getScriptObject();
+    final Scriptable scope = page.getEnclosingWindow().getScriptableObject();
 
     final Object[] parameters = new Object[args.length];
     final ContextAction action = new ContextAction() {
@@ -754,12 +754,12 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     if (arg instanceof HtmlUnitWebElement) {
       HtmlUnitWebElement webElement = (HtmlUnitWebElement) arg;
       assertElementNotStale(webElement.getElement());
-      return webElement.getElement().getScriptObject();
+      return webElement.getElement().getScriptableObject();
 
     } else if (arg instanceof HtmlElement) {
       HtmlElement element = (HtmlElement) arg;
       assertElementNotStale(element);
-      return element.getScriptObject();
+      return element.getScriptableObject();
 
     } else if (arg instanceof Collection<?>) {
       List<Object> list = new ArrayList<>();
