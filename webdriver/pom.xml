@@ -76,37 +76,4 @@
 		</developerConnection>
 		<url>http://htmlunit.svn.sourceforge.net/viewvc/htmlunit</url>
 	</scm>
-
-	<distributionManagement>
-        <repository>
-            <id>htmlunit-m2-repo</id>
-            <url>
-                sftp://web.sourceforge.net/home/groups/h/ht/htmlunit/htdocs/m2-repo
-            </url>
-            <name>HtmlUnit Maven 2 Repository</name>
-        </repository>
-		<snapshotRepository>
-			<id>htmlunit-m2-repo-snapshots</id>
-			<url>
-				sftp://web.sourceforge.net/home/groups/h/ht/htmlunit/htdocs/m2-repo-snapshots
-			</url>
-			<name>HtmlUnit Maven 2 Snapshots Repository</name>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <id>HtmlUnitSnapshots</id>
-            <name>HtmlUnit Snapshots</name>
-            <url>http://htmlunit.sourceforge.net/m2-repo-snapshots</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
 </project>
