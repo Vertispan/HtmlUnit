@@ -698,10 +698,10 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
   }
 
   private Object[] convertScriptArgs(HtmlPage page, final Object[] args) {
-    final Scriptable scope = page.getEnclosingWindow().getScriptableObject();
+//    final Scriptable scope = page.getEnclosingWindow().getScriptableObject();
 
     final Object[] parameters = new Object[args.length];
-    final ContextAction action = new ContextAction() {
+/*    final ContextAction action = new ContextAction() {
       @Override
       public Object run(final Context context) {
         for (int i = 0; i < args.length; i++) {
@@ -711,7 +711,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
       }
     };
     getWebClient().getJavaScriptEngine().getContextFactory().call(action);
-    return parameters;
+*/    return parameters;
   }
 
   private HtmlPage getPageToInjectScriptInto() {
