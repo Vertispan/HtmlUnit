@@ -109,6 +109,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.Location;
 import com.gargoylesoftware.htmlunit.javascript.host.html.DocumentProxy;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLCollection;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
+import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -667,7 +668,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
 
     script = "function() {" + script + "\n};";
     ScriptResult result = page.executeJavaScript(script);
-    ScriptFunction func = (ScriptFunction) result.getJavaScriptResult();
+    JSObject func = (JSObject) result.getJavaScriptResult();
 
     Object[] parameters = convertScriptArgs(page, args);
 
