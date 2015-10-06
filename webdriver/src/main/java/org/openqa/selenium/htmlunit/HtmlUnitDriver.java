@@ -662,20 +662,12 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
   }
 
   @Override
-  public Object executeScript(String script, final Object... args) {
+  public Object executeScript(final String script, final Object... args) {
     HtmlPage page = getPageToInjectScriptInto();
 
-    script = "function() {" + script + "\n};";
-    ScriptResult result = page.executeJavaScript(script);
-    JSObject func = (JSObject) result.getJavaScriptResult();
-
-    Object[] parameters = convertScriptArgs(page, args);
-
+    JSObject result;
     try {
-      result = page.executeJavaScriptFunctionIfPossible(
-          func,
-          getCurrentWindow().getScriptObject2(),
-          parameters);
+        result = (JSObject) page.executeJavaScript(script).getJavaScriptResult();
     } catch (Throwable ex) {
       throw new WebDriverException(ex);
     }
@@ -823,6 +815,13 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     int getLength();
 
     Object item(int index);
+  }
+
+  private Object parseNativeJavascriptResult(JSObject result) {
+      if (result.isArray()) {
+          return result.values();
+      }
+      return result;
   }
 
   private Object parseNativeJavascriptResult(Object result) {
