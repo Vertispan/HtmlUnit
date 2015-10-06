@@ -78,6 +78,9 @@ public class CodeUpdater {
             line = line.replace("  @Property",
                     "  @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property");
             originalLines.set(i, line);
+            if (line.equals("@jdk.Exported")) {
+                originalLines.remove(i--);
+            }
         }
         localLines.addAll(originalLines);
         FileUtils.writeLines(localFile, localLines);

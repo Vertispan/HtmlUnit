@@ -42,7 +42,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface RegExpLiteralTree extends Tree {
     /**
      * Regular expression pattern to match.

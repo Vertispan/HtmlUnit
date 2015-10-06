@@ -45,7 +45,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface GotoTree extends StatementTree {
     /**
      * Label associated with this goto statement. This is null

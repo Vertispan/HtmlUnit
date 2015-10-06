@@ -50,5 +50,4 @@
  *
  * @since 1.8u40
  */
-@jdk.Exported
 package com.gargoylesoftware.js.nashorn.api.scripting;

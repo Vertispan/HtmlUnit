@@ -47,6 +47,5 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface DebuggerTree extends StatementTree {
 }

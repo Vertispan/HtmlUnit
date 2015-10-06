@@ -47,7 +47,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface InstanceOfTree extends ExpressionTree {
     /**
      * Returns the expression whose type is being checked.

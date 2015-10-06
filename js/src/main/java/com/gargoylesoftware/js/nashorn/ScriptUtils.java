@@ -79,7 +79,7 @@ public class ScriptUtils {
                     MethodHandle setter = null;
                     String fieldName = method.getName().substring(3);
                     fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-                    Method setterMethod = setters.get(fieldName);
+                    final Method setterMethod = setters.get(fieldName);
 
                     try {
                         if (setterMethod != null) {

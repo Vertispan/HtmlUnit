@@ -47,7 +47,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface ConditionalExpressionTree extends ExpressionTree {
     /**
      * Returns the condition expression of this ternary expression.

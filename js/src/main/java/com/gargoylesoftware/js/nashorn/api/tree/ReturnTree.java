@@ -48,7 +48,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface ReturnTree extends StatementTree {
     /**
      * Returns the expression being returned. This is null if no value

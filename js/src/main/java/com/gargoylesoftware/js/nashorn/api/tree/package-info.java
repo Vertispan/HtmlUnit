@@ -82,6 +82,5 @@
  *
  * @since 1.9
  */
-@jdk.Exported
 package com.gargoylesoftware.js.nashorn.api.tree;
 

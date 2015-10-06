@@ -83,7 +83,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
  *
  * @since 1.8u40
  */
-@jdk.Exported
 public final class NashornScriptEngine extends AbstractScriptEngine implements Compilable, Invocable {
     /**
      * Key used to associate Nashorn global object mirror with arbitrary Bindings instance.

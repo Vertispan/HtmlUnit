@@ -62,7 +62,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.Version;
  *
  * @since 1.8u40
  */
-@jdk.Exported
 public final class NashornScriptEngineFactory implements ScriptEngineFactory {
     @Override
     public String getEngineName() {

@@ -74,7 +74,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDe
  *
  * @since 1.8u40
  */
-@jdk.Exported
 public final class ScriptObjectMirror extends AbstractJSObject implements Bindings {
     private static AccessControlContext getContextAccCtxt() {
         final Permissions perms = new Permissions();

@@ -48,7 +48,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface CompoundAssignmentTree extends ExpressionTree {
     /**
      * Returns the left hand side (LHS) of this assignment.

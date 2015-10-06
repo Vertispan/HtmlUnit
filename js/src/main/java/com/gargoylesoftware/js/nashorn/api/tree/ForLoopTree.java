@@ -48,7 +48,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface ForLoopTree extends ConditionalLoopTree {
     /**
      * Returns the initializer expression of this 'for' statement.

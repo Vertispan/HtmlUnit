@@ -47,7 +47,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface LabeledStatementTree extends StatementTree {
     /**
      * Returns the label associated with this statement.

@@ -48,7 +48,6 @@ package com.gargoylesoftware.js.nashorn.api.tree;
  *
  * @since 1.9
  */
-@jdk.Exported
 public interface WhileLoopTree extends ConditionalLoopTree {
     /**
      * The condition expression of this 'while' statement.
