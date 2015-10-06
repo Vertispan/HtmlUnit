@@ -2763,6 +2763,16 @@ public final class Global extends Scope {
         }
     }
 
+    private Object domObject;
+
+    public Object getDomObject() {
+        return domObject;
+    }
+
+    public void setDomObject(final Object domObject) {
+        this.domObject = domObject;
+    }
+
     private Map<Class<ScriptObject>, ScriptObject> prototypes = new HashMap<>();
     
     @Override
