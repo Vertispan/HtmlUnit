@@ -109,18 +109,16 @@ import com.gargoylesoftware.htmlunit.javascript.host.Location;
 import com.gargoylesoftware.htmlunit.javascript.host.html.DocumentProxy;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLCollection;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import net.sourceforge.htmlunit.corejs.javascript.Context;
-import net.sourceforge.htmlunit.corejs.javascript.ContextAction;
-import net.sourceforge.htmlunit.corejs.javascript.Function;
 import net.sourceforge.htmlunit.corejs.javascript.NativeArray;
 import net.sourceforge.htmlunit.corejs.javascript.NativeObject;
 import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import net.sourceforge.htmlunit.corejs.javascript.Undefined;
 
 /**
@@ -669,16 +667,15 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
 
     script = "function() {" + script + "\n};";
     ScriptResult result = page.executeJavaScript(script);
-    Function func = (Function) result.getJavaScriptResult();
+    ScriptFunction func = (ScriptFunction) result.getJavaScriptResult();
 
     Object[] parameters = convertScriptArgs(page, args);
 
     try {
       result = page.executeJavaScriptFunctionIfPossible(
           func,
-          getCurrentWindow().getScriptableObject(),
-          parameters,
-          page.getDocumentElement());
+          getCurrentWindow().getScriptObject2(),
+          parameters);
     } catch (Throwable ex) {
       throw new WebDriverException(ex);
     }
