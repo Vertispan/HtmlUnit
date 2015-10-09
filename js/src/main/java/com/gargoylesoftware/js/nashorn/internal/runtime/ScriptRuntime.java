@@ -235,11 +235,11 @@ public final class ScriptRuntime {
         }
 
         final StringBuilder sb = new StringBuilder();
-        sb.append("[object ");
+        sb.append("[object");
         final Browser browser = Browser.getCurrent();
         // to handle HtmlPage.isQuirksMode
         if (browser.getFamily() != BrowserFamily.IE || browser.getVersion() != 8) {
-            sb.append(className);
+            sb.append(' ').append(className);
         }
         sb.append(']');
 
