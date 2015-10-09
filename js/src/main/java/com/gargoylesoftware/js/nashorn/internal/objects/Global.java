@@ -2774,6 +2774,17 @@ public final class Global extends Scope {
         this.domObject = domObject;
     }
 
+    private ScriptObject window;
+
+    @SuppressWarnings("unchecked")
+    public <T extends ScriptObject> T getWindow() {
+        return (T) window;
+    }
+
+    public void setWindow(final ScriptObject window) {
+        this.window = window;
+    }
+
     private Map<Class<ScriptObject>, ScriptObject> prototypes = new HashMap<>();
     
     @Override
