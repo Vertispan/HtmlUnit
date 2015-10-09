@@ -818,8 +818,10 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
   }
 
   private Object parseNativeJavascriptResult(JSObject result) {
-      if (result.isArray()) {
-          return result.values();
+      if (result != null) {
+          if (result.isArray()) {
+              return result.values();
+          }
       }
       return result;
   }
