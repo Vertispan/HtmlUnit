@@ -67,6 +67,8 @@ import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.JSONWriter;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeObject;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.parser.Lexer;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.Bootstrap;
 
@@ -234,7 +236,11 @@ public final class ScriptRuntime {
 
         final StringBuilder sb = new StringBuilder();
         sb.append("[object ");
-        sb.append(className);
+        final Browser browser = Browser.getCurrent();
+        // to handle HtmlPage.isQuirksMode
+        if (browser.getFamily() != BrowserFamily.IE || browser.getVersion() != 8) {
+            sb.append(className);
+        }
         sb.append(']');
 
         return sb.toString();
