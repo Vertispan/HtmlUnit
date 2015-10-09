@@ -1906,7 +1906,7 @@ public final class Global extends Scope {
 
     @Override
     public String getClassName() {
-        return "global";
+        return "Window";
     }
 
     /**
@@ -2765,8 +2765,9 @@ public final class Global extends Scope {
 
     private Object domObject;
 
-    public Object getDomObject() {
-        return domObject;
+    @SuppressWarnings("unchecked")
+    public <T> T getDomObject() {
+        return (T) domObject;
     }
 
     public void setDomObject(final Object domObject) {
