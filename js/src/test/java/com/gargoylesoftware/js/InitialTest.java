@@ -19,6 +19,7 @@ import javax.script.ScriptEngine;
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 
 public class InitialTest {
 
@@ -33,4 +34,11 @@ public class InitialTest {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         assertEquals(0, (int) engine.eval("new Int8Array().length"));
     }
+
+    @Test
+    public void regExp() throws Exception {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        assertEquals("function RegExp() { [native code] }", ScriptRuntime.safeToString(engine.eval("RegExp")));
+    }
+
 }

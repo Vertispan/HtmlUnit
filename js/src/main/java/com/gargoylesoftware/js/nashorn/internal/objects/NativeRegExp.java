@@ -970,8 +970,8 @@ public final class NativeRegExp extends ScriptObject {
     static {
             final List<Property> list = new ArrayList<>(5);
             list.add(AccessorProperty.create("lastIndex", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$lastIndex", ScriptFunction.class),
-                    virtualHandle("S$lastIndex", void.class, ScriptFunction.class)));
+                    virtualHandle("G$lastIndex", Object.class),
+                    virtualHandle("S$lastIndex", void.class, Object.class)));
             list.add(AccessorProperty.create("source", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                     staticHandle("source", Object.class, Object.class),
                     null));
@@ -991,7 +991,7 @@ public final class NativeRegExp extends ScriptObject {
         return this.lastIndex;
     }
 
-    public void S$lastIndex(final ScriptFunction function) {
+    public void S$lastIndex(final Object function) {
         this.lastIndex = function;
     }
 
