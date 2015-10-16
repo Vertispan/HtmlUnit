@@ -69,7 +69,7 @@ public @interface Getter {
     public Where where() default Where.INSTANCE;
 
     /** The {@link WebBrowser}s supported by this getter. */
-    WebBrowser[] browsers() default {
+    WebBrowser[] value() default {
         @WebBrowser(IE),
         @WebBrowser(FF),
         @WebBrowser(CHROME)

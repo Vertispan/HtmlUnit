@@ -152,8 +152,6 @@ class AccessibleMembersLookup {
 
     /**
      * A helper class that represents a method signature - name and argument types.
-     *
-     * @author Attila Szegedi
      */
     static final class MethodSignature {
         private final String name;

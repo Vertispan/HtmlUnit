@@ -114,8 +114,8 @@ import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
  */
 public interface RelinkableCallSite {
     /**
-     * Initializes the relinkable call site by setting a relink-and-invoke method handle. The call site implementation
-     * is supposed to set this method handle as its target.
+     * Initializes the relinkable call site by setting a relink-and-invoke method handle. The call site
+     * implementation is supposed to set this method handle as its target.
      * @param relinkAndInvoke a relink-and-invoke method handle supplied by the {@link DynamicLinker}.
      */
     public void initialize(MethodHandle relinkAndInvoke);

@@ -170,7 +170,9 @@ public interface CallSiteDescriptor {
     public MethodType getMethodType();
 
     /**
-     * Returns the lookup passed to the bootstrap method.
+     * Returns the lookup passed to the bootstrap method. If the lookup isn't the public lookup, the
+     * implementation must check the {@code RuntimePermission("dynalink.getLookup")} permission if a security
+     * manager is present.
      * @return the lookup passed to the bootstrap method.
      */
     public Lookup getLookup();

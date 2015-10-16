@@ -45,12 +45,12 @@ public class FunctionHost2 extends ScriptObject {
         return Browser.getCurrent().getFamily().name();
     }
 
-    @Function(browsers = @WebBrowser(CHROME))
+    @Function(@WebBrowser(CHROME))
     public static String inChromeOnly2(final Object self) {
         return Browser.getCurrent().getFamily().name();
     }
 
-    @Getter(browsers = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
+    @Getter({@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
     public static int getLength2(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }

@@ -77,7 +77,7 @@ public @interface Function {
     public Where where() default Where.PROTOTYPE;
 
     /** The {@link WebBrowser}s supported by this function. */
-    WebBrowser[] browsers() default {
+    WebBrowser[] value() default {
         @WebBrowser(IE),
         @WebBrowser(FF),
         @WebBrowser(CHROME)

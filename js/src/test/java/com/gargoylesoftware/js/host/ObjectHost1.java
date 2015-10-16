@@ -33,12 +33,12 @@ public class ObjectHost1 extends ScriptObject {
         return Browser.getCurrent().getFamily().name();
     }
 
-    @Function(browsers = @WebBrowser(CHROME), where = Where.CONSTRUCTOR)
+    @Function(value = @WebBrowser(CHROME), where = Where.CONSTRUCTOR)
     public static String inChromeOnly(final Object self) {
         return Browser.getCurrent().getFamily().name();
     }
 
-    @Getter(browsers = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) }, where = Where.CONSTRUCTOR)
+    @Getter(value = {@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) }, where = Where.CONSTRUCTOR)
     public static int length(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }

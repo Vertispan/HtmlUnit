@@ -150,4 +150,10 @@ public class FunctionHostTest {
         test("[object Object]",                            "FunctionHost2.__proto__.__proto__.__proto__");
         test("null",                                       "FunctionHost2.__proto__.__proto__.__proto__.__proto__");
     }
+
+    @Test
+    public void scriptFunction() throws Exception {
+        test("function abc(def) {}", "var host = new FunctionHost1(); host.fun = function abc(def) {}; host.fun");
+    }
+
 }

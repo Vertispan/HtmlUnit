@@ -46,7 +46,7 @@ public class ScriptUtils {
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (final Method method : allMethods) {
             for (final Function function : method.getAnnotationsByType(Function.class)) {
-                if (isSupported(function.browsers(), browserFamily, browserVersion)) {
+                if (isSupported(function.value(), browserFamily, browserVersion)) {
                     final String methodName = method.getName();
                     list.add(AccessorProperty.create(methodName, function.attributes(), 
                             virtualHandle(scriptObject.getClass(), "G$" + methodName,
@@ -66,7 +66,7 @@ public class ScriptUtils {
                 }
             }
             for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
-                if (isSupported(setter.browsers(), browserFamily, browserVersion)) {
+                if (isSupported(setter.value(), browserFamily, browserVersion)) {
                     String fieldName = method.getName().substring(3);
                     fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
                     setters.put(fieldName, method);
@@ -75,7 +75,7 @@ public class ScriptUtils {
         }
         for (final Method method : allMethods) {
             for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
-                if (isSupported(getter.browsers(), browserFamily, browserVersion)) {
+                if (isSupported(getter.value(), browserFamily, browserVersion)) {
                     MethodHandle setter = null;
                     String fieldName = method.getName().substring(3);
                     fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);

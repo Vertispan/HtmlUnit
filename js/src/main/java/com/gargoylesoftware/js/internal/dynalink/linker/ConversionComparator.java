@@ -109,8 +109,11 @@ public interface ConversionComparator {
      * Enumeration of possible outcomes of comparing one conversion to another.
      */
     enum Comparison {
+        /** The conversions cannot be compared. **/
         INDETERMINATE,
+        /** The first conversion is better than the second one. **/
         TYPE_1_BETTER,
+        /** The second conversion is better than the first one. **/
         TYPE_2_BETTER,
     }
 

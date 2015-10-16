@@ -128,7 +128,7 @@ public final class NativeJSAdapter extends ScriptObject {
     public static final String __call__      = "__call__";
     /** object new operation */
     public static final String __new__       = "__new__";
-    /** object getIds operation */
+    /** object getIds operation (provided for compatibility reasons; use of getKeys is preferred) */
     public static final String __getIds__    = "__getIds__";
     /** object getKeys operation */
     public static final String __getKeys__   = "__getKeys__";
@@ -157,7 +157,7 @@ public final class NativeJSAdapter extends ScriptObject {
     private final ScriptObject adaptee;
     private final boolean overrides;
 
-    private static final MethodHandle IS_JSADAPTOR = findOwnMH("isJSAdaptor", boolean.class, Object.class, Object.class, MethodHandle.class, Object.class, ScriptFunction.class);
+    private static final MethodHandle IS_JSADAPTER = findOwnMH("isJSAdapter", boolean.class, Object.class, Object.class, MethodHandle.class, Object.class, ScriptFunction.class);
 
     // initialized by nasgen
     private static PropertyMap $nasgenmap$;
@@ -641,7 +641,7 @@ public final class NativeJSAdapter extends ScriptObject {
                     // to name. Probably not a big deal, but if we can ever make it leaner, it'd be nice.
                     return new GuardedInvocation(MH.dropArguments(MH.constant(Object.class,
                             func.createBound(this, new Object[] { name })), 0, Object.class),
-                            testJSAdaptor(adaptee, null, null, null),
+                            testJSAdapter(adaptee, null, null, null),
                             adaptee.getProtoSwitchPoints(__call__, find.getOwner()), null);
                 }
             }
@@ -712,7 +712,7 @@ public final class NativeJSAdapter extends ScriptObject {
                 if (methodHandle != null) {
                     return new GuardedInvocation(
                             methodHandle,
-                            testJSAdaptor(adaptee, findData.getGetter(Object.class, INVALID_PROGRAM_POINT, null), findData.getOwner(), func),
+                            testJSAdapter(adaptee, findData.getGetter(Object.class, INVALID_PROGRAM_POINT, null), findData.getOwner(), func),
                             adaptee.getProtoSwitchPoints(hook, findData.getOwner()), null);
                 }
              }
@@ -725,16 +725,16 @@ public final class NativeJSAdapter extends ScriptObject {
             final MethodHandle methodHandle = hook.equals(__put__) ?
             MH.asType(Lookup.EMPTY_SETTER, type) :
             Lookup.emptyGetter(type.returnType());
-            return new GuardedInvocation(methodHandle, testJSAdaptor(adaptee, null, null, null), adaptee.getProtoSwitchPoints(hook, null), null);
+            return new GuardedInvocation(methodHandle, testJSAdapter(adaptee, null, null, null), adaptee.getProtoSwitchPoints(hook, null), null);
         }
     }
 
-    private static MethodHandle testJSAdaptor(final Object adaptee, final MethodHandle getter, final Object where, final ScriptFunction func) {
-        return MH.insertArguments(IS_JSADAPTOR, 1, adaptee, getter, where, func);
+    private static MethodHandle testJSAdapter(final Object adaptee, final MethodHandle getter, final Object where, final ScriptFunction func) {
+        return MH.insertArguments(IS_JSADAPTER, 1, adaptee, getter, where, func);
     }
 
     @SuppressWarnings("unused")
-    private static boolean isJSAdaptor(final Object self, final Object adaptee, final MethodHandle getter, final Object where, final ScriptFunction func) {
+    private static boolean isJSAdapter(final Object self, final Object adaptee, final MethodHandle getter, final Object where, final ScriptFunction func) {
         final boolean res = self instanceof NativeJSAdapter && ((NativeJSAdapter)self).getAdaptee() == adaptee;
         if (res && getter != null) {
             try {

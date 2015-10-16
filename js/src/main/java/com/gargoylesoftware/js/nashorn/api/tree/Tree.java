@@ -50,7 +50,8 @@ public interface Tree {
     /**
      * Enumerates all kinds of trees.
      */
-        public enum Kind {
+    @jdk.Exported
+    public enum Kind {
         /**
          * Used for instances of {@link ArrayAccessTree}.
          */

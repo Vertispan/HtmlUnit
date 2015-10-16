@@ -66,7 +66,7 @@ public @interface Constructor {
     public int arity() default -2;
 
     /** The {@link WebBrowser}s supported by this constructor. */
-    WebBrowser[] browsers() default {
+    WebBrowser[] value() default {
         @WebBrowser(IE),
         @WebBrowser(FF),
         @WebBrowser(CHROME)

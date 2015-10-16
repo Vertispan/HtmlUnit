@@ -329,8 +329,6 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
     /**
      * Contains methods to adapt an item getter/setter method handle to the requested type, optionally binding it to a
      * fixed key first.
-     * @author Attila Szegedi
-     * @version $Id: $
      */
     private static class Binder {
         private final LinkerServices linkerServices;
