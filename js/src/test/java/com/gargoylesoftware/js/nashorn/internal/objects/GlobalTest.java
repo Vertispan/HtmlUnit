@@ -55,6 +55,17 @@ public class GlobalTest {
         assertSame(Undefined.getUndefined(), global.get("__DIR__"));
     }
 
+    @Test
+    public void context() {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
+        final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
+        Context.setGlobal(global);
+
+        assertSame(Undefined.getUndefined(), global.get("context"));
+        assertSame(Undefined.getUndefined(), global.get("engine"));
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> T get(final Object o, final String fieldName) {
         try {

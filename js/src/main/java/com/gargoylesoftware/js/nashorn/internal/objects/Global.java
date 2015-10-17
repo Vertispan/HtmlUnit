@@ -1431,14 +1431,14 @@ public final class Global extends Scope {
             }
         }
 
-        switch (nameStr) {
-        case "context":
-            return sctxt;
-        case "engine":
-            return global.engine;
-        default:
-            break;
-        }
+//        switch (nameStr) {
+//        case "context":
+//            return sctxt;
+//        case "engine":
+//            return global.engine;
+//        default:
+//            break;
+//        }
 
         if (self == UNDEFINED) {
             // scope access and so throw ReferenceError
