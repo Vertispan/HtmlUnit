@@ -2924,12 +2924,12 @@ public final class Global extends Scope {
         list.add(AccessorProperty.create("org", Property.NOT_ENUMERABLE, 
                 virtualHandle("G$org", Object.class),
                 virtualHandle("S$org", void.class, Object.class)));
-        list.add(AccessorProperty.create("__FILE__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                virtualHandle("G$__FILE__", Object.class), null));
-        list.add(AccessorProperty.create("__DIR__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                virtualHandle("G$__DIR__", Object.class), null));
-        list.add(AccessorProperty.create("__LINE__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                virtualHandle("G$__LINE__", Object.class), null));
+//        list.add(AccessorProperty.create("__FILE__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE, 
+//                virtualHandle("G$__FILE__", Object.class), null));
+//        list.add(AccessorProperty.create("__DIR__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE, 
+//                virtualHandle("G$__DIR__", Object.class), null));
+//        list.add(AccessorProperty.create("__LINE__", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE, 
+//                virtualHandle("G$__LINE__", Object.class), null));
         list.add(AccessorProperty.create("Date", Property.NOT_ENUMERABLE, 
                 staticHandle("getDate", Object.class, Object.class),
                 staticHandle("setDate", void.class, Object.class, Object.class)));

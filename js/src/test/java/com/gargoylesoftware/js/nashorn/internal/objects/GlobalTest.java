@@ -12,6 +12,8 @@
  */
 package com.gargoylesoftware.js.nashorn.internal.objects;
 
+import static org.junit.Assert.assertSame;
+
 import java.lang.reflect.Field;
 
 import javax.script.ScriptContext;
@@ -22,6 +24,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Undefined;
 
 /**
  * Test for {@link Global}.
@@ -38,6 +41,18 @@ public class GlobalTest {
         Context.setGlobal(global);
 
         global.remove("arguments", true);
+    }
+
+    @Test
+    public void __FILE__() {
+        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
+        final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
+        final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
+        Context.setGlobal(global);
+
+        assertSame(Undefined.getUndefined(), global.get("__FILE__"));
+        assertSame(Undefined.getUndefined(), global.get("__LINE__"));
+        assertSame(Undefined.getUndefined(), global.get("__DIR__"));
     }
 
     @SuppressWarnings("unchecked")
