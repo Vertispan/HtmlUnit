@@ -2813,7 +2813,7 @@ public final class Global extends Scope {
 
     static {
         final List<Property> list = new ArrayList<>(61);
-        list.add(AccessorProperty.create("arguments", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+        list.add(AccessorProperty.create("arguments", Property.NOT_ENUMERABLE, 
                 virtualHandle("G$arguments", Object.class),
                 virtualHandle("S$arguments", void.class, Object.class)));
         list.add(AccessorProperty.create("parseInt", Property.NOT_ENUMERABLE, 
