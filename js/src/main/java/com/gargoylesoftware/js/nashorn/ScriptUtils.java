@@ -41,8 +41,10 @@ public class ScriptUtils {
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
         Class<?> enclosingClass = scriptObject.getClass().getEnclosingClass();
+        boolean enclosing = false;
         if (enclosingClass == null) {
             enclosingClass = scriptObject.getClass();
+            enclosing = true;
         }
         final List<Property> list = new ArrayList<>(2);
 
@@ -50,7 +52,7 @@ public class ScriptUtils {
         final Map<String, Method> setters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (final Method method : allMethods) {
-            if (isPrototype) {
+            if (!enclosing) {
                 for (final Function function : method.getAnnotationsByType(Function.class)) {
                     if (isSupported(function.value(), browserFamily, browserVersion)) {
                         final String methodName = method.getName();
@@ -72,7 +74,7 @@ public class ScriptUtils {
                     }
                 }
             }
-            else {
+            if (!isPrototype) {
                 for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
                     if (isSupported(setter.value(), browserFamily, browserVersion)) {
                         String fieldName = method.getName().substring(3);
