@@ -156,4 +156,8 @@ public class FunctionHostTest {
         test("function abc(def) {}", "var host = new FunctionHost1(); host.fun = function abc(def) {}; host.fun");
     }
 
+    @Test
+    public void arbitraryProperty() throws Exception {
+        test("new thing", "new FunctionHost1().something");
+    }
 }

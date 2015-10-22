@@ -26,6 +26,8 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
+import com.gargoylesoftware.js.nashorn.internal.runtime.FindProperty;
+import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
@@ -53,6 +55,14 @@ public class FunctionHost1 extends ScriptObject {
     @Getter({@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
     public static int getLength(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
+    }
+
+    @Override
+    protected FindProperty findProperty(final String key, final boolean deep, final ScriptObject start) {
+        if ("something".equals(key)) {
+            start.addOwnProperty(key, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, "new thing");
+        }
+        return super.findProperty(key, deep, start);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
