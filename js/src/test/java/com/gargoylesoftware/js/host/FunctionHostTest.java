@@ -160,4 +160,9 @@ public class FunctionHostTest {
     public void arbitraryProperty() throws Exception {
         test("new thing", "new FunctionHost1().something");
     }
+
+    @Test
+    public void self() throws Exception {
+        test(FunctionHost1.class.getName(), "new FunctionHost1().mySelf");
+    }
 }

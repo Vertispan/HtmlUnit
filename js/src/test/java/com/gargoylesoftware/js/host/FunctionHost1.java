@@ -39,6 +39,7 @@ public class FunctionHost1 extends ScriptObject {
     public static FunctionHost1 constructor(final boolean newObj, final Object self) {
         final FunctionHost1 host = new FunctionHost1();
         host.setProto(Context.getGlobal().getPrototype(host.getClass()));
+        ScriptUtils.initialize(host);
         return host;
     }
 
@@ -55,6 +56,11 @@ public class FunctionHost1 extends ScriptObject {
     @Getter({@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
     public static int getLength(final Object self) {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
+    }
+
+    @Getter
+    public static String getMySelf(final Object self) {
+        return self.getClass().getName();
     }
 
     @Override
