@@ -1039,11 +1039,9 @@ public class NativeDataView extends ScriptObject {
             list.add(AccessorProperty.create("buffer", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
                     virtualHandle("G$buffer", Object.class), null));
             list.add(AccessorProperty.create("byteOffset", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$byteOffset", int.class),
-null));
+                    virtualHandle("G$byteOffset", int.class), null));
             list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$byteLength", int.class),
-null));
+                    virtualHandle("G$byteLength", int.class), null));
             $nasgenmap$ = PropertyMap.newMap(list);
     }
 

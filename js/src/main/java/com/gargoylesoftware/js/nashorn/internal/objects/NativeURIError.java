@@ -119,11 +119,11 @@ public final class NativeURIError extends ScriptObject {
     static {
             final List<Property> list = new ArrayList<>(2);
             list.add(AccessorProperty.create("message", Property.NOT_ENUMERABLE, 
-                    virtualHandle("G$instMessage", ScriptFunction.class),
-                    virtualHandle("S$instMessage", void.class, ScriptFunction.class)));
+                    virtualHandle("G$instMessage", Object.class),
+                    virtualHandle("S$instMessage", void.class, Object.class)));
             list.add(AccessorProperty.create("nashornException", Property.NOT_ENUMERABLE, 
-                    virtualHandle("G$nashornException", ScriptFunction.class),
-                    virtualHandle("S$nashornException", void.class, ScriptFunction.class)));
+                    virtualHandle("G$nashornException", Object.class),
+                    virtualHandle("S$nashornException", void.class, Object.class)));
             $nasgenmap$ = PropertyMap.newMap(list);
     }
 
@@ -131,7 +131,7 @@ public final class NativeURIError extends ScriptObject {
         return this.instMessage;
     }
 
-    public void S$instMessage(final ScriptFunction function) {
+    public void S$instMessage(final Object function) {
         this.instMessage = function;
     }
 
@@ -139,7 +139,7 @@ public final class NativeURIError extends ScriptObject {
         return this.nashornException;
     }
 
-    public void S$nashornException(final ScriptFunction function) {
+    public void S$nashornException(final Object function) {
         this.nashornException = function;
     }
 
@@ -155,7 +155,7 @@ public final class NativeURIError extends ScriptObject {
 
     private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
-            return MethodHandles.lookup().findVirtual(Constructor.class, name,
+            return MethodHandles.lookup().findVirtual(NativeURIError.class, name,
                     MethodType.methodType(rtype, ptypes));
         }
         catch (final ReflectiveOperationException e) {

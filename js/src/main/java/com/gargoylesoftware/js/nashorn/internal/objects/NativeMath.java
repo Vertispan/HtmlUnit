@@ -967,29 +967,21 @@ public final class NativeMath extends ScriptObject {
         static {
             final List<Property> list = new ArrayList<>(26);
             list.add(AccessorProperty.create("E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$E", double.class),
-null));
+                    virtualHandle("G$E", double.class), null));
             list.add(AccessorProperty.create("LN10", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$LN10", double.class),
-null));
+                    virtualHandle("G$LN10", double.class), null));
             list.add(AccessorProperty.create("LN2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$LN2", double.class),
-null));
+                    virtualHandle("G$LN2", double.class), null));
             list.add(AccessorProperty.create("LOG2E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$LOG2E", double.class),
-null));
+                    virtualHandle("G$LOG2E", double.class), null));
             list.add(AccessorProperty.create("LOG10E", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$LOG10E", double.class),
-null));
+                    virtualHandle("G$LOG10E", double.class), null));
             list.add(AccessorProperty.create("PI", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$PI", double.class),
-null));
+                    virtualHandle("G$PI", double.class), null));
             list.add(AccessorProperty.create("SQRT1_2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$SQRT1_2", double.class),
-null));
+                    virtualHandle("G$SQRT1_2", double.class), null));
             list.add(AccessorProperty.create("SQRT2", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$SQRT2", double.class),
-null));
+                    virtualHandle("G$SQRT2", double.class), null));
             list.add(AccessorProperty.create("abs", Property.NOT_ENUMERABLE, 
                     virtualHandle("G$abs", ScriptFunction.class),
                     virtualHandle("S$abs", void.class, ScriptFunction.class)));

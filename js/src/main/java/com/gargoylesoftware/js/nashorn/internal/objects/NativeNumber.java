@@ -427,20 +427,15 @@ public final class NativeNumber extends ScriptObject {
         static {
             final List<Property> list = new ArrayList<>(5);
             list.add(AccessorProperty.create("MAX_VALUE", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$MAX_VALUE", double.class),
-null));
+                    virtualHandle("G$MAX_VALUE", double.class), null));
             list.add(AccessorProperty.create("MIN_VALUE", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$MIN_VALUE", double.class),
-null));
+                    virtualHandle("G$MIN_VALUE", double.class), null));
             list.add(AccessorProperty.create("NaN", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$NaN", double.class),
-null));
+                    virtualHandle("G$NaN", double.class), null));
             list.add(AccessorProperty.create("NEGATIVE_INFINITY", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$NEGATIVE_INFINITY", double.class),
-null));
+                    virtualHandle("G$NEGATIVE_INFINITY", double.class), null));
             list.add(AccessorProperty.create("POSITIVE_INFINITY", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$POSITIVE_INFINITY", double.class),
-null));
+                    virtualHandle("G$POSITIVE_INFINITY", double.class), null));
             $nasgenmap$ = PropertyMap.newMap(list);
         }
 

@@ -293,8 +293,7 @@ public final class NativeUint32Array extends ArrayBufferView {
         static {
             final List<Property> list = new ArrayList<>(1);
             list.add(AccessorProperty.create("BYTES_PER_ELEMENT", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    virtualHandle("G$BYTES_PER_ELEMENT", int.class),
-null));
+                    virtualHandle("G$BYTES_PER_ELEMENT", int.class), null));
             $nasgenmap$ = PropertyMap.newMap(list);
         }
 
@@ -305,6 +304,10 @@ null));
             final Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
             setPrototype(prototype);
+        }
+
+        public int G$BYTES_PER_ELEMENT() {
+            return BYTES_PER_ELEMENT;
         }
 
         private static MethodHandle virtualHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
