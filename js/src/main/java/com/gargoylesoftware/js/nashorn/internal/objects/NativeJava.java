@@ -52,9 +52,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
-import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
-import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
+import com.gargoylesoftware.js.dynalink.beans.BeansLinker;
+import com.gargoylesoftware.js.dynalink.beans.StaticClass;
+import com.gargoylesoftware.js.dynalink.support.TypeUtilities;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;

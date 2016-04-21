@@ -78,10 +78,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.internal.dynalink.support.CallSiteDescriptorFactory;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.support.CallSiteDescriptorFactory;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;

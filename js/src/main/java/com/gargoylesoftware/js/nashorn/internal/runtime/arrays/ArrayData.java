@@ -47,9 +47,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;

@@ -43,8 +43,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.invoke.MethodHandle;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimismException;
 

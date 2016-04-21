@@ -48,7 +48,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
+import com.gargoylesoftware.js.dynalink.beans.StaticClass;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;

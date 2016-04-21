@@ -42,14 +42,14 @@ import static com.gargoylesoftware.js.nashorn.internal.lookup.Lookup.MH;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 
-import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedTypeConversion;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardingTypeConverterFactory;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
-import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
-import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
+import com.gargoylesoftware.js.dynalink.linker.ConversionComparator;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.GuardedTypeConversion;
+import com.gargoylesoftware.js.dynalink.linker.GuardingTypeConverterFactory;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.linker.LinkerServices;
+import com.gargoylesoftware.js.dynalink.linker.TypeBasedGuardingDynamicLinker;
+import com.gargoylesoftware.js.dynalink.support.TypeUtilities;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ConsString;
 import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
@@ -110,7 +110,7 @@ final class NashornPrimitiveLinker implements TypeBasedGuardingDynamicLinker, Gu
      * @param sourceType the source type to convert from
      * @param targetType1 one candidate target type
      * @param targetType2 another candidate target type
-     * @return one of {@link com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison} values signifying which
+     * @return one of {@link com.gargoylesoftware.js.dynalink.linker.ConversionComparator.Comparison} values signifying which
      * target type should be favored for conversion.
      */
     @Override

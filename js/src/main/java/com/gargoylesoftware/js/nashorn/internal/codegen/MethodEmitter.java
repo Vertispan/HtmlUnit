@@ -95,7 +95,7 @@ import java.util.Map;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 
-import com.gargoylesoftware.js.internal.dynalink.support.NameCodec;
+import com.gargoylesoftware.js.dynalink.support.NameCodec;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ClassEmitter.Flag;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.FieldAccess;

@@ -49,9 +49,9 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;

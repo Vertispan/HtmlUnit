@@ -45,12 +45,12 @@ import java.util.Map;
 
 import javax.script.Bindings;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
-import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
-import com.gargoylesoftware.js.internal.dynalink.support.CallSiteDescriptorFactory;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.linker.LinkerServices;
+import com.gargoylesoftware.js.dynalink.linker.TypeBasedGuardingDynamicLinker;
+import com.gargoylesoftware.js.dynalink.support.CallSiteDescriptorFactory;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.lookup.MethodHandleFactory;
 import com.gargoylesoftware.js.nashorn.internal.lookup.MethodHandleFunctionality;

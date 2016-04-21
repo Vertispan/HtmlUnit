@@ -42,7 +42,7 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.UnwarrantedOptimi
 
 import java.lang.invoke.MethodHandle;
 
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ObjectClassGenerator;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 

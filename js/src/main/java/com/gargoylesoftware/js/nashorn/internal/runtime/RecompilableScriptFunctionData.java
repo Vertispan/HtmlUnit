@@ -57,7 +57,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.gargoylesoftware.js.internal.dynalink.support.NameCodec;
+import com.gargoylesoftware.js.dynalink.support.NameCodec;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler.CompilationPhases;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants;

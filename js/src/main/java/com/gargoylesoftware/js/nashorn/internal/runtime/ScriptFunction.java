@@ -54,10 +54,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.internal.dynalink.support.Guards;
+import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.dynalink.support.Guards;
 import com.gargoylesoftware.js.nashorn.internal.codegen.ApplySpecialization;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler;
 import com.gargoylesoftware.js.nashorn.internal.codegen.CompilerConstants.Call;

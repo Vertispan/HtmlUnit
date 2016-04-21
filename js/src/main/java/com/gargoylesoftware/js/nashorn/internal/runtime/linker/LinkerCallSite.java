@@ -57,9 +57,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.gargoylesoftware.js.internal.dynalink.ChainedCallSite;
-import com.gargoylesoftware.js.internal.dynalink.DynamicLinker;
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.ChainedCallSite;
+import com.gargoylesoftware.js.dynalink.DynamicLinker;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Debug;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;

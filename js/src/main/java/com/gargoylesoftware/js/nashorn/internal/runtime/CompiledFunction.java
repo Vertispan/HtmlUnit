@@ -56,7 +56,7 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler.CompilationPhases;
 import com.gargoylesoftware.js.nashorn.internal.codegen.TypeMap;
