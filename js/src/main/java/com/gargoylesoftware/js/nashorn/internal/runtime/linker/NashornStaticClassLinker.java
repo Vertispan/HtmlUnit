@@ -39,15 +39,15 @@ package com.gargoylesoftware.js.nashorn.internal.runtime.linker;
 
 import java.lang.reflect.Modifier;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.beans.BeansLinker;
-import com.gargoylesoftware.js.dynalink.beans.StaticClass;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.GuardingDynamicLinker;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.dynalink.linker.LinkerServices;
-import com.gargoylesoftware.js.dynalink.linker.TypeBasedGuardingDynamicLinker;
-import com.gargoylesoftware.js.dynalink.support.Guards;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
+import com.gargoylesoftware.js.internal.dynalink.beans.StaticClass;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardingDynamicLinker;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
+import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
+import com.gargoylesoftware.js.internal.dynalink.support.Guards;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors;
 

@@ -45,9 +45,9 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.support.TypeUtilities;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor;
 

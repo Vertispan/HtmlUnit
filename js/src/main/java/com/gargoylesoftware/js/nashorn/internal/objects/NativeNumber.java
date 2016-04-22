@@ -52,8 +52,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;

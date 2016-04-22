@@ -62,9 +62,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.api.scripting.ClassFilter;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;

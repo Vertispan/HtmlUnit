@@ -47,9 +47,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.SwitchPoint;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;

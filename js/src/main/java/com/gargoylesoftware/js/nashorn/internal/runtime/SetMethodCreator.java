@@ -44,15 +44,15 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.JSType.getAccesso
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.SwitchPoint;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornGuards;
 
 /**
  * Instances of this class are quite ephemeral; they only exist for the duration of an invocation of
- * {@link ScriptObject#findSetMethod(CallSiteDescriptor, com.gargoylesoftware.js.dynalink.linker.LinkRequest)} and
+ * {@link ScriptObject#findSetMethod(CallSiteDescriptor, com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest)} and
  * serve as the actual encapsulation of the algorithm for creating an appropriate property setter method.
  */
 final class SetMethodCreator {

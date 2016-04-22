@@ -42,12 +42,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Arrays;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.dynalink.linker.LinkerServices;
-import com.gargoylesoftware.js.dynalink.linker.TypeBasedGuardingDynamicLinker;
-import com.gargoylesoftware.js.dynalink.support.Guards;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
+import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
+import com.gargoylesoftware.js.internal.dynalink.support.Guards;
 
 /**
  * Links {@link BoundCallable} objects. Passes through to linker services for linking a callable (for either

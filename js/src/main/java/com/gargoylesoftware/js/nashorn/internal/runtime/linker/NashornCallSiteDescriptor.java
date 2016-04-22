@@ -43,9 +43,9 @@ import java.lang.invoke.MethodType;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.support.AbstractCallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.support.CallSiteDescriptorFactory;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.support.AbstractCallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.support.CallSiteDescriptorFactory;
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.NashornTextifier;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 

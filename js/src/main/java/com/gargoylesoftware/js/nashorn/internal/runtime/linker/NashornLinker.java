@@ -53,17 +53,17 @@ import java.util.Queue;
 
 import javax.script.Bindings;
 
-import com.gargoylesoftware.js.dynalink.CallSiteDescriptor;
-import com.gargoylesoftware.js.dynalink.linker.ConversionComparator;
-import com.gargoylesoftware.js.dynalink.linker.GuardedInvocation;
-import com.gargoylesoftware.js.dynalink.linker.GuardedTypeConversion;
-import com.gargoylesoftware.js.dynalink.linker.GuardingTypeConverterFactory;
-import com.gargoylesoftware.js.dynalink.linker.LinkRequest;
-import com.gargoylesoftware.js.dynalink.linker.LinkerServices;
-import com.gargoylesoftware.js.dynalink.linker.TypeBasedGuardingDynamicLinker;
-import com.gargoylesoftware.js.dynalink.support.Guards;
-import com.gargoylesoftware.js.dynalink.support.LinkerServicesImpl;
-import com.gargoylesoftware.js.dynalink.support.Lookup;
+import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
+import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardedTypeConversion;
+import com.gargoylesoftware.js.internal.dynalink.linker.GuardingTypeConverterFactory;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
+import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
+import com.gargoylesoftware.js.internal.dynalink.linker.TypeBasedGuardingDynamicLinker;
+import com.gargoylesoftware.js.internal.dynalink.support.Guards;
+import com.gargoylesoftware.js.internal.dynalink.support.LinkerServicesImpl;
+import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptUtils;
