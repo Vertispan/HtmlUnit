@@ -1444,7 +1444,7 @@ public final class NativeDate extends ScriptObject {
                     staticHandle("UTC", double.class, Object.class, Object[].class));
             UTC.setArity(7);
             now = ScriptFunction.createBuiltin("now",
-                    staticHandle("now", long.class, Object.class));
+                    staticHandle("now", double.class, Object.class));
             final Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
             setPrototype(prototype);
