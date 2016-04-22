@@ -39,8 +39,6 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.zip.InflaterInputStream;
 
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
@@ -51,17 +49,12 @@ import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
  */
 final class AstDeserializer {
     static FunctionNode deserialize(final byte[] serializedAst) {
-        return AccessController.doPrivileged(new PrivilegedAction<FunctionNode>() {
-            @Override
-            public FunctionNode run() {
-                try {
-                    return (FunctionNode)new ObjectInputStream(new InflaterInputStream(
-                        new ByteArrayInputStream(serializedAst))).readObject();
-                } catch (final ClassNotFoundException | IOException e) {
-                    // This is internal, can't happen
-                    throw new AssertionError("Unexpected exception deserializing function", e);
-                }
-            }
-        });
+        try {
+            return (FunctionNode)new ObjectInputStream(new InflaterInputStream(new ByteArrayInputStream(
+                    serializedAst))).readObject();
+        } catch (final ClassNotFoundException | IOException e) {
+            // This is internal, can't happen
+            throw new AssertionError("Unexpected exception deserializing function", e);
+        }
     }
 }

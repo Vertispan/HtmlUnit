@@ -51,7 +51,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.CallNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CaseNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CatchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.ContinueNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.DebuggerNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.EmptyNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
@@ -302,13 +301,6 @@ public final class JSONWriter extends SimpleNodeVisitor {
     }
 
     @Override
-    public boolean enterDebuggerNode(final DebuggerNode debuggerNode) {
-        enterDefault(debuggerNode);
-        type("DebuggerStatement");
-        return leave();
-    }
-
-    @Override
     public boolean enterEmptyNode(final EmptyNode emptyNode) {
         enterDefault(emptyNode);
 
@@ -322,7 +314,7 @@ public final class JSONWriter extends SimpleNodeVisitor {
         // handle debugger statement
         final Node expression = expressionStatement.getExpression();
         if (expression instanceof RuntimeNode) {
-            assert false : "should not reach here: RuntimeNode";
+            expression.accept(this);
             return false;
         }
 
@@ -339,18 +331,14 @@ public final class JSONWriter extends SimpleNodeVisitor {
 
     @Override
     public boolean enterBlockStatement(final BlockStatement blockStatement) {
-        if (blockStatement.isSynthetic()) {
-            final Block blk = blockStatement.getBlock();
-            blk.getStatements().get(0).accept(this);
-            return false;
-        }
-
         enterDefault(blockStatement);
 
         type("BlockStatement");
         comma();
 
-        array("body", blockStatement.getBlock().getStatements());
+        property("block");
+        blockStatement.getBlock().accept(this);
+
         return leave();
     }
 
@@ -701,13 +689,19 @@ public final class JSONWriter extends SimpleNodeVisitor {
 
     @Override
     public boolean enterRuntimeNode(final RuntimeNode runtimeNode) {
-        assert false : "should not reach here: RuntimeNode";
+        final RuntimeNode.Request req = runtimeNode.getRequest();
+
+        if (req == RuntimeNode.Request.DEBUGGER) {
+            enterDefault(runtimeNode);
+            type("DebuggerStatement");
+            return leave();
+        }
+
         return false;
     }
 
     @Override
     public boolean enterSplitNode(final SplitNode splitNode) {
-        assert false : "should not reach here: SplitNode";
         return false;
     }
 

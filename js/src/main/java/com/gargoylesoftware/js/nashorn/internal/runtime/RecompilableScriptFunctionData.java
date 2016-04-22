@@ -54,6 +54,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -467,8 +468,11 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
 
         // Asynchronously serialize split functions.
         if (isSplit) {
-            astSerializerExecutorService.execute(() -> {
-                cachedAst = new SerializedAst(symbolClonedAst, ref);
+            astSerializerExecutorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    cachedAst = new SerializedAst(symbolClonedAst, ref);
+                }
             });
         }
     }
@@ -484,13 +488,16 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
      */
     private static ExecutorService createAstSerializerExecutorService() {
         final int threads = Math.max(1, Options.getIntProperty("nashorn.serialize.threads", Runtime.getRuntime().availableProcessors() / 2));
-        final ThreadPoolExecutor service = new ThreadPoolExecutor(threads, threads, 1, TimeUnit.MINUTES, new LinkedBlockingDeque<>(),
-            (r) -> {
-                final Thread t = new Thread(r, "Nashorn AST Serializer");
-                t.setDaemon(true);
-                t.setPriority(Thread.NORM_PRIORITY - 1);
-                return t;
-            });
+        final ThreadPoolExecutor service = new ThreadPoolExecutor(threads, threads, 1L, TimeUnit.MINUTES, new LinkedBlockingDeque<Runnable>(),
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(final Runnable r) {
+                        final Thread t = new Thread(r, "Nashorn AST Serializer");
+                        t.setDaemon(true);
+                        t.setPriority(Thread.NORM_PRIORITY - 1);
+                        return t;
+                    }
+                });
         service.allowCoreThreadTimeOut(true);
         return service;
     }
@@ -530,8 +537,9 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
         // need to do this when we cache an eagerly parsed function (which currently means a split one, as we
         // don't cache non-split functions from the eager pass); those already cached, or those not split
         // don't need this step.
-        final Set<Symbol> blockDefinedSymbols = fn.isSplit() && !cached ? Collections.newSetFromMap(new IdentityHashMap<>()) : null;
+        final Set<Symbol> blockDefinedSymbols = fn.isSplit() && !cached ? Collections.newSetFromMap(new IdentityHashMap<Symbol, Boolean>()) : null;
         FunctionNode newFn = (FunctionNode)fn.accept(new SimpleNodeVisitor() {
+
             private Symbol getReplacement(final Symbol original) {
                 if (original == null) {
                     return null;
@@ -661,7 +669,7 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
      */
     private CodeInstaller getInstallerForNewCode() {
         final ScriptEnvironment env = installer.getContext().getEnv();
-        return env._optimistic_types || env._loader_per_compile ? installer.getOnDemandCompilationInstaller() : installer;
+        return env._optimistic_types || env._loader_per_compile ? installer.withNewLoader() : installer;
     }
 
     Compiler getCompiler(final FunctionNode functionNode, final MethodType actualCallSiteType,
@@ -899,7 +907,7 @@ public final class RecompilableScriptFunctionData extends ScriptFunctionData imp
     }
 
     @Override
-    synchronized CompiledFunction getBest(final MethodType callSiteType, final ScriptObject runtimeScope, final Collection<CompiledFunction> forbidden) {
+    synchronized CompiledFunction getBest(final MethodType callSiteType, final ScriptObject runtimeScope, final Collection<CompiledFunction> forbidden, final boolean linkLogicOkay) {
         assert isValidCallSite(callSiteType) : callSiteType;
 
         CompiledFunction existingBest = pickFunction(callSiteType, false);

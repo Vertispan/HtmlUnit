@@ -462,7 +462,7 @@ public final class ObjectSizeCalculator {
                 for (final Object mp : memoryPoolMXBeans) {
                     final Object usage = getUsage.invoke(mp);
                     final Object max = getMax.invoke(usage);
-                    maxMemory += ((Long)max);
+                    maxMemory += ((Long)max).longValue();
                 }
             } catch (IllegalAccessException |
                      IllegalArgumentException |

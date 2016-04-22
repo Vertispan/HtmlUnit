@@ -127,12 +127,7 @@ public final class NativeArrayBuffer extends ScriptObject {
             return new NativeArrayBuffer(0);
         }
 
-        final Object arg0 = args[0];
-        if (arg0 instanceof ByteBuffer) {
-            return new NativeArrayBuffer((ByteBuffer)arg0);
-        } else {
-            return new NativeArrayBuffer(JSType.toInt32(arg0));
-        }
+        return new NativeArrayBuffer(JSType.toInt32(args[0]));
     }
 
     private static ByteBuffer cloneBuffer(final ByteBuffer original, final int begin, final int end) {

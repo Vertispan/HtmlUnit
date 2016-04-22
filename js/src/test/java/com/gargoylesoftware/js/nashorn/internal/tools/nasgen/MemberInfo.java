@@ -57,7 +57,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
  */
 public final class MemberInfo implements Cloneable {
     // class loader of this class
-    private static final ClassLoader MY_LOADER = MemberInfo.class.getClassLoader();
+    private static ClassLoader myLoader = MemberInfo.class.getClassLoader();
 
     /**
      * The different kinds of available class annotations
@@ -514,7 +514,7 @@ public final class MemberInfo implements Cloneable {
 
         if (type.getSort() == Type.OBJECT) {
             try {
-                final Class<?> clazz = Class.forName(type.getClassName(), false, MY_LOADER);
+                final Class<?> clazz = Class.forName(type.getClassName(), false, myLoader);
                 return ScriptObject.class.isAssignableFrom(clazz);
             } catch (final ClassNotFoundException cnfe) {
                 return false;

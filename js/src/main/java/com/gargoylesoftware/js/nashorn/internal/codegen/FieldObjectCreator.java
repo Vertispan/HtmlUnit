@@ -51,7 +51,6 @@ import java.util.List;
 import com.gargoylesoftware.js.nashorn.internal.codegen.types.Type;
 import com.gargoylesoftware.js.nashorn.internal.ir.Symbol;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
-import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;
@@ -180,8 +179,7 @@ public abstract class FieldObjectCreator<T> extends ObjectCreator<T> {
         assert fieldName.equals(getFieldName(fieldIndex, PRIMITIVE_FIELD_TYPE)) || fieldType.isObject() :    key + " object keys must store to L*-fields";
         assert fieldName.equals(getFieldName(fieldIndex, Type.OBJECT))          || fieldType.isPrimitive() : key + " primitive keys must store to J*-fields";
 
-        loadTuple(method, tuple);
-
+        loadTuple(method, tuple, true);
         method.putField(fieldClass, fieldName, fieldDesc);
     }
 
@@ -193,11 +191,7 @@ public abstract class FieldObjectCreator<T> extends ObjectCreator<T> {
      * @param tuple  Tuple to store.
      */
     private void putSlot(final MethodEmitter method, final long index, final MapTuple<T> tuple) {
-        if (JSType.isRepresentableAsInt(index)) {
-            method.load((int)index);
-        } else {
-            method.load(index);
-        }
+        loadIndex(method, index);
         loadTuple(method, tuple, false); //we don't pack array like objects
         method.dynamicSetIndex(callSiteFlags);
     }

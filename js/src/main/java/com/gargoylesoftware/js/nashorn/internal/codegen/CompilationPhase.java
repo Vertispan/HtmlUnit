@@ -170,11 +170,6 @@ abstract class CompilationPhase {
         }
     };
 
-    /**
-     * Phase used only when doing optimistic code generation. It assigns all potentially
-     * optimistic ops a program point so that an UnwarrantedException knows from where
-     * a guess went wrong when creating the continuation to roll back this execution
-     */
     static final CompilationPhase PROGRAM_POINT_PHASE = new ProgramPointPhase();
 
     private static final class CacheAstPhase extends CompilationPhase {
@@ -224,7 +219,7 @@ abstract class CompilationPhase {
         public String toString() {
             return "'Scope Depth Computation'";
         }
-    }
+    };
 
     static final CompilationPhase SCOPE_DEPTH_COMPUTATION_PHASE = new ScopeDepthComputationPhase();
 
@@ -501,9 +496,8 @@ abstract class CompilationPhase {
             Class<?> rootClass = null;
             long length = 0L;
 
-            final CodeInstaller origCodeInstaller = compiler.getCodeInstaller();
-            final Map<String, byte[]> bytecode = compiler.getBytecode();
-            final CodeInstaller codeInstaller = bytecode.size() > 1 ? origCodeInstaller.getMultiClassCodeInstaller() : origCodeInstaller;
+            final CodeInstaller       codeInstaller = compiler.getCodeInstaller();
+            final Map<String, byte[]> bytecode      = compiler.getBytecode();
 
             for (final Entry<String, byte[]> entry : bytecode.entrySet()) {
                 final String className = entry.getKey();

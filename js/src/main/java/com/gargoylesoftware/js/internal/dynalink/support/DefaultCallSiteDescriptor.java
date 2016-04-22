@@ -96,10 +96,9 @@
 package com.gargoylesoftware.js.internal.dynalink.support;
 
 import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-
-import java.lang.invoke.MethodType;
 
 /**
  * A default, fairly light implementation of a call site descriptor used for describing non-standard operations. It does

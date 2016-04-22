@@ -174,7 +174,6 @@ final class SplitIntoFunctions extends NodeVisitor<BlockLexicalContext> {
                 body.getFirstStatementLineNumber(),
                 newFnToken,
                 finish,
-                newFnToken,
                 NO_TOKEN,
                 namespace,
                 createIdent(name),
@@ -186,10 +185,9 @@ final class SplitIntoFunctions extends NodeVisitor<BlockLexicalContext> {
                 // quite a horrible hack to do with CodeGenerator.fixScopeSlot not trampling other parameters
                 // and should go away once we no longer have array unit handling in codegen. Note however that
                 // we still use IS_SPLIT as the criteria in CompilationPhase.SERIALIZE_SPLIT_PHASE.
-                FunctionNode.IS_ANONYMOUS | FunctionNode.USES_ANCESTOR_SCOPE | FunctionNode.IS_SPLIT,
-                body,
-                null
+                FunctionNode.IS_ANONYMOUS | FunctionNode.USES_ANCESTOR_SCOPE | FunctionNode.IS_SPLIT
         )
+        .setBody(lc, body)
         .setCompileUnit(lc, splitNode.getCompileUnit());
 
         // Call the function:

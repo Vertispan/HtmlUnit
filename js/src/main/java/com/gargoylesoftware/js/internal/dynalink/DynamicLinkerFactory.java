@@ -131,7 +131,7 @@ import com.gargoylesoftware.js.internal.dynalink.support.TypeUtilities;
  *
  * @author Attila Szegedi
  */
-public final class DynamicLinkerFactory {
+public class DynamicLinkerFactory {
     /**
      * Default value for {@link #setUnstableRelinkThreshold(int) unstable relink threshold}.
      */

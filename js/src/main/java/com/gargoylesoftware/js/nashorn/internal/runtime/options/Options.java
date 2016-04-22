@@ -444,7 +444,6 @@ public final class Options {
     private void processArgList(final LinkedList<String> argList) {
         while (!argList.isEmpty()) {
             final String arg = argList.remove(0);
-            Objects.requireNonNull(arg);
 
             // skip empty args
             if (arg.isEmpty()) {

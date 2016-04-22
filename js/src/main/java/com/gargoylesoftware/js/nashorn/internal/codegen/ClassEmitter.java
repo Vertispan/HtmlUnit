@@ -719,7 +719,7 @@ public class ClassEmitter {
         /** private access */
         PRIVATE(ACC_PRIVATE);
 
-        private final int value;
+        private int value;
 
         private Flag(final int value) {
             this.value = value;

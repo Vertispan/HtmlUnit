@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
 public class CodeUpdater {
 
     public static void main(final String[] args) throws Exception {
-        process(new File("../nashorn/src/jdk.scripting.nashorn/share/classes"), true);
+        process(new File("../nashorn/src"), true);
         process(new File("../nashorn/buildtools/nasgen/src"), false);
     }
 

@@ -229,8 +229,11 @@ public abstract class ContinuousArrayData extends ArrayData {
                     int.class);
 
     @SuppressWarnings("unused")
-    private static boolean guard(final Class<? extends ContinuousArrayData> clazz, final ScriptObject sobj) {
-        return sobj != null && sobj.getArray().getClass() == clazz;
+    private static final boolean guard(final Class<? extends ContinuousArrayData> clazz, final ScriptObject sobj) {
+        if (sobj != null && sobj.getArray().getClass() == clazz) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -301,7 +304,7 @@ public abstract class ContinuousArrayData extends ArrayData {
      * @param arg argument
      * @return new array length
      */
-    public long fastPush(final int arg) {
+    public double fastPush(final int arg) {
         throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
     }
 
@@ -310,7 +313,7 @@ public abstract class ContinuousArrayData extends ArrayData {
      * @param arg argument
      * @return new array length
      */
-    public long fastPush(final long arg) {
+    public double fastPush(final long arg) {
         throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
     }
 
@@ -319,7 +322,7 @@ public abstract class ContinuousArrayData extends ArrayData {
      * @param arg argument
      * @return new array length
      */
-    public long fastPush(final double arg) {
+    public double fastPush(final double arg) {
         throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
     }
 
@@ -328,7 +331,7 @@ public abstract class ContinuousArrayData extends ArrayData {
      * @param arg argument
      * @return new array length
      */
-    public long fastPush(final Object arg) {
+    public double fastPush(final Object arg) {
         throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
     }
 
@@ -337,14 +340,6 @@ public abstract class ContinuousArrayData extends ArrayData {
      * @return element value
      */
     public int fastPopInt() {
-        throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
-    }
-
-    /**
-     * Specialization - fast pop implementation
-     * @return element value
-     */
-    public long fastPopLong() {
         throw new ClassCastException(String.valueOf(getClass())); //type is wrong, relink
     }
 

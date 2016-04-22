@@ -201,8 +201,6 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
 
     private static final Call ENSURE_INT = CompilerConstants.staticCallNoLookup(OptimisticReturnFilters.class,
             "ensureInt", int.class, Object.class, int.class);
-    private static final Call ENSURE_LONG = CompilerConstants.staticCallNoLookup(OptimisticReturnFilters.class,
-            "ensureLong", long.class, Object.class, int.class);
     private static final Call ENSURE_NUMBER = CompilerConstants.staticCallNoLookup(OptimisticReturnFilters.class,
             "ensureNumber", double.class, Object.class, int.class);
 
@@ -224,7 +222,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
     private static final Type ITERATOR_TYPE = Type.typeFor(ITERATOR_CLASS);
     private static final Type EXCEPTION_TYPE = Type.typeFor(CompilerConstants.EXCEPTION_PREFIX.type());
 
-    private static final Integer INT_ZERO = 0;
+    private static final Integer INT_ZERO = Integer.valueOf(0);
 
     /** Constant data & installation. The only reason the compiler keeps this is because it is assigned
      *  by reflection in class installation */
@@ -754,7 +752,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
         method.convert(Type.NUMBER);
     }
 
-    private static Type undefinedToNumber(final Type type) {
+    private static final Type undefinedToNumber(final Type type) {
         return type == Type.UNDEFINED ? Type.NUMBER : type;
     }
 
@@ -1733,7 +1731,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
         enterStatement(expressionStatement);
 
         loadAndDiscard(expressionStatement.getExpression());
-        assert method.getStackSize() == 0;
+        assert method.getStackSize() == 0 : "stack not empty in " + expressionStatement;
 
         return false;
     }
@@ -2248,7 +2246,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
      * @param arrayType        the type of the array, e.g. ARRAY_NUMBER or ARRAY_OBJECT
      */
     private void loadArray(final ArrayLiteralNode arrayLiteralNode, final ArrayType arrayType) {
-        assert arrayType == Type.INT_ARRAY || arrayType == Type.LONG_ARRAY || arrayType == Type.NUMBER_ARRAY || arrayType == Type.OBJECT_ARRAY;
+        assert arrayType == Type.INT_ARRAY || arrayType == Type.NUMBER_ARRAY || arrayType == Type.OBJECT_ARRAY;
 
         final Expression[]     nodes    = arrayLiteralNode.getValue();
         final Object           presets  = arrayLiteralNode.getPresets();
@@ -2396,19 +2394,8 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                 method.convert(Type.OBJECT);
             } else if(!resultBounds.canBeNarrowerThan(Type.NUMBER)) {
                 method.load(((Integer)value).doubleValue());
-            } else if(!resultBounds.canBeNarrowerThan(Type.LONG)) {
-                method.load(((Integer)value).longValue());
             } else {
                 method.load((Integer)value);
-            }
-        } else if (value instanceof Long) {
-            if(!resultBounds.canBeNarrowerThan(Type.OBJECT)) {
-                method.load((Long)value);
-                method.convert(Type.OBJECT);
-            } else if(!resultBounds.canBeNarrowerThan(Type.NUMBER)) {
-                method.load(((Long)value).doubleValue());
-            } else {
-                method.load((Long)value);
             }
         } else if (value instanceof Double) {
             if(!resultBounds.canBeNarrowerThan(Type.OBJECT)) {
@@ -3660,8 +3647,6 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
             private void loadMinusOne() {
                 if (type.isInteger()) {
                     method.load(isIncrement ? 1 : -1);
-                } else if (type.isLong()) {
-                    method.load(isIncrement ? 1L : -1L);
                 } else {
                     method.load(isIncrement ? 1.0 : -1.0);
                 }
@@ -4043,23 +4028,66 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
     }
 
     private void loadASSIGN_SHR(final BinaryNode binaryNode) {
-        new BinarySelfAssignment(binaryNode) {
+        new SelfModifyingStore<BinaryNode>(binaryNode, binaryNode.lhs()) {
             @Override
-            protected void op() {
-                doSHR();
-            }
+            protected void evaluate() {
+                new OptimisticOperation(assignNode, new TypeBounds(Type.INT, Type.NUMBER)) {
+                    @Override
+                    void loadStack() {
+                        assert assignNode.getWidestOperandType() == Type.INT;
+                        if (isRhsZero(binaryNode)) {
+                            loadExpressionAsType(binaryNode.lhs(), Type.INT);
+                        } else {
+                            loadBinaryOperands(binaryNode.lhs(), binaryNode.rhs(), TypeBounds.INT, true, false);
+                            method.shr();
+                        }
+                    }
 
+                    @Override
+                    void consumeStack() {
+                        if (isOptimistic(binaryNode)) {
+                            toUint32Optimistic(binaryNode.getProgramPoint());
+                        } else {
+                            toUint32Double();
+                        }
+                    }
+                }.emit(getOptimisticIgnoreCountForSelfModifyingExpression(binaryNode.lhs()));
+                method.convert(assignNode.getType());
+            }
         }.store();
     }
 
-    private void doSHR() {
-        // TODO: make SHR optimistic
-        method.shr();
-        toUint();
+    private void doSHR(final BinaryNode binaryNode) {
+        new OptimisticOperation(binaryNode, new TypeBounds(Type.INT, Type.NUMBER)) {
+            @Override
+            void loadStack() {
+                if (isRhsZero(binaryNode)) {
+                    loadExpressionAsType(binaryNode.lhs(), Type.INT);
+                } else {
+                    loadBinaryOperands(binaryNode);
+                    method.shr();
+                }
+            }
+
+            @Override
+            void consumeStack() {
+                if (isOptimistic(binaryNode)) {
+                    toUint32Optimistic(binaryNode.getProgramPoint());
+                } else {
+                    toUint32Double();
+                }
+            }
+        }.emit();
+
     }
 
-    private void toUint() {
-        JSType.TO_UINT32_I.invoke(method);
+    private void toUint32Optimistic(final int programPoint) {
+        method.load(programPoint);
+        JSType.TO_UINT32_OPTIMISTIC.invoke(method);
+    }
+
+    private void toUint32Double() {
+        JSType.TO_UINT32_DOUBLE.invoke(method);
     }
 
     private void loadASSIGN_SUB(final BinaryNode binaryNode) {
@@ -4097,7 +4125,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                             // Non-optimistic, non-FP subtraction or multiplication. Allow them to overflow.
                             operandBounds = new TypeBounds(Type.narrowest(node.getWidestOperandType(),
                                     numericBounds.widest), Type.NUMBER);
-                            forceConversionSeparation = node.getWidestOperationType().narrowerThan(numericBounds.widest);
+                            forceConversionSeparation = true;
                         }
                     }
                     loadBinaryOperands(node.lhs(), node.rhs(), operandBounds, false, forceConversionSeparation);
@@ -4199,14 +4227,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
     }
 
     private void loadSHR(final BinaryNode binaryNode) {
-        // Optimize x >>> 0 to (uint)x
-        if (isRhsZero(binaryNode)) {
-            loadExpressionAsType(binaryNode.lhs(), Type.INT);
-            toUint();
-        } else {
-            loadBinaryOperands(binaryNode);
-            doSHR();
-        }
+        doSHR(binaryNode);
     }
 
     private void loadSUB(final BinaryNode binaryNode, final TypeBounds resultBounds) {
@@ -4477,6 +4498,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                         }
                     } else {
                         final Type storeType = assignNode.getType();
+                        assert storeType != Type.LONG;
                         if (symbol.hasSlotFor(storeType)) {
                             // Only emit a convert for a store known to be live; converts for dead stores can
                             // give us an unnecessary ClassCastException.
@@ -4861,8 +4883,6 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                     method.load(optimistic.getProgramPoint());
                     if(optimisticType.isInteger()) {
                         method.invoke(ENSURE_INT);
-                    } else if(optimisticType.isLong()) {
-                        method.invoke(ENSURE_LONG);
                     } else if(optimisticType.isNumber()) {
                         method.invoke(ENSURE_NUMBER);
                     } else {
@@ -4898,7 +4918,7 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
             if(propertyValue instanceof String || propertyValue == null) {
                 method.load((String)propertyValue);
             } else if(propertyValue instanceof Integer) {
-                method.load(((Integer)propertyValue));
+                method.load(((Integer)propertyValue).intValue());
                 method.convert(Type.OBJECT);
             } else {
                 throw new AssertionError();

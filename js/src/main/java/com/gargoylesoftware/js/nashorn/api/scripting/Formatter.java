@@ -182,7 +182,7 @@ final class Formatter {
      * @return true if '&lt;' is in the string, else false
      */
     private static boolean isPreviousArgument(final String s) {
-        return (s != null && s.indexOf('<') >= 0);
+        return (s != null && s.indexOf('<') >= 0) ? true : false;
     }
 
     // %[argument_index$][flags][width][.precision][t]conversion

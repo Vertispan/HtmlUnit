@@ -97,7 +97,7 @@ public final class NativeUint32Array extends ArrayBufferView {
 
     private static final class Uint32ArrayData extends TypedArrayData<IntBuffer> {
 
-        private static final MethodHandle GET_ELEM = specialCall(MethodHandles.lookup(), Uint32ArrayData.class, "getElem", long.class, int.class).methodHandle();
+        private static final MethodHandle GET_ELEM = specialCall(MethodHandles.lookup(), Uint32ArrayData.class, "getElem", double.class, int.class).methodHandle();
         private static final MethodHandle SET_ELEM = specialCall(MethodHandles.lookup(), Uint32ArrayData.class, "setElem", void.class, int.class, int.class).methodHandle();
 
         private Uint32ArrayData(final IntBuffer nb, final int start, final int end) {
@@ -122,12 +122,16 @@ public final class NativeUint32Array extends ArrayBufferView {
             return getContinuousElementGetter(getClass(), GET_ELEM, returnType, programPoint);
         }
 
-        private long getElem(final int index) {
+        private int getRawElem(final int index) {
             try {
-                return JSType.toUint32(nb.get(index));
+                return nb.get(index);
             } catch (final IndexOutOfBoundsException e) {
                 throw new ClassCastException(); //force relink - this works for unoptimistic too
             }
+        }
+
+        private double getElem(final int index) {
+            return JSType.toUint32(getRawElem(index));
         }
 
         private void setElem(final int index, final int elem) {
@@ -147,42 +151,37 @@ public final class NativeUint32Array extends ArrayBufferView {
 
         @Override
         public Class<?> getElementType() {
-            return long.class;
+            return double.class;
         }
 
         @Override
         public Class<?> getBoxedElementType() {
-            return Integer.class;
+            return Double.class;
         }
 
         @Override
         public int getInt(final int index) {
-            return (int)getLong(index);
+            return getRawElem(index);
         }
 
         @Override
-        public long getLong(final int index) {
-            return getElem(index);
-        }
-
-        @Override
-        public long getLongOptimistic(final int index, final int programPoint) {
-            return getElem(index);
+        public int getIntOptimistic(final int index, final int programPoint) {
+            return JSType.toUint32Optimistic(getRawElem(index), programPoint);
         }
 
         @Override
         public double getDouble(final int index) {
-            return getLong(index);
+            return getElem(index);
         }
 
         @Override
         public double getDoubleOptimistic(final int index, final int programPoint) {
-            return getLong(index);
+            return getElem(index);
         }
 
         @Override
         public Object getObject(final int index) {
-            return getLong(index);
+            return getElem(index);
         }
 
         @Override
@@ -194,11 +193,6 @@ public final class NativeUint32Array extends ArrayBufferView {
         public ArrayData set(final int index, final int value, final boolean strict) {
             setElem(index, value);
             return this;
-        }
-
-        @Override
-        public ArrayData set(final int index, final long value, final boolean strict) {
-            return set(index, (int)value, strict);
         }
 
         @Override

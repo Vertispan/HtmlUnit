@@ -69,37 +69,20 @@ public final class ForNode extends LoopNode {
     private final int flags;
 
     /**
-     * Constructs a ForNode
-     *
-     * @param lineNumber The line number of header
-     * @param token      The for token
-     * @param finish     The last character of the for node
-     * @param body       The body of the for node
-     * @param flags      The flags
-     */
-    public ForNode(final int lineNumber, final long token, final int finish, final Block body, final int flags){
-        this(lineNumber, token, finish, body, flags, null, null, null);
-    }
-
-    /**
      * Constructor
      *
-     * @param lineNumber The line number of header
-     * @param token      The for token
-     * @param finish     The last character of the for node
-     * @param body       The body of the for node
-     * @param flags      The flags
-     * @param init       The initial expression
-     * @param test       The test expression
-     * @param modify     The modify expression
+     * @param lineNumber line number
+     * @param token      token
+     * @param finish     finish
+     * @param body       body
+     * @param flags      flags
      */
-    public ForNode(final int lineNumber, final long token, final int finish, final Block body, final int flags, final Expression init, final JoinPredecessorExpression test, final JoinPredecessorExpression modify) {
-        super(lineNumber, token, finish, body, test, false);
+    public ForNode(final int lineNumber, final long token, final int finish, final Block body, final int flags) {
+        super(lineNumber, token, finish, body, false);
         this.flags  = flags;
-        this.init = init;
-        this.modify = modify;
+        this.init = null;
+        this.modify = null;
         this.iterator = null;
-
     }
 
     private ForNode(final ForNode forNode, final Expression init, final JoinPredecessorExpression test,
@@ -197,6 +180,16 @@ public final class ForNode extends LoopNode {
     public boolean isForIn() {
         return (flags & IS_FOR_IN) != 0;
     }
+
+    /**
+     * Flag this to be a for in construct
+     * @param lc lexical context
+     * @return new for node if changed or existing if not
+     */
+    public ForNode setIsForIn(final LexicalContext lc) {
+        return setFlags(lc, flags | IS_FOR_IN);
+    }
+
     /**
      * Is this a for each construct, known from e.g. Rhino. This will be a for of construct
      * in ECMAScript 6
@@ -204,6 +197,15 @@ public final class ForNode extends LoopNode {
      */
     public boolean isForEach() {
         return (flags & IS_FOR_EACH) != 0;
+    }
+
+    /**
+     * Flag this to be a for each construct
+     * @param lc lexical context
+     * @return new for node if changed or existing if not
+     */
+    public ForNode setIsForEach(final LexicalContext lc) {
+        return setFlags(lc, flags | IS_FOR_EACH);
     }
 
     /**
@@ -277,6 +279,13 @@ public final class ForNode extends LoopNode {
         return Node.replaceInLexicalContext(lc, this, new ForNode(this, init, test, body, modify, flags, controlFlowEscapes, conversion, iterator));
     }
 
+    private ForNode setFlags(final LexicalContext lc, final int flags) {
+        if (this.flags == flags) {
+            return this;
+        }
+        return Node.replaceInLexicalContext(lc, this, new ForNode(this, init, test, body, modify, flags, controlFlowEscapes, conversion, iterator));
+    }
+
     @Override
     JoinPredecessor setLocalVariableConversionChanged(final LexicalContext lc, final LocalVariableConversion conversion) {
         return Node.replaceInLexicalContext(lc, this, new ForNode(this, init, test, body, modify, flags, controlFlowEscapes, conversion, iterator));
@@ -285,5 +294,14 @@ public final class ForNode extends LoopNode {
     @Override
     public boolean hasPerIterationScope() {
         return (flags & PER_ITERATION_SCOPE) != 0;
+    }
+
+    /**
+     * Set the per-iteration-scope flag on this node.
+     * @param lc lexical context
+     * @return the node with flag set
+     */
+    public ForNode setPerIterationScope(final LexicalContext lc) {
+        return setFlags(lc, flags | PER_ITERATION_SCOPE);
     }
 }

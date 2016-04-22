@@ -132,9 +132,11 @@ final class FindScopeDepths extends SimpleNodeVisitor implements Loggable {
 
     private static boolean definedInBlock(final Block block, final Symbol symbol) {
         if (symbol.isGlobal()) {
+            if (block.isGlobalScope()) {
+                return true;
+            }
             //globals cannot be defined anywhere else
-
-            return block.isGlobalScope();
+            return false;
         }
         return block.getExistingSymbol(symbol.getName()) == symbol;
     }

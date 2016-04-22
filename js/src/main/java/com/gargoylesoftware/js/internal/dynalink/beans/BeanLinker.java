@@ -169,14 +169,14 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
         return null;
     }
 
-    private static final MethodHandle GET_LIST_ELEMENT = Lookup.PUBLIC.findVirtual(List.class, "get",
+    private static MethodHandle GET_LIST_ELEMENT = Lookup.PUBLIC.findVirtual(List.class, "get",
             MethodType.methodType(Object.class, int.class));
 
-    private static final MethodHandle GET_MAP_ELEMENT = Lookup.PUBLIC.findVirtual(Map.class, "get",
+    private static MethodHandle GET_MAP_ELEMENT = Lookup.PUBLIC.findVirtual(Map.class, "get",
             MethodType.methodType(Object.class, Object.class));
 
-    private static final MethodHandle LIST_GUARD = Guards.getInstanceOfGuard(List.class);
-    private static final MethodHandle MAP_GUARD = Guards.getInstanceOfGuard(Map.class);
+    private static MethodHandle LIST_GUARD = Guards.getInstanceOfGuard(List.class);
+    private static MethodHandle MAP_GUARD = Guards.getInstanceOfGuard(Map.class);
 
     private enum CollectionType {
         ARRAY, LIST, MAP
@@ -300,7 +300,7 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
                     if(intIndex != doubleValue && !Double.isInfinite(doubleValue)) { // let infinites trigger IOOBE
                         return null; // not an exact integer
                     }
-                    return intIndex;
+                    return Integer.valueOf(intIndex);
                 } catch(Exception|Error e) {
                     throw e;
                 } catch(final Throwable t) {
@@ -329,6 +329,8 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
     /**
      * Contains methods to adapt an item getter/setter method handle to the requested type, optionally binding it to a
      * fixed key first.
+     * @author Attila Szegedi
+     * @version $Id: $
      */
     private static class Binder {
         private final LinkerServices linkerServices;
@@ -354,9 +356,9 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
         }
     }
 
-    private static final MethodHandle RANGE_CHECK_ARRAY = findRangeCheck(Object.class);
-    private static final MethodHandle RANGE_CHECK_LIST = findRangeCheck(List.class);
-    private static final MethodHandle CONTAINS_MAP = Lookup.PUBLIC.findVirtual(Map.class, "containsKey",
+    private static MethodHandle RANGE_CHECK_ARRAY = findRangeCheck(Object.class);
+    private static MethodHandle RANGE_CHECK_LIST = findRangeCheck(List.class);
+    private static MethodHandle CONTAINS_MAP = Lookup.PUBLIC.findVirtual(Map.class, "containsKey",
             MethodType.methodType(boolean.class, Object.class));
 
     private static MethodHandle findRangeCheck(final Class<?> collectionType) {
@@ -364,7 +366,7 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
     }
 
     @SuppressWarnings("unused")
-    private static boolean rangeCheck(final Object array, final Object index) {
+    private static final boolean rangeCheck(final Object array, final Object index) {
         if(!(index instanceof Number)) {
             return false;
         }
@@ -381,7 +383,7 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
     }
 
     @SuppressWarnings("unused")
-    private static boolean rangeCheck(final List<?> list, final Object index) {
+    private static final boolean rangeCheck(final List<?> list, final Object index) {
         if(!(index instanceof Number)) {
             return false;
         }
@@ -397,10 +399,10 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
         throw new IndexOutOfBoundsException("Index: " + n + ", Size: " + list.size());
     }
 
-    private static final MethodHandle SET_LIST_ELEMENT = Lookup.PUBLIC.findVirtual(List.class, "set",
+    private static MethodHandle SET_LIST_ELEMENT = Lookup.PUBLIC.findVirtual(List.class, "set",
             MethodType.methodType(Object.class, int.class, Object.class));
 
-    private static final MethodHandle PUT_MAP_ELEMENT = Lookup.PUBLIC.findVirtual(Map.class, "put",
+    private static MethodHandle PUT_MAP_ELEMENT = Lookup.PUBLIC.findVirtual(Map.class, "put",
             MethodType.methodType(Object.class, Object.class, Object.class));
 
     private GuardedInvocationComponent getElementSetter(final CallSiteDescriptor callSiteDescriptor,
@@ -482,16 +484,16 @@ class BeanLinker extends AbstractJavaLinker implements TypeBasedGuardingDynamicL
                 gic.getValidatorClass(), gic.getValidationType());
     }
 
-    private static final MethodHandle GET_ARRAY_LENGTH = Lookup.PUBLIC.findStatic(Array.class, "getLength",
+    private static MethodHandle GET_ARRAY_LENGTH = Lookup.PUBLIC.findStatic(Array.class, "getLength",
             MethodType.methodType(int.class, Object.class));
 
-    private static final MethodHandle GET_COLLECTION_LENGTH = Lookup.PUBLIC.findVirtual(Collection.class, "size",
+    private static MethodHandle GET_COLLECTION_LENGTH = Lookup.PUBLIC.findVirtual(Collection.class, "size",
             MethodType.methodType(int.class));
 
-    private static final MethodHandle GET_MAP_LENGTH = Lookup.PUBLIC.findVirtual(Map.class, "size",
+    private static MethodHandle GET_MAP_LENGTH = Lookup.PUBLIC.findVirtual(Map.class, "size",
             MethodType.methodType(int.class));
 
-    private static final MethodHandle COLLECTION_GUARD = Guards.getInstanceOfGuard(Collection.class);
+    private static MethodHandle COLLECTION_GUARD = Guards.getInstanceOfGuard(Collection.class);
 
     private GuardedInvocationComponent getLengthGetter(final CallSiteDescriptor callSiteDescriptor) {
         assertParameterCount(callSiteDescriptor, 1);

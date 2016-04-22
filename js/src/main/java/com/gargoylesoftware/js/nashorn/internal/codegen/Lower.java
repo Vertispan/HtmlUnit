@@ -59,7 +59,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.CallNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CaseNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.CatchNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.ContinueNode;
-import com.gargoylesoftware.js.nashorn.internal.ir.DebuggerNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.EmptyNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.ExpressionStatement;
@@ -113,7 +112,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
 
     // Conservative pattern to test if element names consist of characters valid for identifiers.
     // This matches any non-zero length alphanumeric string including _ and $ and not starting with a digit.
-    private static final Pattern SAFE_PROPERTY_NAME = Pattern.compile("[a-zA-Z_$][\\w$]*");
+    private static Pattern SAFE_PROPERTY_NAME = Pattern.compile("[a-zA-Z_$][\\w$]*");
 
     /**
      * Constructor.
@@ -188,15 +187,6 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
     @Override
     public boolean enterContinueNode(final ContinueNode continueNode) {
         addStatement(continueNode);
-        return false;
-    }
-
-    @Override
-    public boolean enterDebuggerNode(final DebuggerNode debuggerNode) {
-        final int line = debuggerNode.getLineNumber();
-        final long token = debuggerNode.getToken();
-        final int finish = debuggerNode.getFinish();
-        addStatement(new ExpressionStatement(line, token, finish, new RuntimeNode(token, finish, RuntimeNode.Request.DEBUGGER, new ArrayList<Expression>())));
         return false;
     }
 
@@ -590,9 +580,7 @@ final class Lower extends NodeOperatorVisitor<BlockLexicalContext> implements Lo
     @Override
     public Node leaveVarNode(final VarNode varNode) {
         addStatement(varNode);
-        if (varNode.getFlag(VarNode.IS_LAST_FUNCTION_DECLARATION)
-                && lc.getCurrentFunction().isProgram()
-                && ((FunctionNode) varNode.getInit()).isAnonymous()) {
+        if (varNode.getFlag(VarNode.IS_LAST_FUNCTION_DECLARATION) && lc.getCurrentFunction().isProgram()) {
             new ExpressionStatement(varNode.getLineNumber(), varNode.getToken(), varNode.getFinish(), new IdentNode(varNode.getName())).accept(this);
         }
         return varNode;

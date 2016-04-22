@@ -61,15 +61,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
  * A Dynalink linker to handle web browser built-in JS (DOM etc.) objects.
  */
 final class BrowserJSObjectLinker implements TypeBasedGuardingDynamicLinker {
-    private static ClassLoader extLoader;
-    static {
-        extLoader = BrowserJSObjectLinker.class.getClassLoader();
-        // in case nashorn is loaded as bootstrap!
-        if (extLoader == null) {
-            extLoader = ClassLoader.getSystemClassLoader().getParent();
-        }
-    }
-
+    private static final ClassLoader myLoader = BrowserJSObjectLinker.class.getClassLoader();
     private static final String JSOBJECT_CLASS = "netscape.javascript.JSObject";
     // not final because this is lazily initialized
     // when we hit a subclass for the first time.
@@ -93,7 +85,7 @@ final class BrowserJSObjectLinker implements TypeBasedGuardingDynamicLinker {
         // check if this class is a subclass of JSObject
         Class<?> clazz = type;
         while (clazz != null) {
-            if (clazz.getClassLoader() == extLoader &&
+            if (clazz.getClassLoader() == myLoader &&
                 clazz.getName().equals(JSOBJECT_CLASS)) {
                 jsObjectClass = clazz;
                 return true;

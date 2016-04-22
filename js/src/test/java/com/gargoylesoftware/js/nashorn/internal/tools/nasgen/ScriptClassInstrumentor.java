@@ -63,6 +63,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -85,7 +86,7 @@ public class ScriptClassInstrumentor extends ClassVisitor {
     private boolean staticInitFound;
 
     ScriptClassInstrumentor(final ClassVisitor visitor, final ScriptClassInfo sci) {
-        super(Main.ASM_VERSION, visitor);
+        super(Opcodes.ASM4, visitor);
         if (sci == null) {
             throw new IllegalArgumentException("Null ScriptClassInfo, is the class annotated?");
         }
@@ -115,7 +116,7 @@ public class ScriptClassInstrumentor extends ClassVisitor {
 
         final FieldVisitor delegateFV = super.visitField(fieldAccess, fieldName, fieldDesc,
                 signature, value);
-        return new FieldVisitor(Main.ASM_VERSION, delegateFV) {
+        return new FieldVisitor(Opcodes.ASM4, delegateFV) {
             @Override
             public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
                 if (ScriptClassInfo.annotations.containsKey(desc)) {
@@ -152,7 +153,7 @@ public class ScriptClassInstrumentor extends ClassVisitor {
         final MethodGenerator delegateMV = new MethodGenerator(super.visitMethod(methodAccess, methodName, methodDesc,
                 signature, exceptions), methodAccess, methodName, methodDesc);
 
-        return new MethodVisitor(Main.ASM_VERSION, delegateMV) {
+        return new MethodVisitor(Opcodes.ASM4, delegateMV) {
             @Override
             public void visitInsn(final int opcode) {
                 // call $clinit$ just before return from <clinit>

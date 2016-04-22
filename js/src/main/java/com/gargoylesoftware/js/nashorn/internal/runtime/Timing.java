@@ -173,9 +173,12 @@ public final class Timing implements Loggable {
     final class TimeSupplier implements Supplier<String> {
         private final Map<String, LongAdder> timings = new ConcurrentHashMap<>();
         private final LinkedBlockingQueue<String> orderedTimingNames = new LinkedBlockingQueue<>();
-        private final Function<String, LongAdder> newTimingCreator = s -> {
-            orderedTimingNames.add(s);
-            return new LongAdder();
+        private final Function<String, LongAdder> newTimingCreator = new Function<String, LongAdder>() {
+            @Override
+            public LongAdder apply(final String s) {
+                orderedTimingNames.add(s);
+                return new LongAdder();
+            }
         };
 
         String[] getStrings() {
@@ -233,20 +236,19 @@ public final class Timing implements Loggable {
             }
 
             final long total = t - startTime;
-            return sb.append("\nTotal runtime: ").
+            sb.append('\n');
+            sb.append("Total runtime: ").
                 append(toMillisPrint(total)).
                 append(" ms (Non-runtime: ").
                 append(toMillisPrint(knownTime)).
                 append(" ms [").
                 append((int)(knownTime * 100.0 / total)).
-                append("%])").
-                append("\n\nEmitted compile units: ").
-                append(CompileUnit.getEmittedUnitCount()).
-                append("\nCompile units installed as named classes: ").
-                append(Context.getNamedInstalledScriptCount()).
-                append("\nCompile units installed as anonymous classes: ").
-                append(Context.getAnonymousInstalledScriptCount()).
-                toString();
+                append("%])");
+
+            sb.append("\n\nEmitted compile units: ").
+                append(CompileUnit.getEmittedUnitCount());
+
+            return sb.toString();
         }
 
         private void accumulateTime(final String module, final long duration) {

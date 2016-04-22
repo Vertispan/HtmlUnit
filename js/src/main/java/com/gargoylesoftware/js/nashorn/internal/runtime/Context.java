@@ -45,7 +45,6 @@ import static com.gargoylesoftware.js.nashorn.internal.runtime.CodeStore.newCode
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ECMAErrors.typeError;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime.UNDEFINED;
 import static com.gargoylesoftware.js.nashorn.internal.runtime.Source.sourceFor;
-import static org.objectweb.asm.Opcodes.V1_7;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,10 +53,8 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.SwitchPoint;
-import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -78,7 +75,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -86,8 +82,6 @@ import java.util.logging.Level;
 import javax.script.ScriptEngine;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.ClassFilter;
@@ -107,8 +101,6 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.logging.Loggable;
 import com.gargoylesoftware.js.nashorn.internal.runtime.logging.Logger;
 import com.gargoylesoftware.js.nashorn.internal.runtime.options.LoggingOption.LoggerInfo;
 import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
-
-import sun.misc.Unsafe;
 
 /**
  * This class manages the global state of execution. Context is immutable.
@@ -150,11 +142,8 @@ public final class Context {
     private static final String LOAD_FX = "fx:";
     private static final String LOAD_NASHORN = "nashorn:";
 
-    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static final MethodType CREATE_PROGRAM_FUNCTION_TYPE = MethodType.methodType(ScriptFunction.class, ScriptObject.class);
-
-    private static final LongAdder NAMED_INSTALLED_SCRIPT_COUNT = new LongAdder();
-    private static final LongAdder ANONYMOUS_INSTALLED_SCRIPT_COUNT = new LongAdder();
+    private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    private static MethodType CREATE_PROGRAM_FUNCTION_TYPE = MethodType.methodType(ScriptFunction.class, ScriptObject.class);
 
     /**
      * Should scripts use only object slots for fields, or dual long/object slots? The default
@@ -188,30 +177,39 @@ public final class Context {
         DebuggerSupport.FORCELOAD = true;
     }
 
-    static long getNamedInstalledScriptCount() {
-        return NAMED_INSTALLED_SCRIPT_COUNT.sum();
-    }
-
-    static long getAnonymousInstalledScriptCount() {
-        return ANONYMOUS_INSTALLED_SCRIPT_COUNT.sum();
-    }
-
     /**
      * ContextCodeInstaller that has the privilege of installing classes in the Context.
      * Can only be instantiated from inside the context and is opaque to other classes
      */
-    private abstract static class ContextCodeInstaller implements CodeInstaller {
-        final Context context;
-        final CodeSource codeSource;
+    public static class ContextCodeInstaller implements CodeInstaller {
+        private final Context      context;
+        private final ScriptLoader loader;
+        private final CodeSource   codeSource;
+        private int usageCount = 0;
+        private int bytesDefined = 0;
 
-        ContextCodeInstaller(final Context context, final CodeSource codeSource) {
-            this.context = context;
+        // We reuse this installer for 10 compilations or 200000 defined bytes. Usually the first condition
+        // will occur much earlier, the second is a safety measure for very large scripts/functions.
+        private final static int MAX_USAGES = 10;
+        private final static int MAX_BYTES_DEFINED = 200_000;
+
+        private ContextCodeInstaller(final Context context, final ScriptLoader loader, final CodeSource codeSource) {
+            this.context    = context;
+            this.loader     = loader;
             this.codeSource = codeSource;
         }
 
         @Override
         public Context getContext() {
             return context;
+        }
+
+        @Override
+        public Class<?> install(final String className, final byte[] bytecode) {
+            usageCount++;
+            bytesDefined += bytecode.length;
+            final String   binaryName = Compiler.binaryName(className);
+            return loader.installClass(binaryName, bytecode, codeSource);
         }
 
         @Override
@@ -266,149 +264,21 @@ public final class Context {
         }
 
         @Override
+        public CodeInstaller withNewLoader() {
+            // Reuse this installer if we're within our limits.
+            if (usageCount < MAX_USAGES && bytesDefined < MAX_BYTES_DEFINED) {
+                return this;
+            }
+            return new ContextCodeInstaller(context, context.createNewLoader(), codeSource);
+        }
+
+        @Override
         public boolean isCompatibleWith(final CodeInstaller other) {
             if (other instanceof ContextCodeInstaller) {
                 final ContextCodeInstaller cci = (ContextCodeInstaller)other;
                 return cci.context == context && cci.codeSource == codeSource;
             }
             return false;
-        }
-    }
-
-    private static class NamedContextCodeInstaller extends ContextCodeInstaller {
-        private final ScriptLoader loader;
-        private int usageCount = 0;
-        private int bytesDefined = 0;
-
-        // We reuse this installer for 10 compilations or 200000 defined bytes. Usually the first condition
-        // will occur much earlier, the second is a safety measure for very large scripts/functions.
-        private final static int MAX_USAGES = 10;
-        private final static int MAX_BYTES_DEFINED = 200_000;
-
-        private NamedContextCodeInstaller(final Context context, final CodeSource codeSource, final ScriptLoader loader) {
-            super(context, codeSource);
-            this.loader = loader;
-        }
-
-        @Override
-        public Class<?> install(final String className, final byte[] bytecode) {
-            usageCount++;
-            bytesDefined += bytecode.length;
-            NAMED_INSTALLED_SCRIPT_COUNT.increment();
-            return loader.installClass(Compiler.binaryName(className), bytecode, codeSource);
-        }
-
-        @Override
-        public CodeInstaller getOnDemandCompilationInstaller() {
-            // Reuse this installer if we're within our limits.
-            if (usageCount < MAX_USAGES && bytesDefined < MAX_BYTES_DEFINED) {
-                return this;
-            }
-            return new NamedContextCodeInstaller(context, codeSource, context.createNewLoader());
-        }
-
-        @Override
-        public CodeInstaller getMultiClassCodeInstaller() {
-            // This installer is perfectly suitable for installing multiple classes that reference each other
-            // as it produces classes with resolvable names, all defined in a single class loader.
-            return this;
-        }
-    }
-
-    private final Map<CodeSource, HostClassReference> anonymousHostClasses = new HashMap<>();
-    private final ReferenceQueue<Class<?>> anonymousHostClassesRefQueue = new ReferenceQueue<>();
-
-    private static class HostClassReference extends WeakReference<Class<?>> {
-        final CodeSource codeSource;
-
-        HostClassReference(final CodeSource codeSource, final Class<?> clazz, final ReferenceQueue<Class<?>> refQueue) {
-            super(clazz, refQueue);
-            this.codeSource = codeSource;
-        }
-    }
-
-    private synchronized Class<?> getAnonymousHostClass(final CodeSource codeSource) {
-        // Remove cleared entries
-        for(;;) {
-            final HostClassReference clearedRef = (HostClassReference)anonymousHostClassesRefQueue.poll();
-            if (clearedRef == null) {
-                break;
-            }
-            anonymousHostClasses.remove(clearedRef.codeSource, clearedRef);
-        }
-
-        // Try to find an existing host class
-        final Reference<Class<?>> ref = anonymousHostClasses.get(codeSource);
-        if (ref != null) {
-            final Class<?> existingHostClass = ref.get();
-            if (existingHostClass != null) {
-                return existingHostClass;
-            }
-        }
-
-        // Define a new host class if existing is not found
-        final Class<?> newHostClass = createNewLoader().installClass(
-                // NOTE: we're defining these constants in AnonymousContextCodeInstaller so they are not
-                // initialized if we don't use AnonymousContextCodeInstaller. As this method is only ever
-                // invoked from AnonymousContextCodeInstaller, this is okay.
-                AnonymousContextCodeInstaller.ANONYMOUS_HOST_CLASS_NAME,
-                AnonymousContextCodeInstaller.ANONYMOUS_HOST_CLASS_BYTES, codeSource);
-        anonymousHostClasses.put(codeSource, new HostClassReference(codeSource, newHostClass, anonymousHostClassesRefQueue));
-        return newHostClass;
-    }
-
-    private static final class AnonymousContextCodeInstaller extends ContextCodeInstaller {
-        private static final Unsafe UNSAFE = getUnsafe();
-        private static final String ANONYMOUS_HOST_CLASS_NAME = Compiler.SCRIPTS_PACKAGE.replace('/', '.') + ".AnonymousHost";
-        private static final byte[] ANONYMOUS_HOST_CLASS_BYTES = getAnonymousHostClassBytes();
-
-        private final Class<?> hostClass;
-
-        private AnonymousContextCodeInstaller(final Context context, final CodeSource codeSource, final Class<?> hostClass) {
-            super(context, codeSource);
-            this.hostClass = hostClass;
-        }
-
-        @Override
-        public Class<?> install(final String className, final byte[] bytecode) {
-            ANONYMOUS_INSTALLED_SCRIPT_COUNT.increment();
-            return UNSAFE.defineAnonymousClass(hostClass, bytecode, null);
-        }
-
-        @Override
-        public CodeInstaller getOnDemandCompilationInstaller() {
-            // This code loader can be indefinitely reused for on-demand recompilations for the same code source.
-            return this;
-        }
-
-        @Override
-        public CodeInstaller getMultiClassCodeInstaller() {
-            // This code loader can not be used to install multiple classes that reference each other, as they
-            // would have no resolvable names. Therefore, in such situation we must revert to an installer that
-            // produces named classes.
-            return new NamedContextCodeInstaller(context, codeSource, context.createNewLoader());
-        }
-
-        private static final byte[] getAnonymousHostClassBytes() {
-            final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            cw.visit(V1_7, Opcodes.ACC_INTERFACE | Opcodes.ACC_ABSTRACT, ANONYMOUS_HOST_CLASS_NAME.replace('.', '/'), null, "java/lang/Object", null);
-            cw.visitEnd();
-            return cw.toByteArray();
-        }
-
-        private static Unsafe getUnsafe() {
-            return AccessController.doPrivileged(new PrivilegedAction<Unsafe>() {
-                @Override
-                public Unsafe run() {
-                    try {
-                        final Field theUnsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-                        theUnsafeField.setAccessible(true);
-                        return (Unsafe)theUnsafeField.get(null);
-                    } catch (final ReflectiveOperationException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
         }
     }
 
@@ -664,7 +534,7 @@ public final class Context {
 
         final int cacheSize = env._class_cache_size;
         if (cacheSize > 0) {
-            classCache = new ClassCache(this, cacheSize);
+            classCache = new ClassCache(cacheSize);
         }
 
         if (env._persistent_cache) {
@@ -790,7 +660,7 @@ public final class Context {
      * @return reusable compiled script across many global scopes.
      */
     public MultiGlobalCompiledScript compileScript(final Source source) {
-        final Class<?> clazz = compile(source, this.errors, this._strict, false);
+        final Class<?> clazz = compile(source, this.errors, this._strict);
         final MethodHandle createProgramFunctionHandle = getCreateProgramFunctionHandle(clazz);
 
         return new MultiGlobalCompiledScript() {
@@ -844,7 +714,7 @@ public final class Context {
 
         Class<?> clazz = null;
         try {
-            clazz = compile(source, new ThrowErrorManager(), strictFlag, true);
+            clazz = compile(source, new ThrowErrorManager(), strictFlag);
         } catch (final ParserException e) {
             e.throwAsEcmaException(global);
             return null;
@@ -1075,16 +945,6 @@ public final class Context {
     }
 
     /**
-     * Is {@code className} the name of a structure class?
-     *
-     * @param className a class name
-     * @return true if className is a structure class name
-     */
-    public static boolean isStructureClass(final String className) {
-        return StructureLoader.isStructureClass(className);
-    }
-
-    /**
      * Checks that the given Class can be accessed from no permissions context.
      *
      * @param clazz Class object
@@ -1134,6 +994,16 @@ public final class Context {
                 }
             }, NO_PERMISSIONS_ACC_CTXT);
         }
+    }
+
+    /**
+     * Is {@code className} the name of a structure class?
+     *
+     * @param className a class name
+     * @return true if className is a structure class name
+     */
+    public static boolean isStructureClass(final String className) {
+        return StructureLoader.isStructureClass(className);
     }
 
     /**
@@ -1394,10 +1264,10 @@ public final class Context {
     }
 
     private ScriptFunction compileScript(final Source source, final ScriptObject scope, final ErrorManager errMan) {
-        return getProgramFunction(compile(source, errMan, this._strict, false), scope);
+        return getProgramFunction(compile(source, errMan, this._strict), scope);
     }
 
-    private synchronized Class<?> compile(final Source source, final ErrorManager errMan, final boolean strict, final boolean isEval) {
+    private synchronized Class<?> compile(final Source source, final ErrorManager errMan, final boolean strict) {
         // start with no errors, no warnings.
         errMan.reset();
 
@@ -1447,15 +1317,9 @@ public final class Context {
         }
 
         final URL          url    = source.getURL();
+        final ScriptLoader loader = env._loader_per_compile ? createNewLoader() : scriptLoader;
         final CodeSource   cs     = new CodeSource(url, (CodeSigner[])null);
-        final CodeInstaller installer;
-        if (!env.useAnonymousClasses(isEval) || env._persistent_cache || !env._lazy_compilation) {
-            // Persistent code cache and eager compilation preclude use of VM anonymous classes
-            final ScriptLoader loader = env._loader_per_compile ? createNewLoader() : scriptLoader;
-            installer = new NamedContextCodeInstaller(this, cs, loader);
-        } else {
-            installer = new AnonymousContextCodeInstaller(this, cs, getAnonymousHostClass(cs));
-        }
+        final CodeInstaller installer = new ContextCodeInstaller(this, loader, cs);
 
         if (storedScript == null) {
             final CompilationPhases phases = Compiler.CompilationPhases.COMPILE_ALL;
@@ -1499,23 +1363,17 @@ public final class Context {
      * Cache for compiled script classes.
      */
     @SuppressWarnings("serial")
-    @Logger(name="classcache")
-    private static class ClassCache extends LinkedHashMap<Source, ClassReference> implements Loggable {
+    private static class ClassCache extends LinkedHashMap<Source, ClassReference> {
         private final int size;
         private final ReferenceQueue<Class<?>> queue;
-        private final DebugLogger log;
 
-        ClassCache(final Context context, final int size) {
+        ClassCache(final int size) {
             super(size, 0.75f, true);
             this.size = size;
             this.queue = new ReferenceQueue<>();
-            this.log   = initLogger(context);
         }
 
         void cache(final Source source, final Class<?> clazz) {
-            if (log.isEnabled()) {
-                log.info("Caching ", source, " in class cache");
-            }
             put(source, new ClassReference(clazz, queue, source));
         }
 
@@ -1527,28 +1385,9 @@ public final class Context {
         @Override
         public ClassReference get(final Object key) {
             for (ClassReference ref; (ref = (ClassReference)queue.poll()) != null; ) {
-                final Source source = ref.source;
-                if (log.isEnabled()) {
-                    log.info("Evicting ", source, " from class cache.");
-                }
-                remove(source);
+                remove(ref.source);
             }
-
-            final ClassReference ref = super.get(key);
-            if (ref != null && log.isEnabled()) {
-                log.info("Retrieved class reference for ", ref.source, " from class cache");
-            }
-            return ref;
-        }
-
-        @Override
-        public DebugLogger initLogger(final Context context) {
-            return context.getLogger(getClass());
-        }
-
-        @Override
-        public DebugLogger getLogger() {
-            return log;
+            return super.get(key);
         }
 
     }

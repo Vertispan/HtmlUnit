@@ -306,8 +306,6 @@ public class JSONParser {
     private static Class<?> getType(final Object value) {
         if (value instanceof Integer) {
             return int.class;
-        } else if (value instanceof Long) {
-            return long.class;
         } else if (value instanceof Double) {
             return double.class;
         } else {
@@ -490,8 +488,6 @@ public class JSONParser {
         final double d = Double.parseDouble(source.substring(start, pos));
         if (JSType.isRepresentableAsInt(d)) {
             return (int) d;
-        } else if (JSType.isRepresentableAsLong(d)) {
-            return (long) d;
         }
         return d;
     }

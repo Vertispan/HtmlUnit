@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.gargoylesoftware.js.nashorn.api.scripting.AbstractJSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
@@ -167,8 +168,15 @@ public final class JSONListAdapter extends ListAdapter implements JSObject {
         return obj.toNumber();
     }
 
-    @Override
-    public Object getDefaultValue(Class<?> hint) throws UnsupportedOperationException {
-        return obj.getDefaultValue(hint);
+    /**
+     * Implements this object's {@code [[DefaultValue]]} method by returning its wrapped object's {@code [[DefaultValue]]}.
+     *
+     * @param hint the type hint. Should be either {@code null}, {@code Number.class} or {@code String.class}.
+     * @return the wrapped object's default value.
+     * @throws UnsupportedOperationException if the conversion can't be performed. The engine will convert this
+     * exception into a JavaScript {@code TypeError}.
+     */
+    public Object getDefaultValue(final Class<?> hint) {
+        return AbstractJSObject.getDefaultValue(obj, hint);
     }
 }

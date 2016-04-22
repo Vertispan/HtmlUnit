@@ -69,7 +69,7 @@ public class Block extends Node implements BreakableNode, Terminal, Flags<Block>
     /** Break label. */
     private final Label breakLabel;
 
-    /** Does the block/function need a new scope? Is this synthetic? */
+    /** Does the block/function need a new scope? */
     protected final int flags;
 
     /**
@@ -93,19 +93,13 @@ public class Block extends Node implements BreakableNode, Terminal, Flags<Block>
     public static final int IS_GLOBAL_SCOPE = 1 << 3;
 
     /**
-     * Is this block a synthetic one introduced by Parser?
-     */
-    public static final int IS_SYNTHETIC = 1 << 4;
-
-    /**
      * Constructor
      *
-     * @param token      The first token of the block
-     * @param finish     The index of the last character
-     * @param flags      The flags of the block
-     * @param statements All statements in the block
+     * @param token      token
+     * @param finish     finish
+     * @param statements statements
      */
-    public Block(final long token, final int finish, final int flags, final Statement... statements) {
+    public Block(final long token, final int finish, final Statement... statements) {
         super(token, finish);
 
         this.statements = Arrays.asList(statements);
@@ -113,52 +107,29 @@ public class Block extends Node implements BreakableNode, Terminal, Flags<Block>
         this.entryLabel = new Label("block_entry");
         this.breakLabel = new Label("block_break");
         final int len = statements.length;
-        final int terminalFlags = len > 0 && statements[len - 1].hasTerminalFlags() ? IS_TERMINAL : 0;
-        this.flags = terminalFlags | flags;
+        this.flags = len > 0 && statements[len - 1].hasTerminalFlags() ? IS_TERMINAL : 0;
         this.conversion = null;
-    }
-
-    /**
-     * Constructs a new block
-     *
-     * @param token The first token of the block
-     * @param finish The index of the last character
-     * @param statements All statements in the block
-     */
-    public Block(final long token, final int finish, final Statement...statements){
-        this(token, finish, IS_SYNTHETIC, statements);
-    }
-
-    /**
-     * Constructs a new block
-     *
-     * @param token The first token of the block
-     * @param finish The index of the last character
-     * @param statements All statements in the block
-     */
-    public Block(final long token, final int finish, final List<Statement> statements){
-        this(token, finish, IS_SYNTHETIC, statements);
     }
 
     /**
      * Constructor
      *
-     * @param token      The first token of the block
-     * @param finish     The index of the last character
-     * @param flags      The flags of the block
-     * @param statements All statements in the block
+     * @param token      token
+     * @param finish     finish
+     * @param statements statements
      */
-    public Block(final long token, final int finish, final int flags, final List<Statement> statements) {
-        this(token, finish, flags, statements.toArray(new Statement[statements.size()]));
+    public Block(final long token, final int finish, final List<Statement> statements) {
+        this(token, finish, statements.toArray(new Statement[statements.size()]));
     }
 
     private Block(final Block block, final int finish, final List<Statement> statements, final int flags, final Map<String, Symbol> symbols, final LocalVariableConversion conversion) {
-        super(block, finish);
+        super(block);
         this.statements = statements;
         this.flags      = flags;
         this.symbols    = new LinkedHashMap<>(symbols); //todo - symbols have no dependencies on any IR node and can as far as we understand it be shallow copied now
         this.entryLabel = new Label(block.entryLabel);
         this.breakLabel = new Label(block.breakLabel);
+        this.finish     = finish;
         this.conversion = conversion;
     }
 
@@ -235,7 +206,7 @@ public class Block extends Node implements BreakableNode, Terminal, Flags<Block>
      * @return symbol iterator
      */
     public List<Symbol> getSymbols() {
-        return symbols.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(symbols.values()));
+        return symbols.isEmpty() ? Collections.<Symbol>emptyList() : Collections.unmodifiableList(new ArrayList<>(symbols.values()));
     }
 
     /**
@@ -412,15 +383,6 @@ public class Block extends Node implements BreakableNode, Terminal, Flags<Block>
      */
     public boolean needsScope() {
         return (flags & NEEDS_SCOPE) == NEEDS_SCOPE;
-    }
-
-    /**
-     * Check whether this block is synthetic or not.
-     *
-     * @return true if this is a synthetic block
-     */
-    public boolean isSynthetic() {
-        return (flags & IS_SYNTHETIC) == IS_SYNTHETIC;
     }
 
     @Override

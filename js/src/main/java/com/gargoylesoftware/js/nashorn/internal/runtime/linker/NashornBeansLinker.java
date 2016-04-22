@@ -47,12 +47,12 @@ import java.lang.reflect.Modifier;
 
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.beans.BeansLinker;
+import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardingDynamicLinker;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.internal.dynalink.linker.MethodHandleTransformer;
-import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 import com.gargoylesoftware.js.internal.dynalink.support.DefaultInternalObjectFilter;
 import com.gargoylesoftware.js.internal.dynalink.support.Lookup;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptUtils;
@@ -221,6 +221,11 @@ public class NashornBeansLinker implements GuardingDynamicLinker {
         @Override
         public MethodHandle asType(final MethodHandle handle, final MethodType fromType) {
             return linkerServices.asType(handle, fromType);
+        }
+
+        @Override
+        public MethodHandle asTypeLosslessReturn(final MethodHandle handle, final MethodType fromType) {
+            return Implementation.asTypeLosslessReturn(this, handle, fromType);
         }
 
         @Override

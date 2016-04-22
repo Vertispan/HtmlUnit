@@ -55,7 +55,6 @@ import java.util.ResourceBundle;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornException;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler;
 import com.gargoylesoftware.js.nashorn.internal.codegen.Compiler.CompilationPhases;
-import com.gargoylesoftware.js.nashorn.internal.ir.Expression;
 import com.gargoylesoftware.js.nashorn.internal.ir.FunctionNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.ASTWriter;
 import com.gargoylesoftware.js.nashorn.internal.ir.debug.PrintVisitor;
@@ -73,7 +72,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 /**
  * Command line Shell for processing JavaScript files.
  */
-public class Shell implements PartialParser {
+public class Shell {
 
     /**
      * Resource name for properties file
@@ -82,7 +81,7 @@ public class Shell implements PartialParser {
     /**
      * Shell message bundle.
      */
-    protected static final ResourceBundle bundle = ResourceBundle.getBundle(MESSAGE_RESOURCE, Locale.getDefault());
+    private static final ResourceBundle bundle = ResourceBundle.getBundle(MESSAGE_RESOURCE, Locale.getDefault());
 
     /**
      * Exit code for command line tool - successful
@@ -408,49 +407,13 @@ public class Shell implements PartialParser {
     }
 
     /**
-     * Parse potentially partial code and keep track of the start of last expression.
-     * This 'partial' parsing support is meant to be used for code-completion.
-     *
-     * @param context the nashorn context
-     * @param code code that is to be parsed
-     * @return the start index of the last expression parsed in the (incomplete) code.
-     */
-    @Override
-    public final int getLastExpressionStart(final Context context, final String code) {
-        final int[] exprStart = { -1 };
-
-        final Parser p = new Parser(context.getEnv(), sourceFor("<partial_code>", code),new Context.ThrowErrorManager()) {
-            @Override
-            protected Expression expression() {
-                exprStart[0] = this.start;
-                return super.expression();
-            }
-
-            @Override
-            protected Expression assignmentExpression(final boolean noIn) {
-                exprStart[0] = this.start;
-                return super.expression();
-            }
-        };
-
-        try {
-            p.parse();
-        } catch (final Exception ignored) {
-            // throw any parser exception, but we are partial parsing anyway
-        }
-
-        return exprStart[0];
-    }
-
-
-    /**
      * read-eval-print loop for Nashorn shell.
      *
      * @param context the nashorn context
      * @param global  global scope object to use
      * @return return code
      */
-    protected int readEvalPrint(final Context context, final Global global) {
+    private static int readEvalPrint(final Context context, final Global global) {
         final String prompt = bundle.getString("shell.prompt");
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         final PrintWriter err = context.getErr();

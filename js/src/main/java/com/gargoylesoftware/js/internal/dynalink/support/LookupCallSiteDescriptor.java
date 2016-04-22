@@ -96,10 +96,9 @@
 package com.gargoylesoftware.js.internal.dynalink.support;
 
 import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
-
-import java.lang.invoke.MethodType;
 
 /**
  * A call site descriptor that stores a specific {@link Lookup}. It does not, however, store static bootstrap arguments.

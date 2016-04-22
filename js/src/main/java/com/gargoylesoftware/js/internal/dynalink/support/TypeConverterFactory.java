@@ -105,12 +105,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator;
+import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedTypeConversion;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardingTypeConverterFactory;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.internal.dynalink.linker.MethodTypeConversionStrategy;
-import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 
 /**
  * A factory for type converters. This class is the main implementation behind the
@@ -179,7 +179,7 @@ public class TypeConverterFactory {
         }
     };
 
-    private static ClassLoader getClassLoader(final Class<?> clazz) {
+    private static final ClassLoader getClassLoader(final Class<?> clazz) {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
             public ClassLoader run() {
@@ -311,7 +311,7 @@ public class TypeConverterFactory {
      * @return true if there can be a conversion, false if there can not.
      */
     public boolean canConvert(final Class<?> from, final Class<?> to) {
-        return canAutoConvert(from, to) || canConvert.get(from).get(to);
+        return canAutoConvert(from, to) || canConvert.get(from).get(to).booleanValue();
     }
 
     /**

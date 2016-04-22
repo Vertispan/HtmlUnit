@@ -666,7 +666,7 @@ public class LexicalContext {
      *
      * @return LabelNode if found, {@code null} otherwise.
      */
-    private LabelNode findLabel(final String name) {
+    public LabelNode findLabel(final String name) {
         for (final Iterator<LabelNode> iter = new NodeIterator<>(LabelNode.class, getCurrentFunction()); iter.hasNext(); ) {
             final LabelNode next = iter.next();
             if (next.getLabelName().equals(name)) {

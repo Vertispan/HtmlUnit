@@ -96,10 +96,9 @@
 package com.gargoylesoftware.js.internal.dynalink;
 
 import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.internal.dynalink.support.CallSiteDescriptorFactory;
-
-import java.lang.invoke.MethodType;
 
 /**
  * An immutable descriptor of a call site. It is an immutable object that contains all the information about a call
@@ -171,9 +170,7 @@ public interface CallSiteDescriptor {
     public MethodType getMethodType();
 
     /**
-     * Returns the lookup passed to the bootstrap method. If the lookup isn't the public lookup, the
-     * implementation must check the {@code RuntimePermission("dynalink.getLookup")} permission if a security
-     * manager is present.
+     * Returns the lookup passed to the bootstrap method.
      * @return the lookup passed to the bootstrap method.
      */
     public Lookup getLookup();

@@ -40,8 +40,6 @@ package com.gargoylesoftware.js.nashorn.api.scripting;
 import java.util.Collection;
 import java.util.Set;
 
-import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
-
 /**
  * This interface can be implemented by an arbitrary Java class. Nashorn will
  * treat objects of such classes just like nashorn script objects. Usual nashorn
@@ -55,7 +53,7 @@ public interface JSObject {
      * Call this object as a JavaScript function. This is equivalent to
      * 'func.apply(thiz, args)' in JavaScript.
      *
-     * @param thiz 'this' object to be passed to the function
+     * @param thiz 'this' object to be passed to the function. This may be null.
      * @param args arguments to method
      * @return result of call
      */
@@ -83,6 +81,7 @@ public interface JSObject {
      *
      * @param name of member
      * @return member
+     * @throws NullPointerException if name is null
      */
     public Object getMember(final String name);
 
@@ -114,6 +113,7 @@ public interface JSObject {
      * Remove a named member from this JavaScript object
      *
      * @param name name of the member
+     * @throws NullPointerException if name is null
      */
     public void removeMember(final String name);
 
@@ -122,6 +122,7 @@ public interface JSObject {
      *
      * @param name  name of the member
      * @param value value of the member
+     * @throws NullPointerException if name is null
      */
     public void setMember(final String name, final Object value);
 
@@ -199,22 +200,8 @@ public interface JSObject {
      * Returns this object's numeric value.
      *
      * @return this object's numeric value.
-     * @deprecated use {@link #getDefaultValue(Class)} with {@link Number} hint instead.
+     * @deprecated use {@link AbstractJSObject#getDefaultValue(JSObject, Class)} with {@link Number} hint instead.
      */
     @Deprecated
-    default double toNumber() {
-        return JSType.toNumber(JSType.toPrimitive(this, Number.class));
-    }
-
-    /**
-     * Implements this object's {@code [[DefaultValue]]} method as per ECMAScript 5.1 section 8.6.2.
-     *
-     * @param hint the type hint. Should be either {@code null}, {@code Number.class} or {@code String.class}.
-     * @return this object's default value.
-     * @throws UnsupportedOperationException if the conversion can't be performed. The engine will convert this
-     * exception into a JavaScript {@code TypeError}.
-     */
-    default Object getDefaultValue(final Class<?> hint) throws UnsupportedOperationException {
-        return DefaultValueImpl.getDefaultValue(this, hint);
-    }
+    public double toNumber();
 }

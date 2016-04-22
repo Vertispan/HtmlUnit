@@ -135,7 +135,7 @@ class OverloadedMethod {
         fixArgMethods = new ArrayList<>(methodHandles.size());
         varArgMethods = new ArrayList<>(methodHandles.size());
         final int argNum = callSiteType.parameterCount();
-        for(final MethodHandle mh: methodHandles) {
+        for(MethodHandle mh: methodHandles) {
             if(mh.isVarargsCollector()) {
                 final MethodHandle asFixed = mh.asFixedArity();
                 if(argNum == asFixed.type().parameterCount()) {

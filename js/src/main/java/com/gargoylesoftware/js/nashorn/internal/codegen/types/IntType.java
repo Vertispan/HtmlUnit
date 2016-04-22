@@ -85,7 +85,7 @@ class IntType extends BitwiseType {
 
     @Override
     public Type nextWider() {
-        return LONG;
+        return NUMBER;
     }
 
     @Override
@@ -102,7 +102,7 @@ class IntType extends BitwiseType {
     public Type ldc(final MethodVisitor method, final Object c) {
         assert c instanceof Integer;
 
-        final int value = ((Integer) c);
+        final int value = ((Integer) c).intValue();
 
         switch (value) {
         case -1:

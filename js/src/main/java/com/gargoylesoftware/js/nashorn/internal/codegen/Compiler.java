@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -195,7 +196,6 @@ public final class Compiler implements Loggable {
 
         private final static CompilationPhases COMPILE_CACHED_UPTO_BYTECODE = new CompilationPhases(
                 "After common phases, before bytecode generator",
-                CompilationPhase.DECLARE_LOCAL_SYMBOLS_PHASE,
                 CompilationPhase.OPTIMISTIC_TYPE_ASSIGNMENT_PHASE,
                 CompilationPhase.LOCAL_VARIABLE_TYPE_CALCULATION_PHASE
                 );
@@ -465,7 +465,7 @@ public final class Compiler implements Loggable {
         this.onDemand                 = isOnDemand;
         this.compiledFunction         = compiledFunction;
         this.types                    = types;
-        this.invalidatedProgramPoints = invalidatedProgramPoints == null ? new HashMap<>() : invalidatedProgramPoints;
+        this.invalidatedProgramPoints = invalidatedProgramPoints == null ? new HashMap<Integer, Type>() : invalidatedProgramPoints;
         this.typeInformationFile      = typeInformationFile;
         this.continuationEntryPoints  = continuationEntryPoints == null ? null: continuationEntryPoints.clone();
         this.typeEvaluator            = new TypeEvaluator(this, runtimeScope);
@@ -485,7 +485,7 @@ public final class Compiler implements Loggable {
 
         baseName = baseName.replace('.', '_').replace('-', '_');
         if (!env._loader_per_compile) {
-            baseName += installer.getUniqueScriptId();
+            baseName = baseName + installer.getUniqueScriptId();
         }
 
         // ASM's bytecode verifier does not allow JVM allowed safe escapes using '\' as escape char.
@@ -697,7 +697,7 @@ public final class Compiler implements Loggable {
 
             if (time > 0L && timeLogger != null) {
                 assert env.isTimingEnabled();
-                sb.append(" in ").append(time).append(" ms");
+                sb.append(" in ").append(TimeUnit.NANOSECONDS.toMillis(time)).append(" ms");
             }
             log.info(sb);
         }

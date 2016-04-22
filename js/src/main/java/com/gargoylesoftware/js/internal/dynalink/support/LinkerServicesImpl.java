@@ -98,12 +98,12 @@ package com.gargoylesoftware.js.internal.dynalink.support;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 
+import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardedInvocation;
 import com.gargoylesoftware.js.internal.dynalink.linker.GuardingDynamicLinker;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkerServices;
 import com.gargoylesoftware.js.internal.dynalink.linker.MethodHandleTransformer;
-import com.gargoylesoftware.js.internal.dynalink.linker.ConversionComparator.Comparison;
 
 /**
  * Default implementation of the {@link LinkerServices} interface.
@@ -142,6 +142,11 @@ public class LinkerServicesImpl implements LinkerServices {
     @Override
     public MethodHandle asType(final MethodHandle handle, final MethodType fromType) {
         return typeConverterFactory.asType(handle, fromType);
+    }
+
+    @Override
+    public MethodHandle asTypeLosslessReturn(final MethodHandle handle, final MethodType fromType) {
+        return Implementation.asTypeLosslessReturn(this, handle, fromType);
     }
 
     @Override

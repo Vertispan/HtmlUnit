@@ -53,11 +53,6 @@ import org.objectweb.asm.util.CheckClassAdapter;
  *
  */
 public class Main {
-    /**
-     * ASM version to be used by nasgen tool.
-     */
-    public static final int ASM_VERSION = Opcodes.ASM5;
-
     private static final boolean DEBUG = Boolean.getBoolean("nasgen.debug");
 
     private interface ErrorReporter {

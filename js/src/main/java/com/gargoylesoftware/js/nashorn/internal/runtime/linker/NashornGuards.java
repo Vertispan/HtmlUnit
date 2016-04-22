@@ -47,6 +47,7 @@ import com.gargoylesoftware.js.internal.dynalink.CallSiteDescriptor;
 import com.gargoylesoftware.js.internal.dynalink.linker.LinkRequest;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
+import com.gargoylesoftware.js.nashorn.internal.runtime.JSType;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
@@ -59,10 +60,9 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.options.Options;
 public final class NashornGuards {
     private static final MethodHandle IS_MAP              = findOwnMH("isMap", boolean.class, ScriptObject.class, PropertyMap.class);
     private static final MethodHandle IS_MAP_SCRIPTOBJECT = findOwnMH("isMap", boolean.class, Object.class, PropertyMap.class);
-    private static final MethodHandle IS_INSTANCEOF_2     = findOwnMH("isInstanceOf2", boolean.class, Object.class, Class.class, Class.class);
     private static final MethodHandle IS_SCRIPTOBJECT     = findOwnMH("isScriptObject", boolean.class, Object.class);
     private static final MethodHandle IS_NOT_JSOBJECT     = findOwnMH("isNotJSObject", boolean.class, Object.class);
-    private static final MethodHandle SAME_OBJECT       = findOwnMH("sameObject", boolean.class, Object.class, WeakReference.class);
+    private static final MethodHandle SAME_OBJECT         = findOwnMH("sameObject", boolean.class, Object.class, WeakReference.class);
     //TODO - maybe put this back in ScriptFunction instead of the ClassCastException.class relinkage
     //private static final MethodHandle IS_SCRIPTFUNCTION = findOwnMH("isScriptFunction", boolean.class, Object.class);
 
@@ -178,14 +178,21 @@ public final class NashornGuards {
     }
 
     /**
-     * Get a guard that checks if in item is an instance of either of two classes.
+     * Get a guard that checks if in item is a JS string.
      *
-     * @param class1 the first class
-     * @param class2 the second class
      * @return method handle for guard
      */
-    public static MethodHandle getInstanceOf2Guard(final Class<?> class1, final Class<?> class2) {
-        return MH.insertArguments(IS_INSTANCEOF_2, 1, class1, class2);
+    public static MethodHandle getStringGuard() {
+        return JSType.IS_STRING.methodHandle();
+    }
+
+    /**
+     * Get a guard that checks if in item is a JS number.
+     *
+     * @return method handle for guard
+     */
+    public static MethodHandle getNumberGuard() {
+        return JSType.IS_NUMBER.methodHandle();
     }
 
     /**
@@ -234,11 +241,6 @@ public final class NashornGuards {
     @SuppressWarnings("unused")
     private static boolean sameObject(final Object self, final WeakReference<ScriptObject> ref) {
         return self == ref.get();
-    }
-
-    @SuppressWarnings("unused")
-    private static boolean isInstanceOf2(final Object self, final Class<?> class1, final Class<?> class2) {
-        return class1.isInstance(self) || class2.isInstance(self);
     }
 
     @SuppressWarnings("unused")

@@ -64,7 +64,7 @@ public abstract class Node implements Cloneable, Serializable {
     protected final int start;
 
     /** End of source range. */
-    protected final int finish;
+    protected int finish;
 
     /** Token descriptor. */
     private final long token;
@@ -103,18 +103,6 @@ public abstract class Node implements Cloneable, Serializable {
         this.token  = node.token;
         this.start  = node.start;
         this.finish = node.finish;
-    }
-
-    /**
-     * Copy constructor that overrides finish
-     *
-     * @param node source node
-     * @param finish Last character
-     */
-    protected Node(final Node node, final int finish) {
-        this.token = node.token;
-        this.start = node.start;
-        this.finish = finish;
     }
 
     /**
@@ -197,22 +185,19 @@ public abstract class Node implements Cloneable, Serializable {
     }
 
     /**
+     * Set finish position for this node in the source string
+     * @param finish finish
+     */
+    public void setFinish(final int finish) {
+        this.finish = finish;
+    }
+
+    /**
      * Get start position for node
      * @return start position
      */
     public int getStart() {
         return start;
-    }
-
-    /**
-     * Integer to sort nodes in source order. This order is
-     * used by parser API to sort statements in correct order.
-     * By default, this is the start position of this node.
-     *
-     * @return int code to sort this node.
-     */
-    public int getSourceOrder() {
-        return getStart();
     }
 
     @Override

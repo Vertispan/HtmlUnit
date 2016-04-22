@@ -143,7 +143,7 @@ public final class NativeFloat64Array extends ArrayBufferView {
 
         @Override
         public MethodHandle getElementGetter(final Class<?> returnType, final int programPoint) {
-            if (returnType == int.class || returnType == long.class) {
+            if (returnType == int.class) {
                 return null;
             }
             return getContinuousElementGetter(getClass(), GET_ELEM, returnType, programPoint);
@@ -152,11 +152,6 @@ public final class NativeFloat64Array extends ArrayBufferView {
         @Override
         public int getInt(final int index) {
             return (int)getDouble(index);
-        }
-
-        @Override
-        public long getLong(final int index) {
-            return (long)getDouble(index);
         }
 
         @Override
@@ -181,11 +176,6 @@ public final class NativeFloat64Array extends ArrayBufferView {
 
         @Override
         public ArrayData set(final int index, final int value, final boolean strict) {
-            return set(index, (double)value, strict);
-        }
-
-        @Override
-        public ArrayData set(final int index, final long value, final boolean strict) {
             return set(index, (double)value, strict);
         }
 

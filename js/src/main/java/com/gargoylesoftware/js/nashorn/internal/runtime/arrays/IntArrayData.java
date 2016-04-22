@@ -151,7 +151,7 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
         final Object[] oarray = new Object[trim ? len : array.length];
 
         for (int index = 0; index < len; index++) {
-            oarray[index] = array[index];
+            oarray[index] = Integer.valueOf(array[index]);
         }
 
         return oarray;
@@ -169,22 +169,6 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
         return darray;
     }
 
-    private long[] toLongArray() {
-        assert length() <= array.length : "length exceeds internal array size";
-        final int len = (int)length();
-        final long[] larray = new long[array.length];
-
-        for (int index = 0; index < len; index++) {
-            larray[index] = array[index];
-        }
-
-        return larray;
-    }
-
-    private LongArrayData convertToLong() {
-        return new LongArrayData(toLongArray(), (int)length());
-    }
-
     private NumberArrayData convertToDouble() {
         return new NumberArrayData(toDoubleArray(), (int)length());
     }
@@ -197,8 +181,6 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
     public ArrayData convert(final Class<?> type) {
         if (type == Integer.class || type == Byte.class || type == Short.class) {
             return this;
-        } else if (type == Long.class) {
-            return convertToLong();
         } else if (type == Double.class || type == Float.class) {
             return convertToDouble();
         } else {
@@ -266,17 +248,6 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
     }
 
     @Override
-    public ArrayData set(final int index, final long value, final boolean strict) {
-        if (JSType.isRepresentableAsInt(value)) {
-            array[index] = JSType.toInt32(value);
-            setLength(Math.max(index + 1, length()));
-            return this;
-        }
-
-        return convert(Long.class).set(index, value, strict);
-    }
-
-    @Override
     public ArrayData set(final int index, final double value, final boolean strict) {
         if (JSType.isRepresentableAsInt(value)) {
             array[index] = (int)(long)value;
@@ -294,16 +265,6 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
 
     @Override
     public int getIntOptimistic(final int index, final int programPoint) {
-        return array[index];
-    }
-
-    @Override
-    public long getLong(final int index) {
-        return array[index];
-    }
-
-    @Override
-    public long getLongOptimistic(final int index, final int programPoint) {
         return array[index];
     }
 
@@ -392,7 +353,7 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
     }
 
     @Override
-    public long fastPush(final int arg) {
+    public double fastPush(final int arg) {
         final int len = (int)length();
         if (len == array.length) {
             array = Arrays.copyOf(array, nextSize(len));
@@ -411,11 +372,6 @@ final class IntArrayData extends ContinuousArrayData implements IntElements {
         final int elem = array[newLength];
         array[newLength] = 0;
         return elem;
-    }
-
-    @Override
-    public long fastPopLong() {
-        return fastPopInt();
     }
 
     @Override

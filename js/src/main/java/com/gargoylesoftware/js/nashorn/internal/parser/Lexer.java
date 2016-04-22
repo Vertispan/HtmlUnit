@@ -38,7 +38,6 @@
 package com.gargoylesoftware.js.nashorn.internal.parser;
 
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.ADD;
-import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.BINARY_NUMBER;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.COMMENT;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.DECIMAL;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.DIRECTIVE_COMMENT;
@@ -53,7 +52,6 @@ import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.HEXADECI
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.LBRACE;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.LPAREN;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.OCTAL;
-import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.OCTAL_LEGACY;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.RBRACE;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.REGEX;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.RPAREN;
@@ -89,9 +87,6 @@ public class Lexer extends Scanner {
 
     /** True if here and edit strings are supported. */
     private final boolean scripting;
-
-    /** True if parsing in ECMAScript 6 mode. */
-    private final boolean es6;
 
     /** True if a nested scan. (scan to completion, no EOF.) */
     private final boolean nested;
@@ -191,7 +186,7 @@ public class Lexer extends Scanner {
      * @param stream    the token stream to lex
      */
     public Lexer(final Source source, final TokenStream stream) {
-        this(source, stream, false, false);
+        this(source, stream, false);
     }
 
     /**
@@ -200,10 +195,9 @@ public class Lexer extends Scanner {
      * @param source    the source
      * @param stream    the token stream to lex
      * @param scripting are we in scripting mode
-     * @param es6       are we in ECMAScript 6 mode
      */
-    public Lexer(final Source source, final TokenStream stream, final boolean scripting, final boolean es6) {
-        this(source, 0, source.getLength(), stream, scripting, es6, false);
+    public Lexer(final Source source, final TokenStream stream, final boolean scripting) {
+        this(source, 0, source.getLength(), stream, scripting, false);
     }
 
     /**
@@ -214,18 +208,16 @@ public class Lexer extends Scanner {
      * @param len       length of source segment to lex
      * @param stream    token stream to lex
      * @param scripting are we in scripting mode
-     * @param es6       are we in ECMAScript 6 mode
      * @param pauseOnFunctionBody if true, lexer will return from {@link #lexify()} when it encounters a
      * function body. This is used with the feature where the parser is skipping nested function bodies to
      * avoid reading ahead unnecessarily when we skip the function bodies.
      */
 
-    public Lexer(final Source source, final int start, final int len, final TokenStream stream, final boolean scripting, final boolean es6, final boolean pauseOnFunctionBody) {
+    public Lexer(final Source source, final int start, final int len, final TokenStream stream, final boolean scripting, final boolean pauseOnFunctionBody) {
         super(source.getContent(), 1, start, len);
         this.source      = source;
         this.stream      = stream;
         this.scripting   = scripting;
-        this.es6         = es6;
         this.nested      = false;
         this.pendingLine = 1;
         this.last        = EOL;
@@ -239,7 +231,6 @@ public class Lexer extends Scanner {
         source = lexer.source;
         stream = lexer.stream;
         scripting = lexer.scripting;
-        es6 = lexer.es6;
         nested = true;
 
         pendingLine = state.pendingLine;
@@ -1064,11 +1055,7 @@ public class Lexer extends Scanner {
      */
     private static Number valueOf(final String valueString, final int radix) throws NumberFormatException {
         try {
-            final long value = Long.parseLong(valueString, radix);
-            if(value >= MIN_INT_L && value <= MAX_INT_L) {
-                return (int)value;
-            }
-            return value;
+            return Integer.parseInt(valueString, radix);
         } catch (final NumberFormatException e) {
             if (radix == 10) {
                 return Double.valueOf(valueString);
@@ -1110,24 +1097,6 @@ public class Lexer extends Scanner {
             }
 
             type = HEXADECIMAL;
-        } else if (digit == 0 && es6 && (ch1 == 'o' || ch1 == 'O') && convertDigit(ch2, 8) != -1) {
-            // Skip over 0oN.
-            skip(3);
-            // Skip over remaining digits.
-            while (convertDigit(ch0, 8) != -1) {
-                skip(1);
-            }
-
-            type = OCTAL;
-        } else if (digit == 0 && es6 && (ch1 == 'b' || ch1 == 'B') && convertDigit(ch2, 2) != -1) {
-            // Skip over 0bN.
-            skip(3);
-            // Skip over remaining digits.
-            while (convertDigit(ch0, 2) != -1) {
-                skip(1);
-            }
-
-            type = BINARY_NUMBER;
         } else {
             // Check for possible octal constant.
             boolean octal = digit == 0;
@@ -1145,7 +1114,7 @@ public class Lexer extends Scanner {
             }
 
             if (octal && position - start > 1) {
-                type = OCTAL_LEGACY;
+                type = OCTAL;
             } else if (ch0 == '.' || ch0 == 'E' || ch0 == 'e') {
                 // Must be a double.
                 if (ch0 == '.') {
@@ -1677,14 +1646,10 @@ public class Lexer extends Scanner {
         switch (Token.descType(token)) {
         case DECIMAL:
             return Lexer.valueOf(source.getString(start, len), 10); // number
+        case OCTAL:
+            return Lexer.valueOf(source.getString(start, len), 8); // number
         case HEXADECIMAL:
             return Lexer.valueOf(source.getString(start + 2, len - 2), 16); // number
-        case OCTAL_LEGACY:
-            return Lexer.valueOf(source.getString(start, len), 8); // number
-        case OCTAL:
-            return Lexer.valueOf(source.getString(start + 2, len - 2), 8); // number
-        case BINARY_NUMBER:
-            return Lexer.valueOf(source.getString(start + 2, len - 2), 2); // number
         case FLOATING:
             final String str   = source.getString(start, len);
             final double value = Double.valueOf(str);
@@ -1699,8 +1664,6 @@ public class Lexer extends Scanner {
             //yet we don't want e.g. 1e6 to be a double unnecessarily
             if (JSType.isStrictlyRepresentableAsInt(value)) {
                 return (int)value;
-            } else if (JSType.isStrictlyRepresentableAsLong(value)) {
-                return (long)value;
             }
             return value;
         case STRING:

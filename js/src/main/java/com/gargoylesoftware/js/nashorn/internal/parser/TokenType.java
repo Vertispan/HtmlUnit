@@ -182,10 +182,8 @@ public enum TokenType {
     YIELD          (FUTURESTRICT,  "yield"),
 
     DECIMAL        (LITERAL,  null),
-    HEXADECIMAL    (LITERAL,  null),
-    OCTAL_LEGACY   (LITERAL,  null),
     OCTAL          (LITERAL,  null),
-    BINARY_NUMBER  (LITERAL,  null),
+    HEXADECIMAL    (LITERAL,  null),
     FLOATING       (LITERAL,  null),
     STRING         (LITERAL,  null),
     ESCSTRING      (LITERAL,  null),

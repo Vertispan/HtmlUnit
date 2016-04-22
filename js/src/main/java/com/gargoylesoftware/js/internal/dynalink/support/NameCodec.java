@@ -176,7 +176,7 @@ public class NameCodec {
             }
         }
         if(b == null) {
-            return name;
+            return name.toString();
         }
         assert lastEscape != -1;
         b.append(name, lastEscape + 1, l);
