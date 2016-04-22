@@ -289,18 +289,7 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     }
 
     if (BrowserType.IE.equals(browserName)) {
-      // Try and convert the version
-      try {
-        int version = Integer.parseInt(browserVersion);
-        switch (version) {
-          case 8:
-            return BrowserVersion.INTERNET_EXPLORER_8;
-          default:
-            return BrowserVersion.INTERNET_EXPLORER_11;
-        }
-      } catch (NumberFormatException e) {
-        return BrowserVersion.INTERNET_EXPLORER_11;
-      }
+        return BrowserVersion.INTERNET_EXPLORER;
     }
 
     return BrowserVersion.getDefault();
@@ -1665,6 +1654,10 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     public void maximize() {
       setSize(initialWindowDimension);
       setPosition(new Point(0, 0));
+    }
+
+    @Override
+    public void fullscreen() {
     }
   }
 

@@ -32,6 +32,7 @@ import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -965,5 +966,10 @@ public class HtmlUnitWebElement implements WrapsDriver,
   public <X> X getScreenshotAs(OutputType<X> outputType) throws WebDriverException {
     throw new UnsupportedOperationException(
       "Screenshots are not enabled for HtmlUnitDriver");
+  }
+
+  @Override
+  public Rectangle getRect() {
+      return null;
   }
 }
