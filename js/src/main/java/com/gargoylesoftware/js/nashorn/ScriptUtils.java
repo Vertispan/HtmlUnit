@@ -15,6 +15,7 @@ package com.gargoylesoftware.js.nashorn;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Setter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
@@ -37,73 +39,78 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 public class ScriptUtils {
 
     public static void initialize(final ScriptObject scriptObject) {
-        final boolean isPrototype = scriptObject instanceof PrototypeObject;
+        //final boolean isPrototype = scriptObject instanceof PrototypeObject;
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
         Class<?> enclosingClass = scriptObject.getClass().getEnclosingClass();
-        boolean enclosing = false;
         if (enclosingClass == null) {
             enclosingClass = scriptObject.getClass();
-            enclosing = true;
         }
         final List<Property> list = new ArrayList<>(2);
 
         final Method[] allMethods = enclosingClass.getDeclaredMethods();
+        final Field[] allFields = enclosingClass.getDeclaredFields();
         final Map<String, Method> setters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (final Method method : allMethods) {
-            if (!enclosing) {
-                for (final Function function : method.getAnnotationsByType(Function.class)) {
-                    if (isSupported(function.value(), browserFamily, browserVersion)) {
-                        final String methodName = method.getName();
-                        list.add(AccessorProperty.create(methodName, function.attributes(), 
-                                virtualHandle(scriptObject.getClass(), "G$" + methodName,
-                                        ScriptFunction.class),
-                                virtualHandle(scriptObject.getClass(), "S$" + methodName,
-                                        void.class, ScriptFunction.class)));
-                        try {
-                            final ScriptFunction scriptFunction =
-                                    ScriptFunction.createBuiltin(method.getName(), lookup.unreflect(method));
-                            final MethodHandle handle =
-                                    lookup.findSetter(scriptObject.getClass(), methodName, ScriptFunction.class);
-                            handle.invoke(scriptObject, scriptFunction);
-                        }
-                        catch(final Throwable t) {
-                            throw new RuntimeException(t);
-                        }
+            for (final Function function : method.getAnnotationsByType(Function.class)) {
+                if (isSupported(scriptObject, function.where(), function.value(), browserFamily, browserVersion)) {
+                    final String methodName = method.getName();
+                    list.add(AccessorProperty.create(methodName, function.attributes(), 
+                            virtualHandle(scriptObject.getClass(), "G$" + methodName,
+                                    ScriptFunction.class),
+                            virtualHandle(scriptObject.getClass(), "S$" + methodName,
+                                    void.class, ScriptFunction.class)));
+                    try {
+                        final ScriptFunction scriptFunction =
+                                ScriptFunction.createBuiltin(method.getName(), lookup.unreflect(method));
+                        final MethodHandle handle =
+                                lookup.findSetter(scriptObject.getClass(), methodName, ScriptFunction.class);
+                        handle.invoke(scriptObject, scriptFunction);
+                    }
+                    catch(final Throwable t) {
+                        throw new RuntimeException(t);
                     }
                 }
             }
-            if (!isPrototype) {
-                for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
-                    if (isSupported(setter.value(), browserFamily, browserVersion)) {
-                        String fieldName = method.getName().substring(3);
-                        fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-                        setters.put(fieldName, method);
-                    }
+            for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
+                if (isSupported(scriptObject, setter.where(), setter.value(), browserFamily, browserVersion)) {
+                    String fieldName = method.getName().substring(3);
+                    fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+                    setters.put(fieldName, method);
                 }
             }
         }
-        if (!isPrototype) {
-            for (final Method method : allMethods) {
-                for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
-                    if (isSupported(getter.value(), browserFamily, browserVersion)) {
-                        MethodHandle setter = null;
-                        String fieldName = method.getName().substring(3);
-                        fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-                        final Method setterMethod = setters.get(fieldName);
+        for (final Field field : allFields) {
+            for (final com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property property
+                    : field.getAnnotationsByType(
+                            com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property.class)) {
+                if (isSupported(scriptObject, property.where(), property.value(), browserFamily, browserVersion)) {
+                    final String propertyName = field.getName();
+                    list.add(AccessorProperty.create(propertyName, property.attributes(), 
+                            virtualHandle(scriptObject.getClass(), "G$" + propertyName,
+                                    int.class), null));
+                }
+            }
+        }
+        for (final Method method : allMethods) {
+            for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
+                if (isSupported(scriptObject, getter.where(), getter.value(), browserFamily, browserVersion)) {
+                    MethodHandle setter = null;
+                    String fieldName = method.getName().substring(3);
+                    fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+                    final Method setterMethod = setters.get(fieldName);
 
-                        try {
-                            if (setterMethod != null) {
-                                setter = lookup.unreflect(setterMethod);
-                            }
-                            list.add(AccessorProperty.create(fieldName, getter.attributes(), 
-                                    lookup.unreflect(method),
-                                    setter));
+                    try {
+                        if (setterMethod != null) {
+                            setter = lookup.unreflect(setterMethod);
                         }
-                        catch (final IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        }
+                        list.add(AccessorProperty.create(fieldName, getter.attributes(), 
+                                lookup.unreflect(method),
+                                setter));
+                    }
+                    catch (final IllegalAccessException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -120,8 +127,16 @@ public class ScriptUtils {
         }
     }
 
-    private static boolean isSupported(final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
+    private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
             final int expectedBrowserVersion) {
+        
+        if (where == Where.PROTOTYPE && !(scriptObject instanceof PrototypeObject)
+                || where != Where.PROTOTYPE && scriptObject instanceof PrototypeObject
+                || where == Where.CONSTRUCTOR && scriptObject.getClass().getEnclosingClass() == null
+                || where == Where.INSTANCE && scriptObject.getClass().getEnclosingClass() != null) {
+            return false;
+        }
+
         for (final WebBrowser browser : browsers) {
             if (browser.value() == expectedBrowserFamily
                     && browser.minVersion() <= expectedBrowserVersion
