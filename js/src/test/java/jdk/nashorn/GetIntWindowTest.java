@@ -1,5 +1,3 @@
-package jdk.nashorn;
-
 /*
  * Copyright (c) 2016 Gargoyle Software Inc.
  *
@@ -12,6 +10,7 @@ package jdk.nashorn;
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * version 2 for more details (http://www.gnu.org/licenses/).
  */
+package jdk.nashorn;
 
 import static org.junit.Assert.assertEquals;
 
