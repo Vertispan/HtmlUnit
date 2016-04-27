@@ -829,7 +829,7 @@ public final class ScriptObjectMirror extends AbstractJSObject implements Bindin
 
     // package-privates below this.
 
-    ScriptObjectMirror(final ScriptObject sobj, final Global global) {
+    public ScriptObjectMirror(final ScriptObject sobj, final Global global) {
         this(sobj, global, false);
     }
 

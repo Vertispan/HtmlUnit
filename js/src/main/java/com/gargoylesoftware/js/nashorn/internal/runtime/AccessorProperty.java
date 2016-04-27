@@ -500,7 +500,7 @@ public class AccessorProperty extends Property {
     }
 
     @Override
-    void initMethodHandles(final Class<?> structure) {
+    public void initMethodHandles(final Class<?> structure) {
         // sanity check for structure class
         if (!ScriptObject.class.isAssignableFrom(structure) || !StructureLoader.isStructureClass(structure.getName())) {
             throw new IllegalArgumentException();

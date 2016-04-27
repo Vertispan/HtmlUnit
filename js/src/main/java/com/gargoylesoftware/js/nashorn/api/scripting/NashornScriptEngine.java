@@ -352,7 +352,7 @@ public final class NashornScriptEngine extends AbstractScriptEngine implements C
     }
 
     // Create a new Nashorn Global object
-    private Global createNashornGlobal() {
+    public Global createNashornGlobal() {
         final Global newGlobal = AccessController.doPrivileged(new PrivilegedAction<Global>() {
             @Override
             public Global run() {
