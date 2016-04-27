@@ -25,6 +25,10 @@ import org.apache.commons.io.FileUtils;
 public class CodeUpdater {
 
     public static void main(final String[] args) throws Exception {
+        if (!new File("../nashorn").exists()) {
+            System.err.println("Nashron does not exist");
+            return;
+        }
         process(new File("../nashorn/src"), true);
         process(new File("../nashorn/buildtools/nasgen/src"), false);
     }
@@ -34,17 +38,24 @@ public class CodeUpdater {
             if (file.isDirectory()) {
                 process(file, isMain);
             }
-            else if (file.getName().endsWith(".java") && !file.getName().equals("package-info.java")) {
+            else if (accept(file)) {
                 processFile(file, isMain);
             }
         }
+    }
+
+    private static boolean accept(final File file) {
+        final String name = file.getName();
+        return (name.endsWith(".java") && !name.equals("package-info.java"))
+            || name.endsWith(".properties") || name.endsWith(".js");
     }
 
     private static void processFile(final File originalFile, final boolean isMain) throws IOException {
         String relativePath = originalFile.getPath().replace('\\', '/');
         relativePath = "com/gargoylesoftware/js/"
                 + relativePath.substring(relativePath.indexOf("/jdk/") + "/jdk/".length());
-        final String root = isMain ? "src/main/java/" : "src/test/java/";
+        final String root = (isMain ? "src/main/" : "src/test/")
+                + (relativePath.endsWith(".java") ? "java/" : "resources/");
         final File localFile = new File(root + relativePath);
         if (!localFile.exists()) {
             System.out.println("File doesn't locally exist: " + relativePath);
