@@ -4,3 +4,8 @@ It is currently based on Nashorn code from http://hg.openjdk.java.net/jdk8u/jdk8
 as of 22 April 2016
 
 jdk9 code depends on Java 9
+
+- Global is the mandatory 'this' or 'top level' object in Nashorn, and it is with a one-to-one relation with Window.
+HtmlUnit uses window, and Nashorn calls Global.
+- ScriptConext is one per WebWindow.
+- The entry point of dynamic linking is DynamicLinker (specially .relink()). 
