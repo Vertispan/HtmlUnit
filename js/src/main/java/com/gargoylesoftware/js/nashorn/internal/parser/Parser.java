@@ -59,7 +59,6 @@ import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.INCPOSTF
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.LBRACE;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.LET;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.LPAREN;
-import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.PERIOD;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.RBRACE;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.RBRACKET;
 import static com.gargoylesoftware.js.nashorn.internal.parser.TokenType.RPAREN;
@@ -104,7 +103,6 @@ import com.gargoylesoftware.js.nashorn.internal.ir.IndexNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.JoinPredecessorExpression;
 import com.gargoylesoftware.js.nashorn.internal.ir.LabelNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContext;
-import com.gargoylesoftware.js.nashorn.internal.ir.LexicalContextNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LiteralNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.LoopNode;
 import com.gargoylesoftware.js.nashorn.internal.ir.Node;
@@ -459,32 +457,7 @@ loop:
      * @return New block.
      */
     private Block newBlock() {
-        final LexicalContextNode node = lc.peek();
-        final Block block = lc.push(new Block(token, Token.descPosition(token)));
-        if (node instanceof FunctionNode && !((FunctionNode) node).isProgram()) {
-            // appends the arguments statement to all function nodes.
-            lc.appendStatement(getArgumentsStatement(block));
-        }
-        return block;
-    }
-
-    /**
-     * Generates an assignment statement of {@code arguments.callee.arguments = arguments;}.
-     */
-    private Statement getArgumentsStatement(final Block block) {
-        final int position = Token.descPosition(block.getToken());
-        final int lineNumber = block.getFirstStatementLineNumber();
-
-        final IdentNode arguments = new IdentNode(Token.toDesc(IDENT, position, 0), position, "arguments");
-        final AccessNode argumentsCallee
-            = new AccessNode(Token.toDesc(PERIOD, position, 0), position, arguments, "callee");
-        final AccessNode lhs
-            = new AccessNode(Token.toDesc(PERIOD, position, 0), position, argumentsCallee, "arguments");
-        final IdentNode rhs =  new IdentNode(Token.toDesc(IDENT, position, 0), position, "arguments");
-        final Expression expression = new BinaryNode(Token.toDesc(ASSIGN, position, 0), lhs, rhs);
-        final ExpressionStatement expressionStatement = new ExpressionStatement(lineNumber,
-                Token.toDesc(IDENT, position, 0), position, expression);
-        return expressionStatement;
+        return lc.push(new Block(token, Token.descPosition(token)));
     }
 
     /**

@@ -1999,7 +1999,10 @@ public final class Global extends Scope {
      * @return the new array
      */
     public static ScriptObject allocateArguments(final Object[] arguments, final Object callee, final int numParams) {
-        return NativeArguments.allocate(arguments, (ScriptFunction)callee, numParams);
+        final ScriptFunction function = (ScriptFunction) callee;
+        final ScriptObject argumentsScriptObject = NativeArguments.allocate(arguments, function, numParams);
+        function.addOwnProperty("arguments", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, argumentsScriptObject);
+        return argumentsScriptObject;
     }
 
     /**
