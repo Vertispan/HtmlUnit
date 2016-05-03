@@ -8,4 +8,8 @@ jdk9 code depends on Java 9
 - Global is the mandatory 'this' or 'top level' object in Nashorn, and it is with a one-to-one relation with Window.
 HtmlUnit uses window, and Nashorn calls Global.
 - ScriptConext is one per WebWindow.
-- The entry point of dynamic linking is DynamicLinker (specially .relink()). 
+- The entry point of dynamic linking is DynamicLinker (specially .relink()).
+
+
+Main customizations:
+- Function.arguments should always exist (can be detected by arguments.callee.arguments).

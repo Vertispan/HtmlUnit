@@ -768,7 +768,7 @@ public final class FunctionNode extends LexicalContextExpression implements Flag
     public boolean needsArguments() {
         // uses "arguments" or calls eval, but it does not redefine "arguments", and finally, it's not a script, since
         // for top-level script, "arguments" is picked up from Context by Global.init() instead.
-        return getFlag(MAYBE_NEEDS_ARGUMENTS) && !getFlag(DEFINES_ARGUMENTS) && !isProgram();
+        return /*getFlag(MAYBE_NEEDS_ARGUMENTS) &&*/ !getFlag(DEFINES_ARGUMENTS) && !isProgram();
     }
 
     /**
