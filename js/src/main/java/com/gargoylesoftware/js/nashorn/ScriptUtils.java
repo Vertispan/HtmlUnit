@@ -18,6 +18,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,16 +40,15 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 public class ScriptUtils {
 
     public static void initialize(final ScriptObject scriptObject) {
-        //final boolean isPrototype = scriptObject instanceof PrototypeObject;
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
         Class<?> enclosingClass = scriptObject.getClass().getEnclosingClass();
         if (enclosingClass == null) {
             enclosingClass = scriptObject.getClass();
         }
-        final List<Property> list = new ArrayList<>(2);
+        final List<Property> list = new ArrayList<>();
 
-        final Method[] allMethods = enclosingClass.getDeclaredMethods();
+        final Method[] allMethods = getAllMethods(scriptObject, enclosingClass);
         final Field[] allFields = enclosingClass.getDeclaredFields();
         final Map<String, Method> setters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -116,6 +116,21 @@ public class ScriptUtils {
             }
         }
         scriptObject.setMap(PropertyMap.newMap(list));
+    }
+
+    /**
+     * For {@code instances}, return all declared methods including in super classes, which is needed
+     * for setting the {@code getter} and {@code setter} at {@code Where#INSTANCE}.
+     */
+    private static Method[] getAllMethods(final ScriptObject scriptObject, final Class<?> enclosingClass) {
+        if (scriptObject.getClass().getEnclosingClass() != null) {
+            return enclosingClass.getDeclaredMethods();
+        }
+        final List<Method> list = new ArrayList<>();
+        for (Class<?> klass = enclosingClass; klass != null; klass = klass.getSuperclass()) {
+            Collections.addAll(list, klass.getDeclaredMethods());
+        }
+        return list.toArray(new Method[list.size()]);
     }
 
     private static MethodHandle virtualHandle(final Class<?> klass, final String name, final Class<?> rtype, final Class<?>... ptypes) {
