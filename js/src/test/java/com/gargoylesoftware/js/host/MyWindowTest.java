@@ -36,7 +36,7 @@ public class MyWindowTest {
 
     @Test
     public void addEventListener() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 45);
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
         test("[object Object]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
@@ -78,6 +78,7 @@ public class MyWindowTest {
                 windowProto = (ScriptObject) global.get("Window");
             }
             window.setProto(windowProto);
+            global.setWindow(window);
 
             global.put("window", window, true);
         }
@@ -113,5 +114,14 @@ public class MyWindowTest {
     private void setProto(final Global global, final String childName, final ScriptObject parentObject) {
         final ScriptObject childObject = (ScriptObject) global.get(childName);
         childObject.setProto(parentObject);
+    }
+
+    @Test
+    public void equal() throws Exception {
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
+        test("true", "this === window", chrome);
+        test("true", "window === this", chrome);
+        test("true", "this == window", chrome);
+        test("true", "window == this", chrome);
     }
 }
