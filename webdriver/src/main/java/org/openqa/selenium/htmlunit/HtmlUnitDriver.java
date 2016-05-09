@@ -655,14 +655,11 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
   public Object executeScript(final String script, final Object... args) {
     HtmlPage page = getPageToInjectScriptInto();
 
-    JSObject result;
     try {
-        result = (JSObject) page.executeJavaScript(script).getJavaScriptResult();
+        return page.executeJavaScript(script).getJavaScriptResult();
     } catch (Throwable ex) {
       throw new WebDriverException(ex);
     }
-
-    return parseNativeJavascriptResult(result);
   }
 
   @Override
