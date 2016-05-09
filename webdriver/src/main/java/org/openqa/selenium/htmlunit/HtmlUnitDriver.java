@@ -111,6 +111,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.html.DocumentProxy;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLCollection;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
+import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Undefined;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -656,7 +657,11 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     HtmlPage page = getPageToInjectScriptInto();
 
     try {
-        return page.executeJavaScript(script).getJavaScriptResult();
+        Object object = page.executeJavaScript(script).getJavaScriptResult();
+        if (object instanceof ScriptObjectMirror) {
+            object = parseNativeJavascriptResult((ScriptObjectMirror) object);
+        }
+        return object;
     } catch (Throwable ex) {
       throw new WebDriverException(ex);
     }
@@ -804,11 +809,9 @@ public class HtmlUnitDriver implements WebDriver, JavascriptExecutor,
     Object item(int index);
   }
 
-  private Object parseNativeJavascriptResult(JSObject result) {
-      if (result != null) {
-          if (result.isArray()) {
-              return result.values();
-          }
+  private Object parseNativeJavascriptResult(ScriptObjectMirror result) {
+      if (result != null && result.isArray()) {
+          return result.values();
       }
       return result;
   }
