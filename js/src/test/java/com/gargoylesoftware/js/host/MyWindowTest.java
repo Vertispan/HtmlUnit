@@ -18,13 +18,15 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Field;
 
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
 import javax.script.SimpleScriptContext;
 
 import org.junit.Test;
 
+import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngine;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
+import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
+import com.gargoylesoftware.js.nashorn.internal.objects.NativeArray;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
@@ -47,16 +49,26 @@ public class MyWindowTest {
     }
 
     private void test(final String expected, final String script, final Browser browser) throws Exception {
-        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        initGlobal(engine, browser);
-        final Object object = engine.eval(script);
-        assertEquals(expected, object == null ? "null" : object.toString());
+        final NashornScriptEngine engine = createEngine();
+        final ScriptContext scriptContext = initGlobal(engine, browser);
+        evaluate(engine, scriptContext, expected, script, browser);
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
+    private NashornScriptEngine createEngine() {
+        return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
+    }
+
+    private ScriptContext evaluate(final NashornScriptEngine engine, final ScriptContext scriptContext, final String expected, final String script, final Browser browser) throws Exception {
+        final Object object = engine.eval(script, scriptContext);
+        assertEquals(expected, object == null ? "null" : object.toString());
+        return scriptContext;
+    }
+
+    private ScriptContext initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
         Browser.setCurrent(browser);
-        final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
-        final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
+        final Global global = engine.createNashornGlobal();
+        final ScriptContext scriptContext = new SimpleScriptContext();
+        scriptContext.setBindings(new ScriptObjectMirror(global, global), ScriptContext.ENGINE_SCOPE);
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
@@ -81,17 +93,11 @@ public class MyWindowTest {
             global.setWindow(window);
 
             global.put("window", window, true);
+            return scriptContext;
         }
         finally {
             Context.setGlobal(oldGlobal);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T get(final Object o, final String fieldName) throws Exception {
-        final Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return (T) field.get(o);
     }
 
     private void setProto(final Global global, final String childName, final String parentName) {
@@ -123,5 +129,34 @@ public class MyWindowTest {
         test("true", "window === this", chrome);
         test("true", "this == window", chrome);
         test("true", "window == this", chrome);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T get(final Object o, final String fieldName) throws Exception {
+        final Field field = o.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (T) field.get(o);
+    }
+
+    @Test
+    public void calledTwice() throws Exception {
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
+        final String s = "function info(msg) {\n"
+                + "  (function(t){var x = window.__huCatchedAlerts; x = x ? x : []; window.__huCatchedAlerts = x; x.push(String(t))})(msg);"
+            + "};\n"
+            + "info('a');\n"
+            + "info('b')";
+
+        final NashornScriptEngine engine = createEngine();
+        final ScriptContext scriptContext = initGlobal(engine, chrome);
+        engine.eval(s, scriptContext);
+
+        final String s2 = "window.__huCatchedAlerts";
+        final ScriptObjectMirror som = (ScriptObjectMirror) engine.eval(s2, scriptContext);
+        final NativeArray result = get(som, "sobj");
+
+        assertEquals(2, result.getLength());
+        assertEquals("a", result.get(0));
+        assertEquals("b", result.get(1));
     }
 }
