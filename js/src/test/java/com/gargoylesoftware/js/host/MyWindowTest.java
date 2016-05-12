@@ -51,17 +51,12 @@ public class MyWindowTest {
     private void test(final String expected, final String script, final Browser browser) throws Exception {
         final NashornScriptEngine engine = createEngine();
         final ScriptContext scriptContext = initGlobal(engine, browser);
-        evaluate(engine, scriptContext, expected, script, browser);
+        final Object object = engine.eval(script, scriptContext);
+        assertEquals(expected, object == null ? "null" : object.toString());
     }
 
     private NashornScriptEngine createEngine() {
         return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
-    }
-
-    private ScriptContext evaluate(final NashornScriptEngine engine, final ScriptContext scriptContext, final String expected, final String script, final Browser browser) throws Exception {
-        final Object object = engine.eval(script, scriptContext);
-        assertEquals(expected, object == null ? "null" : object.toString());
-        return scriptContext;
     }
 
     private ScriptContext initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
