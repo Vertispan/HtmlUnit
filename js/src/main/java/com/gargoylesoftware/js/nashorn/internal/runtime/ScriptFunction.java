@@ -66,6 +66,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.NativeFunction;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.Bootstrap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornCallSiteDescriptor;
+import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornGuards;
 import com.gargoylesoftware.js.nashorn.internal.runtime.logging.DebugLogger;
 
 /**
@@ -1316,4 +1317,27 @@ public class ScriptFunction extends ScriptObject {
     private static MethodHandle findOwnMH_V(final String name, final Class<?> rtype, final Class<?>... types) {
         return MH.findVirtual(MethodHandles.lookup(), ScriptFunction.class, name, MH.type(rtype, types));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GuardedInvocation noSuchProperty(final CallSiteDescriptor desc, final LinkRequest request) {
+        final String name = desc.getNameToken(CallSiteDescriptor.NAME_OPERAND);
+        if ("arguments".equals(name)) {
+            final MethodHandle mh = findOwnMH_V("getNullProperty", Object.class);
+            final boolean explicitInstanceOfCheck = NashornGuards.explicitInstanceOfCheck(desc, request);
+            return new GuardedInvocation(mh,
+                    NashornGuards.getMapGuard(getMap(), explicitInstanceOfCheck),
+                    getProtoSwitchPoints(name, null),
+                    explicitInstanceOfCheck ? null : ClassCastException.class);
+        }
+        return super.noSuchProperty(desc, request);
+    }
+
+    @SuppressWarnings("unused")
+    private Object getNullProperty() {
+        return null;
+    }
+
 }
