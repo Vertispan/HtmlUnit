@@ -976,7 +976,7 @@ public final class Global extends Scope {
     }
 
     @Override
-    protected Context getContext() {
+    public Context getContext() {
         return context;
     }
 
