@@ -231,9 +231,9 @@ public class AccessorProperty extends Property {
         // or known type getter/setter. No invalidations will take place
 
         final Class<?> getterType = getter.type().returnType();
-        final Class<?> setterType = setter == null ? null : setter.type().parameterType(1);
+        //final Class<?> setterType = setter == null ? null : setter.type().parameterType(1);
 
-        assert setterType == null || setterType == getterType;
+        //assert setterType == null || setterType == getterType;
 
         if (getterType == int.class) {
             primitiveGetter = MH.asType(getter, Lookup.GET_PRIMITIVE_TYPE);
