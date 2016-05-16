@@ -51,6 +51,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.LinkerCallSite;
 
 
@@ -197,6 +199,10 @@ public abstract class ScriptFunctionData implements Serializable {
     }
 
     String toSource() {
+        final Browser browser = Browser.getCurrent();
+        if (browser.getFamily() == BrowserFamily.FF) {
+            return "function " + (name == null ? "" : name) + "() {\n    [native code]\n}";
+        }
         return "function " + (name == null ? "" : name) + "() { [native code] }";
     }
 
