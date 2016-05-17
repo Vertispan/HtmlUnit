@@ -45,11 +45,7 @@ public class ObjectHost1 extends ScriptObject {
 
     public static final class Constructor extends SimpleObjectConstructor {
         public Constructor() {
-            ScriptUtils.initialize(this);
-        }
-
-        public String getClassName() {
-            return "ObjectHost1";
+            super("ObjectHost1");
         }
     }
 }

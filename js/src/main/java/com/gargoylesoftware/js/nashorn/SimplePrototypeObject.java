@@ -25,7 +25,13 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
  */
 public class SimplePrototypeObject extends PrototypeObject {
 
+    private final String className_;
     private Map<String, ScriptFunction> map_ = new HashMap<>();
+
+    protected SimplePrototypeObject(final String className) {
+        className_ = className;
+        ScriptUtils.initialize(this);
+    }
 
     /**
      * Returns the {@code ScriptFunction} with the specified {@code functionName}.
@@ -45,4 +51,11 @@ public class SimplePrototypeObject extends PrototypeObject {
         map_.put(functionName, function);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getClassName() {
+        return className_;
+    }
 }

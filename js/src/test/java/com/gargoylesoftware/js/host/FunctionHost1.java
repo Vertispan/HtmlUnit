@@ -95,11 +95,7 @@ public class FunctionHost1 extends ScriptObject {
 
     public static final class Prototype extends SimplePrototypeObject {
         Prototype() {
-            ScriptUtils.initialize(this);
-        }
-
-        public String getClassName() {
-            return "FunctionHost1";
+            super("FunctionHost1");
         }
     }
 }

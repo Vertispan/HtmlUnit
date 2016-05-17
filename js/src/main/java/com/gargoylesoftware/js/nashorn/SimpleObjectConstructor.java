@@ -25,7 +25,13 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
  */
 public class SimpleObjectConstructor extends ScriptObject {
 
+    private final String className_;
     private Map<String, ScriptFunction> map_ = new HashMap<>();
+
+    protected SimpleObjectConstructor(final String className) {
+        className_ = className;
+        ScriptUtils.initialize(this);
+    }
 
     /**
      * Returns the {@code ScriptFunction} with the specified {@code functionName}.
@@ -43,6 +49,21 @@ public class SimpleObjectConstructor extends ScriptObject {
      */
     public void setScriptFunction(final ScriptFunction function, final String functionName) {
         map_.put(functionName, function);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getClassName() {
+        return className_;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getDefaultValue(final Class<?> typeHint) {
+        return "[object " + getClassName() + "]";
     }
 
 }
