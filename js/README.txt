@@ -12,4 +12,7 @@ HtmlUnit uses window, and Nashorn calls Global.
 
 
 Main customizations:
-- Function.arguments should always exist (can be detected by arguments.callee.arguments).
+- Function.arguments should always exist (can be detected by arguments.callee.arguments):
+  fixed in Global.allocateArguments() and FunctionNode.needsArguments()
+- Handle return statements outside function:
+  fixed in Parser.returnStatement()

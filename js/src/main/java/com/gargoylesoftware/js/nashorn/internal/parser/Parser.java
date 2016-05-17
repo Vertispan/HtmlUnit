@@ -1555,7 +1555,10 @@ loop:
     private void returnStatement() {
         // check for return outside function
         if (lc.getCurrentFunction().getKind() == FunctionNode.Kind.SCRIPT) {
-            throw error(AbstractParser.message("invalid.return"));
+            nextOrEOL();
+            expressionStatement();
+            return;
+//            throw error(AbstractParser.message("invalid.return"));
         }
 
         // Capture RETURN token.
