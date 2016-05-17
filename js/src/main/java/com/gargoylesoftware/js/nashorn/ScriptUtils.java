@@ -39,6 +39,16 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 public class ScriptUtils {
 
+    private static final MethodHandle SIMPLE_PROTOTYPE_GETTER_ = virtualHandle(SimplePrototypeObject.class, "getScriptFunction",
+            ScriptFunction.class, String.class);
+    private static final MethodHandle SIMPLE_PROTOTYPE_SETTER_ = virtualHandle(SimplePrototypeObject.class, "setScriptFunction",
+            void.class, ScriptFunction.class, String.class);
+
+    private static final MethodHandle SIMPLE_CONSTRUCTOR_GETTER_ = virtualHandle(SimpleObjectConstructor.class, "getScriptFunction",
+            ScriptFunction.class, String.class);
+    private static final MethodHandle SIMPLE_CONSTRUCTOR_SETTER_ = virtualHandle(SimpleObjectConstructor.class, "setScriptFunction",
+            void.class, ScriptFunction.class, String.class);
+
     public static void initialize(final ScriptObject scriptObject) {
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
@@ -56,10 +66,16 @@ public class ScriptUtils {
             for (final Function function : method.getAnnotationsByType(Function.class)) {
                 if (isSupported(scriptObject, function.where(), function.value(), browserFamily, browserVersion)) {
                     final String functionName = method.getName();
-                    final MethodHandle getter = virtualHandle(scriptObject.getClass(), "G$" + functionName,
-                            ScriptFunction.class);
-                    final MethodHandle setter = virtualHandle(scriptObject.getClass(), "S$" + functionName,
-                            void.class, ScriptFunction.class);
+                    final MethodHandle getter;
+                    final MethodHandle setter;
+                    if (scriptObject instanceof SimplePrototypeObject) {
+                        getter = MethodHandles.insertArguments(SIMPLE_PROTOTYPE_GETTER_, 1, functionName);
+                        setter = MethodHandles.insertArguments(SIMPLE_PROTOTYPE_SETTER_, 2, functionName);
+                    }
+                    else {
+                        getter = MethodHandles.insertArguments(SIMPLE_CONSTRUCTOR_GETTER_, 1, functionName);
+                        setter = MethodHandles.insertArguments(SIMPLE_CONSTRUCTOR_SETTER_, 2, functionName);
+                    }
 
                     int attributes = function.attributes();
                     attributes |= Property.NOT_ENUMERABLE;
