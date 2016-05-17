@@ -148,7 +148,8 @@ public class ScriptUtils {
     private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
             final int expectedBrowserVersion) {
         
-        if (where == Where.PROTOTYPE && scriptObject.getClass().getEnclosingClass() == null
+        if (where == Where.PROTOTYPE
+                && (scriptObject.getClass().getEnclosingClass() == null || scriptObject instanceof ScriptFunction)
                 || where != Where.PROTOTYPE && scriptObject instanceof PrototypeObject
                 || where == Where.CONSTRUCTOR && scriptObject.getClass().getEnclosingClass() == null
                 || where == Where.INSTANCE && scriptObject.getClass().getEnclosingClass() != null) {
