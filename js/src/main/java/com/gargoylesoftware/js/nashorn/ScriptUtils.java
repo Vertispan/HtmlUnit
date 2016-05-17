@@ -65,7 +65,13 @@ public class ScriptUtils {
         for (final Method method : allMethods) {
             for (final Function function : method.getAnnotationsByType(Function.class)) {
                 if (isSupported(scriptObject, function.where(), function.value(), browserFamily, browserVersion)) {
-                    final String functionName = method.getName();
+                    final String functionName;
+                    if (function.name().isEmpty()) {
+                        functionName = method.getName();
+                    }
+                    else {
+                        functionName = function.name();
+                    }
                     final MethodHandle getter;
                     final MethodHandle setter;
                     if (scriptObject instanceof SimplePrototypeObject) {
