@@ -90,20 +90,20 @@ public class FunctionHostTest {
     @Test
     public void browserInMethods() throws Exception {
         final String script = "FunctionHost1.prototype.someMethod()";
-        test("CHROME", script, new Browser(BrowserFamily.CHROME, 45));
+        test("CHROME", script, new Browser(BrowserFamily.CHROME, 50));
         test("IE", script, new Browser(BrowserFamily.IE, 11));
     }
 
     @Test
     public void browserSpecificFunction() throws Exception {
         final String script = "typeof new FunctionHost1().inChromeOnly";
-        test("function", script, new Browser(BrowserFamily.CHROME, 45));
+        test("function", script, new Browser(BrowserFamily.CHROME, 50));
         test("undefined", script, new Browser(BrowserFamily.IE, 11));
     }
 
     @Test
     public void browserSpecificGetter() throws Exception {
-        test("1", "new FunctionHost1().length", new Browser(BrowserFamily.CHROME, 45));
+        test("1", "new FunctionHost1().length", new Browser(BrowserFamily.CHROME, 50));
         test("2", "new FunctionHost1().length", new Browser(BrowserFamily.IE, 11));
         test("true", "new FunctionHost1().length === undefined", new Browser(BrowserFamily.IE, 8));
         test("true", "new FunctionHost1().length === undefined", new Browser(BrowserFamily.FF, 38));
@@ -112,7 +112,7 @@ public class FunctionHostTest {
     @Test
     public void browserSpecificGetterType() throws Exception {
         final String script = "typeof new FunctionHost1().length";
-        test("number", script, new Browser(BrowserFamily.CHROME, 45));
+        test("number", script, new Browser(BrowserFamily.CHROME, 50));
         test("number", script, new Browser(BrowserFamily.IE, 11));
         test("undefined", script, new Browser(BrowserFamily.IE, 8));
         test("undefined", script, new Browser(BrowserFamily.FF, 38));
