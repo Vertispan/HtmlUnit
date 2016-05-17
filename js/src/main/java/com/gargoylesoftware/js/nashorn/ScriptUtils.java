@@ -55,18 +55,21 @@ public class ScriptUtils {
         for (final Method method : allMethods) {
             for (final Function function : method.getAnnotationsByType(Function.class)) {
                 if (isSupported(scriptObject, function.where(), function.value(), browserFamily, browserVersion)) {
-                    final String methodName = method.getName();
-                    list.add(AccessorProperty.create(methodName, function.attributes(), 
-                            virtualHandle(scriptObject.getClass(), "G$" + methodName,
-                                    ScriptFunction.class),
-                            virtualHandle(scriptObject.getClass(), "S$" + methodName,
-                                    void.class, ScriptFunction.class)));
+                    final String functionName = method.getName();
+                    final MethodHandle getter = virtualHandle(scriptObject.getClass(), "G$" + functionName,
+                            ScriptFunction.class);
+                    final MethodHandle setter = virtualHandle(scriptObject.getClass(), "S$" + functionName,
+                            void.class, ScriptFunction.class);
+
+                    int attributes = function.attributes();
+                    attributes |= Property.NOT_ENUMERABLE;
+
+                    list.add(AccessorProperty.create(functionName, attributes, getter, setter));
+
                     try {
                         final ScriptFunction scriptFunction =
                                 ScriptFunction.createBuiltin(method.getName(), lookup.unreflect(method));
-                        final MethodHandle handle =
-                                lookup.findSetter(scriptObject.getClass(), methodName, ScriptFunction.class);
-                        handle.invoke(scriptObject, scriptFunction);
+                        setter.invoke(scriptObject, scriptFunction);
                     }
                     catch(final Throwable t) {
                         throw new RuntimeException(t);
@@ -145,7 +148,7 @@ public class ScriptUtils {
     private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
             final int expectedBrowserVersion) {
         
-        if (where == Where.PROTOTYPE && !(scriptObject instanceof PrototypeObject)
+        if (where == Where.PROTOTYPE && scriptObject.getClass().getEnclosingClass() == null
                 || where != Where.PROTOTYPE && scriptObject instanceof PrototypeObject
                 || where == Where.CONSTRUCTOR && scriptObject.getClass().getEnclosingClass() == null
                 || where == Where.INSTANCE && scriptObject.getClass().getEnclosingClass() != null) {
