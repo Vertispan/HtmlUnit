@@ -16,13 +16,13 @@ import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.Brows
 import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
 
 import com.gargoylesoftware.js.nashorn.ScriptUtils;
+import com.gargoylesoftware.js.nashorn.SimpleObjectConstructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
-import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 @ScriptClass("ObjectHost1")
@@ -43,26 +43,7 @@ public class ObjectHost1 extends ScriptObject {
         return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
     }
 
-    public static final class Constructor extends ScriptObject {
-        public ScriptFunction parentMethod;
-        public ScriptFunction inChromeOnly;
-
-        public ScriptFunction G$parentMethod() {
-            return this.parentMethod;
-        }
-
-        public void S$parentMethod(final ScriptFunction function) {
-            this.parentMethod = function;
-        }
-
-        public ScriptFunction G$inChromeOnly() {
-            return this.inChromeOnly;
-        }
-
-        public void S$inChromeOnly(final ScriptFunction function) {
-            this.inChromeOnly = function;
-        }
-
+    public static final class Constructor extends SimpleObjectConstructor {
         public Constructor() {
             ScriptUtils.initialize(this);
         }

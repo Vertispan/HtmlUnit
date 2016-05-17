@@ -20,6 +20,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.nashorn.ScriptUtils;
+import com.gargoylesoftware.js.nashorn.SimplePrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
@@ -77,26 +78,7 @@ public class FunctionHost2 extends ScriptObject {
         }
     }
 
-    public static final class Prototype extends PrototypeObject {
-        public ScriptFunction someMethod2;
-        public ScriptFunction inChromeOnly2;
-
-        public ScriptFunction G$someMethod2() {
-            return this.someMethod2;
-        }
-
-        public void S$someMethod2(final ScriptFunction function) {
-            this.someMethod2 = function;
-        }
-
-        public ScriptFunction G$inChromeOnly2() {
-            return this.inChromeOnly2;
-        }
-
-        public void S$inChromeOnly2(final ScriptFunction function) {
-            this.inChromeOnly2 = function;
-        }
-
+    public static final class Prototype extends SimplePrototypeObject {
         Prototype() {
             ScriptUtils.initialize(this);
         }

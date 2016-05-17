@@ -62,7 +62,7 @@ public class FunctionHostTest {
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
-            global.put("FunctionHost1", new FunctionHost1.Constructor(), true);
+            global.put("FunctionHost1", new FunctionHost1.FunctionConstructor(), true);
             global.put("FunctionHost2", new FunctionHost2.Constructor(), true);
             setProto(global, "FunctionHost2", "FunctionHost1");
         }

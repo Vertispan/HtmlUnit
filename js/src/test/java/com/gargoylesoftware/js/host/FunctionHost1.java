@@ -20,6 +20,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.nashorn.ScriptUtils;
+import com.gargoylesoftware.js.nashorn.SimplePrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
@@ -81,8 +82,8 @@ public class FunctionHost1 extends ScriptObject {
         }
     }
 
-    public static final class Constructor extends ScriptFunction {
-        public Constructor() {
+    public static final class FunctionConstructor extends ScriptFunction {
+        public FunctionConstructor() {
             super("FunctionHost1", 
                     staticHandle("constructor", FunctionHost1.class, boolean.class, Object.class),
                     null);
@@ -92,26 +93,7 @@ public class FunctionHost1 extends ScriptObject {
         }
     }
 
-    public static final class Prototype extends PrototypeObject {
-        public ScriptFunction someMethod;
-        public ScriptFunction inChromeOnly;
-
-        public ScriptFunction G$someMethod() {
-            return this.someMethod;
-        }
-
-        public void S$someMethod(final ScriptFunction function) {
-            this.someMethod = function;
-        }
-
-        public ScriptFunction G$inChromeOnly() {
-            return this.inChromeOnly;
-        }
-
-        public void S$inChromeOnly(final ScriptFunction function) {
-            this.inChromeOnly = function;
-        }
-
+    public static final class Prototype extends SimplePrototypeObject {
         Prototype() {
             ScriptUtils.initialize(this);
         }
