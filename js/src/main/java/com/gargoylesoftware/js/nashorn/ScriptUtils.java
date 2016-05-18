@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
@@ -121,7 +122,7 @@ public class ScriptUtils {
         for (final Method method : allMethods) {
             for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
                 if (isSupported(scriptObject, getter.where(), getter.value(), browserFamily, browserVersion)) {
-                    MethodHandle setter = null;
+                    MethodHandle setter = Lookup.EMPTY_SETTER;
                     String fieldName = method.getName().substring(3);
                     fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
                     final Method setterMethod = setters.get(fieldName);
