@@ -23,7 +23,7 @@ import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 public class ParserTest {
 
     /**
-     * Gracefully handle {@code return} statements in .
+     * Gracefully handle {@code return} statements outside function.
      */
     @Test
     public void returnStatement() throws Exception {
