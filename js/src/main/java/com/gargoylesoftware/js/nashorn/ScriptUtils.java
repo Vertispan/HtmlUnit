@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
+import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
@@ -49,6 +50,9 @@ public class ScriptUtils {
             ScriptFunction.class, String.class);
     private static final MethodHandle SIMPLE_CONSTRUCTOR_SETTER_ = virtualHandle(SimpleObjectConstructor.class, "setScriptFunction",
             void.class, ScriptFunction.class, String.class);
+
+    private static final MethodHandle SETTER_ = staticHandle(ScriptUtils.class, "set",
+            void.class, ScriptObject.class, Object.class, String.class);
 
     public static void initialize(final ScriptObject scriptObject) {
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
@@ -122,15 +126,22 @@ public class ScriptUtils {
         for (final Method method : allMethods) {
             for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
                 if (isSupported(scriptObject, getter.where(), getter.value(), browserFamily, browserVersion)) {
-                    MethodHandle setter = Lookup.EMPTY_SETTER;
-                    String fieldName = method.getName().substring(3);
-                    fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-                    final Method setterMethod = setters.get(fieldName);
-
                     try {
+                        String fieldName = method.getName().substring(3);
+                        fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+
+                        final MethodHandle setter;
+                        final Method setterMethod = setters.get(fieldName);
                         if (setterMethod != null) {
                             setter = lookup.unreflect(setterMethod);
                         }
+                        else if (browserFamily != BrowserFamily.IE) {
+                            setter = Lookup.EMPTY_SETTER;
+                        }
+                        else {
+                            setter = MethodHandles.insertArguments(SETTER_, 2, fieldName);
+                        }
+
                         list.add(AccessorProperty.create(fieldName, getter.attributes(), 
                                 lookup.unreflect(method),
                                 setter));
@@ -187,6 +198,31 @@ public class ScriptUtils {
             }
         }
         return false;
+    }
+
+    private static MethodHandle staticHandle(final Class<?> klass, final String name, final Class<?> rtype, final Class<?>... ptypes) {
+        try {
+            return MethodHandles.lookup().findStatic(klass, name, MethodType.methodType(rtype, ptypes));
+        }
+        catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Sets property of an object.
+     * @param self this object
+     * @param value the value
+     * @param name the property name
+     */
+    public static void set(final ScriptObject self, final Object value, final String name) {
+        self.addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
+        if (self instanceof Global) {
+            ((Global) self).getWindow().addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
+        }
+        if (self == Global.instance().getWindow()) {
+            Global.instance().addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
+        }
     }
 
 }
