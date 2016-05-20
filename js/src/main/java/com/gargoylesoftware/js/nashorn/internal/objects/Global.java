@@ -3447,6 +3447,11 @@ public final class Global extends Scope {
         return __LINE__;
     }
 
+    @Override
+    public GuardedInvocation noSuchProperty(final CallSiteDescriptor desc, final LinkRequest request) {
+        return getWindow().noSuchProperty(desc, request);
+    }
+
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(Global.class,
