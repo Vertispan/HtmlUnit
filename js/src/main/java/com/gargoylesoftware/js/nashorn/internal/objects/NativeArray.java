@@ -210,22 +210,22 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
     private static InvokeByName getJOIN() {
         return Global.instance().getInvokeByName(JOIN,
                 new Callable<InvokeByName>() {
-                    @Override
-                    public InvokeByName call() {
-                        return new InvokeByName("join", ScriptObject.class);
-                    }
-                });
+            @Override
+            public InvokeByName call() {
+                return new InvokeByName("join", ScriptObject.class);
+            }
+        });
     }
 
     private static MethodHandle createIteratorCallbackInvoker(final Object key, final Class<?> rtype) {
         return Global.instance().getDynamicInvoker(key,
-            new Callable<MethodHandle>() {
-                @Override
-                public MethodHandle call() {
-                    return Bootstrap.createDynamicInvoker("dyn:call", rtype, Object.class, Object.class, Object.class,
+                new Callable<MethodHandle>() {
+            @Override
+            public MethodHandle call() {
+                return Bootstrap.createDynamicInvoker("dyn:call", rtype, Object.class, Object.class, Object.class,
                         double.class, Object.class);
-                }
-            });
+            }
+        });
     }
 
     private static MethodHandle getEVERY_CALLBACK_INVOKER() {
@@ -251,33 +251,33 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
     private static MethodHandle getREDUCE_CALLBACK_INVOKER() {
         return Global.instance().getDynamicInvoker(REDUCE_CALLBACK_INVOKER,
                 new Callable<MethodHandle>() {
-                    @Override
-                    public MethodHandle call() {
-                        return Bootstrap.createDynamicInvoker("dyn:call", Object.class, Object.class,
-                             Undefined.class, Object.class, Object.class, double.class, Object.class);
-                    }
-                });
+            @Override
+            public MethodHandle call() {
+                return Bootstrap.createDynamicInvoker("dyn:call", Object.class, Object.class,
+                        Undefined.class, Object.class, Object.class, double.class, Object.class);
+            }
+        });
     }
 
     private static MethodHandle getCALL_CMP() {
         return Global.instance().getDynamicInvoker(CALL_CMP,
                 new Callable<MethodHandle>() {
-                    @Override
-                    public MethodHandle call() {
-                        return Bootstrap.createDynamicInvoker("dyn:call", double.class,
-                            ScriptFunction.class, Object.class, Object.class, Object.class);
-                    }
-                });
+            @Override
+            public MethodHandle call() {
+                return Bootstrap.createDynamicInvoker("dyn:call", double.class,
+                        Object.class, Object.class, Object.class, Object.class);
+            }
+        });
     }
 
     private static InvokeByName getTO_LOCALE_STRING() {
         return Global.instance().getInvokeByName(TO_LOCALE_STRING,
                 new Callable<InvokeByName>() {
-                    @Override
-                    public InvokeByName call() {
-                        return new InvokeByName("toLocaleString", ScriptObject.class, String.class);
-                    }
-                });
+            @Override
+            public InvokeByName call() {
+                return new InvokeByName("toLocaleString", ScriptObject.class, String.class);
+            }
+        });
     }
 
     // initialized by nasgen
@@ -1237,23 +1237,23 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
         return copy;
     }
 
-    private static ScriptFunction compareFunction(final Object comparefn) {
+    private static Object compareFunction(final Object comparefn) {
         if (comparefn == ScriptRuntime.UNDEFINED) {
             return null;
         }
 
-        if (! (comparefn instanceof ScriptFunction)) {
+        if (!Bootstrap.isCallable(comparefn)) {
             throw typeError("not.a.function", ScriptRuntime.safeToString(comparefn));
         }
 
-        return (ScriptFunction)comparefn;
+        return comparefn;
     }
 
     private static Object[] sort(final Object[] array, final Object comparefn) {
-        final ScriptFunction cmp = compareFunction(comparefn);
+        final Object cmp = compareFunction(comparefn);
 
         final List<Object> list = Arrays.asList(array);
-        final Object cmpThis = cmp == null || cmp.isStrict() ? ScriptRuntime.UNDEFINED : Global.instance();
+        final Object cmpThis = cmp == null || Bootstrap.isStrictCallable(cmp) ? ScriptRuntime.UNDEFINED : Global.instance();
 
         try {
             Collections.sort(list, new Comparator<Object>() {
@@ -1907,7 +1907,7 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
             final ContinuousArrayData data = (ContinuousArrayData)(T)((NativeArray)self).getArray();
             if (data.length() != 0L) {
                 return data; //if length is 0 we cannot pop and have to relink, because then we'd have to return an undefined, which is a wider type than e.g. int
-           }
+            }
         } catch (final NullPointerException e) {
             //fallthru
         }
@@ -1917,25 +1917,25 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
     private static final ContinuousArrayData getContinuousArrayDataCCE(final Object self) {
         try {
             return (ContinuousArrayData)((NativeArray)self).getArray();
-         } catch (final NullPointerException e) {
-             throw new ClassCastException();
-         }
+        } catch (final NullPointerException e) {
+            throw new ClassCastException();
+        }
     }
 
     private static final ContinuousArrayData getContinuousArrayDataCCE(final Object self, final Class<?> elementType) {
         try {
-           return (ContinuousArrayData)((NativeArray)self).getArray(elementType); //ensure element type can fit "elementType"
+            return (ContinuousArrayData)((NativeArray)self).getArray(elementType); //ensure element type can fit "elementType"
         } catch (final NullPointerException e) {
             throw new ClassCastException();
         }
     }
 
     static {
-            final List<Property> list = new ArrayList<>(1);
-            list.add(AccessorProperty.create("length", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    staticHandle("length", Object.class, Object.class),
-                    staticHandle("length", void.class, Object.class, Object.class)));
-            $nasgenmap$ = PropertyMap.newMap(list);
+        final List<Property> list = new ArrayList<>(1);
+        list.add(AccessorProperty.create("length", Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                staticHandle("length", Object.class, Object.class),
+                staticHandle("length", void.class, Object.class, Object.class)));
+        $nasgenmap$ = PropertyMap.newMap(list);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
@@ -1972,11 +1972,11 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
             super("Array", 
                     staticHandle("construct", NativeArray.class, boolean.class, Object.class, Object[].class),
                     $nasgenmap$, new Specialization[] {
-                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class), false),
-                        new Specialization(staticHandle("construct", Object.class, boolean.class, Object.class, boolean.class), false),
-                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, long.class), false),
-                        new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, double.class), false)
+                            new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class), false),
+                            new Specialization(staticHandle("construct", Object.class, boolean.class, Object.class, boolean.class), false),
+                            new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, long.class), false),
+                            new Specialization(staticHandle("construct", NativeArray.class, boolean.class, Object.class, double.class), false)
             });
             isArray = ScriptFunction.createBuiltin("isArray",
                     staticHandle("isArray", boolean.class, Object.class, Object.class));
@@ -2281,28 +2281,28 @@ public final class NativeArray extends ScriptObject implements OptimisticBuiltin
                     staticHandle("toLocaleString", String.class, Object.class));
             concat = ScriptFunction.createBuiltin("concat",
                     staticHandle("concat", NativeArray.class, Object.class, Object[].class), new Specialization[] {
-                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, long.class), false),
-                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("concat", NativeArray.class, Object.class, Object.class), false)
-                    });
+                            new Specialization(staticHandle("concat", NativeArray.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("concat", NativeArray.class, Object.class, long.class), false),
+                            new Specialization(staticHandle("concat", NativeArray.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("concat", NativeArray.class, Object.class, Object.class), false)
+            });
             concat.setArity(1);
             join = ScriptFunction.createBuiltin("join",
                     staticHandle("join", String.class, Object.class, Object.class));
             pop = ScriptFunction.createBuiltin("pop",
                     staticHandle("pop", Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("popInt", int.class, Object.class), false),
-                        new Specialization(staticHandle("popDouble", double.class, Object.class), false),
-                        new Specialization(staticHandle("popObject", Object.class, Object.class), false)
-                    });
+                            new Specialization(staticHandle("popInt", int.class, Object.class), false),
+                            new Specialization(staticHandle("popDouble", double.class, Object.class), false),
+                            new Specialization(staticHandle("popObject", Object.class, Object.class), false)
+            });
             push = ScriptFunction.createBuiltin("push",
                     staticHandle("push", Object.class, Object.class, Object[].class), new Specialization[] {
-                        new Specialization(staticHandle("push", double.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("push", double.class, Object.class, long.class), false),
-                        new Specialization(staticHandle("push", double.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("pushObject", double.class, Object.class, Object.class), false),
-                        new Specialization(staticHandle("push", double.class, Object.class, Object.class), false)
-                    });
+                            new Specialization(staticHandle("push", double.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("push", double.class, Object.class, long.class), false),
+                            new Specialization(staticHandle("push", double.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("pushObject", double.class, Object.class, Object.class), false),
+                            new Specialization(staticHandle("push", double.class, Object.class, Object.class), false)
+            });
             push.setArity(1);
             reverse = ScriptFunction.createBuiltin("reverse",
                     staticHandle("reverse", Object.class, Object.class));

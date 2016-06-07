@@ -50,8 +50,11 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
+import com.gargoylesoftware.js.nashorn.api.scripting.JSObject;
+import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Attribute;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -80,25 +83,37 @@ public final class NativeJSON extends ScriptObject {
     private static InvokeByName getTO_JSON() {
         return Global.instance().getInvokeByName(TO_JSON,
                 new Callable<InvokeByName>() {
-                    @Override
-                    public InvokeByName call() {
-                        return new InvokeByName("toJSON", ScriptObject.class, Object.class, Object.class);
-                    }
-                });
+            @Override
+            public InvokeByName call() {
+                return new InvokeByName("toJSON", ScriptObject.class, Object.class, Object.class);
+            }
+        });
     }
 
+    private static final Object JSOBJECT_INVOKER = new Object();
+
+    private static MethodHandle getJSOBJECT_INVOKER() {
+        return Global.instance().getDynamicInvoker(JSOBJECT_INVOKER,
+                new Callable<MethodHandle>() {
+            @Override
+            public MethodHandle call() {
+                return Bootstrap.createDynamicInvoker("dyn:call",
+                        Object.class, Object.class, Object.class);
+            }
+        });
+    }
 
     private static final Object REPLACER_INVOKER = new Object();
 
     private static MethodHandle getREPLACER_INVOKER() {
         return Global.instance().getDynamicInvoker(REPLACER_INVOKER,
                 new Callable<MethodHandle>() {
-                    @Override
-                    public MethodHandle call() {
-                        return Bootstrap.createDynamicInvoker("dyn:call", Object.class,
-                            ScriptFunction.class, ScriptObject.class, Object.class, Object.class);
-                    }
-                });
+            @Override
+            public MethodHandle call() {
+                return Bootstrap.createDynamicInvoker("dyn:call", Object.class,
+                        Object.class, Object.class, Object.class, Object.class);
+            }
+        });
     }
 
     // initialized by nasgen
@@ -146,9 +161,10 @@ public final class NativeJSON extends ScriptObject {
         final StringifyState state = new StringifyState();
 
         // If there is a replacer, it must be a function or an array.
-        if (replacer instanceof ScriptFunction) {
-            state.replacerFunction = (ScriptFunction) replacer;
+        if (Bootstrap.isCallable(replacer)) {
+            state.replacerFunction = replacer;
         } else if (isArray(replacer) ||
+                isJSObjectArray(replacer) ||
                 replacer instanceof Iterable ||
                 (replacer != null && replacer.getClass().isArray())) {
 
@@ -220,18 +236,19 @@ public final class NativeJSON extends ScriptObject {
     // stringify helpers.
 
     private static class StringifyState {
-        final Map<ScriptObject, ScriptObject> stack = new IdentityHashMap<>();
+        final Map<Object, Object> stack = new IdentityHashMap<>();
 
         StringBuilder  indent = new StringBuilder();
         String         gap = "";
         List<String>   propertyList = null;
-        ScriptFunction replacerFunction = null;
+        Object         replacerFunction = null;
     }
 
     // Spec: The abstract operation Str(key, holder).
-    private static Object str(final Object key, final ScriptObject holder, final StringifyState state) {
-        Object value = holder.get(key);
+    private static Object str(final Object key, final Object holder, final StringifyState state) {
+        assert holder instanceof ScriptObject || holder instanceof JSObject;
 
+        Object value = getProperty(holder, key);
         try {
             if (value instanceof ScriptObject) {
                 final InvokeByName toJSONInvoker = getTO_JSON();
@@ -239,6 +256,12 @@ public final class NativeJSON extends ScriptObject {
                 final Object toJSON = toJSONInvoker.getGetter().invokeExact(svalue);
                 if (Bootstrap.isCallable(toJSON)) {
                     value = toJSONInvoker.getInvoker().invokeExact(toJSON, svalue, key);
+                }
+            } else if (value instanceof JSObject) {
+                final JSObject jsObj = (JSObject)value;
+                final Object toJSON = jsObj.getMember("toJSON");
+                if (Bootstrap.isCallable(toJSON)) {
+                    value = getJSOBJECT_INVOKER().invokeExact(toJSON, value);
                 }
             }
 
@@ -281,10 +304,10 @@ public final class NativeJSON extends ScriptObject {
 
         final JSType type = JSType.of(value);
         if (type == JSType.OBJECT) {
-            if (isArray(value)) {
-                return JA((ScriptObject)value, state);
-            } else if (value instanceof ScriptObject) {
-                return JO((ScriptObject)value, state);
+            if (isArray(value) || isJSObjectArray(value)) {
+                return JA(value, state);
+            } else if (value instanceof ScriptObject || value instanceof JSObject) {
+                return JO(value, state);
             }
         }
 
@@ -292,7 +315,9 @@ public final class NativeJSON extends ScriptObject {
     }
 
     // Spec: The abstract operation JO(value) serializes an object.
-    private static String JO(final ScriptObject value, final StringifyState state) {
+    private static String JO(final Object value, final StringifyState state) {
+        assert value instanceof ScriptObject || value instanceof JSObject;
+
         if (state.stack.containsKey(value)) {
             throw typeError("JSON.stringify.cyclic");
         }
@@ -303,72 +328,75 @@ public final class NativeJSON extends ScriptObject {
 
         final StringBuilder finalStr = new StringBuilder();
         final List<Object>  partial  = new ArrayList<>();
-        final List<String>  k        = state.propertyList == null ? Arrays.asList(value.getOwnKeys(false)) : state.propertyList;
+        final List<String>  k        = state.propertyList == null ?
+                Arrays.asList(getOwnKeys(value)) : state.propertyList;
 
-        for (final Object p : k) {
-            final Object strP = str(p, value, state);
+                for (final Object p : k) {
+                    final Object strP = str(p, value, state);
 
-            if (strP != UNDEFINED) {
-                final StringBuilder member = new StringBuilder();
+                    if (strP != UNDEFINED) {
+                        final StringBuilder member = new StringBuilder();
 
-                member.append(JSONFunctions.quote(p.toString())).append(':');
-                if (!state.gap.isEmpty()) {
-                    member.append(' ');
-                }
+                        member.append(JSONFunctions.quote(p.toString())).append(':');
+                        if (!state.gap.isEmpty()) {
+                            member.append(' ');
+                        }
 
-                member.append(strP);
-                partial.add(member);
-            }
-        }
-
-        if (partial.isEmpty()) {
-            finalStr.append("{}");
-        } else {
-            if (state.gap.isEmpty()) {
-                final int size = partial.size();
-                int       index = 0;
-
-                finalStr.append('{');
-
-                for (final Object str : partial) {
-                    finalStr.append(str);
-                    if (index < size - 1) {
-                        finalStr.append(',');
+                        member.append(strP);
+                        partial.add(member);
                     }
-                    index++;
                 }
 
-                finalStr.append('}');
-            } else {
-                final int size  = partial.size();
-                int       index = 0;
+                if (partial.isEmpty()) {
+                    finalStr.append("{}");
+                } else {
+                    if (state.gap.isEmpty()) {
+                        final int size = partial.size();
+                        int       index = 0;
 
-                finalStr.append("{\n");
-                finalStr.append(state.indent);
+                        finalStr.append('{');
 
-                for (final Object str : partial) {
-                    finalStr.append(str);
-                    if (index < size - 1) {
-                        finalStr.append(",\n");
+                        for (final Object str : partial) {
+                            finalStr.append(str);
+                            if (index < size - 1) {
+                                finalStr.append(',');
+                            }
+                            index++;
+                        }
+
+                        finalStr.append('}');
+                    } else {
+                        final int size  = partial.size();
+                        int       index = 0;
+
+                        finalStr.append("{\n");
                         finalStr.append(state.indent);
+
+                        for (final Object str : partial) {
+                            finalStr.append(str);
+                            if (index < size - 1) {
+                                finalStr.append(",\n");
+                                finalStr.append(state.indent);
+                            }
+                            index++;
+                        }
+
+                        finalStr.append('\n');
+                        finalStr.append(stepback);
+                        finalStr.append('}');
                     }
-                    index++;
                 }
 
-                finalStr.append('\n');
-                finalStr.append(stepback);
-                finalStr.append('}');
-            }
-        }
+                state.stack.remove(value);
+                state.indent = stepback;
 
-        state.stack.remove(value);
-        state.indent = stepback;
-
-        return finalStr.toString();
+                return finalStr.toString();
     }
 
     // Spec: The abstract operation JA(value) serializes an array.
-    private static Object JA(final ScriptObject value, final StringifyState state) {
+    private static Object JA(final Object value, final StringifyState state) {
+        assert value instanceof ScriptObject || value instanceof JSObject;
+
         if (state.stack.containsKey(value)) {
             throw typeError("JSON.stringify.cyclic");
         }
@@ -378,7 +406,7 @@ public final class NativeJSON extends ScriptObject {
         state.indent.append(state.gap);
         final List<Object> partial = new ArrayList<>();
 
-        final int length = JSType.toInteger(value.getLength());
+        final int length = JSType.toInteger(getLength(value));
         int index = 0;
 
         while (index < length) {
@@ -433,9 +461,53 @@ public final class NativeJSON extends ScriptObject {
         return finalStr.toString();
     }
 
+    private static String[] getOwnKeys(final Object obj) {
+        if (obj instanceof ScriptObject) {
+            return ((ScriptObject)obj).getOwnKeys(false);
+        } else if (obj instanceof ScriptObjectMirror) {
+            return ((ScriptObjectMirror)obj).getOwnKeys(false);
+        } else if (obj instanceof JSObject) {
+            // No notion of "own keys" or "proto" for general JSObject! We just
+            // return all keys of the object. This will be useful for POJOs
+            // implementing JSObject interface.
+            return ((JSObject)obj).keySet().toArray(new String[0]);
+        } else {
+            throw new AssertionError("should not reach here");
+        }
+    }
+
+    private static Object getLength(final Object obj) {
+        if (obj instanceof ScriptObject) {
+            return ((ScriptObject)obj).getLength();
+        } else if (obj instanceof JSObject) {
+            return ((JSObject)obj).getMember("length");
+        } else {
+            throw new AssertionError("should not reach here");
+        }
+    }
+
+    private static boolean isJSObjectArray(final Object obj) {
+        return (obj instanceof JSObject) && ((JSObject)obj).isArray();
+    }
+
+    private static Object getProperty(final Object holder, final Object key) {
+        if (holder instanceof ScriptObject) {
+            return ((ScriptObject)holder).get(key);
+        } else if (holder instanceof JSObject) {
+            JSObject jsObj = (JSObject)holder;
+            if (key instanceof Integer) {
+                return jsObj.getSlot((Integer)key);
+            } else {
+                return jsObj.getMember(Objects.toString(key));
+            }
+        } else {
+            return new AssertionError("should not reach here");
+        }
+    }
+
     static {
-            final List<Property> list = Collections.emptyList();
-            $nasgenmap$ = PropertyMap.newMap(list);
+        final List<Property> list = Collections.emptyList();
+        $nasgenmap$ = PropertyMap.newMap(list);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {

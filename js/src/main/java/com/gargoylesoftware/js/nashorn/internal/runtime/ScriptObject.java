@@ -1189,7 +1189,7 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
      * Return the current context from the object's map.
      * @return Current context.
      */
-    public Context getContext() {
+    protected Context getContext() {
         return Context.fromClass(getClass());
     }
 

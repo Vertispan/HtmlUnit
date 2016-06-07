@@ -141,7 +141,7 @@ public abstract class Property implements Serializable {
      * @param flags property flags
      * @param slot  property field number or spill slot
      */
-    public Property(final String key, final int flags, final int slot) {
+    Property(final String key, final int flags, final int slot) {
         assert key != null;
         this.key   = key;
         this.flags = flags;
@@ -428,7 +428,7 @@ public abstract class Property implements Serializable {
      *
      * @param structure the structure class
      */
-    public abstract void initMethodHandles(final Class<?> structure);
+    abstract void initMethodHandles(final Class<?> structure);
 
     /**
      * Get the key for this property. This key is an ordinary string. The "name".

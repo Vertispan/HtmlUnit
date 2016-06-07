@@ -153,7 +153,7 @@ public final class NashornScriptEngineFactory implements ScriptEngineFactory {
     }
 
     // default options passed to Nashorn script engine
-    private static final String[] DEFAULT_OPTIONS = new String[] { "-doe"/*, "--print-code"*/ };
+    private static final String[] DEFAULT_OPTIONS = new String[] { "-doe" };
 
     @Override
     public ScriptEngine getScriptEngine() {

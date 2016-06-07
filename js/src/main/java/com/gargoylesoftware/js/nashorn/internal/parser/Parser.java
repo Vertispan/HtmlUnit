@@ -472,7 +472,7 @@ loop:
 
         final FunctionNode parentFunction = lc.getCurrentFunction();
         if (parentFunction != null && !parentFunction.isProgram()) {
-            sb.append(parentFunction.getName()).append('$');
+            sb.append(parentFunction.getName()).append(CompilerConstants.NESTED_FUNCTION_SEPARATOR.symbolName());
         }
 
         assert ident.getName() != null;
@@ -1148,7 +1148,7 @@ loop:
 
     /**
      * ExpressionStatement :
-     *      Expression ; // [lookahead ~( or  function )]
+     *      Expression ; // [lookahead ~({ or  function )]
      *
      * See 12.4
      *
@@ -1558,7 +1558,7 @@ loop:
             nextOrEOL();
             expressionStatement();
             return;
-//            throw error(AbstractParser.message("invalid.return"));
+            //throw error(AbstractParser.message("invalid.return"));
         }
 
         // Capture RETURN token.

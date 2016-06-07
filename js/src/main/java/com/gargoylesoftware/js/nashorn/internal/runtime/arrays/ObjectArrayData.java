@@ -50,7 +50,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
  * Implementation of {@link ArrayData} as soon as an Object has been
  * written to the array
  */
-public final class ObjectArrayData extends ContinuousArrayData implements AnyElements {
+final class ObjectArrayData extends ContinuousArrayData implements AnyElements {
 
     /**
      * The wrapped array
@@ -62,7 +62,7 @@ public final class ObjectArrayData extends ContinuousArrayData implements AnyEle
      * @param array an int array
      * @param length a length, not necessarily array.length
      */
-    public ObjectArrayData(final Object[] array, final int length) {
+    ObjectArrayData(final Object[] array, final int length) {
         super(length);
         assert array.length >= length;
         this.array  = array;

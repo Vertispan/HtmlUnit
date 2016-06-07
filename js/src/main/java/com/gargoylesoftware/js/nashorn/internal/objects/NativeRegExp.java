@@ -672,7 +672,7 @@ public final class NativeRegExp extends ScriptObject {
      * @param replacement Replacement string.
      * @return String with substitutions.
      */
-    String replace(final String string, final String replacement, final ScriptFunction function) throws Throwable {
+    String replace(final String string, final String replacement, final Object function) throws Throwable {
         final RegExpMatcher matcher = regexp.match(string);
 
         if (matcher == null) {
@@ -688,7 +688,7 @@ public final class NativeRegExp extends ScriptObject {
             sb.append(string, 0, matcher.start());
 
             if (function != null) {
-                final Object self = function.isStrict() ? UNDEFINED : Global.instance();
+                final Object self = Bootstrap.isStrictCallable(function) ? UNDEFINED : Global.instance();
                 sb.append(callReplaceValue(getReplaceValueInvoker(), function, self, matcher, string));
             } else {
                 appendReplacement(matcher, string, replacement, sb);
@@ -708,7 +708,7 @@ public final class NativeRegExp extends ScriptObject {
         final StringBuilder sb = new StringBuilder();
 
         final MethodHandle invoker = function == null ? null : getReplaceValueInvoker();
-        final Object self = function == null || function.isStrict() ? UNDEFINED : Global.instance();
+        final Object self = function == null || Bootstrap.isStrictCallable(function) ? UNDEFINED : Global.instance();
 
         do {
             sb.append(string, thisIndex, matcher.start());
@@ -824,12 +824,13 @@ public final class NativeRegExp extends ScriptObject {
                 new Callable<MethodHandle>() {
                     @Override
                     public MethodHandle call() {
-                        return Bootstrap.createDynamicInvoker("dyn:call", String.class, ScriptFunction.class, Object.class, Object[].class);
+                        return Bootstrap.createDynamicInvoker("dyn:call",
+                            String.class, Object.class, Object.class, Object[].class);
                     }
                 });
     }
 
-    private String callReplaceValue(final MethodHandle invoker, final ScriptFunction function, final Object self, final RegExpMatcher matcher, final String string) throws Throwable {
+    private String callReplaceValue(final MethodHandle invoker, final Object function, final Object self, final RegExpMatcher matcher, final String string) throws Throwable {
         final Object[] groups = groups(matcher);
         final Object[] args   = Arrays.copyOf(groups, groups.length + 2);
 
@@ -965,7 +966,6 @@ public final class NativeRegExp extends ScriptObject {
     private void setRegExp(final RegExp regexp) {
         this.regexp = regexp;
     }
-
 
     static {
             final List<Property> list = new ArrayList<>(5);

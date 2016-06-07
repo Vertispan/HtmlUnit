@@ -254,7 +254,7 @@ public final class UserAccessorProperty extends SpillProperty {
     }
 
     @Override
-    public void initMethodHandles(final Class<?> structure) {
+    void initMethodHandles(final Class<?> structure) {
         throw new UnsupportedOperationException();
     }
 

@@ -49,6 +49,7 @@ import static org.objectweb.asm.Opcodes.ACONST_NULL;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ANEWARRAY;
 import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ASM4;
 import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.BALOAD;
 import static org.objectweb.asm.Opcodes.BASTORE;
@@ -98,7 +99,6 @@ import java.util.List;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SpecializedFunction.LinkLogic;
@@ -117,7 +117,7 @@ public class MethodGenerator extends MethodVisitor {
     static final Type EMPTY_LINK_LOGIC_TYPE = Type.getType(LinkLogic.getEmptyLinkLogicClass());
 
     MethodGenerator(final MethodVisitor mv, final int access, final String name, final String descriptor) {
-        super(Opcodes.ASM4, mv);
+        super(ASM4, mv);
         this.access        = access;
         this.name          = name;
         this.descriptor    = descriptor;

@@ -76,6 +76,7 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Specialization;
 import com.gargoylesoftware.js.nashorn.internal.runtime.arrays.ArrayIndex;
+import com.gargoylesoftware.js.nashorn.internal.runtime.linker.Bootstrap;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.NashornGuards;
 import com.gargoylesoftware.js.nashorn.internal.runtime.linker.PrimitiveLookup;
 
@@ -765,8 +766,8 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
             nativeRegExp = NativeRegExp.flatRegExp(JSType.toString(string));
         }
 
-        if (replacement instanceof ScriptFunction) {
-            return nativeRegExp.replace(str, "", (ScriptFunction)replacement);
+        if (Bootstrap.isCallable(replacement)) {
+            return nativeRegExp.replace(str, "", replacement);
         }
 
         return nativeRegExp.replace(str, JSType.toString(replacement), null);
@@ -1369,11 +1370,11 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
     }
 
     static {
-            final List<Property> list = new ArrayList<>(1);
-            list.add(AccessorProperty.create("length", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    staticHandle("length", Object.class, Object.class),
-                    null));
-            $nasgenmap$ = PropertyMap.newMap(list);
+        final List<Property> list = new ArrayList<>(1);
+        list.add(AccessorProperty.create("length", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                staticHandle("length", Object.class, Object.class),
+                null));
+        $nasgenmap$ = PropertyMap.newMap(list);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
@@ -1410,22 +1411,22 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
             super("String", 
                     staticHandle("constructor", Object.class, boolean.class, Object.class, Object[].class),
                     $nasgenmap$, new Specialization[] {
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class), false),
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, Object.class), false),
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, long.class), false),
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, boolean.class), false)
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class), false),
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, Object.class), false),
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, long.class), false),
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("constructor", Object.class, boolean.class, Object.class, boolean.class), false)
             });
             fromCharCode = ScriptFunction.createBuiltin("fromCharCode",
                     staticHandle("fromCharCode", String.class, Object.class, Object[].class), new Specialization[] {
-                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, Object.class), false),
-                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class), false),
-                        new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class, int.class), false),
-                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class, int.class, int.class, int.class), false),
-                        new Specialization(staticHandle("fromCharCode", String.class, Object.class, double.class), false)
-                    });
+                            new Specialization(staticHandle("fromCharCode", Object.class, Object.class, Object.class), false),
+                            new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class), false),
+                            new Specialization(staticHandle("fromCharCode", Object.class, Object.class, int.class, int.class, int.class), false),
+                            new Specialization(staticHandle("fromCharCode", String.class, Object.class, int.class, int.class, int.class, int.class), false),
+                            new Specialization(staticHandle("fromCharCode", String.class, Object.class, double.class), false)
+            });
             fromCharCode.setArity(1);
             final Prototype prototype = new Prototype();
             PrototypeObject.setConstructor(prototype, this);
@@ -1723,24 +1724,24 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
                     staticHandle("valueOf", String.class, Object.class));
             charAt = ScriptFunction.createBuiltin("charAt",
                     staticHandle("charAt", String.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("charAt", String.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("charAt", String.class, Object.class, int.class), false)
-                    });
+                            new Specialization(staticHandle("charAt", String.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("charAt", String.class, Object.class, int.class), false)
+            });
             charCodeAt = ScriptFunction.createBuiltin("charCodeAt",
                     staticHandle("charCodeAt", double.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, long.class), false),
-                        new Specialization(staticHandle("charCodeAt", int.class, Object.class, int.class), false)
-                    });
+                            new Specialization(staticHandle("charCodeAt", int.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("charCodeAt", int.class, Object.class, long.class), false),
+                            new Specialization(staticHandle("charCodeAt", int.class, Object.class, int.class), false)
+            });
             concat = ScriptFunction.createBuiltin("concat",
                     staticHandle("concat", Object.class, Object.class, Object[].class));
             concat.setArity(1);
             indexOf = ScriptFunction.createBuiltin("indexOf",
                     staticHandle("indexOf", int.class, Object.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class), false),
-                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, int.class), false)
-                    });
+                            new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class), false),
+                            new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("indexOf", int.class, Object.class, Object.class, int.class), false)
+            });
             indexOf.setArity(1);
             lastIndexOf = ScriptFunction.createBuiltin("lastIndexOf",
                     staticHandle("lastIndexOf", int.class, Object.class, Object.class, Object.class));
@@ -1755,22 +1756,22 @@ public final class NativeString extends ScriptObject implements OptimisticBuilti
                     staticHandle("search", int.class, Object.class, Object.class));
             slice = ScriptFunction.createBuiltin("slice",
                     staticHandle("slice", String.class, Object.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("slice", String.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("slice", String.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("slice", String.class, Object.class, int.class, int.class), false),
-                        new Specialization(staticHandle("slice", String.class, Object.class, double.class, double.class), false)
-                    });
+                            new Specialization(staticHandle("slice", String.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("slice", String.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("slice", String.class, Object.class, int.class, int.class), false),
+                            new Specialization(staticHandle("slice", String.class, Object.class, double.class, double.class), false)
+            });
             split = ScriptFunction.createBuiltin("split",
                     staticHandle("split", ScriptObject.class, Object.class, Object.class, Object.class));
             substr = ScriptFunction.createBuiltin("substr",
                     staticHandle("substr", String.class, Object.class, Object.class, Object.class));
             substring = ScriptFunction.createBuiltin("substring",
                     staticHandle("substring", String.class, Object.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("substring", String.class, Object.class, int.class), false),
-                        new Specialization(staticHandle("substring", String.class, Object.class, double.class), false),
-                        new Specialization(staticHandle("substring", String.class, Object.class, int.class, int.class), false),
-                        new Specialization(staticHandle("substring", String.class, Object.class, double.class, double.class), false)
-                    });
+                            new Specialization(staticHandle("substring", String.class, Object.class, int.class), false),
+                            new Specialization(staticHandle("substring", String.class, Object.class, double.class), false),
+                            new Specialization(staticHandle("substring", String.class, Object.class, int.class, int.class), false),
+                            new Specialization(staticHandle("substring", String.class, Object.class, double.class, double.class), false)
+            });
             toLowerCase = ScriptFunction.createBuiltin("toLowerCase",
                     staticHandle("toLowerCase", String.class, Object.class));
             toLocaleLowerCase = ScriptFunction.createBuiltin("toLocaleLowerCase",
