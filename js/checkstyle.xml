@@ -6,7 +6,7 @@
 <module name="Checker">
 
     <module name="Header">
-        <property name="headerFile" value="${checkstyle.header.file}"/>
+        <property name="header" value="/*\n * Copyright (c) 2016 Gargoyle Software Inc.\n *\n * This code is free software; you can redistribute it and/or modify it\n * under the terms of the GNU General Public License version 2 only, as\n * published by the Free Software Foundation.\n *\n * This code is distributed in the hope that it will be useful, but WITHOUT\n * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License\n * version 2 for more details (http://www.gnu.org/licenses/).\n */\n"/>
         <property name="fileExtensions" value="java"/>
     </module>
 

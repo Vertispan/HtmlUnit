@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -92,6 +93,7 @@ public class CodeStyleTest {
         svnWCClient_ = new SVNWCClient(authManager, options);
         process(new File("src/main"));
         process(new File("src/test"));
+        licenseYear();
     }
 
     private void process(final File dir) throws IOException {
@@ -233,6 +235,25 @@ public class CodeStyleTest {
             if (indentation % 4 != 0) {
                 addFailure("Bad indentation level (" + indentation + ") in " + relativePath + ", line: " + (i + 1));
             }
+        }
+    }
+
+    /**
+     * Checks the year in LICENSE.txt.
+     */
+    private void licenseYear() throws IOException {
+        final List<String> lines = FileUtils.readLines(new File("checkstyle.xml"));
+        boolean check = false;
+        for (final String line : lines) {
+            if (line.contains("<property name=\"header\"")) {
+                if (!line.contains("Copyright (c) " + Calendar.getInstance(Locale.ROOT).get(Calendar.YEAR))) {
+                    addFailure("Incorrect year in LICENSE.txt");
+                }
+                check = true;
+            }
+        }
+        if (!check) {
+            addFailure("Not found \"header\" in checkstyle.xml");
         }
     }
 
