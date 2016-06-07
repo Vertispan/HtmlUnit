@@ -239,10 +239,10 @@ public class CodeStyleTest {
     }
 
     /**
-     * Checks the year in LICENSE.txt.
+     * Checks the year in {@code LICENSE.txt}.
      */
     private void licenseYear() throws IOException {
-        final List<String> lines = FileUtils.readLines(new File("checkstyle.xml"));
+        final List<String> lines = FileUtils.readLines(new File("checkstyle.xml"), "ISO-8859-1");
         boolean check = false;
         for (final String line : lines) {
             if (line.contains("<property name=\"header\"")) {
