@@ -2789,7 +2789,15 @@ public final class Global extends Scope {
         return super.put(key, value, strict);
     }
 
-    public ScriptObject getPrototype(final Class<? extends ScriptObject> klass) {
+    @SuppressWarnings("unchecked")
+    public ScriptObject getPrototype(Class<? extends ScriptObject> klass) {
+        final String className = klass.getName();
+        if (className.indexOf('$') != -1) {
+            final char ch = className.charAt(className.length() - 1);
+            if (ch >= '0' && ch <= '9') {
+                klass = (Class<? extends ScriptObject>) klass.getSuperclass();
+            }
+        }
         final ScriptObject scriptObject = prototypes.get(klass);
         if (scriptObject instanceof ScriptFunction) {
             final Object proto = ((ScriptFunction) scriptObject).getPrototype();

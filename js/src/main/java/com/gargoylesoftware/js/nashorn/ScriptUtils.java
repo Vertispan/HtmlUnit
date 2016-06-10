@@ -57,13 +57,14 @@ public class ScriptUtils {
     public static void initialize(final ScriptObject scriptObject) {
         final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
         final int browserVersion = Browser.getCurrent().getVersion();
-        Class<?> enclosingClass = scriptObject.getClass().getEnclosingClass();
+        final Class<?> scriptClass = getScriptClass(scriptObject);
+        Class<?> enclosingClass = scriptClass.getEnclosingClass();
         if (enclosingClass == null) {
-            enclosingClass = scriptObject.getClass();
+            enclosingClass = scriptClass;
         }
         final List<Property> list = new ArrayList<>();
 
-        final Method[] allMethods = getAllMethods(scriptObject, enclosingClass);
+        final Method[] allMethods = getAllMethods(scriptClass, enclosingClass);
         final Field[] allFields = enclosingClass.getDeclaredFields();
         final Map<String, Method> setters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -156,11 +157,26 @@ public class ScriptUtils {
     }
 
     /**
+     * Returns the script class, handling anonymous ones. 
+     */
+    private static Class<?> getScriptClass(final Object scriptObject) {
+        Class<?> scriptClass = scriptObject.getClass();
+        final String name = scriptClass.getName();
+        if (name.indexOf('$') != -1) {
+            final char ch = name.charAt(name.length() - 1);
+            if (ch >= '0' && ch <= '9') {
+                scriptClass = scriptClass.getSuperclass();
+            }
+        }
+        return scriptClass;
+    }
+
+    /**
      * For {@code instances}, return all declared methods including in super classes, which is needed
      * for setting the {@code getter} and {@code setter} at {@code Where#INSTANCE}.
      */
-    private static Method[] getAllMethods(final ScriptObject scriptObject, final Class<?> enclosingClass) {
-        if (scriptObject.getClass().getEnclosingClass() != null) {
+    private static Method[] getAllMethods(final Class<?> scriptClass, final Class<?> enclosingClass) {
+        if (scriptClass.getEnclosingClass() != null) {
             return enclosingClass.getDeclaredMethods();
         }
         final List<Method> list = new ArrayList<>();
@@ -181,12 +197,12 @@ public class ScriptUtils {
 
     private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
             final int expectedBrowserVersion) {
-        
+        final Class<?> scriptClass = getScriptClass(scriptObject);
         if (where == Where.PROTOTYPE
-                && (scriptObject.getClass().getEnclosingClass() == null || scriptObject instanceof ScriptFunction)
+                && (scriptClass.getEnclosingClass() == null || scriptObject instanceof ScriptFunction)
                 || where != Where.PROTOTYPE && scriptObject instanceof PrototypeObject
-                || where == Where.CONSTRUCTOR && scriptObject.getClass().getEnclosingClass() == null
-                || where == Where.INSTANCE && scriptObject.getClass().getEnclosingClass() != null) {
+                || where == Where.CONSTRUCTOR && scriptClass.getEnclosingClass() == null
+                || where == Where.INSTANCE && scriptClass.getEnclosingClass() != null) {
             return false;
         }
 
