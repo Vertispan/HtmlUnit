@@ -1020,6 +1020,9 @@ public final class Global extends Scope {
     }
 
     private static Global instanceFrom(final Object self) {
+        if (self instanceof Globalable) {
+            return ((Globalable) self).getGlobal();
+        }
         return self instanceof Global? (Global)self : instance();
     }
 
