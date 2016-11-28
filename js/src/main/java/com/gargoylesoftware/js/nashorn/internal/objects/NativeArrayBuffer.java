@@ -244,7 +244,7 @@ public final class NativeArrayBuffer extends ScriptObject {
     }
 
     ByteBuffer getBuffer() {
-       return nb;
+        return nb;
     }
 
     ByteBuffer getBuffer(final int offset) {
@@ -256,11 +256,11 @@ public final class NativeArrayBuffer extends ScriptObject {
     }
 
     static {
-            final List<Property> list = new ArrayList<>(1);
-            list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
-                    staticHandle("byteLength", int.class, Object.class),
-                    null));
-            $nasgenmap$ = PropertyMap.newMap(list);
+        final List<Property> list = new ArrayList<>(1);
+        list.add(AccessorProperty.create("byteLength", Property.NOT_WRITABLE | Property.NOT_ENUMERABLE | Property.NOT_CONFIGURABLE, 
+                staticHandle("byteLength", int.class, Object.class),
+                null));
+        $nasgenmap$ = PropertyMap.newMap(list);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
@@ -339,9 +339,9 @@ public final class NativeArrayBuffer extends ScriptObject {
             super($nasgenmap$);
             slice = ScriptFunction.createBuiltin("slice",
                     staticHandle("slice", NativeArrayBuffer.class, Object.class, Object.class, Object.class), new Specialization[] {
-                        new Specialization(staticHandle("slice", Object.class, Object.class, int.class, int.class), false),
-                        new Specialization(staticHandle("slice", Object.class, Object.class, int.class), false)
-                    });
+                            new Specialization(staticHandle("slice", Object.class, Object.class, int.class, int.class), false),
+                            new Specialization(staticHandle("slice", Object.class, Object.class, int.class), false)
+            });
         }
 
         public String getClassName() {
