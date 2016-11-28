@@ -101,4 +101,5 @@ public class TestWindow extends ScriptObject {
             super("Window");
         }
     }
+
 }

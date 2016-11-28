@@ -772,9 +772,6 @@ public final class ScriptRuntime {
             return true;
         }
         if (x instanceof ScriptObject && y instanceof ScriptObject) {
-            if (equalGlobalWindow(x, y)) {
-                return true;
-            }
             return false; // x != y
         }
         if (x instanceof ScriptObjectMirror || y instanceof ScriptObjectMirror) {
@@ -827,16 +824,7 @@ public final class ScriptRuntime {
             return ((Boolean)x).booleanValue() == ((Boolean)y).booleanValue();
         }
 
-        if (equalGlobalWindow(x, y)) {
-            return true;
-        }
-
         return x == y;
-    }
-
-    private static boolean equalGlobalWindow(final Object x, final Object y) {
-        return x instanceof Global && ((Global) x).getWindow() == y
-            || y instanceof Global && ((Global) y).getWindow() == x;
     }
 
     /**

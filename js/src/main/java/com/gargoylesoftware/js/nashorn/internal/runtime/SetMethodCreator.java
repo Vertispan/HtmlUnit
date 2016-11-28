@@ -140,7 +140,7 @@ final class SetMethodCreator {
         checkStrictCreateNewVariable();
 
         if (sobj.isScope()) {
-            return createGlobalPropertySetter();
+            return createGlobalPropertySetter(sobj);
         }
 
         return createNewPropertySetter(builtinSwitchPoint);
@@ -193,8 +193,7 @@ final class SetMethodCreator {
         return new SetMethod(boundHandle, property);
     }
 
-    private SetMethod createGlobalPropertySetter() {
-        final ScriptObject global = Context.getGlobal();
+    private SetMethod createGlobalPropertySetter(final ScriptObject global) {
         return new SetMethod(MH.filterArguments(global.addSpill(type, getName()), 0, ScriptObject.GLOBALFILTER), null);
     }
 

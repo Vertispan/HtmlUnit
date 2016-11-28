@@ -16,6 +16,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+import com.gargoylesoftware.js.nashorn.SimpleObjectConstructor;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
@@ -56,6 +57,12 @@ public class MyWindow extends ScriptObject {
     static final class Prototype extends PrototypeObject {
         public String getClassName() {
             return "Window";
+        }
+    }
+
+    static final class ObjectConstructor extends SimpleObjectConstructor {
+        public ObjectConstructor() {
+            super("Window");
         }
     }
 }

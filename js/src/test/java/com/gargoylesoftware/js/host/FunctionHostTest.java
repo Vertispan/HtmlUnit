@@ -29,6 +29,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamil
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
+import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
 public class FunctionHostTest {
 
@@ -62,6 +63,7 @@ public class FunctionHostTest {
         final Global oldGlobal = Context.getGlobal();
         try {
             Context.setGlobal(global);
+            global.setWindow(new ScriptObject() {});
             global.put("FunctionHost1", new FunctionHost1.FunctionConstructor(), true);
             global.put("FunctionHost2", new FunctionHost2.Constructor(), true);
             setProto(global, "FunctionHost2", "FunctionHost1");

@@ -233,12 +233,6 @@ public class ScriptUtils {
      */
     public static void set(final ScriptObject self, final Object value, final String name) {
         self.addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
-        if (self instanceof Global) {
-            ((Global) self).getWindow().addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
-        }
-        if (self == Global.instance().getWindow()) {
-            Global.instance().addOwnProperty(name, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, value);
-        }
     }
 
 }

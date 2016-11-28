@@ -1020,9 +1020,6 @@ public final class Global extends Scope {
     }
 
     private static Global instanceFrom(final Object self) {
-        if (self instanceof Globalable) {
-            return ((Globalable) self).getGlobal();
-        }
         return self instanceof Global? (Global)self : instance();
     }
 
@@ -2778,6 +2775,32 @@ public final class Global extends Scope {
         this.window = window;
     }
 
+    @Override
+    public GuardedInvocation noSuchProperty(final CallSiteDescriptor desc, final LinkRequest request) {
+        final GuardedInvocation invocation = window.noSuchProperty(desc, request);
+        if (invocation != null) {
+            return invocation;
+        }
+        return super.noSuchProperty(desc, request);
+    }
+
+    @Override
+    public Object get(final int key) {
+        Object obj = window.get(key);
+        if (obj == null) {
+            obj = super.get(key);
+        }
+        return obj;
+    }
+
+    @Override
+    public boolean has(final Object key) {
+        if (window != null && window.has(key)) {
+            return true;
+        }
+        return super.has(key);
+    }
+
     private Map<Class<ScriptObject>, ScriptObject> prototypes = new HashMap<>();
     
     @Override
@@ -3456,11 +3479,6 @@ public final class Global extends Scope {
 
     public Object G$__LINE__() {
         return __LINE__;
-    }
-
-    @Override
-    public GuardedInvocation noSuchProperty(final CallSiteDescriptor desc, final LinkRequest request) {
-        return getWindow().noSuchProperty(desc, request);
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {

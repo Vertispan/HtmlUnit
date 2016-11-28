@@ -39,12 +39,12 @@ public class MyWindowTest {
     @Test
     public void addEventListener() throws Exception {
         final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
-        test("[object Object]", "window", chrome);
+        test("[object Window]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
         final Browser ie11 = new Browser(BrowserFamily.IE, 11);
-        test("[object Object]", "window", ie11);
-        test("[object Object]", "Window", ie11);
+        test("[object Window]", "window", ie11);
+        test("[object Window]", "Window", ie11);
         test("function addEventListener() { [native code] }", "window.addEventListener", ie11);
     }
 
@@ -73,21 +73,18 @@ public class MyWindowTest {
                 global.put("EventTarget", new MyEventTarget.FunctionConstructor(), true);
                 global.put("Window", new MyWindow.FunctionConstructor(), true);
                 setProto(global, "Window", "EventTarget");
+                final ScriptFunction parentFunction = (ScriptFunction) global.get("EventTarget");
+                final PrototypeObject parentPrototype = (PrototypeObject) parentFunction.getPrototype();
+                global.setProto(parentPrototype);
             }
             else {
-                global.put("Window", new MyWindow(), true);
-                setProto(global, "Window", new MyEventTarget.ObjectConstructor());
+                global.put("Window", new MyWindow.ObjectConstructor(), true);
+                global.setProto(new MyEventTarget.ObjectConstructor());
             }
+            
+            global.setWindow(new ScriptObject() {});
 
-            final MyWindow window = new MyWindow();
-            ScriptObject windowProto = Context.getGlobal().getPrototype(window.getClass());
-            if (windowProto == null) {
-                windowProto = (ScriptObject) global.get("Window");
-            }
-            window.setProto(windowProto);
-            global.setWindow(window);
-
-            global.put("window", window, true);
+            global.put("window", global, true);
             return scriptContext;
         }
         finally {
@@ -110,11 +107,6 @@ public class MyWindowTest {
             final ScriptObject parentObject = (ScriptObject) global.get(parentName);
             childObject.setProto(parentObject);
         }
-    }
-
-    private void setProto(final Global global, final String childName, final ScriptObject parentObject) {
-        final ScriptObject childObject = (ScriptObject) global.get(childName);
-        childObject.setProto(parentObject);
     }
 
     @Test
