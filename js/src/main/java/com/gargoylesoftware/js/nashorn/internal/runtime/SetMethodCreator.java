@@ -194,7 +194,7 @@ final class SetMethodCreator {
     }
 
     private SetMethod createGlobalPropertySetter() {
-        final ScriptObject global = Context.getGlobal();
+        final ScriptObject global = sobj;//Context.getGlobal();
         return new SetMethod(MH.filterArguments(global.addSpill(type, getName()), 0, ScriptObject.GLOBALFILTER), null);
     }
 

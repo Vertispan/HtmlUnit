@@ -2768,17 +2768,6 @@ public final class Global extends Scope {
         }
     }
 
-    private Object domObject;
-
-    @SuppressWarnings("unchecked")
-    public <T> T getDomObject() {
-        return (T) domObject;
-    }
-
-    public void setDomObject(final Object domObject) {
-        this.domObject = domObject;
-    }
-
     private ScriptObject window;
 
     @SuppressWarnings("unchecked")
