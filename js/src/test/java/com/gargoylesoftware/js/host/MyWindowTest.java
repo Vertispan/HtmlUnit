@@ -42,10 +42,10 @@ public class MyWindowTest {
         test("[object Window]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
-        final Browser ie11 = new Browser(BrowserFamily.IE, 11);
-        test("[object Window]", "window", ie11);
-        test("[object Window]", "Window", ie11);
-        test("function addEventListener() { [native code] }", "window.addEventListener", ie11);
+        final Browser ie = new Browser(BrowserFamily.IE, 11);
+        test("[object Window]", "window", ie);
+        test("[object Window]", "Window", ie);
+        test("function addEventListener() { [native code] }", "window.addEventListener", ie);
     }
 
     private void test(final String expected, final String script, final Browser browser) throws Exception {
@@ -146,4 +146,13 @@ public class MyWindowTest {
         assertEquals("a", result.get(0));
         assertEquals("b", result.get(1));
     }
+
+    @Test
+    public void testToString() throws Exception {
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        test("function toString() { [native code] }", "toString", chrome);
+        final Browser ie = new Browser(BrowserFamily.IE, 11);
+        test("function toString() { [native code] }", "toString", ie);
+    }
+
 }

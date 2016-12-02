@@ -124,6 +124,7 @@ public class MyEventTarget extends ScriptObject {
         }
 
         public ObjectConstructor() {
+            setProto(new Prototype());
             addEventListener = ScriptFunction.createBuiltin("addEventListener",
                     staticHandle("addEventListener", String.class, Object.class));
         }
