@@ -38,7 +38,7 @@ public class MyWindowTest {
 
     @Test
     public void addEventListener() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
         test("[object Window]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
@@ -111,7 +111,7 @@ public class MyWindowTest {
 
     @Test
     public void equal() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
         test("true", "this === window", chrome);
         test("true", "window === this", chrome);
         test("true", "this == window", chrome);
@@ -127,7 +127,7 @@ public class MyWindowTest {
 
     @Test
     public void calledTwice() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 50);
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
         final String s = "function info(msg) {\n"
                 + "  (function(t){var x = window.__huCatchedAlerts; x = x ? x : []; window.__huCatchedAlerts = x; x.push(String(t))})(msg);"
             + "};\n"

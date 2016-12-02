@@ -39,7 +39,7 @@ public class InitialTest {
 
     @Test
     public void regExp() throws Exception {
-        Browser.setCurrent(new Browser(BrowserFamily.CHROME, 50));
+        Browser.setCurrent(new Browser(BrowserFamily.CHROME, 55));
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         assertEquals("function RegExp() { [native code] }", ScriptRuntime.safeToString(engine.eval("RegExp")));
     }
