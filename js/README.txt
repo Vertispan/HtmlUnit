@@ -17,4 +17,5 @@ Main customizations:
 - Handle return statements outside function:
   fixed in Parser.returnStatement()
 - When setting property of another Global, don't use the current one
-  fixed in SetMethodCreator.createGlobalPropertySetter 
+  fixed in SetMethodCreator.createGlobalPropertySetter
+- ScriptObject.avoidObjectDetection() 

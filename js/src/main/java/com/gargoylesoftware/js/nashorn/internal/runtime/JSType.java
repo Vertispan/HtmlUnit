@@ -284,6 +284,9 @@ public enum JSType {
         }
 
         if (obj instanceof ScriptObject) {
+            if (((ScriptObject) obj).avoidObjectDetection()) {
+                return JSType.UNDEFINED;
+            }
             return obj instanceof ScriptFunction ? JSType.FUNCTION : JSType.OBJECT;
         }
 
@@ -569,6 +572,9 @@ public enum JSType {
             return ((CharSequence)obj).length() > 0;
         }
 
+        if (obj instanceof ScriptObject && ((ScriptObject) obj).avoidObjectDetection()) {
+            return false;
+        }
         return true;
     }
 

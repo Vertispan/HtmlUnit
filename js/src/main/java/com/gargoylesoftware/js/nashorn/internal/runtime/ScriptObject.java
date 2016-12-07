@@ -3378,6 +3378,14 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
         }
     }
 
+    /**
+     * Allows custom objects to avoid detection by normal "object detection" code patterns.
+     * @return true if this object should avoid object detection
+     */
+    public boolean avoidObjectDetection() {
+        return false;
+    }
+
     @Override
     protected ScriptObject clone() throws CloneNotSupportedException {
         final ScriptObject clone = (ScriptObject) super.clone();
