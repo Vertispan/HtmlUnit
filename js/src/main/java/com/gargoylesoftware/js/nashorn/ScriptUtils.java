@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
-import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Setter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
@@ -176,7 +176,8 @@ public class ScriptUtils {
      * for setting the {@code getter} and {@code setter} at {@code Where#INSTANCE}.
      */
     private static Method[] getAllMethods(final Class<?> scriptClass, final Class<?> enclosingClass) {
-        if (scriptClass.getEnclosingClass() != null) {
+        final boolean nullProto = enclosingClass.getAnnotation(ScriptClass.class).nullProto();
+        if (!nullProto && scriptClass.getEnclosingClass() != null) {
             return enclosingClass.getDeclaredMethods();
         }
         final List<Method> list = new ArrayList<>();
