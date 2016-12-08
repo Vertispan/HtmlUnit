@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to specify that the annotated Java class is a JavaScript "class".
+ * Annotation to specify that the annotated Java class is a JavaScript "class" constructor.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

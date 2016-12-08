@@ -53,4 +53,10 @@ public @interface ScriptClass {
      *         from the Java class name.
      */
     public String value() default "";
+
+    /**
+     * @return whether this inherits {@code __proto__} of its super java class,
+     *         or we need to copy the super functions and properties
+     */
+    public boolean nullProto() default false;
 }

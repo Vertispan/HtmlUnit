@@ -132,9 +132,9 @@ public class FunctionHostTest {
 
     @Test
     public void __proto__() throws Exception {
-        test("function () { [native code] }", "Object.__proto__");
-        test("function () { [native code] }", "Int8Array.__proto__");
-        test("function () { [native code] }", "FunctionHost1.__proto__");
+        test("function () {}", "Object.__proto__");
+        test("function () {}", "Int8Array.__proto__");
+        test("function () {}", "FunctionHost1.__proto__");
         test("function FunctionHost1() { [native code] }", "FunctionHost2.__proto__");
         test("[object Object]", "new Object().__proto__");
     }
@@ -148,7 +148,7 @@ public class FunctionHostTest {
     public void hierarchy() throws Exception {
         test("function FunctionHost2() { [native code] }", "FunctionHost2");
         test("function FunctionHost1() { [native code] }", "FunctionHost2.__proto__");
-        test("function () { [native code] }",              "FunctionHost2.__proto__.__proto__");
+        test("function () {}",              "FunctionHost2.__proto__.__proto__");
         test("[object Object]",                            "FunctionHost2.__proto__.__proto__.__proto__");
         test("null",                                       "FunctionHost2.__proto__.__proto__.__proto__.__proto__");
     }

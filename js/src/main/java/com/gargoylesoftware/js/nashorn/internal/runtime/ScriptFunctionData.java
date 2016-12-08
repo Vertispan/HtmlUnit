@@ -200,10 +200,14 @@ public abstract class ScriptFunctionData implements Serializable {
 
     String toSource() {
         final Browser browser = Browser.getCurrent();
+        boolean eol = false;
         if (browser.getFamily() == BrowserFamily.FF) {
-            return "function " + (name == null ? "" : name) + "() {\n    [native code]\n}";
+            eol = true;
         }
-        return "function " + (name == null ? "" : name) + "() { [native code] }";
+        final String prefix = name == null || name.isEmpty() ? "" : " ";
+        return "function " + (name == null ? "" : name) + "() {"
+            + (eol ? "\n    " : prefix) + (name == null || name.isEmpty() ? "" : "[native code]")
+            + (eol ? "\n" : prefix) + "}";
     }
 
     String getName() {
