@@ -2196,7 +2196,7 @@ public final class Global extends Scope {
     }
 
     @Override
-    protected FindProperty findProperty(final String key, final boolean deep, final ScriptObject start) {
+    public FindProperty findProperty(final String key, final boolean deep, final ScriptObject start) {
         if (lexicalScope != null && start != this && start.isScope()) {
             final FindProperty find = lexicalScope.findProperty(key, false);
             if (find != null) {

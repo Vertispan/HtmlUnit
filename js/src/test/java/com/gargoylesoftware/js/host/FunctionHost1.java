@@ -65,7 +65,7 @@ public class FunctionHost1 extends ScriptObject {
     }
 
     @Override
-    protected FindProperty findProperty(final String key, final boolean deep, final ScriptObject start) {
+    public FindProperty findProperty(final String key, final boolean deep, final ScriptObject start) {
         if ("something".equals(key)) {
             start.addOwnProperty(key, Property.WRITABLE_ENUMERABLE_CONFIGURABLE, "new thing");
         }
