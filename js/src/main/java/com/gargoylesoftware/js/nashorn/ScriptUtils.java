@@ -106,9 +106,15 @@ public class ScriptUtils {
             }
             for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
                 if (isSupported(scriptObject, setter.where(), setter.value(), browserFamily, browserVersion)) {
-                    String fieldName = method.getName().substring(3);
-                    fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-                    setters.put(fieldName, method);
+                    String name;
+                    if (setter.name().isEmpty()) {
+                        name = method.getName().substring(3);
+                        name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                    }
+                    else {
+                        name = setter.name();
+                    }
+                    setters.put(name, method);
                 }
             }
         }
@@ -128,11 +134,17 @@ public class ScriptUtils {
             for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
                 if (isSupported(scriptObject, getter.where(), getter.value(), browserFamily, browserVersion)) {
                     try {
-                        String fieldName = method.getName().substring(3);
-                        fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+                        String name;
+                        if (getter.name().isEmpty()) {
+                            name = method.getName().substring(3);
+                            name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                        }
+                        else {
+                            name = getter.name();
+                        }
 
                         final MethodHandle setter;
-                        final Method setterMethod = setters.get(fieldName);
+                        final Method setterMethod = setters.get(name);
                         if (setterMethod != null) {
                             setter = lookup.unreflect(setterMethod);
                         }
@@ -140,10 +152,10 @@ public class ScriptUtils {
                             setter = Lookup.EMPTY_SETTER;
                         }
                         else {
-                            setter = MethodHandles.insertArguments(SETTER_, 2, fieldName);
+                            setter = MethodHandles.insertArguments(SETTER_, 2, name);
                         }
 
-                        list.add(AccessorProperty.create(fieldName, getter.attributes(), 
+                        list.add(AccessorProperty.create(name, getter.attributes(), 
                                 lookup.unreflect(method),
                                 setter));
                     }
