@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.core.IsNull;
+
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
@@ -189,12 +191,28 @@ public class ScriptUtils {
      */
     private static Method[] getAllMethods(final Class<?> scriptClass, final Class<?> enclosingClass) {
         final boolean nullProto = enclosingClass.getAnnotation(ScriptClass.class).nullProto();
-        if (!nullProto && scriptClass.getEnclosingClass() != null) {
-            return enclosingClass.getDeclaredMethods();
-        }
         final List<Method> list = new ArrayList<>();
+        boolean foundSuperScriptClass = false;
         for (Class<?> klass = enclosingClass; klass != null; klass = klass.getSuperclass()) {
-            Collections.addAll(list, klass.getDeclaredMethods());
+            if (klass == ScriptObject.class) {
+                break;
+            }
+            final boolean isScriptClass = klass.getAnnotation(ScriptClass.class) != null;
+            if (klass != enclosingClass && isScriptClass && !nullProto) {
+                foundSuperScriptClass = true;
+            }
+            final Method[] declaredMethods = klass.getDeclaredMethods();
+            if (!foundSuperScriptClass) {
+                Collections.addAll(list, klass.getDeclaredMethods());
+            }
+            else {
+                for (final Method method : declaredMethods) {
+                    if (method.getAnnotation(Getter.class) != null
+                            || method.getAnnotation(Setter.class) != null) {
+                        list.add(method);
+                    }
+                }
+            }
         }
         return list.toArray(new Method[list.size()]);
     }
