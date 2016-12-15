@@ -38,27 +38,15 @@
 package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to specify that the annotated Java class is a JavaScript "class".
+ * Annotation for repeated {@link ScriptClass}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(ScriptClasses.class)
-public @interface ScriptClass {
-    /**
-     * @return the name of the script class. By default, the name is derived
-     *         from the Java class name.
-     */
-    public String value() default "";
-
-    /**
-     * @return whether this inherits {@code __proto__} of its super java class,
-     *         or we need to copy the super functions and properties
-     */
-    public boolean nullProto() default false;
+public @interface ScriptClasses {
+    public ScriptClass[] value();
 }
