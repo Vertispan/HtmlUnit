@@ -772,7 +772,7 @@ public final class ScriptRuntime {
             return true;
         }
         if (x instanceof ScriptObject && y instanceof ScriptObject) {
-            return false; // x != y
+            return ((ScriptObject) x).equivalentValues(y);
         }
         if (x instanceof ScriptObjectMirror || y instanceof ScriptObjectMirror) {
             return ScriptObjectMirror.identical(x, y);

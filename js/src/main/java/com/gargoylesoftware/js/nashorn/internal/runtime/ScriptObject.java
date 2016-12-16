@@ -3530,4 +3530,15 @@ public abstract class ScriptObject implements PropertyAccess, Cloneable {
     public static long getCount() {
         return count.longValue();
     }
+
+    /**
+     * Custom {@code ==} operator.
+     *
+     * The default implementation returns {@code true} if {@code this == value}.
+     * or {@code false} otherwise.
+     */
+    protected boolean equivalentValues(final Object value) {
+        return this == value;
+    }
+
 }
