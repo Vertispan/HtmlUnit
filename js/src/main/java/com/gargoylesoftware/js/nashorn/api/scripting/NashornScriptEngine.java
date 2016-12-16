@@ -415,7 +415,7 @@ public final class NashornScriptEngine extends AbstractScriptEngine implements C
         return evalImpl(compileImpl(src, ctxt), ctxt);
     }
 
-    private Object evalImpl(final ScriptFunction script, final ScriptContext ctxt) throws ScriptException {
+    public Object evalImpl(final ScriptFunction script, final ScriptContext ctxt) throws ScriptException {
         return evalImpl(script, ctxt, getNashornGlobalFrom(ctxt));
     }
 
