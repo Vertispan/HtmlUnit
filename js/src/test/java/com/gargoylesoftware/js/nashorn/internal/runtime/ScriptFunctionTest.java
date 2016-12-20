@@ -87,7 +87,22 @@ public class ScriptFunctionTest {
                 + "test()";
         final NashornScriptEngine engine = createEngine();
         final Object value = engine.eval(script);
-        assertNotNull("ab", value);
+        assertNotNull(value);
+    }
+
+    @Test
+    public void caller2() throws Exception {
+        final String script = ""
+                + "function test() {\n"
+                + "  return test2('a');\n"
+                + "}\n"
+                + "function test2(a) {\n"
+                + "  return a;\n"
+                + "}\n"
+                + "test()";
+        final NashornScriptEngine engine = createEngine();
+        final Object value = engine.eval(script);
+        assertEquals("a", value);
     }
 
 }
