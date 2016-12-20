@@ -14,10 +14,12 @@ package com.gargoylesoftware.js.nashorn.internal.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngine;
@@ -76,6 +78,7 @@ public class ScriptFunctionTest {
     }
 
     @Test
+    @Ignore
     public void caller() throws Exception {
         final String script = ""
                 + "function test() {\n"
@@ -106,6 +109,18 @@ public class ScriptFunctionTest {
     }
 
     @Test
+    public void caller3() throws Exception {
+        final String script = ""
+                + "function test() {\n"
+                + "  return arguments.callee.caller;\n"
+                + "}\n"
+                + "test()";
+        final NashornScriptEngine engine = createEngine();
+        final Object value = engine.eval(script);
+        assertNull(value);
+    }
+
+    @Test
     public void length() throws Exception {
         final String script = ""
                 + "function test() {\n"
@@ -118,5 +133,17 @@ public class ScriptFunctionTest {
         final NashornScriptEngine engine = createEngine();
         final Object value = engine.eval(script);
         assertEquals(1, value);
+    }
+
+    @Test
+    public void length2() throws Exception {
+        final String script = ""
+                + "function test() {\n"
+                + "  return test.length;\n"
+                + "}\n"
+                + "test()";
+        final NashornScriptEngine engine = createEngine();
+        final Object value = engine.eval(script);
+        assertEquals(0, value);
     }
 }
