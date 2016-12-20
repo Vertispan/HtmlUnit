@@ -2017,7 +2017,9 @@ public final class Global extends Scope {
         final ScriptFunction function = (ScriptFunction) callee;
         final ScriptObject argumentsScriptObject = NativeArguments.allocate(arguments, function, numParams);
         function.addOwnProperty("arguments", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, argumentsScriptObject);
-        function.addOwnProperty("caller", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, arguments[0]);
+        if (arguments.length != 0) {
+            function.addOwnProperty("caller", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, arguments[arguments.length - 1]);
+        }
         return argumentsScriptObject;
     }
 

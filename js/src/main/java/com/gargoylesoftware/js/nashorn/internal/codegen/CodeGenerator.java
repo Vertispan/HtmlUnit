@@ -1485,8 +1485,8 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                         loadExpressionAsObject(ident); // foo() makes no sense if foo == 3
                         // ScriptFunction will see CALLSITE_SCOPE and will bind scope accordingly.
                         method.loadUndefined(Type.OBJECT); //the 'this'
-                        method.loadCompilerConstant(CALLEE);
                         argsCount = loadArgs(args);
+                        method.loadCompilerConstant(CALLEE);
                     }
                     @Override
                     void consumeStack() {
