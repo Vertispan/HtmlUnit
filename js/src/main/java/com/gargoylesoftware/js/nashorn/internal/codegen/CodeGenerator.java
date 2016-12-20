@@ -1486,7 +1486,6 @@ final class CodeGenerator extends NodeOperatorVisitor<CodeGeneratorLexicalContex
                         // ScriptFunction will see CALLSITE_SCOPE and will bind scope accordingly.
                         method.loadUndefined(Type.OBJECT); //the 'this'
                         argsCount = loadArgs(args);
-//                        method.loadCompilerConstant(CALLEE);
                     }
                     @Override
                     void consumeStack() {
