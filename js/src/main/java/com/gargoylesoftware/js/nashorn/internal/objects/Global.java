@@ -2015,7 +2015,8 @@ public final class Global extends Scope {
      */
     public static ScriptObject allocateArguments(final Object[] arguments, final Object callee, final int numParams) {
         final ScriptFunction function = (ScriptFunction) callee;
-        final ScriptObject argumentsScriptObject = NativeArguments.allocate(arguments, function, numParams);
+        final Object[] newArguments = Arrays.copyOf(arguments, Math.max(0, arguments.length - 1));
+        final ScriptObject argumentsScriptObject = NativeArguments.allocate(newArguments, function, numParams - 1);
         function.addOwnProperty("arguments", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, argumentsScriptObject);
         if (arguments.length != 0) {
             function.addOwnProperty("caller", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, arguments[arguments.length - 1]);
