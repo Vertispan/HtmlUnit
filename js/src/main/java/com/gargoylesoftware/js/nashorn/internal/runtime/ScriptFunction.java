@@ -836,6 +836,13 @@ public class ScriptFunction extends ScriptObject {
      */
     @Override
     protected GuardedInvocation findCallMethod(final CallSiteDescriptor desc, final LinkRequest request) {
+        Object caller = request.getArguments()[1];
+        if (caller instanceof ScriptFunction) {
+            if (":program".equals(((ScriptFunction) caller).getName())) {
+                caller = null;
+            }
+            addOwnProperty("caller", Property.WRITABLE_ENUMERABLE_CONFIGURABLE, caller);
+        }
         final MethodType type = desc.getMethodType();
 
         final String name = getName();

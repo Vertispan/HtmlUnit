@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNull;
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngine;
@@ -78,7 +77,6 @@ public class ScriptFunctionTest {
     }
 
     @Test
-    @Ignore
     public void caller() throws Exception {
         final String script = ""
                 + "function test() {\n"
