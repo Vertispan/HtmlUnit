@@ -144,4 +144,28 @@ public class ScriptFunctionTest {
         final Object value = engine.eval(script);
         assertEquals(0, value);
     }
+
+    @Test
+    public void fullScriptFunction() throws Exception {
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final NashornScriptEngine engine = createEngine();
+        final Global global = initGlobal(engine, chrome);
+        final String script = "function test(event) {return 'hello ' + event}";
+
+        final Source source = Source.sourceFor("some name", script);
+        final Global oldGlobal = Context.getGlobal();
+        try {
+            Context.setGlobal(global);
+            final ScriptFunction eventHandler = global.getContext().compileScript(source, global);
+            ScriptRuntime.apply(eventHandler, global);
+
+            final ScriptFunction testFunction = (ScriptFunction) global.get("test");
+            final Object value = ScriptRuntime.apply(testFunction, global, "there");
+            assertEquals("hello there", value.toString());
+        }
+        finally {
+            Context.setGlobal(oldGlobal);
+        }
+    }
+
 }
