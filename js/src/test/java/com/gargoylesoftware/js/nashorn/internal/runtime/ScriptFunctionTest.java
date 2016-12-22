@@ -31,7 +31,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamil
 public class ScriptFunctionTest {
 
     @Test
-    public void simpleScriptFunction() throws Exception {
+    public void simple() throws Exception {
         final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
@@ -146,7 +146,7 @@ public class ScriptFunctionTest {
     }
 
     @Test
-    public void fullScriptFunction() throws Exception {
+    public void withDeclaration() throws Exception {
         final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
@@ -161,6 +161,33 @@ public class ScriptFunctionTest {
 
             final ScriptFunction testFunction = (ScriptFunction) global.get("test");
             final Object value = ScriptRuntime.apply(testFunction, global, "there");
+            assertEquals("hello there", value.toString());
+        }
+        finally {
+            Context.setGlobal(oldGlobal);
+        }
+    }
+
+    @Test
+    public void useFromAnother() throws Exception {
+        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final NashornScriptEngine engine = createEngine();
+        final Global global = initGlobal(engine, chrome);
+        final String code1 = "function test1(name) {return test2(name)}";
+        final String code2 = "function test2(event) {return 'hello ' + event}";
+
+        final Source source1 = Source.sourceFor("some name", code1);
+        final Source source2 = Source.sourceFor("some name2", code2);
+        final Global oldGlobal = Context.getGlobal();
+        try {
+            Context.setGlobal(global);
+            final ScriptFunction event1Handler = global.getContext().compileScript(source1, global);
+            ScriptRuntime.apply(event1Handler, global);
+            final ScriptFunction event2Handler = global.getContext().compileScript(source2, global);
+            ScriptRuntime.apply(event2Handler, global);
+
+            final ScriptFunction test1Function = (ScriptFunction) global.get("test1");
+            final Object value = ScriptRuntime.apply(test1Function, global, "there");
             assertEquals("hello there", value.toString());
         }
         finally {
