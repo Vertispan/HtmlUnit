@@ -17,6 +17,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 import com.gargoylesoftware.js.nashorn.SimpleObjectConstructor;
+import com.gargoylesoftware.js.nashorn.internal.objects.Global;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
@@ -26,6 +28,8 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 @ScriptClass("Window")
 public class MyWindow extends ScriptObject {
 
+    private MyHTMLDocument document_;
+
     @com.gargoylesoftware.js.nashorn.internal.objects.annotations.Constructor
     public static MyWindow constructor(final boolean newObj, final Object self) {
         final MyWindow host = new MyWindow();
@@ -33,6 +37,26 @@ public class MyWindow extends ScriptObject {
         return host;
     }
 
+    @Getter
+    public static MyHTMLDocument getDocument(final Object self) {
+        MyWindow window = getWindow(self);
+        if (window.document_ == null) {
+            window.document_ = MyHTMLDocument.constructor(true, Global.instance());
+        }
+        return window.document_;
+    }
+
+    private static MyWindow getWindow(final Object self) {
+        if (self instanceof Global) {
+            MyWindow window = ((Global) self).getWindow();
+            return window;
+        }
+        if (self instanceof MyWindow) {
+            return (MyWindow) self;
+        }
+        return Global.instance().getWindow();
+    }
+    
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
         try {
             return MethodHandles.lookup().findStatic(MyWindow.class,
@@ -60,7 +84,7 @@ public class MyWindow extends ScriptObject {
         }
     }
 
-    static final class ObjectConstructor extends SimpleObjectConstructor {
+    public static final class ObjectConstructor extends SimpleObjectConstructor {
         public ObjectConstructor() {
             super("Window");
         }
