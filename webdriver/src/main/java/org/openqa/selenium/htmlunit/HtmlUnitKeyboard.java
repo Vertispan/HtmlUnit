@@ -94,10 +94,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
   }
 
   private Keyboard asHtmlUnitKeyboard(final boolean startAtEnd, final CharSequence keysSequence, final boolean isPress) {
-    Keyboard keyboard = new Keyboard();
-    if (startAtEnd) {
-      addToKeyboard(keyboard, Keys.END.charAt(0), true);
-    }
+    Keyboard keyboard = new Keyboard(startAtEnd);
     for (int i = 0; i < keysSequence.length(); i++) {
       char ch = keysSequence.charAt(i);
       addToKeyboard(keyboard, ch, isPress);
