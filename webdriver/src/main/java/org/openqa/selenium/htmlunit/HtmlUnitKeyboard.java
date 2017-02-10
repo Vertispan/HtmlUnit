@@ -34,6 +34,7 @@ import com.gargoylesoftware.htmlunit.html.Keyboard;
 public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboard {
   private KeyboardModifiersState modifiersState = new KeyboardModifiersState();
   private final HtmlUnitDriver parent;
+  private HtmlElement lastElement;
 
   HtmlUnitKeyboard(HtmlUnitDriver parent) {
     this.parent = parent;
@@ -73,7 +74,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     }
 
     try {
-      Keyboard keyboard = asHtmlUnitKeyboard(keysSequence, true);
+      Keyboard keyboard = asHtmlUnitKeyboard(lastElement != element, keysSequence, true);
       if (releaseAllAtEnd) {
         if (isShiftPressed()) {
           addToKeyboard(keyboard, Keys.SHIFT.charAt(0), false);
@@ -89,10 +90,14 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     } catch (IOException e) {
       throw new WebDriverException(e);
     }
+    lastElement = element;
   }
 
-  private Keyboard asHtmlUnitKeyboard(final CharSequence keysSequence, final boolean isPress) {
+  private Keyboard asHtmlUnitKeyboard(final boolean startAtEnd, final CharSequence keysSequence, final boolean isPress) {
     Keyboard keyboard = new Keyboard();
+    if (startAtEnd) {
+      addToKeyboard(keyboard, Keys.END.charAt(0), true);
+    }
     for (int i = 0; i < keysSequence.length(); i++) {
       char ch = keysSequence.charAt(i);
       addToKeyboard(keyboard, ch, isPress);
@@ -122,7 +127,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     HtmlUnitWebElement htmlElement = (HtmlUnitWebElement) parent.switchTo().activeElement();
     HtmlElement element = (HtmlElement) htmlElement.element;
     try {
-      element.type(asHtmlUnitKeyboard(keyToPress, true));
+      element.type(asHtmlUnitKeyboard(lastElement != element, keyToPress, true));
     } catch (IOException e) {
       throw new WebDriverException(e);
     }
@@ -137,7 +142,7 @@ public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboa
     HtmlUnitWebElement htmlElement = (HtmlUnitWebElement) parent.switchTo().activeElement();
     HtmlElement element = (HtmlElement) htmlElement.element;
     try {
-      element.type(asHtmlUnitKeyboard(keyToRelease, false));
+      element.type(asHtmlUnitKeyboard(lastElement != element, keyToRelease, false));
     } catch (IOException e) {
       throw new WebDriverException(e);
     }
