@@ -22,24 +22,19 @@ import java.io.IOException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Keyboard;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.javascript.host.event.Event;
-import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
+import com.gargoylesoftware.htmlunit.html.Keyboard;
 
 /**
  * Implements keyboard operations using the HtmlUnit WebDriver.
  *
  */
-public class HtmlUnitKeyboard implements Keyboard {
+public class HtmlUnitKeyboard implements org.openqa.selenium.interactions.Keyboard {
   private KeyboardModifiersState modifiersState = new KeyboardModifiersState();
   private final HtmlUnitDriver parent;
+  private HtmlElement lastElement;
 
   HtmlUnitKeyboard(HtmlUnitDriver parent) {
     this.parent = parent;
@@ -59,46 +54,64 @@ public class HtmlUnitKeyboard implements Keyboard {
     WebElement toElement = parent.switchTo().activeElement();
 
     HtmlUnitWebElement htmlElem = getElementToSend(toElement);
-    htmlElem.sendKeys(keysToSend);
+    htmlElem.sendKeys(false, keysToSend);
   }
 
-  public void sendKeys(HtmlElement element, String currentValue, InputKeysContainer keysToSend) {
+  public void sendKeys(HtmlElement element, InputKeysContainer keysToSend, boolean releaseAllAtEnd) {
     keysToSend.setCapitalization(modifiersState.isShiftPressed());
+    String keysSequence = keysToSend.toString();
 
-    if (parent.isJavascriptEnabled() && !(element instanceof HtmlFileInput)) {
-      if (element instanceof HtmlTextArea) {
-        HtmlTextArea area = (HtmlTextArea) element;
-        String text = area.getText();
-        area.setSelectionStart(text.length());
-        area.setSelectionEnd(text.length());
-      }
-      else if (element instanceof HtmlTextInput) {
-        HtmlTextInput input = (HtmlTextInput) element;
-        String text = input.getText();
-        input.setSelectionStart(text.length());
-        input.setSelectionEnd(text.length());
-      }
-      else if (element instanceof HtmlPasswordInput) {
-        HtmlPasswordInput input = (HtmlPasswordInput) element;
-        String text = input.getText();
-        input.setSelectionStart(text.length());
-        input.setSelectionEnd(text.length());
-      }
-      try {
-        element.type(keysToSend.toString());
-      } catch (IOException e) {
-        throw new WebDriverException(e);
-      }
-    } else if (element instanceof HtmlInput) {
-      HtmlInput input = (HtmlInput) element;
+    // HtmlElement.type doesn't modify the value of a file input element. Special case.
+    if (element instanceof HtmlFileInput) {
+      HtmlFileInput fileInput = (HtmlFileInput) element;
+      fileInput.setValueAttribute(keysSequence);
+      return;
+    }
 
-      input.setValueAttribute((currentValue == null ? "" : currentValue) + keysToSend.toString());
-    } else if (element instanceof HtmlTextArea) {
-      ((HtmlTextArea) element).setText(
-          (currentValue == null ? "" : currentValue) + keysToSend.toString());
-    } else {
-      throw new UnsupportedOperationException(
-          "You may only set the value of elements that are input elements");
+    try {
+      Keyboard keyboard = asHtmlUnitKeyboard(lastElement != element, keysSequence, true);
+      if (releaseAllAtEnd) {
+        if (isShiftPressed()) {
+          addToKeyboard(keyboard, Keys.SHIFT.charAt(0), false);
+        }
+        if (isAltPressed()) {
+          addToKeyboard(keyboard, Keys.ALT.charAt(0), false);
+        }
+        if (isCtrlPressed()) {
+          addToKeyboard(keyboard, Keys.CONTROL.charAt(0), false);
+        }
+      }
+      element.type(keyboard);
+    } catch (IOException e) {
+      throw new WebDriverException(e);
+    }
+    lastElement = element;
+  }
+
+  private Keyboard asHtmlUnitKeyboard(final boolean startAtEnd, final CharSequence keysSequence,
+      final boolean isPress) {
+    Keyboard keyboard = new Keyboard(startAtEnd);
+    for (int i = 0; i < keysSequence.length(); i++) {
+      char ch = keysSequence.charAt(i);
+      addToKeyboard(keyboard, ch, isPress);
+    }
+    return keyboard;
+  }
+
+  private void addToKeyboard(final Keyboard keyboard, char ch, final boolean isPress) {
+    if (HtmlUnitKeyboardMapping.isSpecialKey(ch)) {
+      int keyCode = HtmlUnitKeyboardMapping.getKeysMapping(ch);
+      if (isPress) {
+        keyboard.press(keyCode);
+        modifiersState.storeKeyDown(ch);
+      }
+      else {
+        keyboard.release(keyCode);
+        modifiersState.storeKeyUp(ch);
+      }
+    }
+    else {
+      keyboard.type(ch);
     }
   }
 
@@ -107,8 +120,16 @@ public class HtmlUnitKeyboard implements Keyboard {
     WebElement toElement = parent.switchTo().activeElement();
 
     HtmlUnitWebElement htmlElement = getElementToSend(toElement);
-    modifiersState.storeKeyDown(keyToPress);
-    htmlElement.sendKeyDownEvent(keyToPress);
+    HtmlElement element = (HtmlElement) htmlElement.element;
+    try {
+      element.type(asHtmlUnitKeyboard(lastElement != element, keyToPress, true));
+    } catch (IOException e) {
+      throw new WebDriverException(e);
+    }
+    for (int i = 0; i < keyToPress.length(); i++) {
+      char ch = keyToPress.charAt(i);
+      modifiersState.storeKeyDown(ch);
+    }
   }
 
   @Override
@@ -116,18 +137,16 @@ public class HtmlUnitKeyboard implements Keyboard {
     WebElement toElement = parent.switchTo().activeElement();
 
     HtmlUnitWebElement htmlElement = getElementToSend(toElement);
-    modifiersState.storeKeyUp(keyToRelease);
-    htmlElement.sendKeyUpEvent(keyToRelease);
-  }
-
-  void performSingleKeyAction(HtmlElement element, CharSequence modifierKey, String eventDescription) {
-    boolean shiftKey = modifierKey.equals(Keys.SHIFT);
-    boolean ctrlKey = modifierKey.equals(Keys.CONTROL);
-    boolean altKey = modifierKey.equals(Keys.ALT);
-
-    Event keyEvent = new KeyboardEvent(element, eventDescription, 0, shiftKey, ctrlKey, altKey);
-    element.fireEvent(keyEvent);
-
+    HtmlElement element = (HtmlElement) htmlElement.element;
+    try {
+      element.type(asHtmlUnitKeyboard(lastElement != element, keyToRelease, false));
+    } catch (IOException e) {
+      throw new WebDriverException(e);
+    }
+    for (int i = 0; i < keyToRelease.length(); i++) {
+      char ch = keyToRelease.charAt(i);
+      modifiersState.storeKeyUp(ch);
+    }
   }
 
   public boolean isShiftPressed() {

@@ -46,32 +46,29 @@ import org.openqa.selenium.internal.FindsByXPath;
 import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.internal.WrapsElement;
+import org.openqa.selenium.support.Color;
+import org.openqa.selenium.support.Colors;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlFileInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
-import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.javascript.host.event.Event;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLInputElement;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 
 import net.sourceforge.htmlunit.corejs.javascript.Undefined;
-
 
 public class HtmlUnitWebElement implements WrapsDriver,
     FindsById, FindsByLinkText, FindsByXPath, FindsByTagName,
@@ -79,10 +76,6 @@ public class HtmlUnitWebElement implements WrapsDriver,
 
   protected final HtmlUnitDriver parent;
   protected final DomElement element;
-  private static final char nbspChar = 160;
-  private static final String[] blockLevelsTagNames =
-  {"p", "h1", "h2", "h3", "h4", "h5", "h6", "dl", "div", "noscript",
-      "blockquote", "form", "hr", "table", "fieldset", "address", "ul", "ol", "pre", "br"};
   private static final String[] booleanAttributes = {
     "async",
     "autofocus",
@@ -136,28 +129,8 @@ public class HtmlUnitWebElement implements WrapsDriver,
 
   @Override
   public void click() {
-    try {
-      verifyCanInteractWithElement();
-    } catch (InvalidElementStateException e) {
-      Throwables.propagateIfInstanceOf(e, ElementNotVisibleException.class);
-      // Swallow disabled element case
-      // Clicking disabled elements should still be passed through,
-      // we just don't expect any state change
-
-      // TODO: The javadoc for this method implies we shouldn't throw for
-      // element not visible either
-    }
-
-    HtmlUnitMouse mouse = (HtmlUnitMouse) parent.getMouse();
-    mouse.click(getCoordinates());
-
-    if (element instanceof HtmlLabel) {
-      HtmlElement referencedElement = ((HtmlLabel)element).getReferencedElement();
-      if (referencedElement != null) {
-        new HtmlUnitWebElement(parent, referencedElement).click();
-      }
-    }
-
+    verifyCanInteractWithElement(true);
+    parent.getMouse().click(getCoordinates());
   }
 
   @Override
@@ -167,7 +140,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
         submitForm((HtmlForm) element);
         return;
       } else if ((element instanceof HtmlSubmitInput) || (element instanceof HtmlImageInput)) {
-        ((HtmlElement) element).click();
+        element.click();
         return;
       } else if (element instanceof HtmlInput) {
         HtmlForm form = ((HtmlElement) element).getEnclosingForm();
@@ -191,19 +164,18 @@ public class HtmlUnitWebElement implements WrapsDriver,
   private void submitForm(HtmlForm form) {
     assertElementNotStale();
 
-    List<String> names = new ArrayList<>();
-    names.add("input");
-    names.add("button");
-    List<? extends HtmlElement> allElements = form.getHtmlElementsByTagNames(names);
+    List<HtmlElement> allElements = new ArrayList<>();
+    allElements.addAll(form.getElementsByTagName("input"));
+    allElements.addAll(form.getElementsByTagName("button"));
 
     HtmlElement submit = null;
-    for (HtmlElement element : allElements) {
-      if (!isSubmitElement(element)) {
+    for (HtmlElement e : allElements) {
+      if (!isSubmitElement(e)) {
         continue;
       }
 
       if (submit == null) {
-        submit = element;
+        submit = e;
       }
     }
 
@@ -224,7 +196,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
     }
   }
 
-  private boolean isSubmitElement(HtmlElement element) {
+  private static boolean isSubmitElement(HtmlElement element) {
     HtmlElement candidate = null;
 
     if (element instanceof HtmlSubmitInput && !((HtmlSubmitInput) element).isDisabled()) {
@@ -254,6 +226,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
         throw new InvalidElementStateException("You may only interact with enabled elements");
       }
       htmlInput.setValueAttribute("");
+      htmlInput.fireEvent("change");
     } else if (element instanceof HtmlTextArea) {
       HtmlTextArea htmlTextArea = (HtmlTextArea) element;
       if (htmlTextArea.isReadOnly()) {
@@ -263,12 +236,12 @@ public class HtmlUnitWebElement implements WrapsDriver,
         throw new InvalidElementStateException("You may only interact with enabled elements");
       }
       htmlTextArea.setText("");
-    } else if (element.getAttribute("contenteditable") != DomElement.ATTRIBUTE_NOT_DEFINED) {
+    } else if (!element.getAttribute("contenteditable").equals(DomElement.ATTRIBUTE_NOT_DEFINED)) {
       element.setTextContent("");
     }
   }
 
-  private void verifyCanInteractWithElement() {
+  private void verifyCanInteractWithElement(boolean ignoreDisabled) {
     assertElementNotStale();
 
     Boolean displayed = parent.implicitlyWaitFor(new Callable<Boolean>() {
@@ -278,11 +251,11 @@ public class HtmlUnitWebElement implements WrapsDriver,
       }
     });
 
-    if (displayed == null || !displayed.booleanValue()) {
+    if (displayed == null || !displayed) {
       throw new ElementNotVisibleException("You may only interact with visible elements");
     }
 
-    if (!isEnabled()) {
+    if (!ignoreDisabled && !isEnabled()) {
       throw new InvalidElementStateException("You may only interact with enabled elements");
     }
   }
@@ -298,47 +271,33 @@ public class HtmlUnitWebElement implements WrapsDriver,
       if (jsEnabled &&
           !oldActiveEqualsCurrent &&
           !isBody) {
-        ((HtmlElement) oldActiveElement.element).blur();
+        oldActiveElement.element.blur();
       }
     } catch (StaleElementReferenceException ex) {
       // old element has gone, do nothing
     }
-    ((HtmlElement) element).focus();
-  }
-
-  void sendKeyDownEvent(CharSequence modifierKey) {
-    sendSingleKeyEvent(modifierKey, Event.TYPE_KEY_DOWN);
-  }
-
-  void sendKeyUpEvent(CharSequence modifierKey) {
-    sendSingleKeyEvent(modifierKey, Event.TYPE_KEY_UP);
-  }
-
-  private void sendSingleKeyEvent(CharSequence modifierKey, String eventDescription) {
-    verifyCanInteractWithElement();
-    switchFocusToThisIfNeeded();
-    HtmlUnitKeyboard keyboard = (HtmlUnitKeyboard) parent.getKeyboard();
-    keyboard.performSingleKeyAction((HtmlElement) getElement(), modifierKey, eventDescription);
+    element.focus();
   }
 
   @Override
   public void sendKeys(CharSequence... value) {
-    verifyCanInteractWithElement();
+    sendKeys(true, value);
+  }
 
-    InputKeysContainer keysContainer = new InputKeysContainer(isInputElement(), value);
+  void sendKeys(boolean releaseAllAtEnd, CharSequence... value) {
+    verifyCanInteractWithElement(false);
+
+    final boolean inputElement = element instanceof HtmlInput;
+    InputKeysContainer keysContainer = new InputKeysContainer(inputElement, value);
 
     switchFocusToThisIfNeeded();
 
     HtmlUnitKeyboard keyboard = (HtmlUnitKeyboard) parent.getKeyboard();
-    keyboard.sendKeys((HtmlElement) element, getAttribute("value"), keysContainer);
+    keyboard.sendKeys((HtmlElement) element, keysContainer, releaseAllAtEnd);
 
-    if (isInputElement() && keysContainer.wasSubmitKeyFound()) {
+    if (inputElement && keysContainer.wasSubmitKeyFound() && ((HtmlInput) element).getEnclosingForm() != null) {
       submit();
     }
-  }
-
-  private boolean isInputElement() {
-    return element instanceof HtmlInput;
   }
 
   @Override
@@ -414,7 +373,18 @@ public class HtmlUnitWebElement implements WrapsDriver,
       return null;
     }
 
+    if ("textContent".equalsIgnoreCase(lowerName)) {
+      return element.getTextContent();
+    }
+
+    if ("innerHTML".equalsIgnoreCase(lowerName)) {
+      return element.asXml();
+    }
+
     if ("value".equals(lowerName)) {
+      if (element instanceof HtmlFileInput) {
+        return ((HTMLInputElement) element.getScriptableObject()).getValue();
+      }
       if (element instanceof HtmlTextArea) {
         return ((HtmlTextArea) element).getText();
       }
@@ -424,7 +394,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
       // if the value attribute doesn't exist, getting the "value" attribute defers to the
       // option's content.
       if (element instanceof HtmlOption && !element.hasAttribute("value")) {
-    	  return element.getTextContent();
+        return element.getTextContent();
       }
 
       return value == null ? "" : value;
@@ -440,16 +410,16 @@ public class HtmlUnitWebElement implements WrapsDriver,
 
     final Object slotVal = element.getScriptableObject().get(name);
     if (slotVal instanceof String) {
-        String strVal = (String) slotVal;
-        if (!Strings.isNullOrEmpty(strVal)) {
-            return strVal;
-        }
+      String strVal = (String) slotVal;
+      if (!Strings.isNullOrEmpty(strVal)) {
+        return strVal;
+      }
     }
 
     return null;
   }
 
-  private String trueOrNull(boolean condition) {
+  private static String trueOrNull(boolean condition) {
     return condition ? "true" : null;
   }
 
@@ -505,6 +475,11 @@ public class HtmlUnitWebElement implements WrapsDriver,
     }
   }
 
+  @Override
+  public Rectangle getRect() {
+    return new Rectangle(getLocation(), getSize());
+  }
+
   private int readAndRound(final String property) {
     final String cssValue = getCssValue(property).replaceAll("[^0-9\\.]", "");
     if (cssValue.length() == 0) {
@@ -513,28 +488,10 @@ public class HtmlUnitWebElement implements WrapsDriver,
     return Math.round(Float.parseFloat(cssValue));
   }
 
-  // This isn't very pretty. Sorry.
   @Override
   public String getText() {
     assertElementNotStale();
-
-    StringBuffer toReturn = new StringBuffer();
-    StringBuffer textSoFar = new StringBuffer();
-
-    boolean isPreformatted = element instanceof HtmlPreformattedText;
-    getTextFromNode(element, toReturn, textSoFar, isPreformatted);
-
-    String text = toReturn.toString() + collapseWhitespace(textSoFar);
-
-    if (!isPreformatted) {
-      text = text.trim();
-    } else {
-      if (text.endsWith("\n")) {
-        text = text.substring(0, text.length()-1);
-      }
-    }
-
-    return text.replace(nbspChar, ' ');
+    return HtmlSerializer.getText(element);
   }
 
   protected HtmlUnitDriver getParent() {
@@ -545,81 +502,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
     return element;
   }
 
-  private void getTextFromNode(DomNode node, StringBuffer toReturn, StringBuffer textSoFar,
-      boolean isPreformatted) {
-    if (node instanceof HtmlScript) {
-      return;
-    }
-    if (isPreformatted) {
-      getPreformattedText(node, toReturn);
-
-    } else {
-      for (DomNode child : node.getChildren()) {
-        // Do we need to collapse the text so far?
-        if (child instanceof HtmlPreformattedText) {
-          if (child.isDisplayed()) {
-            String textToAdd = collapseWhitespace(textSoFar);
-            if (! " ".equals(textToAdd)) {
-              toReturn.append(textToAdd);
-            }
-            textSoFar.delete(0, textSoFar.length());
-          }
-          getTextFromNode(child, toReturn, textSoFar, true);
-          continue;
-        }
-
-        // Or is this just plain text?
-        if (child instanceof DomText) {
-          if (child.isDisplayed()) {
-            String textToAdd = ((DomText) child).getData();
-            textSoFar.append(textToAdd);
-          }
-          continue;
-        }
-
-        // Treat as another child node.
-        getTextFromNode(child, toReturn, textSoFar, false);
-      }
-    }
-
-    if (isBlockLevel(node)) {
-      toReturn.append(collapseWhitespace(textSoFar).trim()).append("\n");
-      textSoFar.delete(0, textSoFar.length());
-    }
-  }
-
-  private boolean isBlockLevel(DomNode node) {
-    // From the HTML spec (http://www.w3.org/TR/html401/sgml/dtd.html#block)
-    // <!ENTITY % block
-    // "P | %heading; | %list; | %preformatted; | DL | DIV | NOSCRIPT | BLOCKQUOTE | FORM | HR | TABLE | FIELDSET | ADDRESS">
-    // <!ENTITY % heading "H1|H2|H3|H4|H5|H6">
-    // <!ENTITY % list "UL | OL">
-    // <!ENTITY % preformatted "PRE">
-
-    if (!(node instanceof HtmlElement)) {
-      return false;
-    }
-
-    String tagName = ((HtmlElement) node).getTagName().toLowerCase();
-    for (String blockLevelsTagName : blockLevelsTagNames) {
-      if (blockLevelsTagName.equals(tagName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private String collapseWhitespace(StringBuffer textSoFar) {
-    String textToAdd = textSoFar.toString();
-    return textToAdd.replaceAll("\\p{javaWhitespace}+", " ").replaceAll("\r", "");
-  }
-
-  private void getPreformattedText(DomNode node, StringBuffer toReturn) {
-    if (node.isDisplayed()) {
-      toReturn.append(node.getTextContent());
-    }
-  }
-
+  @Deprecated // It's not a part of WebDriver API
   public List<WebElement> getElementsByTagName(String tagName) {
     assertElementNotStale();
 
@@ -683,7 +566,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
   }
 
   private List<WebElement> findChildNodes(List<WebElement> allElements) {
-    List<WebElement> toReturn = new LinkedList<WebElement>();
+    List<WebElement> toReturn = new LinkedList<>();
 
     for (WebElement current : allElements) {
       DomElement candidate = ((HtmlUnitWebElement) current).element;
@@ -726,18 +609,18 @@ public class HtmlUnitWebElement implements WrapsDriver,
 
     List<WebElement> webElements = new ArrayList<>();
 
-    List<?> htmlElements;
+    List<?> domElements;
     try {
-      htmlElements = element.getByXPath(xpathExpr);
+      domElements = element.getByXPath(xpathExpr);
     } catch (Exception ex) {
       // The xpath expression cannot be evaluated, so the expression is invalid
       throw new InvalidSelectorException(
           String.format(HtmlUnitDriver.INVALIDXPATHERROR, xpathExpr), ex);
     }
 
-    for (Object e : htmlElements) {
-      if (e instanceof HtmlElement) {
-        webElements.add(getParent().newHtmlUnitWebElement((HtmlElement) e));
+    for (Object e : domElements) {
+      if (e instanceof DomElement) {
+        webElements.add(getParent().newHtmlUnitWebElement((DomElement) e));
       }
       else {
         // The xpath selector selected something different than a WebElement. The selector is
@@ -766,7 +649,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
     assertElementNotStale();
 
     String expectedText = linkText.trim();
-    List<? extends DomElement> htmlElements = ((HtmlElement) element).getHtmlElementsByTagName("a");
+    List<? extends HtmlElement> htmlElements = ((HtmlElement) element).getElementsByTagName("a");
     List<WebElement> webElements = new ArrayList<>();
     for (DomElement e : htmlElements) {
       if (expectedText.equals(e.getTextContent().trim()) && e.getAttribute("href") != null) {
@@ -792,7 +675,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
   public List<WebElement> findElementsByPartialLinkText(String linkText) {
     assertElementNotStale();
 
-    List<? extends HtmlElement> htmlElements = ((HtmlElement) element).getHtmlElementsByTagName("a");
+    List<? extends HtmlElement> htmlElements = ((HtmlElement) element).getElementsByTagName("a");
     List<WebElement> webElements = new ArrayList<>();
     for (HtmlElement e : htmlElements) {
       if (e.getTextContent().contains(linkText)
@@ -818,10 +701,10 @@ public class HtmlUnitWebElement implements WrapsDriver,
   public List<WebElement> findElementsByTagName(String name) {
     assertElementNotStale();
 
-    List<HtmlElement> elements = ((HtmlElement) element).getHtmlElementsByTagName(name);
+    List<HtmlElement> elements = ((HtmlElement) element).getElementsByTagName(name);
     List<WebElement> toReturn = new ArrayList<>(elements.size());
-    for (HtmlElement element : elements) {
-      toReturn.add(parent.newHtmlUnitWebElement(element));
+    for (HtmlElement e : elements) {
+      toReturn.add(parent.newHtmlUnitWebElement(e));
     }
 
     return toReturn;
@@ -845,7 +728,7 @@ public class HtmlUnitWebElement implements WrapsDriver,
       for (int i = 0; i < n; ++i) {
         Attr a = (Attr) attributes.item(i);
         sb.append(' ').append(a.getName()).append("=\"")
-            .append(a.getValue().replace("\"", "&quot;")).append("\"");
+          .append(a.getValue().replace("\"", "&quot;")).append("\"");
       }
       if (element.hasChildNodes()) {
         sb.append('>');
@@ -865,7 +748,33 @@ public class HtmlUnitWebElement implements WrapsDriver,
   public String getCssValue(String propertyName) {
     assertElementNotStale();
 
-    return getEffectiveStyle((HtmlElement) element, propertyName);
+    String style = getEffectiveStyle((HtmlElement) element, propertyName);
+    return getColor(style);
+  }
+
+  private static String getColor(String name) {
+    if ("null".equals(name)) {
+      return "transparent";
+    }
+    if (name.startsWith("rgb(")) {
+      return Color.fromString(name).asRgba();
+    }
+
+    Colors colors = getColorsOf(name);
+    if (colors != null) {
+      return colors.getColorValue().asRgba();
+    }
+    return name;
+  }
+
+  private static Colors getColorsOf(String name) {
+    name = name.toUpperCase();
+    for (Colors colors : Colors.values()) {
+      if (colors.name().equals(name)) {
+        return colors;
+      }
+    }
+    return null;
   }
 
   private String getEffectiveStyle(HtmlElement htmlElement, String propertyName) {
@@ -874,27 +783,27 @@ public class HtmlUnitWebElement implements WrapsDriver,
     while ("inherit".equals(value)) {
       // Hat-tip to the Selenium team
       Object result =
-          parent
-              .executeScript(
-                  "if (window.getComputedStyle) { "
-                      +
-                      "    return window.getComputedStyle(arguments[0], null).getPropertyValue(arguments[1]); "
-                      +
-                      "} "
-                      +
-                      "if (arguments[0].currentStyle) { "
-                      +
-                      "    return arguments[0].currentStyle[arguments[1]]; "
-                      +
-                      "} "
-                      +
-                      "if (window.document.defaultView && window.document.defaultView.getComputedStyle) { "
-                      +
-                      "    return window.document.defaultView.getComputedStyle(arguments[0], null)[arguments[1]]; "
-                      +
-                      "} ",
-                  current, propertyName
-              );
+        parent
+          .executeScript(
+            "if (window.getComputedStyle) { "
+              +
+              "    return window.getComputedStyle(arguments[0], null).getPropertyValue(arguments[1]); "
+              +
+              "} "
+              +
+              "if (arguments[0].currentStyle) { "
+              +
+              "    return arguments[0].currentStyle[arguments[1]]; "
+              +
+              "} "
+              +
+              "if (window.document.defaultView && window.document.defaultView.getComputedStyle) { "
+              +
+              "    return window.document.defaultView.getComputedStyle(arguments[0], null)[arguments[1]]; "
+              +
+              "} ",
+            current, propertyName
+          );
 
       if (!(result instanceof Undefined)) {
         value = String.valueOf(result);
@@ -963,13 +872,9 @@ public class HtmlUnitWebElement implements WrapsDriver,
     };
   }
 
+  @Override
   public <X> X getScreenshotAs(OutputType<X> outputType) throws WebDriverException {
     throw new UnsupportedOperationException(
       "Screenshots are not enabled for HtmlUnitDriver");
-  }
-
-  @Override
-  public Rectangle getRect() {
-      return null;
   }
 }

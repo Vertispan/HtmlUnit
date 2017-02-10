@@ -26,7 +26,6 @@ import org.openqa.selenium.interactions.internal.Coordinates;
 
 import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.javascript.host.event.MouseEvent;
 import com.google.common.base.Preconditions;
 
@@ -38,7 +37,7 @@ public class HtmlUnitMouse implements Mouse {
   private final HtmlUnitKeyboard keyboard;
   private HtmlElement currentActiveElement = null;
 
-  public HtmlUnitMouse(HtmlUnitDriver parent, HtmlUnitKeyboard keyboard) {
+  public HtmlUnitMouse(HtmlUnitKeyboard keyboard) {
     this.keyboard = keyboard;
   }
 
@@ -62,10 +61,6 @@ public class HtmlUnitMouse implements Mouse {
     moveOutIfNeeded(element);
 
     try {
-      if (!(element instanceof HtmlInput)) {
-        element.focus();
-      }
-
       element.mouseOver();
       element.mouseMove();
 

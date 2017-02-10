@@ -78,12 +78,11 @@ class HtmlUnitAlert implements Alert, AlertHandler {
   public void setCredentials(Credentials credentials) {
   }
 
-
   @Override
   public void handleAlert(Page page, String message) {
     Queue<String> queue = queues.get(page);
     if (queue == null) {
-      queue = new LinkedList<String>();
+      queue = new LinkedList<>();
       queues.put(page, queue);
     }
     queue.add(message);
@@ -97,7 +96,7 @@ class HtmlUnitAlert implements Alert, AlertHandler {
    * Closes the current window.
    */
   void close() {
-    queues.remove(driver.getCurrentWindow());
+    queues.remove(driver.getCurrentWindow().getEnclosedPage());
   }
 
 }
