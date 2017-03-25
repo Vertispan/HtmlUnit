@@ -2,6 +2,8 @@ package net.sourceforge.htmlunit.testapplets;
 
 import java.applet.Applet;
 
+import netscape.javascript.JSObject;
+
 /**
  * A simple with a single method called "doIt" that echoes the method call in the window's status of the containing page.
  * @author Marc Guillemot
@@ -28,5 +30,19 @@ public class AppletDoIt extends Applet {
 
     public void showParam(final String paramName) {
         getAppletContext().showStatus(paramName + ": '" + getParameter(paramName) + "'");
+    }
+
+    public void execJS(final String javascript) {
+        getAppletContext().showStatus("execJS: '" + javascript + "'");
+        JSObject window = JSObject.getWindow(this);
+        Object result = window.eval(javascript);
+        getAppletContext().showStatus("  '" + result + "'");
+    }
+
+    public void setValueAttribute(final String id, final String value) {
+        JSObject window = JSObject.getWindow(this);
+        JSObject input = (JSObject) window.eval("document.getElementById('" + id + "');");
+        input.setMember("value", value);
+        getAppletContext().showStatus("value set for '" + id + "' to '" + value + "'");
     }
 }
