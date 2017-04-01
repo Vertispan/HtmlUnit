@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Gargoyle Software Inc.
+ * Copyright (c) 2016-2017 Gargoyle Software Inc.
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
@@ -16,9 +16,9 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -244,9 +244,10 @@ public class CodeStyleTest {
     private void licenseYear() throws IOException {
         final List<String> lines = FileUtils.readLines(new File("checkstyle.xml"), "ISO-8859-1");
         boolean check = false;
+        final String copyright = "Copyright (c) 2016-" + LocalDate.now().getYear();
         for (final String line : lines) {
             if (line.contains("<property name=\"header\"")) {
-                if (!line.contains("Copyright (c) " + Calendar.getInstance(Locale.ROOT).get(Calendar.YEAR))) {
+                if (!line.contains(copyright)) {
                     addFailure("Incorrect year in LICENSE.txt");
                 }
                 check = true;
