@@ -62,6 +62,7 @@ public class SimpleObjectConstructor extends ScriptObject {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getDefaultValue(final Class<?> typeHint) {
         return "[object " + getClassName() + "]";
     }

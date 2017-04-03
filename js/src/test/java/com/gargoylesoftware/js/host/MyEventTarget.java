@@ -89,6 +89,7 @@ public class MyEventTarget extends ScriptObject {
                     staticHandle("addEventListener", String.class, Object.class));
         }
 
+        @Override
         public String getClassName() {
             return "EventTarget";
         }
@@ -129,6 +130,7 @@ public class MyEventTarget extends ScriptObject {
                     staticHandle("addEventListener", String.class, Object.class));
         }
 
+        @Override
         public String getClassName() {
             return "EventTarget";
         }

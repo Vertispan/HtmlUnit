@@ -79,6 +79,7 @@ public class MyWindow extends ScriptObject {
     }
 
     static final class Prototype extends PrototypeObject {
+        @Override
         public String getClassName() {
             return "Window";
         }
