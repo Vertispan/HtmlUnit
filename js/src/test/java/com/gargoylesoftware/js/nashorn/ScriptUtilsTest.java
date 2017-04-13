@@ -36,14 +36,14 @@ import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 
 public class ScriptUtilsTest {
 
-    private void test(final String expected, final String script, final Browser browser) throws Exception {
+    private static void test(final String expected, final String script, final Browser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
         assertEquals(expected, object == null ? "null" : object.toString());
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
+    private static void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");

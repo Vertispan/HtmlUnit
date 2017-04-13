@@ -58,11 +58,11 @@ public class ScriptFunctionTest {
         }
     }
 
-    private NashornScriptEngine createEngine() {
+    private static NashornScriptEngine createEngine() {
         return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
     }
 
-    private Global initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
+    private static Global initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
         Browser.setCurrent(browser);
         final Global global = engine.createNashornGlobal();
         final ScriptContext scriptContext = new SimpleScriptContext();
@@ -105,7 +105,7 @@ public class ScriptFunctionTest {
         }
     }
 
-    private void setProto(final Global global, final String childName, final String parentName) {
+    private static void setProto(final Global global, final String childName, final String parentName) {
         final Object child = global.get(childName);
         if (child instanceof ScriptFunction) {
             final ScriptFunction childFunction = (ScriptFunction) global.get(childName);

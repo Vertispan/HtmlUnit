@@ -12,6 +12,8 @@
  */
 package com.gargoylesoftware.js;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -61,8 +63,8 @@ public class CodeUpdater {
             System.out.println("File doesn't locally exist: " + relativePath);
             return;
         }
-        final List<String> originalLines = FileUtils.readLines(originalFile);
-        final List<String> localLines = FileUtils.readLines(localFile);
+        final List<String> originalLines = FileUtils.readLines(originalFile, UTF_8);
+        final List<String> localLines = FileUtils.readLines(localFile, UTF_8);
 
         while (!isCodeStart(originalLines.get(0))) {
             originalLines.remove(0);

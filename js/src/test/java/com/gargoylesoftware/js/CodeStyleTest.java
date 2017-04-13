@@ -12,6 +12,7 @@
  */
 package com.gargoylesoftware.js;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -187,7 +188,7 @@ public class CodeStyleTest {
                 }
                 else {
                     if (file.getName().endsWith(".xml")) {
-                        final List<String> lines = FileUtils.readLines(file);
+                        final List<String> lines = FileUtils.readLines(file, UTF_8);
                         final String relativePath = file.getAbsolutePath().substring(
                                 new File(".").getAbsolutePath().length() - 1);
                         mixedIndentation(lines, relativePath);
@@ -258,7 +259,7 @@ public class CodeStyleTest {
         }
     }
 
-    private int getIndentation(final String line) {
+    private static int getIndentation(final String line) {
         final Matcher matcher = leadingWhitespace.matcher(line);
         if (matcher.find()) {
             return matcher.end() - matcher.start();

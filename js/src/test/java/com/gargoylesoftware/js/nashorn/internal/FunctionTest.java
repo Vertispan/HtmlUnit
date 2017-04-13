@@ -64,7 +64,7 @@ public class FunctionTest {
         test("2", script);
     }
 
-    private void test(final String expected, final String script) throws Exception {
+    private static void test(final String expected, final String script) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         final Object object = engine.eval(script);
         assertEquals(expected, object == null ? "null" : object.toString());

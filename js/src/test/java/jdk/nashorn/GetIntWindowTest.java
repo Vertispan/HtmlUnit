@@ -35,7 +35,7 @@ public class GetIntWindowTest {
         assertEquals("Success", engine.eval("var xxx = window[50];xxx"));
     }
 
-    private void initGlobal(final ScriptContext scriptContext) {
+    private static void initGlobal(final ScriptContext scriptContext) {
         final Global global = getGlobal(scriptContext);
         final Global oldGlobal = Context.getGlobal();
         try {
