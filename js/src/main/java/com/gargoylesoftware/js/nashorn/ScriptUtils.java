@@ -136,7 +136,8 @@ public class ScriptUtils {
                     try {
                         String name;
                         if (getter.name().isEmpty()) {
-                            name = method.getName().substring(3);
+                            name = method.getName();
+                            name = name.substring(name.startsWith("is") ? 2 : 3);
                             name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
                         }
                         else {
