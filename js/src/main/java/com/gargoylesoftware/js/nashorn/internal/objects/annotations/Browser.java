@@ -17,29 +17,23 @@ package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
  */
 public class Browser {
 
-    private static final ThreadLocal<Browser> current_ = new ThreadLocal<>();
+    private static final ThreadLocal<WebBrowser> current_ = new ThreadLocal<>();
 
-    private final BrowserFamily family_;
-    private final int version_;
+    private final WebBrowser family_;
 
-    public Browser(final BrowserFamily family, final int version) {
-        family_ = family;
-        version_ = version;
+    public Browser(final WebBrowser browser) {
+        family_ = browser;
     }
 
-    public BrowserFamily getFamily() {
+    public WebBrowser getFamily() {
         return family_;
     }
 
-    public int getVersion() {
-        return version_;
-    }
-
     /**
-     * Returns the currently used {@code Browser}.
-     * @return the currently used {@code Browser}
+     * Returns the currently used {@code WebBrowser}.
+     * @return the currently used {@code WebBrowser}
      */
-    public static Browser getCurrent() {
+    public static WebBrowser getCurrent() {
         return current_.get();
     }
 
@@ -47,7 +41,7 @@ public class Browser {
      * Sets the currently used {@code Browser}.
      * @param browser the browser
      */
-    public static void setCurrent(final Browser browser) {
+    public static void setCurrent(final WebBrowser browser) {
         current_.set(browser);
     }
 }

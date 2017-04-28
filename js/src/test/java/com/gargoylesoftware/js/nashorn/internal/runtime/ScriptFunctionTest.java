@@ -12,7 +12,7 @@
  */
 package com.gargoylesoftware.js.nashorn.internal.runtime;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.CHROME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -31,13 +31,13 @@ import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 
 public class ScriptFunctionTest {
 
     @Test
     public void simple() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final ScriptContext scriptContext = global.getScriptContext();
@@ -62,7 +62,7 @@ public class ScriptFunctionTest {
         return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
     }
 
-    private static Global initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
+    private static Global initGlobal(final NashornScriptEngine engine, final WebBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final Global global = engine.createNashornGlobal();
         final ScriptContext scriptContext = new SimpleScriptContext();
@@ -71,8 +71,7 @@ public class ScriptFunctionTest {
         try {
             Context.setGlobal(global);
 
-            final BrowserFamily browserFamily = browser.getFamily();
-            if (browserFamily == CHROME) {
+            if (browser == CHROME) {
                 global.put("EventTarget", new MyEventTarget.FunctionConstructor(), true);
                 global.put("Window", new MyWindow.FunctionConstructor(), true);
                 global.put("HTMLDocument", new MyHTMLDocument.FunctionConstructor(), true);
@@ -193,7 +192,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void withDeclaration() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String script = "function test(event) {return 'hello ' + event}";
@@ -216,7 +215,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void useFromGlobal() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test1(name) {return test2(name)}";
@@ -243,7 +242,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void differentJsObjects() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test() {"
@@ -275,7 +274,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void callFromAnotherObject() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test1(name) {return test2(name)}";

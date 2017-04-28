@@ -25,7 +25,7 @@ import org.junit.Test;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
@@ -40,10 +40,10 @@ public class FunctionHostTest {
     }
 
     private void test(final String expected, final String script) throws Exception {
-        test(expected, script, new Browser(BrowserFamily.IE, 8));
+        test(expected, script, WebBrowser.IE);
     }
 
-    private void test(final String expected, final String script, final Browser browser) throws Exception {
+    private void test(final String expected, final String script, final WebBrowser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
@@ -56,7 +56,7 @@ public class FunctionHostTest {
         test("function", "typeof new FunctionHost1().someMethod");
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
+    private void initGlobal(final ScriptEngine engine, final WebBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
@@ -92,32 +92,32 @@ public class FunctionHostTest {
     @Test
     public void browserInMethods() throws Exception {
         final String script = "FunctionHost1.prototype.someMethod()";
-        test("CHROME", script, new Browser(BrowserFamily.CHROME, 55));
-        test("IE", script, new Browser(BrowserFamily.IE, 11));
+        test("CHROME", script, WebBrowser.CHROME);
+        test("IE", script, WebBrowser.IE);
     }
 
     @Test
     public void browserSpecificFunction() throws Exception {
         final String script = "typeof new FunctionHost1().inChromeOnly";
-        test("function", script, new Browser(BrowserFamily.CHROME, 55));
-        test("undefined", script, new Browser(BrowserFamily.IE, 11));
+        test("function", script, WebBrowser.CHROME);
+        test("undefined", script, WebBrowser.IE);
     }
 
     @Test
     public void browserSpecificGetter() throws Exception {
-        test("1", "new FunctionHost1().length", new Browser(BrowserFamily.CHROME, 55));
-        test("2", "new FunctionHost1().length", new Browser(BrowserFamily.IE, 11));
-        test("true", "new FunctionHost1().length === undefined", new Browser(BrowserFamily.IE, 8));
-        test("true", "new FunctionHost1().length === undefined", new Browser(BrowserFamily.FF, 38));
+        test("1", "new FunctionHost1().length", WebBrowser.CHROME);
+        test("2", "new FunctionHost1().length", WebBrowser.IE);
+        test("true", "new FunctionHost1().length === undefined", WebBrowser.IE);
+        test("true", "new FunctionHost1().length === undefined", WebBrowser.FF);
     }
 
     @Test
     public void browserSpecificGetterType() throws Exception {
         final String script = "typeof new FunctionHost1().length";
-        test("number", script, new Browser(BrowserFamily.CHROME, 55));
-        test("number", script, new Browser(BrowserFamily.IE, 11));
-        test("undefined", script, new Browser(BrowserFamily.IE, 8));
-        test("undefined", script, new Browser(BrowserFamily.FF, 38));
+        test("number", script, WebBrowser.CHROME);
+        test("number", script, WebBrowser.IE);
+        test("undefined", script, WebBrowser.IE);
+        test("undefined", script, WebBrowser.FF);
     }
 
     @Test

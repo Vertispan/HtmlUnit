@@ -48,8 +48,6 @@ import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.SecureClassLoader;
 
-import com.gargoylesoftware.js.nashorn.tools.Shell;
-
 /**
  * Superclass for Nashorn class loader classes.
  */

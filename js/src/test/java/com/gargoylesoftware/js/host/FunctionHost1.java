@@ -12,8 +12,8 @@
  */
 package com.gargoylesoftware.js.host;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.IE;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -25,7 +25,6 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.FindProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
@@ -46,17 +45,17 @@ public class FunctionHost1 extends ScriptObject {
 
     @Function
     public static String someMethod(final Object self) {
-        return Browser.getCurrent().getFamily().name();
+        return Browser.getCurrent().name();
     }
 
-    @Function(@WebBrowser(CHROME))
+    @Function(CHROME)
     public static String inChromeOnly(final Object self) {
-        return Browser.getCurrent().getFamily().name();
+        return Browser.getCurrent().name();
     }
 
-    @Getter({@WebBrowser(value = IE, minVersion = 11), @WebBrowser(CHROME) })
+    @Getter({IE, CHROME})
     public static int getLength(final Object self) {
-        return Browser.getCurrent().getFamily() == CHROME ? 1 : 2;
+        return Browser.getCurrent() == CHROME ? 1 : 2;
     }
 
     @Getter

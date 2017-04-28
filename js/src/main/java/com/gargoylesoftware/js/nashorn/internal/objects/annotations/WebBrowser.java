@@ -12,25 +12,27 @@
  */
 package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * An annotation to specify a range of browser, e.g. Firefox from version 31 to version 38.
+ * An annotation to specify a browser.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface WebBrowser {
+public enum WebBrowser {
 
-    /** The browser name. */
-    BrowserFamily value();
+    /** Latest version of Chrome. */
+    CHROME,
 
-    /** The minimum version which supports this feature. */
-    float minVersion() default 0;
+    /** Internet Explorer 11. */
+    IE,
 
-    /** The maximum version which supports this feature. */
-    float maxVersion() default Float.MAX_VALUE;
+    /** Edge. */
+    EDGE,
+
+    /** All versions of Firefox. */
+    FF,
+
+    /** Firefox 45. */
+    FF45,
+
+    /** Firefox 52. */
+    FF52
 }
 

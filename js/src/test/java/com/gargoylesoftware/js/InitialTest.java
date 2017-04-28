@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptRuntime;
 
 public class InitialTest {
@@ -39,7 +39,7 @@ public class InitialTest {
 
     @Test
     public void regExp() throws Exception {
-        Browser.setCurrent(new Browser(BrowserFamily.CHROME, 55));
+        Browser.setCurrent(WebBrowser.CHROME);
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         assertEquals("function RegExp() { [native code] }", ScriptRuntime.safeToString(engine.eval("RegExp")));
     }

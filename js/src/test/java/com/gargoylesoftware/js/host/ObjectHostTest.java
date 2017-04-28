@@ -25,7 +25,7 @@ import org.junit.Test;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
@@ -39,17 +39,17 @@ public class ObjectHostTest {
     }
 
     private void test(final String expected, final String script) throws Exception {
-        test(expected, script, new Browser(BrowserFamily.IE, 8));
+        test(expected, script, WebBrowser.IE);
     }
 
-    private void test(final String expected, final String script, final Browser browser) throws Exception {
+    private void test(final String expected, final String script, final WebBrowser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
         assertEquals(expected, object == null ? "null" : object.toString());
     }
 
-    private void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
+    private void initGlobal(final ScriptEngine engine, final WebBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");

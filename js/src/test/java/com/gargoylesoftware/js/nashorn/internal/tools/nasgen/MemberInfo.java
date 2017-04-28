@@ -571,7 +571,7 @@ public final class MemberInfo implements Cloneable {
     }
 
     private static Comparator<WebBrowser> comparator = (o1, o2) -> {
-        return o1.value().compareTo(o2.value());
+        return o1.compareTo(o2);
     };
 
     public void setBrowsers(WebBrowser[] browsers) {

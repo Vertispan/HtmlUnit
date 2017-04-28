@@ -37,9 +37,9 @@
 
 package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.FF;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.FF;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.IE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -67,8 +67,8 @@ public @interface Constructor {
 
     /** The {@link WebBrowser}s supported by this constructor. */
     WebBrowser[] value() default {
-        @WebBrowser(IE),
-        @WebBrowser(FF),
-        @WebBrowser(CHROME)
+        CHROME,
+        FF,
+        IE
     };
 }

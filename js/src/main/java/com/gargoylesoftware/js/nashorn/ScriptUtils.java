@@ -25,7 +25,6 @@ import java.util.Map;
 
 import com.gargoylesoftware.js.nashorn.internal.lookup.Lookup;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
@@ -55,8 +54,7 @@ public class ScriptUtils {
             void.class, ScriptObject.class, Object.class, String.class);
 
     public static void initialize(final ScriptObject scriptObject) {
-        final BrowserFamily browserFamily = Browser.getCurrent().getFamily();
-        final int browserVersion = Browser.getCurrent().getVersion();
+        final WebBrowser webBrowser = Browser.getCurrent();
         final Class<?> scriptClass = getScriptClass(scriptObject);
         Class<?> enclosingClass = scriptClass.getEnclosingClass();
         if (enclosingClass == null) {
@@ -70,7 +68,7 @@ public class ScriptUtils {
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (final Method method : allMethods) {
             for (final Function function : method.getAnnotationsByType(Function.class)) {
-                if (isSupported(scriptObject, function.where(), function.value(), browserFamily, browserVersion)) {
+                if (isSupported(scriptObject, function.where(), function.value(), webBrowser)) {
                     final String functionName;
                     if (function.name().isEmpty()) {
                         functionName = method.getName();
@@ -105,7 +103,7 @@ public class ScriptUtils {
                 }
             }
             for (final Setter setter : method.getAnnotationsByType(Setter.class)) {
-                if (isSupported(scriptObject, setter.where(), setter.value(), browserFamily, browserVersion)) {
+                if (isSupported(scriptObject, setter.where(), setter.value(), webBrowser)) {
                     String name;
                     if (setter.name().isEmpty()) {
                         name = method.getName().substring(3);
@@ -122,7 +120,7 @@ public class ScriptUtils {
             for (final com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property property
                     : field.getAnnotationsByType(
                             com.gargoylesoftware.js.nashorn.internal.objects.annotations.Property.class)) {
-                if (isSupported(scriptObject, property.where(), property.value(), browserFamily, browserVersion)) {
+                if (isSupported(scriptObject, property.where(), property.value(), webBrowser)) {
                     final String propertyName = field.getName();
                     list.add(AccessorProperty.create(propertyName, property.attributes(), 
                             virtualHandle(scriptObject.getClass(), "G$" + propertyName,
@@ -132,7 +130,7 @@ public class ScriptUtils {
         }
         for (final Method method : allMethods) {
             for (final Getter getter : method.getAnnotationsByType(Getter.class)) {
-                if (isSupported(scriptObject, getter.where(), getter.value(), browserFamily, browserVersion)) {
+                if (isSupported(scriptObject, getter.where(), getter.value(), webBrowser)) {
                     try {
                         String name;
                         if (getter.name().isEmpty()) {
@@ -149,7 +147,7 @@ public class ScriptUtils {
                         if (setterMethod != null) {
                             setter = lookup.unreflect(setterMethod);
                         }
-                        else if (browserFamily != BrowserFamily.IE) {
+                        else if (webBrowser != WebBrowser.IE) {
                             setter = Lookup.EMPTY_SETTER;
                         }
                         else {
@@ -225,8 +223,8 @@ public class ScriptUtils {
         }
     }
 
-    private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers, final BrowserFamily expectedBrowserFamily,
-            final int expectedBrowserVersion) {
+    private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers,
+            final WebBrowser expectedBrowser) {
         final Class<?> scriptClass = getScriptClass(scriptObject);
         if (where == Where.PROTOTYPE
                 && (scriptClass.getEnclosingClass() == null || scriptObject instanceof ScriptFunction)
@@ -237,9 +235,7 @@ public class ScriptUtils {
         }
 
         for (final WebBrowser browser : browsers) {
-            if (browser.value() == expectedBrowserFamily
-                    && browser.minVersion() <= expectedBrowserVersion
-                    && browser.maxVersion() >= expectedBrowserVersion) {
+            if (browser == expectedBrowser) {
                 return true;
             }
         }

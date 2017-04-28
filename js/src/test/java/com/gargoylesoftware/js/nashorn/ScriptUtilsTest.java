@@ -12,9 +12,6 @@
  */
 package com.gargoylesoftware.js.nashorn;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.FF;
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.IE;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
@@ -30,20 +27,21 @@ import org.junit.Test;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PropertyMap;
 
 public class ScriptUtilsTest {
 
-    private static void test(final String expected, final String script, final Browser browser) throws Exception {
+    private static void test(final String expected, final String script, final WebBrowser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
         assertEquals(expected, object == null ? "null" : object.toString());
     }
 
-    private static void initGlobal(final ScriptEngine engine, final Browser browser) throws Exception {
+    private static void initGlobal(final ScriptEngine engine, final WebBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
@@ -80,9 +78,9 @@ public class ScriptUtilsTest {
                 + "top = 'hello';\n"
                 + "output += ', ' + typeof top;\n"
                 + "output";
-        test("object, object", script, new Browser(CHROME, 50));
-        test("object, object", script, new Browser(FF, 45));
-        test("object, string", script, new Browser(IE, 11));
+        test("object, object", script, WebBrowser.CHROME);
+        test("object, object", script, WebBrowser.FF45);
+        test("object, string", script, WebBrowser.IE);
     }
 
 }

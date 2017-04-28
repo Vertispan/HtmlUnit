@@ -12,7 +12,7 @@
  */
 package com.gargoylesoftware.js.host;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.CHROME;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
@@ -28,7 +28,7 @@ import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.NativeArray;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.BrowserFamily;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
@@ -38,17 +38,17 @@ public class MyWindowTest {
 
     @Test
     public void addEventListener() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         test("[object Window]", "window", chrome);
         test("function Window() { [native code] }", "Window", chrome);
         test("function addEventListener() { [native code] }", "window.addEventListener", chrome);
-        final Browser ie = new Browser(BrowserFamily.IE, 11);
+        final WebBrowser ie = WebBrowser.IE;
         test("[object Window]", "window", ie);
         test("[object Window]", "Window", ie);
         test("function addEventListener() { [native code] }", "window.addEventListener", ie);
     }
 
-    private void test(final String expected, final String script, final Browser browser) throws Exception {
+    private void test(final String expected, final String script, final WebBrowser browser) throws Exception {
         final NashornScriptEngine engine = createEngine();
         final ScriptContext scriptContext = initGlobal(engine, browser);
         final Object object = engine.eval(script, scriptContext);
@@ -59,7 +59,7 @@ public class MyWindowTest {
         return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
     }
 
-    private ScriptContext initGlobal(final NashornScriptEngine engine, final Browser browser) throws Exception {
+    private ScriptContext initGlobal(final NashornScriptEngine engine, final WebBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final Global global = engine.createNashornGlobal();
         final ScriptContext scriptContext = new SimpleScriptContext();
@@ -68,8 +68,7 @@ public class MyWindowTest {
         try {
             Context.setGlobal(global);
 
-            final BrowserFamily browserFamily = browser.getFamily();
-            if (browserFamily == CHROME) {
+            if (browser == CHROME) {
                 global.put("EventTarget", new MyEventTarget.FunctionConstructor(), true);
                 global.put("Window", new MyWindow.FunctionConstructor(), true);
                 setProto(global, "Window", "EventTarget");
@@ -111,7 +110,7 @@ public class MyWindowTest {
 
     @Test
     public void equal() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         test("true", "this === window", chrome);
         test("true", "window === this", chrome);
         test("true", "this == window", chrome);
@@ -127,7 +126,7 @@ public class MyWindowTest {
 
     @Test
     public void calledTwice() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         final String s = "function info(msg) {\n"
                 + "  (function(t){var x = window.__huCatchedAlerts; x = x ? x : []; window.__huCatchedAlerts = x; x.push(String(t))})(msg);"
             + "};\n"
@@ -149,9 +148,9 @@ public class MyWindowTest {
 
     @Test
     public void testToString() throws Exception {
-        final Browser chrome = new Browser(BrowserFamily.CHROME, 55);
+        final WebBrowser chrome = WebBrowser.CHROME;
         test("function toString() { [native code] }", "toString", chrome);
-        final Browser ie = new Browser(BrowserFamily.IE, 11);
+        final WebBrowser ie = WebBrowser.IE;
         test("function toString() { [native code] }", "toString", ie);
     }
 

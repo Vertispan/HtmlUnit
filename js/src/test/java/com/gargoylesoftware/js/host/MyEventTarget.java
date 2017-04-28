@@ -41,7 +41,7 @@ public class MyEventTarget extends ScriptObject {
 
     @Function
     public static String addEventListener(final Object self) {
-        return Browser.getCurrent().getFamily().name();
+        return Browser.getCurrent().name();
     }
 
     private static MethodHandle staticHandle(final String name, final Class<?> rtype, final Class<?>... ptypes) {
