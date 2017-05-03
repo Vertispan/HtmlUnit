@@ -47,7 +47,7 @@ import java.util.Comparator;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptObject;
 
@@ -126,7 +126,7 @@ public final class MemberInfo implements Cloneable {
 
     private boolean isOptimistic;
 
-    private WebBrowser[] browsers;
+    private SupportedBrowser[] browsers;
 
     /**
      * @return the kind
@@ -566,15 +566,15 @@ public final class MemberInfo implements Cloneable {
         this.arity = arity;
     }
 
-    public WebBrowser[] getBrowsers() {
+    public SupportedBrowser[] getBrowsers() {
         return browsers;
     }
 
-    private static Comparator<WebBrowser> comparator = (o1, o2) -> {
+    private static Comparator<SupportedBrowser> comparator = (o1, o2) -> {
         return o1.compareTo(o2);
     };
 
-    public void setBrowsers(WebBrowser[] browsers) {
+    public void setBrowsers(SupportedBrowser[] browsers) {
         Arrays.sort(browsers, comparator);
         this.browsers = browsers;
     }

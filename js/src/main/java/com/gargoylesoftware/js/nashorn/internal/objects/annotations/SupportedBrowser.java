@@ -15,7 +15,7 @@ package com.gargoylesoftware.js.nashorn.internal.objects.annotations;
 /**
  * An annotation to specify a browser.
  */
-public enum WebBrowser {
+public enum SupportedBrowser {
 
     /** Latest version of Chrome. */
     CHROME,
@@ -34,5 +34,5 @@ public enum WebBrowser {
 
     /** Firefox 52. */
     FF52
-}
 
+}

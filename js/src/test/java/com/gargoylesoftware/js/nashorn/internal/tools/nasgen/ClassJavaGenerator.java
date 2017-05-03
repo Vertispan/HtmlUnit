@@ -89,7 +89,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
 import com.gargoylesoftware.js.nashorn.internal.tools.nasgen.MemberInfo.Kind;
 
@@ -596,7 +596,7 @@ public class ClassJavaGenerator {
     private static String getBrowserCondition(MemberInfo info) {
         if (info != null && info.getBrowsers() != null) {
             StringBuilder builder = new StringBuilder();
-            for (WebBrowser browser : info.getBrowsers()) {
+            for (SupportedBrowser browser : info.getBrowsers()) {
 //                if (builder.length() != 0) {
 //                    builder.append(" || ");
 //                }

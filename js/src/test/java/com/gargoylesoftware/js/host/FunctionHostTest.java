@@ -25,7 +25,7 @@ import org.junit.Test;
 import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Context;
 import com.gargoylesoftware.js.nashorn.internal.runtime.PrototypeObject;
 import com.gargoylesoftware.js.nashorn.internal.runtime.ScriptFunction;
@@ -39,11 +39,11 @@ public class FunctionHostTest {
         test("function someMethod() { [native code] }", "new FunctionHost1().someMethod");
     }
 
-    private void test(final String expected, final String script) throws Exception {
-        test(expected, script, WebBrowser.IE);
+    private static void test(final String expected, final String script) throws Exception {
+        test(expected, script, SupportedBrowser.IE);
     }
 
-    private void test(final String expected, final String script, final WebBrowser browser) throws Exception {
+    private static void test(final String expected, final String script, final SupportedBrowser browser) throws Exception {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         initGlobal(engine, browser);
         final Object object = engine.eval(script);
@@ -56,7 +56,7 @@ public class FunctionHostTest {
         test("function", "typeof new FunctionHost1().someMethod");
     }
 
-    private void initGlobal(final ScriptEngine engine, final WebBrowser browser) throws Exception {
+    private static void initGlobal(final ScriptEngine engine, final SupportedBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final SimpleScriptContext context = (SimpleScriptContext) engine.getContext();
         final Global global = get(context.getBindings(ScriptContext.ENGINE_SCOPE), "sobj");
@@ -80,7 +80,7 @@ public class FunctionHostTest {
         return (T) field.get(o);
     }
 
-    private void setProto(final Global global, final String childName, final String parentName) {
+    private static void setProto(final Global global, final String childName, final String parentName) {
         final ScriptFunction childFunction = (ScriptFunction) global.get(childName);
         final PrototypeObject childPrototype = (PrototypeObject) childFunction.getPrototype();
         final ScriptFunction parentFunction = (ScriptFunction) global.get(parentName);
@@ -92,32 +92,31 @@ public class FunctionHostTest {
     @Test
     public void browserInMethods() throws Exception {
         final String script = "FunctionHost1.prototype.someMethod()";
-        test("CHROME", script, WebBrowser.CHROME);
-        test("IE", script, WebBrowser.IE);
+        test("CHROME", script, SupportedBrowser.CHROME);
+        test("IE", script, SupportedBrowser.IE);
     }
 
     @Test
     public void browserSpecificFunction() throws Exception {
         final String script = "typeof new FunctionHost1().inChromeOnly";
-        test("function", script, WebBrowser.CHROME);
-        test("undefined", script, WebBrowser.IE);
+        test("function", script, SupportedBrowser.CHROME);
+        test("undefined", script, SupportedBrowser.IE);
     }
 
     @Test
     public void browserSpecificGetter() throws Exception {
-        test("1", "new FunctionHost1().length", WebBrowser.CHROME);
-        test("2", "new FunctionHost1().length", WebBrowser.IE);
-        test("true", "new FunctionHost1().length === undefined", WebBrowser.IE);
-        test("true", "new FunctionHost1().length === undefined", WebBrowser.FF);
+        test("1", "new FunctionHost1().length", SupportedBrowser.CHROME);
+        test("2", "new FunctionHost1().length", SupportedBrowser.IE);
+        test("false", "new FunctionHost1().length === undefined", SupportedBrowser.IE);
+        test("true", "new FunctionHost1().length === undefined", SupportedBrowser.FF);
     }
 
     @Test
     public void browserSpecificGetterType() throws Exception {
         final String script = "typeof new FunctionHost1().length";
-        test("number", script, WebBrowser.CHROME);
-        test("number", script, WebBrowser.IE);
-        test("undefined", script, WebBrowser.IE);
-        test("undefined", script, WebBrowser.FF);
+        test("number", script, SupportedBrowser.CHROME);
+        test("number", script, SupportedBrowser.IE);
+        test("undefined", script, SupportedBrowser.FF);
     }
 
     @Test

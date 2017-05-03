@@ -12,7 +12,7 @@
  */
 package com.gargoylesoftware.js.nashorn.internal.runtime;
 
-import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser.CHROME;
+import static com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser.CHROME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -31,13 +31,13 @@ import com.gargoylesoftware.js.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.gargoylesoftware.js.nashorn.api.scripting.ScriptObjectMirror;
 import com.gargoylesoftware.js.nashorn.internal.objects.Global;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Browser;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser;
 
 public class ScriptFunctionTest {
 
     @Test
     public void simple() throws Exception {
-        final WebBrowser chrome = WebBrowser.CHROME;
+        final SupportedBrowser chrome = SupportedBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final ScriptContext scriptContext = global.getScriptContext();
@@ -62,7 +62,7 @@ public class ScriptFunctionTest {
         return (NashornScriptEngine) new NashornScriptEngineFactory().getScriptEngine();
     }
 
-    private static Global initGlobal(final NashornScriptEngine engine, final WebBrowser browser) throws Exception {
+    private static Global initGlobal(final NashornScriptEngine engine, final SupportedBrowser browser) throws Exception {
         Browser.setCurrent(browser);
         final Global global = engine.createNashornGlobal();
         final ScriptContext scriptContext = new SimpleScriptContext();
@@ -192,7 +192,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void withDeclaration() throws Exception {
-        final WebBrowser chrome = WebBrowser.CHROME;
+        final SupportedBrowser chrome = SupportedBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String script = "function test(event) {return 'hello ' + event}";
@@ -215,7 +215,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void useFromGlobal() throws Exception {
-        final WebBrowser chrome = WebBrowser.CHROME;
+        final SupportedBrowser chrome = SupportedBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test1(name) {return test2(name)}";
@@ -242,7 +242,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void differentJsObjects() throws Exception {
-        final WebBrowser chrome = WebBrowser.CHROME;
+        final SupportedBrowser chrome = SupportedBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test() {"
@@ -274,7 +274,7 @@ public class ScriptFunctionTest {
 
     @Test
     public void callFromAnotherObject() throws Exception {
-        final WebBrowser chrome = WebBrowser.CHROME;
+        final SupportedBrowser chrome = SupportedBrowser.CHROME;
         final NashornScriptEngine engine = createEngine();
         final Global global = initGlobal(engine, chrome);
         final String code1 = "function test1(name) {return test2(name)}";

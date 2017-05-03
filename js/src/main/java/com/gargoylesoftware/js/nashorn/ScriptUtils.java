@@ -29,7 +29,7 @@ import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Function;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Getter;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.ScriptClass;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Setter;
-import com.gargoylesoftware.js.nashorn.internal.objects.annotations.WebBrowser;
+import com.gargoylesoftware.js.nashorn.internal.objects.annotations.SupportedBrowser;
 import com.gargoylesoftware.js.nashorn.internal.objects.annotations.Where;
 import com.gargoylesoftware.js.nashorn.internal.runtime.AccessorProperty;
 import com.gargoylesoftware.js.nashorn.internal.runtime.Property;
@@ -54,7 +54,7 @@ public class ScriptUtils {
             void.class, ScriptObject.class, Object.class, String.class);
 
     public static void initialize(final ScriptObject scriptObject) {
-        final WebBrowser webBrowser = Browser.getCurrent();
+        final SupportedBrowser webBrowser = Browser.getCurrent();
         final Class<?> scriptClass = getScriptClass(scriptObject);
         Class<?> enclosingClass = scriptClass.getEnclosingClass();
         if (enclosingClass == null) {
@@ -147,7 +147,7 @@ public class ScriptUtils {
                         if (setterMethod != null) {
                             setter = lookup.unreflect(setterMethod);
                         }
-                        else if (webBrowser != WebBrowser.IE) {
+                        else if (webBrowser != SupportedBrowser.IE) {
                             setter = Lookup.EMPTY_SETTER;
                         }
                         else {
@@ -223,8 +223,8 @@ public class ScriptUtils {
         }
     }
 
-    private static boolean isSupported(final ScriptObject scriptObject, final Where where, final WebBrowser[] browsers,
-            final WebBrowser expectedBrowser) {
+    private static boolean isSupported(final ScriptObject scriptObject, final Where where, final SupportedBrowser[] browsers,
+            final SupportedBrowser expectedBrowser) {
         final Class<?> scriptClass = getScriptClass(scriptObject);
         if (where == Where.PROTOTYPE
                 && (scriptClass.getEnclosingClass() == null || scriptObject instanceof ScriptFunction)
@@ -234,7 +234,7 @@ public class ScriptUtils {
             return false;
         }
 
-        for (final WebBrowser browser : browsers) {
+        for (final SupportedBrowser browser : browsers) {
             if (browser == expectedBrowser) {
                 return true;
             }
