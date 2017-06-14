@@ -39,6 +39,20 @@ public class AppletDoIt extends Applet {
         getAppletContext().showStatus("  '" + result + "'");
     }
 
+    public void callWithoutParams(final String methodName) {
+        getAppletContext().showStatus("call: '" + methodName + "'");
+        JSObject window = JSObject.getWindow(this);
+        Object result = window.call(methodName);
+        getAppletContext().showStatus("  '" + result + "'");
+    }
+
+    public void callWithStringParam(final String methodName) {
+        getAppletContext().showStatus("call: '" + methodName + "'");
+        JSObject window = JSObject.getWindow(this);
+        Object result = window.call(methodName, "HtmlUnit");
+        getAppletContext().showStatus("  '" + result + "'");
+    }
+
     public void setValueAttribute(final String id, final String value) {
         JSObject window = JSObject.getWindow(this);
         JSObject input = (JSObject) window.eval("document.getElementById('" + id + "');");
